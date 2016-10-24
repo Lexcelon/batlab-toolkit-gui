@@ -22,33 +22,33 @@ batlabtest::~batlabtest()
 }
 
 void batlabtest::onGetTemp() {
-    emit emitGetTemp(ui->unitNumber->value(),ui->cellNumber->value());
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),temperature);
 }
 
 void batlabtest::onGetCurr() {
-    emit emitGetCurr(ui->unitNumber->value(),ui->cellNumber->value());
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),current);
 }
 
 void batlabtest::onGetCurrAmp() {
-    emit emitGetCurrAmp(ui->unitNumber->value(),ui->cellNumber->value());
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),currentAmplitude);
 }
 
 void batlabtest::onGetVol() {
-    emit emitGetVol(ui->unitNumber->value(),ui->cellNumber->value());
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),voltage);
 }
 
 void batlabtest::onGetVolAmp() {
-    emit emitGetVolAmp(ui->unitNumber->value(),ui->cellNumber->value());
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),voltageAmplitude);
 }
 
 void batlabtest::onGetVolPhase() {
-    emit emitGetVolPhase(ui->unitNumber->value(),ui->cellNumber->value());
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),voltagePhase);
 }
 
 void batlabtest::onGetEnergy() {
-    emit emitGetEnergy(ui->unitNumber->value(),ui->cellNumber->value());
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),energy);
 }
 
 void batlabtest::onGetCharge() {
-    emit emitGetCharge(ui->unitNumber->value(),ui->cellNumber->value());
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),charge);
 }

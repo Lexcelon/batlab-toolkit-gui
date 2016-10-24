@@ -52,14 +52,7 @@ QPainter painter;
 
 void Batlab::onTest() {
    if (testObj == nullptr) testObj = new batlabtest();
-   connect(testObj,SIGNAL(emitGetCharge(int,int)),com,SLOT(onGetCharge(int,int)));
-   connect(testObj,SIGNAL(emitGetTemp(int,int)),com,SLOT(onGetTemp(int,int)));
-   connect(testObj,SIGNAL(emitGetEnergy(int,int)),com,SLOT(onGetEnergy(int,int)));
-   connect(testObj,SIGNAL(emitGetVol(int,int)),com,SLOT(onGetVol(int,int)));
-   connect(testObj,SIGNAL(emitGetVolAmp(int,int)),com,SLOT(onGetVolAmp(int,int)));
-   connect(testObj,SIGNAL(emitGetVolPhase(int,int)),com,SLOT(onGetVolPhase(int,int)));
-   connect(testObj,SIGNAL(emitGetCurr(int,int)),com,SLOT(onGetCurr(int,int)));
-   connect(testObj,SIGNAL(emitGetCurrAmp(int,int)),com,SLOT(onGetCurrAmp(int,int)));
+   connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
    testObj->setModal(false);
    testObj->show();
 

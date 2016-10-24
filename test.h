@@ -2,6 +2,7 @@
 #define TEST_H
 
 #include <QDialog>
+#include "batlabcom.h"
 
 namespace Ui {
 class test;
@@ -34,18 +35,10 @@ signals:
     void emitGetVolPhase(int,int);
     void emitGetEnergy(int,int);
     void emitGetCharge(int,int);
+    void emitReadReg(int,int,vals);
 
 private:
     Ui::test *ui;
-    QPushButton * temp;
-    QPushButton * currAmp;
-    QPushButton * curr;
-    QPushButton * vol;
-    QPushButton * volphase;
-    QPushButton * volamp;
-    QPushButton * energy;
-    QPushButton * charge;
-
 
 };
 

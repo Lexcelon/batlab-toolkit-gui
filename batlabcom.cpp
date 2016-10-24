@@ -97,20 +97,27 @@ void batlabCom::onRead() {
         emit emitResponse((int)(rec[start+1] >> 2),(int)(rec[start+1] & 0x03),str, 256*(int)rec[start+3] + (int)rec[start+4]);
         len-=5;
         start +=5;
-    } else if (rec[0] == 0xAF) {
-
+    } else if ((uchar)rec[start] == 0xAF) {
+        qDebug() << "RESPONSE PACKET";
+        qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
+        int unit = (int)(rec[start+1] >> 2);
+        int cell = (int)(rec[start+1] & 0x03);
+        if ((uchar)rec[start+2] == 0x00) {
+            int status,temp,current,voltage,charge;
+            status = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
+            temp = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
+            current = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
+            voltage = 256*(uchar)rec[start+9] + (uchar)rec[start+10];
+            charge = 256*(uchar)rec[start+11] + (uchar)rec[start+12];
+            emit emitStream(unit,cell,status,temp,current,voltage,charge);
+        } else {
+            int currAmp,volPhase,volAmp;
+            currAmp = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
+            volPhase = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
+            volAmp = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
+            emit emitStreamExt(unit,cell,currAmp,volPhase,volAmp);
+        }
     }
-//    for (int i = 0; i < len; i++) {
-//        qDebug() << (uchar)rec[i];
-//    }
-//    qDebug() << rec[3]*256+rec[4];
-
-
-//    qint64 bytes = port->bytesAvailable();
-//    for (int i = 0; i < bytes; i++) {
-//        data.push_back(port->read(1)[0]);
-//    }
-//    parseData();
 }
 
 void batlabCom::parseData() {
@@ -211,6 +218,20 @@ void batlabCom::onGetCharge(int unit, int cell) {
     data[0] = 0xAA;
     data[1] = (unit<<2) + cell;
     data[2] = 0x09;
+    data[3] = 0x00;
+    data[4] = 0x00;
+
+    port->write(data,5);
+    port->waitForBytesWritten(1000);
+}
+
+
+void batlabCom::onReadReg(int unit, int cell, vals val) {
+    char * data = new char[5];
+    qDebug() << registers[val];
+    data[0] = 0xAA;
+    data[1] = (unit<<2) + cell;
+    data[2] = registers[val];
     data[3] = 0x00;
     data[4] = 0x00;
 
