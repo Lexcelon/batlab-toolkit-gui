@@ -54,47 +54,9 @@ void batlabCom::onRead() {
         QString str;
         qDebug() << "RESPONSE PACKET";
         qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
-        switch ((uchar)rec[start+2]) {
-        case 0x02:
-            str = "Temperature";
-            qDebug() << "Temperature: ";
-            break;
-        case 0x03:
-            str = "Current";
-            qDebug() << "Current: ";
-            break;
-        case 0x04:
-            str = "Current Amplitude";
-            qDebug() << "Current Amplitude: ";
-            break;
-        case 0x05:
-            str = "Voltage";
-            qDebug() << "Voltage: ";
-
-            break;
-        case 0x06:
-            str = "Voltage Phase";
-            qDebug() << "Voltage Phase: ";
-            break;
-        case 0x07:
-            str = "Voltage Amplitude";
-            qDebug() << "Voltage Amplitude: ";
-            break;
-        case 0x08:
-            str = "Energy";
-            qDebug() << "Energy: ";
-            break;
-        case 0x09:
-            str = "Charge";
-            qDebug() << "Charge: ";
-
-            break;
-        default:
-            break;
-        }
-        qDebug() << 256*(uchar)rec[start+3] + (uchar)rec[start+4];
+        qDebug() << names[enumVals[(uchar)rec[start+2]]] +": " << 256*(int)rec[start+3] + (int)rec[start+4];
 //        qDebug() << (uchar)(rec[start+1] >> 2) << (uchar)(rec[start+1] & 0x03)<<str << 256*(uint)rec[start+3] + (uint)rec[start+4];
-        emit emitResponse((int)(rec[start+1] >> 2),(int)(rec[start+1] & 0x03),str, 256*(int)rec[start+3] + (int)rec[start+4]);
+        emit emitResponse((int)(rec[start+1] >> 2),(int)(rec[start+1] & 0x03),names[enumVals[(uchar)rec[start+2]]] +": ", 256*(int)rec[start+3] + (int)rec[start+4]);
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
@@ -129,106 +91,9 @@ batlabCom::~batlabCom()
 
 }
 
-void batlabCom::onGetTemp(int unit, int cell) {
-    char * data = new char[5];
-    data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
-    data[2] = 0x02;
-    data[3] = 0x00;
-    data[4] = 0x00;
-
-    port->write(data,5);
-    port->waitForBytesWritten(1000);
-}
-
-void batlabCom::onGetCurr(int unit, int cell) {
-    char * data = new char[5];
-    data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
-    data[2] = 0x03;
-    data[3] = 0x00;
-    data[4] = 0x00;
-
-    port->write(data,5);
-    port->waitForBytesWritten(1000);
-}
-
-void batlabCom::onGetCurrAmp(int unit, int cell) {
-    char * data = new char[5];
-    data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
-    data[2] = 0x04;
-    data[3] = 0x00;
-    data[4] = 0x00;
-
-    port->write(data,5);
-    port->waitForBytesWritten(1000);
-}
-
-void batlabCom::onGetVol(int unit, int cell) {
-    char * data = new char[5];
-    data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
-    data[2] = 0x05;
-    data[3] = 0x00;
-    data[4] = 0x00;
-
-    port->write(data,5);
-    port->waitForBytesWritten(1000);
-}
-
-void batlabCom::onGetVolPhase(int unit, int cell) {
-    char * data = new char[5];
-    data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
-    data[2] = 0x06;
-    data[3] = 0x00;
-    data[4] = 0x00;
-
-    port->write(data,5);
-    port->waitForBytesWritten(1000);
-}
-
-void batlabCom::onGetVolAmp(int unit, int cell) {
-    char * data = new char[5];
-    data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
-    data[2] = 0x07;
-    data[3] = 0x00;
-    data[4] = 0x00;
-
-    port->write(data,5);
-    port->waitForBytesWritten(1000);
-}
-
-void batlabCom::onGetEnergy(int unit, int cell) {
-    char * data = new char[5];
-    data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
-    data[2] = 0x08;
-    data[3] = 0x00;
-    data[4] = 0x00;
-
-    port->write(data,5);
-    port->waitForBytesWritten(1000);
-}
-
-void batlabCom::onGetCharge(int unit, int cell) {
-    char * data = new char[5];
-    data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
-    data[2] = 0x09;
-    data[3] = 0x00;
-    data[4] = 0x00;
-
-    port->write(data,5);
-    port->waitForBytesWritten(1000);
-}
-
-
 void batlabCom::onReadReg(int unit, int cell, vals val) {
     char * data = new char[5];
-    qDebug() << registers[val];
+    //qDebug() << registers[val];
     data[0] = 0xAA;
     data[1] = (unit<<2) + cell;
     data[2] = registers[val];
@@ -238,3 +103,4 @@ void batlabCom::onReadReg(int unit, int cell, vals val) {
     port->write(data,5);
     port->waitForBytesWritten(1000);
 }
+

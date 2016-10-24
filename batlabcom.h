@@ -35,7 +35,7 @@ enum vals {
     highTempDischargeSafetyCutoff,
     chargeCurrentSafetyCutoff,
     dischargeCurrentSafetyCutoff,
-    sreamReportingPeriod,
+    streamReportingPeriod,
     sinewaveFrequency,
     pulseOnTime,
     pulseOffTime,
@@ -74,7 +74,7 @@ static std::map<vals, uchar> registers = {
     {highTempDischargeSafetyCutoff, 0x4D},
     {chargeCurrentSafetyCutoff, 0x4E},
     {dischargeCurrentSafetyCutoff, 0x4F},
-    {sreamReportingPeriod, 0x50},
+    {streamReportingPeriod, 0x50},
     {sinewaveFrequency, 0x51},
     {pulseOnTime, 0x52},
     {pulseOffTime, 0x53},
@@ -85,6 +85,84 @@ static std::map<vals, uchar> registers = {
     {PULSE_TIMER, 0x0C},
     {phase_timestamp_highRes, 0x0D},
     {phase_timestamp_lowRes, 0x0E}
+};
+
+
+static std::map<uchar, vals> enumVals = {
+    { 0x02, temperature },
+    { 0x03, current},
+    { 0x04, currentAmplitude},
+    { 0x05, voltage},
+    { 0x06, voltagePhase},
+    { 0x07, voltageAmplitude,},
+    { 0x08, energy},
+    { 0x09, charge},
+    { 0x40, numberOfConnectedUnits},
+    { 0x41, numberOfConnectedCells},
+    { 0x42, chargeVoltageCutoff},
+    { 0x43, dischargeVoltageCutoff},
+    { 0x44, chargeCVVoltageCutoff},
+    { 0x45, dischargeCVVoltageCutoff},
+    { 0x46, chargeCurrentCutoff},
+    { 0x47, dischargeCurrentCutoff},
+    { 0x48, chargeCVCurrentCutoff},
+    { 0x49, dischargeCVCurrentCutoff},
+    { 0x4A, sineChargeCurrentIppSetpoint},
+    { 0x4B, sineDischargeCurrentIppSetpoint},
+    { 0x4C, highTempChargeSafetyCutoff},
+    { 0x4D, highTempDischargeSafetyCutoff},
+    { 0x4E, chargeCurrentSafetyCutoff},
+    { 0x4F, dischargeCurrentSafetyCutoff},
+    { 0x50, streamReportingPeriod},
+    { 0x51, sinewaveFrequency},
+    { 0x52, pulseOnTime},
+    { 0x53, pulseOffTime},
+    { 0x54, NC_VOLTAGE},
+    { 0x55, SYSTEM_TIMER},
+    { 0x56, STREAM_TIMER},
+    { 0x0B, CV_DUTY},
+    { 0x0C, PULSE_TIMER},
+    { 0x0D, phase_timestamp_highRes},
+    { 0x0E, phase_timestamp_lowRes}
+};
+
+
+static std::map<vals, QString> names = {
+    {temperature, "Temperature" },
+    {current, "Current"},
+    {currentAmplitude, "Current Amplitude"},
+    {voltage, "Voltage"},
+    {voltagePhase, "Voltage Phase"},
+    {voltageAmplitude, "Voltage Amplitude"},
+    {energy, "Energy"},
+    {charge, "Charge"},
+    {numberOfConnectedUnits, "Number of Connected Cells"},
+    {numberOfConnectedCells, "Number of Connected Units"},
+    {chargeVoltageCutoff, "Charge Voltage Cutoff"},
+    {dischargeVoltageCutoff, "Discharge Voltage Cutoff"},
+    {chargeCVVoltageCutoff, "Charge CV Voltage Cutoff"},
+    {dischargeCVVoltageCutoff, "Discharge CV Voltage Cutoff"},
+    {chargeCurrentCutoff, "Charge Current Cutoff"},
+    {dischargeCurrentCutoff, "Discharge Current Cutoff"},
+    {chargeCVCurrentCutoff, "Charge CV Current Cutoff"},
+    {dischargeCVCurrentCutoff, "Discharge CV Current Cutoff"},
+    {sineChargeCurrentIppSetpoint, "Sine Charge Current IPP Setpoint"},
+    {sineDischargeCurrentIppSetpoint, "Sine Discharge Current IPP Setpoint"},
+    {highTempChargeSafetyCutoff, "High Temperature Charge Safety Cutoff"},
+    {highTempDischargeSafetyCutoff, "High Temperature Discharge Safety Cutoff"},
+    {chargeCurrentSafetyCutoff, "Charge Current Safety Cutoff"},
+    {dischargeCurrentSafetyCutoff, "Discharge Current Safety Cutoff"},
+    {streamReportingPeriod, "Stream Reporting Period"},
+    {sinewaveFrequency, "Sinewave Frequency"},
+    {pulseOnTime, "Pulse On Time"},
+    {pulseOffTime, "Pulse Off Time"},
+    {NC_VOLTAGE, "NC_VOLTAGE"},
+    {SYSTEM_TIMER, "SYSTEM_TIMER"},
+    {STREAM_TIMER, "STREAM_TIMER"},
+    {CV_DUTY, "CV_DUTY"},
+    {PULSE_TIMER, "PULSE_TIMER"},
+    {phase_timestamp_highRes, "phase_timestamp_high res"},
+    {phase_timestamp_lowRes, "phase_timestamp_low res"}
 
 };
 
@@ -104,16 +182,6 @@ signals:
 public slots:
     void onRead();
     void parseData();
-
-    void onGetTemp(int unit, int cell);
-    void onGetCurr(int unit, int cell);
-    void onGetCurrAmp(int unit, int cell);
-    void onGetVol(int unit, int cell);
-    void onGetVolPhase(int unit, int cell);
-    void onGetVolAmp(int unit, int cell);
-    void onGetEnergy(int unit, int cell);
-    void onGetCharge(int unit, int cell);
-
     void onReadReg(int,int,vals);
 
 private:
