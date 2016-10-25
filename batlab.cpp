@@ -25,6 +25,8 @@ Batlab::Batlab(QWidget *parent) :
     ui->textBrowser->insertPlainText(QString(">> Process Complete\n" ));
 
     connect(com,SIGNAL(emitResponse(int,int,QString,int)),this,SLOT(onReceiveResponse(int,int,QString,int)));
+    connect(com,SIGNAL(emitStream(int,int,int,int,int,int,int)),this,SLOT(onReceiveStream(int,int,int,int,int,int,int)));
+    connect(com,SIGNAL(emitStreamExt(int,int,int,int,int)),this,SLOT(onReceiveStreamExt(int,int,int,int,int)));
     connect(exit,SIGNAL(clicked()),this,SLOT(close()));
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
 
@@ -77,6 +79,23 @@ void Batlab::onReceiveResponse(int a,int aa,QString aaa,int aaaa) {
     } else {
         str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + QString::number(aaaa) +"\n";
     }
+    ui->textBrowser->insertPlainText(str);
+    ui->textBrowser->moveCursor(QTextCursor::End);
+}
+
+void Batlab::onReceiveStream(int unit,int cell,int status,int temp,int current,int voltage,int charge) {
+    QString str;
+    if (voltage &0x8000) {
+        voltage = -0x10000 + voltage;
+    }
+        str = ">> Unit: " + QString::number(unit) + " Cell: " + QString::number(cell) + " STATUS: " + statusString[status] + " TEMPERATURE: " + QString::number(temp) +" / 1023 counts   CURRENT: " + QString::number(current*5.0/4095) + " A   VOLTAGE: " + QString::number(voltage*5.0/4095) + " V   CHARGE: " + QString::number(charge*5.0/(10.0*1023)) + " C\n";
+    ui->textBrowser->insertPlainText(str);
+    ui->textBrowser->moveCursor(QTextCursor::End);
+}
+
+void Batlab::onReceiveStreamExt(int unit,int cell,int currentAmp,int voltagePhase,int voltageAmp) {
+    QString str;
+        str = ">> Unit: " + QString::number(unit) + " Cell: " + QString::number(cell) + " Current Ipp: " + QString::number(currentAmp *5.0/1023) + "A-pp  Voltage Phase: " + QString::number(voltagePhase*360/25000) + " Deg  VOLTAGE VPP: " + QString::number(voltageAmp*5.0/4095) + " V-pp\n";
     ui->textBrowser->insertPlainText(str);
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
