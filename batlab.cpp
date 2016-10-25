@@ -60,8 +60,6 @@ void Batlab::onTest() {
    }
    testObj->setModal(false);
    testObj->show();
-
-
 }
 
 Batlab::~Batlab()
