@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QDebug>
+#include "globals.h"
 
 class batlabDataObject : public QObject
 {

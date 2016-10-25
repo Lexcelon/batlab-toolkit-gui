@@ -6,6 +6,7 @@
 #include <QString>
 #include <iostream>
 #include <QDebug>
+#include "globals.h"
 
 class batlabPacket : public QObject
 {

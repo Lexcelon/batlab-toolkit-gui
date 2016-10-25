@@ -27,7 +27,8 @@ HEADERS  += batlab.h \
     bldataobject.h \
     batlabpacket.h \
     batlabcom.h \
-    test.h
+    test.h \
+    globals.h
 
 FORMS    += batlab.ui \
     settings.ui \

@@ -53,6 +53,7 @@ QPainter painter;
 void Batlab::onTest() {
    if (testObj == nullptr) testObj = new batlabtest();
    connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
+   connect(testObj,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
    testObj->setModal(false);
    testObj->show();
 

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QDebug>
+#include "globals.h"
 
 
 class batlabConfig : public QObject

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "batlabcom.h"
+#include "globals.h"
 
 namespace Ui {
 class test;
@@ -18,9 +19,11 @@ public:
 
 public slots:
     void onRegRead();
+    void onRegWrite();
 
 signals:
     void emitReadReg(int,int,vals);
+    void emitWriteReg(int,int,writeVals,int);
 
 private:
     Ui::test *ui;

@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QSettings>
 #include "batlabconfig.h"
+#include "globals.h"
 
 namespace Ui {
 class settings;

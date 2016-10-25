@@ -10,6 +10,7 @@
 #include "bldataobject.h"
 #include "test.h"
 #include "batlabcom.h"
+#include "globals.h"
 
 namespace Ui {
 class Batlab;
