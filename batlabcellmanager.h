@@ -5,7 +5,7 @@
 #include <QMap>
 #include "batlabcell.h"
 
-class batlabCellManager
+class batlabCellManager : public QObject
 {
     Q_OBJECT
 
@@ -17,6 +17,7 @@ public slots:
     void onReceiveStream(int,int,int,float,int,int,int);
     void onReceiveStreamExt(int,int,int,int,int);
     void onNewCell(uchar);
+    void onDeleteCell(uchar);
 
 private:
     QMap<uchar,batlabCell*> cells;

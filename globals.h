@@ -378,12 +378,12 @@ static QString parseStatus(int status) {
 
 static float getTemp(int val) {
     float R = 10000/ ((pow(2,15)/float(val))-1);
-    float To = 25.0 + 273.15;
+    float To = 25.0f + 273.15f;
     float Ro = 10000;
     float B = 3428;
     float Tinv = (1/To) + (log(R/Ro)/B);
-    float T = (1/Tinv) - 273.15;
-    T = (T * 1.8) +32;
+    float T = (1/Tinv) - 273.15f;
+    T = (T * 1.8f) +32;
     return T;
 }
 

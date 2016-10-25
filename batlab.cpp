@@ -30,7 +30,7 @@ Batlab::Batlab(QWidget *parent) :
     connect(exit,SIGNAL(clicked()),this,SLOT(close()));
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
 
-    batlabDataObject a = batlabDataObject();
+
     configSettings = new settings();
 
     connect(this->settingsB,SIGNAL(clicked()),configSettings,SLOT(show()));

@@ -3,13 +3,28 @@
 
 #include <QObject>
 #include <QVector>
+#include <QString>
+#include "globals.h"
 
-class batlabCell
+class batlabCell : public QObject
 {
+    Q_OBJECT
+
 public:
     batlabCell();
     batlabCell(uchar key);
     ~batlabCell();
+
+    void receiveStream(int,float,int,int,int);
+    void receiveStreamExt(int,int,int);
+
+    QVector<int> * getTemperature() { return &temperature; }
+    QVector<int> * getVoltage() { return &voltage; }
+    QVector<int> * getCurrent() { return &current; }
+    QVector<int> * getCurrentAmplitude() { return &currentAmplitude; }
+    QVector<int> * getVoltageAmplitude() { return &voltageAmplitude; }
+    QVector<int> * getVoltagePhase() { return &voltagePhase; }
+    QVector<int> * getCharge() { return &charge; }
 
 private:
     uchar unit;
@@ -22,6 +37,7 @@ private:
     QVector<int> voltagePhase;
     QVector<int> charge;
     int status;
+    QString statusString;
 
 };
 
