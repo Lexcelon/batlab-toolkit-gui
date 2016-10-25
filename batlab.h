@@ -40,7 +40,7 @@ private:
     QPushButton *exit;
     QGraphicsView *glWidget;
     batlabtest *testObj = nullptr;
-    batlabCom * com;
+    batlabCom * com = nullptr;
 
     settings * configSettings;
 

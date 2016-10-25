@@ -66,6 +66,8 @@ void Batlab::onTest() {
 
 Batlab::~Batlab()
 {
+    if (testObj) delete testObj;
+    if (com) delete com;
     if (configSettings) delete configSettings;
     if (exit) delete exit;
     if (test) delete test;

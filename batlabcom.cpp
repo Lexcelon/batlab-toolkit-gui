@@ -3,8 +3,7 @@
 #include <QInputDialog>
 
 
-batlabCom::batlabCom(QObject *parent) : QObject(parent)
-{
+batlabCom::batlabCom(QObject *parent) : QObject(parent) {
     port = new QSerialPort();
     QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
     QStringList names;
@@ -22,29 +21,6 @@ batlabCom::batlabCom(QObject *parent) : QObject(parent)
     }
 
      connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
-//    char * data = new char[50];
-//    int i;
-//    for (i = 0; i < 7; ++i) {
-//        data[0+5*i] = 0xAA;
-//        data[1+5*i] = (0x00<<2) + 0x00;
-//        data[2+5*i] = 0x02+i;
-//        data[3+5*i] = 0x00;
-//        data[4+5*i] = 0x00;
-//       // qDebug() << uchar(data[0]) << uchar(data[1]) << uchar(data[2]) << uchar(data[3]) << uchar(data[4]);
-//    }
-//    port->write(data,5*(i));
-//    bool truth = port->waitForBytesWritten(1000);
-//    if (truth)
-//    qDebug() << "WRITTEN";
-//    else
-//        qDebug() << "NOT WRITTEN";
-
-//    while (port->waitForReadyRead(1000)) {
-//        ;
-//    }
-
-
-    //port->close();
 }
 
 void batlabCom::onRead() {
@@ -96,9 +72,8 @@ void batlabCom::parseData() {
 
 }
 
-batlabCom::~batlabCom()
-{
-
+batlabCom::~batlabCom() {
+    port->close();
 }
 
 void batlabCom::onReadReg(int unit, int cell, vals val) {
