@@ -17,24 +17,9 @@ public:
     ~batlabtest();
 
 public slots:
-    void onGetTemp();
-    void onGetCurr();
-    void onGetCurrAmp();
-    void onGetVol();
-    void onGetVolAmp();
-    void onGetVolPhase();
-    void onGetEnergy();
-    void onGetCharge();
+    void onRegRead();
 
 signals:
-    void emitGetTemp(int,int);
-    void emitGetCurr(int,int);
-    void emitGetCurrAmp(int,int);
-    void emitGetVol(int,int);
-    void emitGetVolAmp(int,int);
-    void emitGetVolPhase(int,int);
-    void emitGetEnergy(int,int);
-    void emitGetCharge(int,int);
     void emitReadReg(int,int,vals);
 
 private:

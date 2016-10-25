@@ -55,8 +55,8 @@ void batlabCom::onRead() {
         qDebug() << "RESPONSE PACKET";
         qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
         qDebug() << names[enumVals[(uchar)rec[start+2]]] +": " << 256*(int)rec[start+3] + (int)rec[start+4];
-//        qDebug() << (uchar)(rec[start+1] >> 2) << (uchar)(rec[start+1] & 0x03)<<str << 256*(uint)rec[start+3] + (uint)rec[start+4];
-        emit emitResponse((int)(rec[start+1] >> 2),(int)(rec[start+1] & 0x03),names[enumVals[(uchar)rec[start+2]]] +": ", 256*(int)rec[start+3] + (int)rec[start+4]);
+        qDebug() << (int)rec[start+1];
+        emit emitResponse((int)(rec[start+1] >> 2),(int)(rec[start+1] & 0x03),names[enumVals[(uchar)rec[start+2]]], 256*(int)rec[start+3] + (int)rec[start+4]);
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
@@ -93,9 +93,17 @@ batlabCom::~batlabCom()
 
 void batlabCom::onReadReg(int unit, int cell, vals val) {
     char * data = new char[5];
+    uchar value;
     //qDebug() << registers[val];
     data[0] = 0xAA;
-    data[1] = (unit<<2) + cell;
+    if (val == numberOfConnectedUnits) {
+        value = 0xFF;
+    } else if (val == numberOfConnectedCells) {
+        value = unit;
+    } else {
+        value = ((unit<<2) + cell);
+    }
+    data[1] = value;
     data[2] = registers[val];
     data[3] = 0x00;
     data[4] = 0x00;
