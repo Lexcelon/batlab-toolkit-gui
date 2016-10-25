@@ -1,14 +1,20 @@
 #include "batlabcom.h"
+#include <QComboBox>
+#include <QInputDialog>
 
 
 batlabCom::batlabCom(QObject *parent) : QObject(parent)
 {
     port = new QSerialPort();
     QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
+    QStringList names;
     for (int i = 0; i< list.size(); ++i) {
         qDebug() << list[i].portName();
+        names.append(list[i].portName());
     }
-    port->setPortName("COM4");
+    bool ok;
+    QString item = QInputDialog::getItem(nullptr,"Com Port Selection","Port Name: ",names,0,false,&ok);
+    port->setPortName(item);
     port->setBaudRate(QSerialPort::Baud115200);
     bool success = port->open(QSerialPort::ReadWrite);
     if (!success) {
@@ -53,16 +59,18 @@ void batlabCom::onRead() {
     if ((uchar)rec[start] == 0xAA) {
         qDebug() << "RESPONSE PACKET";
         qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
-        qDebug() << names[enumVals[(uchar)rec[start+2]]] +": " << 256*(int)rec[start+3] + (int)rec[start+4];
+        qDebug() << names[enumVals[(uchar)rec[start+2]]] +": " << (int)rec[start+3] << (int)rec[start+4];
+
         emit emitResponse((int)(rec[start+1] >> 2),(int)(rec[start+1] & 0x03),names[enumVals[(uchar)rec[start+2]]], 256*(int)rec[start+3] + (int)rec[start+4]);
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
-        qDebug() << "STREAM PACKET";
-        qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
+
         int unit = (int)(rec[start+1] >> 2);
         int cell = (int)(rec[start+1] & 0x03);
         if ((uchar)rec[start+2] == 0x00) {
+            qDebug() << "STREAM PACKET";
+            qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
             int status,temp,current,voltage,charge;
             status = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
             temp = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
@@ -72,12 +80,15 @@ void batlabCom::onRead() {
             emit emitStream(unit,cell,status,temp,current,voltage,charge);
         } else {
             qDebug() << "STREAM PACKET EXT";
+            qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
             int currAmp,volPhase,volAmp;
             currAmp = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
             volPhase = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
             volAmp = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
             emit emitStreamExt(unit,cell,currAmp,volPhase,volAmp);
         }
+        len-=13;
+        start+=13;
     }
 }
 

@@ -76,6 +76,8 @@ void Batlab::onReceiveResponse(int a,int aa,QString aaa,int aaaa) {
     QString str;
     if (aaa == names[numberOfConnectedUnits]) {
         str = ">> " + aaa + ": " + QString::number((aaaa) & 0x3F);
+    } else if (aaa == names[status]){
+        str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + statusString[aaaa] +"\n";
     } else {
         str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + QString::number(aaaa) +"\n";
     }
