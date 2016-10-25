@@ -112,13 +112,4 @@ void batlabCom::onWriteReg(int unit, int cell, writeVals val,int num) {
     port->waitForBytesWritten(1000);
 }
 
-float batlabCom::getTemp(int val) {
-    float R = 10000/ ((pow(2,15)/float(val))-1);
-    float To = 25.0 + 273.15;
-    float Ro = 10000;
-    float B = 3428;
-    float Tinv = (1/To) + (log(R/Ro)/B);
-    float T = (1/Tinv) - 273.15;
-    T = (T * 1.8) +32;
-    return T;
-}
+

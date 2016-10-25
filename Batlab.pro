@@ -16,19 +16,23 @@ SOURCES += main.cpp\
     batlab.cpp \
     batlabconfig.cpp \
     settings.cpp \
-    bldataobject.cpp \
-    batlabpacket.cpp \
+#    bldataobject.cpp \
+#    batlabpacket.cpp \
     batlabcom.cpp \
-    test.cpp
+    test.cpp \
+    batlabcellmanager.cpp \
+    batlabcell.cpp
 
 HEADERS  += batlab.h \
     batlabconfig.h \
     settings.h \
-    bldataobject.h \
-    batlabpacket.h \
+#    bldataobject.h \
+#    batlabpacket.h \
     batlabcom.h \
     test.h \
-    globals.h
+    globals.h \
+    batlabcellmanager.h \
+    batlabcell.h
 
 FORMS    += batlab.ui \
     settings.ui \

@@ -26,7 +26,7 @@ public slots:
     void onRead();
     void onReadReg(int,int,vals);
     void onWriteReg(int,int,writeVals,int);
-    float getTemp(int val);
+    //float getTemp(int val);
 
 private:
     QSerialPort * port;
