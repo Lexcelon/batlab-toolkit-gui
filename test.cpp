@@ -29,5 +29,10 @@ void batlabtest::onRegRead() {
 }
 
 void batlabtest::onRegWrite() {
-    emit emitWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),writeVals(ui->regWriteBox->currentIndex()),ui->spinBox->value());
+
+    if (writeVals(ui->regWriteBox->currentIndex())!=writeVals::command) {
+        emit emitWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),writeVals(ui->regWriteBox->currentIndex()),ui->spinBox->value());
+    } else {
+        emit emitWriteReg(ui->unitNumber_2->value(),0,writeVals(ui->regWriteBox->currentIndex()),ui->spinBox->value());
+    }
 }
