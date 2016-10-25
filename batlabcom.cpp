@@ -68,10 +68,6 @@ void batlabCom::onRead() {
     }
 }
 
-void batlabCom::parseData() {
-
-}
-
 batlabCom::~batlabCom() {
     port->close();
 }

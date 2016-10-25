@@ -12,6 +12,16 @@
 #include "batlabcom.h"
 #include "globals.h"
 
+static QString parseStatus(int status) {
+    QString str;
+    for (int i = 0; i < statusString.size(); ++i) {
+        if (status & (1<<i)) {
+                str = str + " " + statusString[1<<i];
+        }
+    }
+    return str;
+}
+
 namespace Ui {
 class Batlab;
 }

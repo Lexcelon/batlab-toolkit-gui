@@ -24,7 +24,6 @@ signals:
 
 public slots:
     void onRead();
-    void parseData();
     void onReadReg(int,int,vals);
     void onWriteReg(int,int,writeVals,int);
     float getTemp(int val);

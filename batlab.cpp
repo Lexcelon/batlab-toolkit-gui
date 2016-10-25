@@ -85,7 +85,7 @@ void Batlab::onReceiveResponse(int a,int aa,QString aaa,int aaaa) {
         } else if (aaaa== 0x0101) {
             str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + "FAILED" +"\n";
         } else {
-            str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + statusString[aaaa] +"\n";
+            str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + parseStatus(aaaa) +"\n";
         }
     } else {
         str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + QString::number(aaaa) +"\n";
@@ -110,3 +110,5 @@ void Batlab::onReceiveStreamExt(int unit,int cell,int currentAmp,int voltagePhas
     ui->textBrowser->insertPlainText(str);
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
+
+
