@@ -18,7 +18,7 @@ public:
 
 signals:
     void emitResponse(int,int,QString,int);
-    void emitStream(int,int,int,int,int,int,int);
+    void emitStream(int,int,int,float,int,int,int);
     void emitStreamExt(int,int,int,int,int);
 
 
@@ -27,7 +27,7 @@ public slots:
     void parseData();
     void onReadReg(int,int,vals);
     void onWriteReg(int,int,writeVals,int);
-
+    float getTemp(int val);
 
 private:
     QSerialPort * port;

@@ -27,7 +27,7 @@ public:
 public slots:
     void onTest();
     void onReceiveResponse(int,int,QString,int);
-    void onReceiveStream(int,int,int,int,int,int,int);
+    void onReceiveStream(int,int,int,float,int,int,int);
     void onReceiveStreamExt(int,int,int,int,int);
 
 

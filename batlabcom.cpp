@@ -1,7 +1,7 @@
 #include "batlabcom.h"
 #include <QComboBox>
 #include <QInputDialog>
-
+#include "math.h"
 
 batlabCom::batlabCom(QObject *parent) : QObject(parent) {
     port = new QSerialPort();
@@ -53,7 +53,7 @@ void batlabCom::onRead() {
             current = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
             voltage = 256*(uchar)rec[start+9] + (uchar)rec[start+10];
             charge = 256*(uchar)rec[start+11] + (uchar)rec[start+12];
-            emit emitStream(unit,cell,status,temp,current,voltage,charge);
+            emit emitStream(unit,cell,status,getTemp(temp),current,voltage,charge);
         } else {
             qDebug() << "STREAM PACKET EXT";
             qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
@@ -116,3 +116,13 @@ void batlabCom::onWriteReg(int unit, int cell, writeVals val,int num) {
     port->waitForBytesWritten(1000);
 }
 
+float batlabCom::getTemp(int val) {
+    float R = 10000/ ((pow(2,15)/float(val))-1);
+    float To = 25.0 + 273.15;
+    float Ro = 10000;
+    float B = 3428;
+    float Tinv = (1/To) + (log(R/Ro)/B);
+    float T = (1/Tinv) - 273.15;
+    T = (T * 1.8) +32;
+    return T;
+}
