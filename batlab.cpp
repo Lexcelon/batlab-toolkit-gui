@@ -8,25 +8,36 @@ Batlab::Batlab(QWidget *parent) :
 {
     ui->setupUi(this);
     com = new batlabCom();
+    cellManager = new batlabCellManager();
     test = new QPushButton(QString("Test"));
     options = new QPushButton(QString("Options"));
     settingsB = new QPushButton(QString("Settings"));
     report = new QPushButton(QString("Report"));
     exit = new QPushButton(QString("Exit"));
+
     ui->buttonBox->addButton(settingsB,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(report,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(options,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(exit,QDialogButtonBox::ActionRole);
+
+    // PLACEHOLDER TEXT WILL REMOVE
     ui->textBrowser->insertPlainText(QString(">> Batlab analysis results confirm optimal cell matching pairs (1,7), (2,3), (6,8)\n" ));
     ui->textBrowser->insertPlainText(QString(">> Data Analysis confirms Cell 6 as 'Ready for Recycle'\n" ));
     ui->textBrowser->insertPlainText(QString(">> Cell 4 remains unmatched\n" ));
     ui->textBrowser->insertPlainText(QString(">> Exporting analysis data to external report...\n" ));
     ui->textBrowser->insertPlainText(QString(">> Process Complete\n" ));
 
+    //THESE CONNECTIONS
     connect(com,SIGNAL(emitResponse(int,int,QString,int)),this,SLOT(onReceiveResponse(int,int,QString,int)));
     connect(com,SIGNAL(emitStream(int,int,int,float,int,int,int)),this,SLOT(onReceiveStream(int,int,int,float,int,int,int)));
     connect(com,SIGNAL(emitStreamExt(int,int,int,int,int)),this,SLOT(onReceiveStreamExt(int,int,int,int,int)));
+
+    // MANAGER CONNECTIONS
+    connect(com,SIGNAL(emitStream(int,int,int,float,int,int,int)),this,SLOT(onReceiveStream(int,int,int,float,int,int,int)));
+    connect(com,SIGNAL(emitStreamExt(int,int,int,int,int)),this,SLOT(onReceiveStreamExt(int,int,int,int,int)));
+
+
     connect(exit,SIGNAL(clicked()),this,SLOT(close()));
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
 
@@ -34,22 +45,7 @@ Batlab::Batlab(QWidget *parent) :
     configSettings = new settings();
 
     connect(this->settingsB,SIGNAL(clicked()),configSettings,SLOT(show()));
-
-QBrush  brush;
-QGraphicsScene scene;
-QPainter painter;
-
-    //brush.setTextureImage(QImage("1010.bmp"));
-    //scene.render(&painter);
-    glWidget = ui->graphicsView;
-
-    //painter.drawImage(QRect(0,0,ui->graphicsView->width(),ui->graphicsView->height()),QImage("1010.bmp"));
-    //glWidget->drawBackground(&painter,QRect(0,0,ui->graphicsView->width(),ui->graphicsView->height()));
-//    glWidget->render(&painter);
-    //scene.render(&painter);
-   // glWidget->setBackgroundBrush(brush);
     glWidget->show();
-
 }
 
 void Batlab::onTest() {

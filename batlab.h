@@ -10,6 +10,7 @@
 #include "bldataobject.h"
 #include "test.h"
 #include "batlabcom.h"
+#include "batlabcellmanager.h"
 #include "globals.h"
 
 
@@ -33,17 +34,19 @@ public slots:
 
 
 private:
-    Ui::Batlab *ui;
-    QPushButton *test;
-    QPushButton *settingsB;
-    QPushButton *report;
-    QPushButton *options;
-    QPushButton *exit;
-    QGraphicsView *glWidget;
+    Ui::Batlab *ui = nullptr;
+    QPushButton *test = nullptr;
+    QPushButton *settingsB = nullptr;
+    QPushButton *report = nullptr;
+    QPushButton *options = nullptr;
+    QPushButton *exit = nullptr;
+    QGraphicsView *glWidget = nullptr;
     batlabtest *testObj = nullptr;
     batlabCom * com = nullptr;
 
-    settings * configSettings;
+    settings * configSettings = nullptr;
+
+    batlabCellManager * cellManager = nullptr;
 
 };
 

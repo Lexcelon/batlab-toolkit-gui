@@ -25,6 +25,10 @@ public:
     QVector<int> * getVoltageAmplitude() { return &voltageAmplitude; }
     QVector<int> * getVoltagePhase() { return &voltagePhase; }
     QVector<int> * getCharge() { return &charge; }
+    uchar getUnit(){ return unit;}
+    uchar getCell(){ return cell;}
+    int getStatus(){ return status;}
+    QString getStatusString() { return statusString; }
 
 private:
     uchar unit;
