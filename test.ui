@@ -64,7 +64,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="cellNumber"/>
+         <widget class="QSpinBox" name="cellNumber">
+          <property name="maximum">
+           <number>3</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -115,7 +119,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="cellNumber_2"/>
+       <widget class="QSpinBox" name="cellNumber_2">
+        <property name="maximum">
+         <number>3</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

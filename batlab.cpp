@@ -53,11 +53,14 @@ QPainter painter;
 }
 
 void Batlab::onTest() {
-   if (testObj == nullptr) testObj = new batlabtest();
-   connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
-   connect(testObj,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
+   if (testObj == nullptr) {
+       testObj = new batlabtest();
+       connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
+       connect(testObj,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
+   }
    testObj->setModal(false);
    testObj->show();
+
 
 }
 
@@ -77,7 +80,13 @@ void Batlab::onReceiveResponse(int a,int aa,QString aaa,int aaaa) {
     if (aaa == names[numberOfConnectedUnits]) {
         str = ">> " + aaa + ": " + QString::number((aaaa) & 0x3F);
     } else if (aaa == names[status]){
-        str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + statusString[aaaa] +"\n";
+        if (aaaa == 0x0000) {
+            str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + "SUCCEEDED" +"\n";
+        } else if (aaaa== 0x0101) {
+            str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + "FAILED" +"\n";
+        } else {
+            str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + statusString[aaaa] +"\n";
+        }
     } else {
         str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + QString::number(aaaa) +"\n";
     }

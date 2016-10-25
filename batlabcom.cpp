@@ -65,7 +65,7 @@ void batlabCom::onRead() {
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
-
+        qDebug() << (int)(rec[start+1]);
         int unit = (int)(rec[start+1] >> 2);
         int cell = (int)(rec[start+1] & 0x03);
         if ((uchar)rec[start+2] == 0x00) {
