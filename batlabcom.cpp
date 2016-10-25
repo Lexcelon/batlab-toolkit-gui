@@ -126,7 +126,7 @@ void batlabCom::onWriteReg(int unit, int cell, writeVals val,int num) {
     data[3] = msb;
     data[4] = lsb;
 
-//    port->write(data,5);
-//    port->waitForBytesWritten(1000);
+    port->write(data,5);
+    port->waitForBytesWritten(1000);
 }
 
