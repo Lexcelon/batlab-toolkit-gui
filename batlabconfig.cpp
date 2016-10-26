@@ -13,6 +13,16 @@ batlabConfig::batlabConfig()
     }
 }
 
+batlabConfig::batlabConfig(QString name) {
+    settings = new QSettings(name + ".INI",QSettings::IniFormat);
+    QStringList temp = settings->allKeys();
+    if (temp.isEmpty()) {
+        createSettings();
+    } else {
+        loadSettings();
+    }
+}
+
 batlabConfig::~batlabConfig()
 {
 

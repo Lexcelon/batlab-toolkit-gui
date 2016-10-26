@@ -24,13 +24,11 @@ batlabCom::batlabCom(QObject *parent) : QObject(parent) {
 }
 
 void batlabCom::onRead() {
-    char * rec = new char[100];
     qint64 len = port->bytesAvailable();
+    char * rec = new char[len];
     int start = 0;
     port->read(rec,len);
-//    for (int i = 0; i < (len/5); ++i) {
-//        qDebug() << (uchar)rec[0+5*i] << (uchar)rec[1+5*i] << (uchar)(rec[2+5*i] & 0x7F) << (uchar)rec[3+5*i] << (uchar)rec[4+5*i];
-//    }
+
     while (len > 0)
     if ((uchar)rec[start] == 0xAA) {
         qDebug() << "RESPONSE PACKET";

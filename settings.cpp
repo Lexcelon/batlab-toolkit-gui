@@ -38,15 +38,18 @@ settings::settings(QWidget *parent) :
     connect(batlabSettings,SIGNAL(emitHighVoltageCV(double)),this->ui->hvCVSB,SLOT(setValue(double)));
     connect(batlabSettings,SIGNAL(emitReportingFrequency(double)),this->ui->rf,SLOT(setValue(double)));
     connect(batlabSettings,SIGNAL(emitSinewaveFrequency(double)),this->ui->sf,SLOT(setValue(double)));
+
+
     connect(this->ui->pbLoad,SIGNAL(clicked()),batlabSettings,SLOT(getDefaults()));
-    connect(this->ui->pbSave,SIGNAL(clicked()),batlabSettings,SLOT(update()));
+    connect(this->ui->pbSave,SIGNAL(clicked()),this,SLOT(saveSettings()));
     connect(this->ui->pbOK,SIGNAL(clicked()),this,SLOT(hide()));
 //    batlabSettings->getDefaults();
 
 }
 
 void settings::saveSettings() {
-//    batlabSettings->update();
+    batlabConfig * config = batlabSettings;
+//    emit emitSettings(name, config);
 }
 
 settings::~settings()

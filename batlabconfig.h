@@ -13,6 +13,7 @@ class batlabConfig : public QObject
 
 public:
     batlabConfig();
+    batlabConfig(QString name);
     ~batlabConfig();
     void createSettings();
     void loadSettings();
