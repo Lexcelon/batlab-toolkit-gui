@@ -1,7 +1,8 @@
 #ifndef GLOBALS
 #define GLOBALS
-#include <map>
+#include <QMap>
 #include <QString>
+#include <qmath.h>
 
 
 enum vals {
@@ -47,7 +48,7 @@ enum vals {
 
 };
 
-static std::map<vals, uchar> registers = {
+static QMap<vals, uchar> registers = {
     {status, 0x00 },
     {mode, 0x01 },
     {temperature, 0x02 },
@@ -132,7 +133,7 @@ static std::map<uchar, vals> enumVals = {
     { 0x61, unitUniqueSerialID}
 };
 
-static std::map<int, QString> statusString = {
+static QMap<int, QString> statusString = {
     { 0x0001, "DONE" },
     { 0x0002, "IDLE" },
     { 0x0004, "NOT_CONNECTED" },
@@ -148,7 +149,7 @@ static std::map<int, QString> statusString = {
     { 0x1000, "RLY_CHG" }
 };
 
-static std::map<vals, QString> names = {
+static QMap<vals, QString> names = {
     {status, "Status" },
     {mode, "Mode" },
     {temperature, "Temperature" },
@@ -203,7 +204,7 @@ enum modeCodes {
     sineDischarge
 };
 
-static std::map<modeCodes,uchar> modeRegCodes = {
+static QMap<modeCodes,uchar> modeRegCodes = {
   {idle, 0x00},
     {ccCharge, 0x01},
     {cccvCharge, 0x02},
@@ -215,7 +216,7 @@ static std::map<modeCodes,uchar> modeRegCodes = {
     {sineDischarge, 0x08}
 };
 
-static std::map<uchar,modeCodes> enumModeCodes = {
+static QMap<uchar,modeCodes> enumModeCodes = {
     { 0x00, idle},
     { 0x01, ccCharge},
     { 0x02, cccvCharge},
@@ -227,7 +228,7 @@ static std::map<uchar,modeCodes> enumModeCodes = {
     { 0x08, sineDischarge}
 };
 
-static std::map<modeCodes,QString> modeRegCodeNames = {
+static QMap<modeCodes,QString> modeRegCodeNames = {
   {idle, "IDLE"},
     {ccCharge, "CC CHARGE"},
     {cccvCharge, "CC-CV CHARGE"},
@@ -247,21 +248,21 @@ enum commandCodes {
     resume
 };
 
-static std::map<commandCodes,uchar> commandRegCodes = {
+static QMap<commandCodes,uchar> commandRegCodes = {
     {start, 0x01},
     {stop, 0x02},
     {pause, 0x03},
     {resume, 0x04}
 };
 
-static std::map<uchar,commandCodes> enumCommandCodes = {
+static QMap<uchar,commandCodes> enumCommandCodes = {
     { 0x01, start},
     { 0x02, stop},
     { 0x03, pause},
     { 0x04, resume}
 };
 
-static std::map<commandCodes,QString> commandRegCodeNames = {
+static QMap<commandCodes,QString> commandRegCodeNames = {
     {start, "START"},
     {stop, "STOP"},
     {pause, "PAUSE"},
@@ -293,7 +294,7 @@ enum class writeVals {
     command
 };
 
-static std::map<writeVals, uchar> writeRegisters = {
+static QMap<writeVals, uchar> writeRegisters = {
     {writeVals::mode, 0x01 },
     {writeVals::chargeVoltageCutoff, 0x42},
     {writeVals::dischargeVoltageCutoff, 0x43},
@@ -318,7 +319,7 @@ static std::map<writeVals, uchar> writeRegisters = {
 };
 
 
-static std::map<uchar, writeVals> enumWriteVals = {
+static QMap<uchar, writeVals> enumWriteVals = {
     { 0x01, writeVals::mode },
     { 0x42, writeVals::chargeVoltageCutoff},
     { 0x43, writeVals::dischargeVoltageCutoff},
@@ -342,7 +343,7 @@ static std::map<uchar, writeVals> enumWriteVals = {
     { 0x60, writeVals::command},
 };
 
-static std::map<writeVals, QString> writeNames = {
+static QMap<writeVals, QString> writeNames = {
     { writeVals::mode, "Mode" },
     { writeVals::chargeVoltageCutoff, "Charge Voltage Cutoff"},
     { writeVals::dischargeVoltageCutoff, "Discharge Voltage Cutoff"},
@@ -403,7 +404,7 @@ enum class properties {
 };
 
 
-static std::map<properties,QString> cellProperties {
+static QMap<properties,QString> cellProperties {
     { properties::unit, "Unit" },
     { properties::cell, "Cell" },
     { properties::status, "Status" },

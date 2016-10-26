@@ -7,7 +7,6 @@
 #include <QGraphicsView>
 #include "batlabconfig.h"
 #include "settings.h"
-#include "bldataobject.h"
 #include "test.h"
 #include "batlabcom.h"
 #include "batlabcellmanager.h"

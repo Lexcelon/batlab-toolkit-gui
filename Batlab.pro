@@ -16,8 +16,6 @@ SOURCES += main.cpp\
     batlab.cpp \
     batlabconfig.cpp \
     settings.cpp \
-#    bldataobject.cpp \
-#    batlabpacket.cpp \
     batlabcom.cpp \
     test.cpp \
     batlabcellmanager.cpp \
@@ -26,8 +24,6 @@ SOURCES += main.cpp\
 HEADERS  += batlab.h \
     batlabconfig.h \
     settings.h \
-#    bldataobject.h \
-#    batlabpacket.h \
     batlabcom.h \
     test.h \
     globals.h \
