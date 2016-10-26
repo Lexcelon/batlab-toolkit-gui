@@ -7,7 +7,7 @@ Batlab::Batlab(QWidget *parent) :
     ui(new Ui::Batlab)
 {
     ui->setupUi(this);
-    //com = new batlabCom();
+    com = new batlabCom();
     cellManager = new batlabCellManager();
     test = new QPushButton(QString("Test"));
     options = new QPushButton(QString("Options"));
