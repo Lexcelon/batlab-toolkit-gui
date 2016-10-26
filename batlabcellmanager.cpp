@@ -4,7 +4,7 @@ batlabCellManager::batlabCellManager()
 {
     batlabCell * a = new batlabCell();
     cells[0] = a;
-    print(0,properties::temperature);
+    onPrintCell(0,properties::temperature);
 }
 
 batlabCellManager::~batlabCellManager()
@@ -42,7 +42,7 @@ void batlabCellManager::onDeleteCell(uchar key) {
     cells.remove(key);
 }
 
-void batlabCellManager::print(uchar key, properties val) {
+void batlabCellManager::onPrintCell(uchar key, properties val) {
     switch(val) {
     case properties::unit:
         qDebug() << QString("Unit: ") << cells[key]->getUnit();

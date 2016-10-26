@@ -20,10 +20,12 @@ public:
 public slots:
     void onRegRead();
     void onRegWrite();
+    void onPrintCell();
 
 signals:
     void emitReadReg(int,int,vals);
     void emitWriteReg(int,int,writeVals,int);
+    void emitPrint(uchar,properties);
 
 private:
     Ui::test *ui;

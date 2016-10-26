@@ -387,5 +387,34 @@ static float getTemp(int val) {
     return T;
 }
 
+
+enum class properties {
+    unit,
+    cell,
+    status,
+    statusString,
+    temperature,
+    current,
+    voltage,
+    charge,
+    currentAmplitude,
+    voltagePhase,
+    voltageAmplitude
+};
+
+
+static std::map<properties,QString> cellProperties {
+    { properties::unit, "Unit" },
+    { properties::cell, "Cell" },
+    { properties::status, "Status" },
+    { properties::statusString, "Status String" },
+    { properties::temperature, "Temperature" },
+    { properties::current, "Current" },
+    { properties::voltage, "Voltage" },
+    { properties::charge, "Charge" },
+    { properties::currentAmplitude, "Current Amplitude" },
+    { properties::voltagePhase, "Voltage Phase" },
+    { properties::voltageAmplitude, "Voltage Amplitude" }
+};
 #endif // GLOBALS
 

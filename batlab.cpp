@@ -7,7 +7,7 @@ Batlab::Batlab(QWidget *parent) :
     ui(new Ui::Batlab)
 {
     ui->setupUi(this);
-    com = new batlabCom();
+    //com = new batlabCom();
     cellManager = new batlabCellManager();
     test = new QPushButton(QString("Test"));
     options = new QPushButton(QString("Options"));
@@ -45,7 +45,7 @@ Batlab::Batlab(QWidget *parent) :
     configSettings = new settings();
 
     connect(this->settingsB,SIGNAL(clicked()),configSettings,SLOT(show()));
-    glWidget->show();
+
 }
 
 void Batlab::onTest() {
@@ -53,6 +53,7 @@ void Batlab::onTest() {
        testObj = new batlabtest();
        connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
        connect(testObj,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
+       connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
    }
    testObj->setModal(false);
    testObj->show();
