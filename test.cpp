@@ -43,5 +43,5 @@ void batlabtest::onRegWrite() {
 }
 
 void batlabtest::onPrintCell() {
-    emit emitPrint((uchar)(ui->unitNumber_3->value()<<2 + ui->cellNumber_3->value()), properties(ui->cellComboBox->currentIndex()));
+    emit emitPrint((uchar)((ui->unitNumber_3->value()<<2) + ui->cellNumber_3->value()), properties(ui->cellComboBox->currentIndex()));
 }

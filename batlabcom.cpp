@@ -1,7 +1,5 @@
 #include "batlabcom.h"
-#include <QComboBox>
-#include <QInputDialog>
-#include "math.h"
+
 
 batlabCom::batlabCom(QObject *parent) : QObject(parent) {
     port = new QSerialPort();

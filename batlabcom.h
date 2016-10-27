@@ -6,7 +6,9 @@
 #include <QSerialPortInfo>
 #include <QVector>
 #include <QDebug>
-#include <iostream>
+#include <QComboBox>
+#include <QInputDialog>
+#include <qmath.h>
 #include "globals.h"
 
 class batlabCom : public QObject
