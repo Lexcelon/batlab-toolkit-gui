@@ -3,6 +3,7 @@
 #include <QMap>
 #include <QString>
 #include <qmath.h>
+#include <QVector>
 
 
 enum vals {
@@ -91,7 +92,7 @@ static QMap<vals, uchar> registers = {
 };
 
 
-static std::map<uchar, vals> enumVals = {
+static QMap<uchar, vals> enumVals = {
     { 0x00, status },
     { 0x01, mode },
     { 0x02, temperature },

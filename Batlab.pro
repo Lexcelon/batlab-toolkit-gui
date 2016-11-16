@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     batlabcom.cpp \
     test.cpp \
     batlabcellmanager.cpp \
-    batlabcell.cpp
+    batlabcell.cpp \
+    batlabsystemtest.cpp
 
 HEADERS  += batlab.h \
     batlabconfig.h \
@@ -28,7 +29,8 @@ HEADERS  += batlab.h \
     test.h \
     globals.h \
     batlabcellmanager.h \
-    batlabcell.h
+    batlabcell.h \
+    batlabsystemtest.h
 
 FORMS    += batlab.ui \
     settings.ui \

@@ -6,6 +6,18 @@
 #include <QString>
 #include "globals.h"
 
+
+struct test {
+    QVector<int> temperature;
+    QVector<int> voltage;
+    QVector<int> current;
+    QVector<int> currentAmplitude;
+    QVector<int> voltageAmplitude;
+    QVector<int> voltagePhase;
+    QVector<int> charge;
+    uchar mode;
+};
+
 class batlabCell : public QObject
 {
     Q_OBJECT
@@ -25,14 +37,23 @@ public:
     QVector<int> * getVoltageAmplitude() { return &voltageAmplitude; }
     QVector<int> * getVoltagePhase() { return &voltagePhase; }
     QVector<int> * getCharge() { return &charge; }
+
+    QVector<test> * getTests() { return &tests; }
+
     uchar getUnit(){ return unit;}
     uchar getCell(){ return cell;}
     int getStatus(){ return status;}
     QString getStatusString() { return statusString; }
 
+    void newTest(uchar testnum);
+
+signals:
+    void testFinished(uchar);
+
 private:
     uchar unit;
     uchar cell;
+    QVector<test> tests;
     QVector<int> temperature;
     QVector<int> voltage;
     QVector<int> current;

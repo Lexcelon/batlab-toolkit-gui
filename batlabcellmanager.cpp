@@ -34,6 +34,15 @@ void batlabCellManager::onReceiveStreamExt(int unit,int cell,int currentAmp,int 
 
 void batlabCellManager::onNewCell(uchar key) {
     cells.insert(key,new batlabCell(key));
+    connect(cells[key],SIGNAL(testFinished(uchar)),this,SLOT(onTestFinished(uchar)));
+}
+
+void batlabCellManager::onTestFinished(uchar key) {
+    emit testFinished(key);
+}
+
+void batlabCellManager::onNewTest(uchar key,uchar test) {
+    cells[key]->newTest(test);
 }
 
 void batlabCellManager::onDeleteCell(uchar key) {
