@@ -107,10 +107,12 @@ void Batlab::onReceiveResponse(int a,int aa,QString aaa,int aaaa) {
 
 void Batlab::onReceiveStream(int unit,int cell,int status,float temp,int current,int voltage,int charge) {
     QString str;
+
+    // Voltage is a 16 bit signed number but is passed to this function as a 32 bit number
     if (voltage &0x8000) {
         voltage = -0x10000 + voltage;
     }
-        str = ">> Unit: " + QString::number(unit) + " Cell: " + QString::number(cell) + " STATUS: " + statusString[status] + " TEMPERATURE: " + QString::number(temp) +" Deg F   CURRENT: " + QString::number(current*5.0/4095) + " A   VOLTAGE: " + QString::number(voltage*5.0/4095) + " V   CHARGE: " + QString::number(charge*5.0/(10.0*1023)) + " C\n";
+        str = ">> Unit: " + QString::number(unit) + " Cell: " + QString::number(cell) + " STATUS: " + statusString[status] + " TEMPERATURE: " + QString::number(temp) +" Deg F   CURRENT: " + QString::number(current*1.024*5.0/32768.0) + " A   VOLTAGE: " + QString::number(voltage*4.5/32768.0) + " V   CHARGE: " + QString::number(charge*5.0/(10.0*1023)) + " C\n";
     ui->textBrowser->insertPlainText(str);
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
