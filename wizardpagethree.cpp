@@ -57,6 +57,7 @@ void wizardPageThree::onActivate() {
         ui->tableWidget->setCellWidget(i,6,htc);
 
         QDoubleSpinBox *  ltc = new QDoubleSpinBox();
+        ltc->setMinimum(-999999999999999.000000);
         ltc->setValue(parms.ltc);
         ui->tableWidget->setCellWidget(i,7,ltc);
 
