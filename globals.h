@@ -7,6 +7,8 @@
 #include <QLayout>
 #include <QDebug>
 #include <QPushButton>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
 
 
 enum vals {

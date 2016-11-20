@@ -24,6 +24,12 @@ void wizardPageOne::onFinish() {
     ui->startingIndex->setText(QString("%1").arg(txt.toInt(),zeros,10,QChar('0')));
 }
 
+void wizardPageOne::onUpdate() {
+    emit emitDesignator(ui->name->text());
+    emit emitStartInd(ui->startingIndex->text());
+    emit emitNumCells(ui->numCells->value());
+}
+
 wizardPageOne::~wizardPageOne()
 {
     delete ui;

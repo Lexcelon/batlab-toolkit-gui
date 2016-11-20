@@ -49,11 +49,17 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
     wiz->addPage(four);
 
     QWizard * wizForLambda = wiz;
-    connect(wiz,&QWizard::currentIdChanged,[&,wizForLambda,page3]() {
-        qDebug() << wizForLambda->currentId();
+    connect(wiz,&QWizard::currentIdChanged,[&,wizForLambda,page3,page2,page1]() {
+        if (wizForLambda->currentId()==1) {
+            page1->onUpdate();
+        }
         if (wizForLambda->currentId()==3) {
             qDebug() << "Here";
+            //page2->update();
             page3->onActivate();
+        }
+        if (wizForLambda->currentId()==2) {
+            page2->onUpdate();
         }
     }
     );
