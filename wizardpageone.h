@@ -22,6 +22,7 @@ public slots:
     void onStartInd();
     void onNumCells(int val);
     void onNew(bool val);
+    void onUpdate();
 
 signals:
     void emitDesignator(QString);

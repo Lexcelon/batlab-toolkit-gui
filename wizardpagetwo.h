@@ -32,6 +32,8 @@ public slots:
     void onPulseOnTime(int seconds) { parms.poft = seconds;   emit emitParms(parms); }
     void onPulseOffTime(int seconds) { parms.pont = seconds;   emit emitParms(parms); }
 
+    void onUpdate();
+
 signals:
     void emitCycles(int);
     void emitParms(testParms);

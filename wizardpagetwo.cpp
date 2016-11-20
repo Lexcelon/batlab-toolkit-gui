@@ -26,9 +26,29 @@ wizardPageTwo::wizardPageTwo(QWidget *parent) :
     connect(this->ui->sf,SIGNAL(valueChanged(double)),this,SLOT(onSinewaveFrequency(double)));
 
     connect(this->ui->cycles,SIGNAL(valueChanged(int)),this,SLOT(onCycles(int)));
+
+    parms.hvc = 4.2f;
+    parms.lvc = 2.65f;
+    parms.hvcv = 4.2f;
+    parms.lvcv = 2.8f;
+    parms.htc = 45.0f;
+    parms.ltc = -INFINITY;
+    parms.ccsc = 3.0f;
+    parms.dcsc = 3.0f;
+    parms.rf = 1.0f;
+    parms.ccs = 2.0f;
+    parms.sf = 1000.0f;
+    parms.pont = 600;
+    parms.poft = 600;
+
 }
 
 wizardPageTwo::~wizardPageTwo()
 {
     delete ui;
+}
+
+void wizardPageTwo::onUpdate() {
+    emit emitCycles(ui->cycles->value());
+    emit emitParms(parms);
 }
