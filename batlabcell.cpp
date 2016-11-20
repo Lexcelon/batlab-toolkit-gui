@@ -2,9 +2,6 @@
 
 batlabCell::batlabCell()
 {
-    for (int i = 0; i < 100; ++i) {
-        temperature.append(i);
-    }
 }
 
 batlabCell::batlabCell(uchar key)
@@ -13,9 +10,14 @@ batlabCell::batlabCell(uchar key)
     cell = key & 0x03;
 }
 
+batlabCell::batlabCell(QString designator, QString number)
+{
+    name = designator;
+    cellNumber = number;
+}
+
 batlabCell::~batlabCell()
 {
-
 }
 
 void batlabCell::receiveStream(int stat,float temp,int curr, int volt,int cha) {

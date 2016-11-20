@@ -7,16 +7,6 @@
 #include "globals.h"
 
 
-struct test {
-    QVector<int> temperature;
-    QVector<int> voltage;
-    QVector<int> current;
-    QVector<int> currentAmplitude;
-    QVector<int> voltageAmplitude;
-    QVector<int> voltagePhase;
-    QVector<int> charge;
-    uchar mode;
-};
 
 class batlabCell : public QObject
 {
@@ -25,6 +15,9 @@ class batlabCell : public QObject
 public:
     batlabCell();
     batlabCell(uchar key);
+    batlabCell(QString designator, QString number);
+
+
     ~batlabCell();
 
     void receiveStream(int,float,int,int,int);
@@ -63,6 +56,9 @@ private:
     QVector<int> charge;
     int status;
     QString statusString;
+
+    QString name;
+    QString cellNumber;
 
 };
 
