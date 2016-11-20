@@ -75,7 +75,8 @@ batlabWizard::~batlabWizard()
 }
 
 void batlabWizard::onShow() {
-    wiz->show();
+//    wiz->show();
+    wiz->showFullScreen();
 }
 
 void batlabWizard::onIDChanged() {
