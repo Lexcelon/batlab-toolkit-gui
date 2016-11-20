@@ -19,7 +19,7 @@
 #include <QSpinBox>
 #include "wizardpageone.h"
 #include "wizardpagetwo.h"
-
+#include "batlabwizard.h"
 
 namespace Ui {
 class Batlab;

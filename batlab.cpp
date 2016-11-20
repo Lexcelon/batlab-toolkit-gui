@@ -10,32 +10,8 @@ Batlab::Batlab(QWidget *parent) :
     ui->setupUi(this);
 
 
-    QWizard * wiz = new QWizard(this);
-    QWizardPage * first = new QWizardPage();
-    first->setTitle("Welcome to WIZARD");
-    first->setSubTitle("Wanna wizard?");
-
-
-    wizardPageOne * wiz1 = new wizardPageOne();
-    wizardPageTwo * wiz2 = new wizardPageTwo();
-
-    QGridLayout * grid = new QGridLayout();
-    grid->addWidget(wiz1);
-    QWizardPage * two = new QWizardPage();
-    two->setTitle("Page1");
-    two->setLayout(grid);
-
-    QGridLayout * grid1 = new QGridLayout();
-    grid1->addWidget(wiz2);
-    QWizardPage * three = new QWizardPage();
-    three->setTitle("Page2");
-    three->setLayout(grid1);
-
-
-    wiz->addPage(first);
-    wiz->addPage(two);
-    wiz->addPage(three);
-    wiz->show();
+    batlabWizard a;
+    a.onShow();
 
 
     tableWidget = ui->tableWidget;
@@ -159,7 +135,7 @@ void Batlab::onAddTests() {
     for (int i = 0; i < colCount; ++i) {
         ui->tableWidget->insertColumn(i);
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 10; i++) {
 
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
         QTableWidgetItem * item = new QTableWidgetItem("Test1");
@@ -170,4 +146,6 @@ void Batlab::onAddTests() {
         }
 //        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
     }
+
+    ui->tableWidget->insertRow(4);
 }

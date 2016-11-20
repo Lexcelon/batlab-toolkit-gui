@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     batlabsystemtest.cpp \
     testwindow.cpp \
     wizardpageone.cpp \
-    wizardpagetwo.cpp
+    wizardpagetwo.cpp \
+    wizardpagethree.cpp \
+    batlabwizard.cpp
 
 HEADERS  += batlab.h \
     batlabconfig.h \
@@ -36,13 +38,16 @@ HEADERS  += batlab.h \
     batlabsystemtest.h \
     testwindow.h \
     wizardpageone.h \
-    wizardpagetwo.h
+    wizardpagetwo.h \
+    wizardpagethree.h \
+    batlabwizard.h
 
 FORMS    += batlab.ui \
     settings.ui \
     test.ui \
     testwindow.ui \
     wizardpageone.ui \
-    wizardpagetwo.ui
+    wizardpagetwo.ui \
+    wizardpagethree.ui
 
 DISTFILES += 1010.bmp

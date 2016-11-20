@@ -18,8 +18,23 @@ public:
 public slots:
     void onFinish();
 
+    void onDesignator();
+    void onStartInd();
+    void onNumCells(int val);
+    void onNew(bool val);
+
+signals:
+    void emitDesignator(QString);
+    void emitStartInd(QString);
+    void emitNumCells(int);
+    void emitIsNew(bool);
+
 private:
     Ui::wizardPageOne *ui;
+    QString name;
+    QString startInd;
+    int numCells;
+    bool isNew;
 };
 
 #endif // WIZARDPAGEONE_H

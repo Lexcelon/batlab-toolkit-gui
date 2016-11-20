@@ -15,6 +15,9 @@ class batlabCell : public QObject
 public:
     batlabCell();
     batlabCell(uchar key);
+    batlabCell(QString designator, QString number);
+
+
     ~batlabCell();
 
     void receiveStream(int,float,int,int,int);
@@ -53,6 +56,9 @@ private:
     QVector<int> charge;
     int status;
     QString statusString;
+
+    QString name;
+    QString cellNumber;
 
 };
 

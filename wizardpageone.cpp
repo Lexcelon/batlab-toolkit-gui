@@ -9,6 +9,11 @@ wizardPageOne::wizardPageOne(QWidget *parent) :
 
     ui->startingIndex->setValidator(new QIntValidator(0,0xFFFF));
 
+
+    connect(ui->name,SIGNAL(editingFinished()),this,SLOT(onDesignator()));
+    connect(ui->numCells,SIGNAL(valueChanged(int)),this,SLOT(onNumCells(int)));
+    connect(ui->startingIndex,SIGNAL(editingFinished()),this,SLOT(onStartInd()));
+
   //  connect(ui->startingIndex,SIGNAL(editingFinished()),this,SLOT(onFinish()));
 }
 
@@ -23,3 +28,9 @@ wizardPageOne::~wizardPageOne()
 {
     delete ui;
 }
+
+
+void wizardPageOne::onDesignator() { name = ui->name->text(); emit emitDesignator(name);}
+void wizardPageOne::onStartInd() { startInd = ui->startingIndex->text(); emit emitStartInd(startInd); }
+void wizardPageOne::onNumCells(int val) { numCells = val; emit emitNumCells(val); }
+void wizardPageOne::onNew(bool val) { isNew = val; emit emitIsNew(val); }

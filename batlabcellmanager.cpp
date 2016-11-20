@@ -43,6 +43,11 @@ void batlabCellManager::onNewCell(uchar key) {
     connect(cells[key],SIGNAL(testFinished(uchar)),this,SLOT(onTestFinished(uchar)));
 }
 
+void batlabCellManager::onNewCell(QString name , QString number) {
+
+}
+
+
 void batlabCellManager::onTestFinished(uchar key) {
     emit testFinished(key);
 }

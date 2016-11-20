@@ -26,6 +26,8 @@ public slots:
     void onTestFinished(uchar key);
     void onGetTests(uchar key);
 
+    void onNewCell(QString name , QString number);
+
 signals:
     void testFinished(uchar);
     void emitTests(QVector<test>*);
