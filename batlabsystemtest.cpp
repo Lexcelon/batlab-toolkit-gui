@@ -1,6 +1,6 @@
 #include "batlabsystemtest.h"
 
-batlabSystemTest::batlabSystemTest(QWidget *parent) :
+batlabSystemTest::batlabSystemTest(QObject *parent) :
     QObject(parent)
 {
 

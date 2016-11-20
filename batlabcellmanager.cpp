@@ -23,6 +23,12 @@ void batlabCellManager::onReceiveStream(int unit,int cell,int status,float temp,
     }
 }
 
+void batlabCellManager::onGetTests(uchar key) {
+    if (cells.contains(key)) {
+        emit emitTests(cells[key]->getTests());
+    }
+}
+
 void batlabCellManager::onReceiveStreamExt(int unit,int cell,int currentAmp,int voltagePhase,int voltageAmp) {
     uchar key = uchar(((unit<<2) + cell));
     if (cells.contains(key)) {

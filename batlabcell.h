@@ -7,16 +7,6 @@
 #include "globals.h"
 
 
-struct test {
-    QVector<int> temperature;
-    QVector<int> voltage;
-    QVector<int> current;
-    QVector<int> currentAmplitude;
-    QVector<int> voltageAmplitude;
-    QVector<int> voltagePhase;
-    QVector<int> charge;
-    uchar mode;
-};
 
 class batlabCell : public QObject
 {

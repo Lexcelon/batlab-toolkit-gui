@@ -11,7 +11,7 @@ class batlabSystemTest : public QObject
     Q_OBJECT
 
 public:
-    explicit batlabSystemTest(QWidget *parent = 0);
+    explicit batlabSystemTest(QObject *parent = 0);
     ~batlabSystemTest();
 
 public slots:
@@ -20,7 +20,7 @@ public slots:
     void onNextTest(uchar);
 
 signals:
-    void emitTests(QVector);
+    void emitTests(QVector<uchar>);
     void emitNextTest(uchar,uchar);
 
 private:

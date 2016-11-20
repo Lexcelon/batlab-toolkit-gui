@@ -11,6 +11,14 @@
 #include "batlabcom.h"
 #include "batlabcellmanager.h"
 #include "globals.h"
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QWizard>
+#include <QWizardPage>
+#include <QLineEdit>
+#include <QSpinBox>
+#include "wizardpageone.h"
+#include "wizardpagetwo.h"
 
 
 namespace Ui {
@@ -31,6 +39,8 @@ public slots:
     void onReceiveStream(int,int,int,float,int,int,int);
     void onReceiveStreamExt(int,int,int,int,int);
 
+    void onAddTests();
+
 
 private:
     Ui::Batlab *ui = nullptr;
@@ -46,6 +56,8 @@ private:
     settings * configSettings = nullptr;
 
     batlabCellManager * cellManager = nullptr;
+
+    QTableWidget * tableWidget = nullptr;
 
 };
 

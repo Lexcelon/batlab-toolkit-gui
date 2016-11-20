@@ -1,6 +1,6 @@
 #include "batlab.h"
 #include "ui_batlab.h"
-#include <QLineEdit>
+
 
 Batlab::Batlab(QWidget *parent) :
     QMainWindow(parent),
@@ -8,6 +8,37 @@ Batlab::Batlab(QWidget *parent) :
 {
     // Setting up the gui with the same name in the forms directory
     ui->setupUi(this);
+
+
+    QWizard * wiz = new QWizard(this);
+    QWizardPage * first = new QWizardPage();
+    first->setTitle("Welcome to WIZARD");
+    first->setSubTitle("Wanna wizard?");
+
+
+    wizardPageOne * wiz1 = new wizardPageOne();
+    wizardPageTwo * wiz2 = new wizardPageTwo();
+
+    QGridLayout * grid = new QGridLayout();
+    grid->addWidget(wiz1);
+    QWizardPage * two = new QWizardPage();
+    two->setTitle("Page1");
+    two->setLayout(grid);
+
+    QGridLayout * grid1 = new QGridLayout();
+    grid1->addWidget(wiz2);
+    QWizardPage * three = new QWizardPage();
+    three->setTitle("Page2");
+    three->setLayout(grid1);
+
+
+    wiz->addPage(first);
+    wiz->addPage(two);
+    wiz->addPage(three);
+    wiz->show();
+
+
+    tableWidget = ui->tableWidget;
 
     // For communication with batlab
     com = new batlabCom();
@@ -54,7 +85,7 @@ Batlab::Batlab(QWidget *parent) :
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
     connect(this->settingsB,SIGNAL(clicked()),configSettings,SLOT(show()));
 
-
+    onAddTests();
 
 }
 
@@ -122,4 +153,21 @@ void Batlab::onReceiveStreamExt(int unit,int cell,int currentAmp,int voltagePhas
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
 
+void Batlab::onAddTests() {
 
+    int colCount = 10;
+    for (int i = 0; i < colCount; ++i) {
+        ui->tableWidget->insertColumn(i);
+    }
+    for (int i = 0; i < 4; i++) {
+
+        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+        QTableWidgetItem * item = new QTableWidgetItem("Test1");
+        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,item);
+        for (int j = 1; j < colCount; j++) {
+            QTableWidgetItem * testItem = new QTableWidgetItem("CCDC");
+            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,j,testItem);
+        }
+//        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+    }
+}

@@ -418,5 +418,17 @@ static QMap<properties,QString> cellProperties {
     { properties::voltagePhase, "Voltage Phase" },
     { properties::voltageAmplitude, "Voltage Amplitude" }
 };
+
+struct test {
+    QVector<int> temperature;
+    QVector<int> voltage;
+    QVector<int> current;
+    QVector<int> currentAmplitude;
+    QVector<int> voltageAmplitude;
+    QVector<int> voltagePhase;
+    QVector<int> charge;
+    uchar mode;
+};
+
 #endif // GLOBALS
 
