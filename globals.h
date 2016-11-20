@@ -4,6 +4,9 @@
 #include <QString>
 #include <qmath.h>
 #include <QVector>
+#include <QLayout>
+#include <QDebug>
+#include <QPushButton>
 
 
 enum vals {
@@ -418,5 +421,33 @@ static QMap<properties,QString> cellProperties {
     { properties::voltagePhase, "Voltage Phase" },
     { properties::voltageAmplitude, "Voltage Amplitude" }
 };
+
+struct test {
+    QVector<int> temperature;
+    QVector<int> voltage;
+    QVector<int> current;
+    QVector<int> currentAmplitude;
+    QVector<int> voltageAmplitude;
+    QVector<int> voltagePhase;
+    QVector<int> charge;
+    uchar mode;
+};
+
+struct testParms {
+    float hvc;
+    float lvc;
+    float hvcv;
+    float lvcv;
+    float htc;
+    float ltc;
+    float ccsc;
+    float dcsc;
+    float rf;
+    float ccs;
+    float sf;
+    int pont;
+    int poft;
+};
+
 #endif // GLOBALS
 

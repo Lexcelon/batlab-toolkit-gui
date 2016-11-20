@@ -24,9 +24,13 @@ public slots:
     void onPrintCell(uchar key, properties val);
     void onNewTest(uchar key,uchar test);
     void onTestFinished(uchar key);
+    void onGetTests(uchar key);
+
+    void onNewCell(QString name , QString number);
 
 signals:
     void testFinished(uchar);
+    void emitTests(QVector<test>*);
 
 private:
     QMap<uchar,batlabCell*> cells;
