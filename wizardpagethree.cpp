@@ -93,11 +93,62 @@ void wizardPageThree::onActivate() {
 
         //QLineEdit * one = new QLineEdit();
     }
+
+    onSaveProject();
 }
 
+void wizardPageThree::onSaveProject() {
+    QFile f( "testProj.csv" );
+
+    if (f.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream data( &f );
+        QStringList strList;
+
+        for(int c = 0; c < ui->tableWidget->columnCount(); c++) {
+            strList << " " + ui->tableWidget->horizontalHeaderItem(c)->data(Qt::DisplayRole).toString() + " ";
+        }
+
+        data << strList.join(",") + "\n";
+
+        for( int r = 0; r < ui->tableWidget->rowCount(); ++r )
+        {
+            strList.clear();
+            for( int c = 0; c < ui->tableWidget->columnCount(); ++c )
+            {
+                switch(c) {
+                case 0:
+                    strList << " "+qobject_cast<QLabel*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
+                    break;
+                case 1:
+                    strList << " "+qobject_cast<QSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                    strList << " "+qobject_cast<QDoubleSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
+                    break;
+                case 13:
+                case 14:
+                    strList << " "+qobject_cast<QSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
+                    break;
+                }
+            }
+            data << strList.join( "," )+"\n";
+        }
+        f.close();
+    }
+}
 
 void wizardPageThree::onDesignator(QString val) {
-    qDebug() << val;
     designator = val;
 }
 

@@ -64,7 +64,14 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
     }
     );
 
-    qDebug() << connect(wiz->button(QWizard::NextButton),SIGNAL(clicked()),this,SLOT(onIDChanged()));
+    connect(wiz,&QWizard::finished, [&,wizForLambda,page3]() {
+        if (wizForLambda->currentId()==3) {
+            page3->onSaveProject();
+        }
+    }
+    );
+
+    //qDebug() << connect(wiz->button(QWizard::NextButton),SIGNAL(clicked()),this,SLOT(onIDChanged()));
  //  connect(wiz->button(QWizard::NextButton),SIGNAL(clicked()),this,SLOT(onIDChanged()));
     //wiz->show();
 }
