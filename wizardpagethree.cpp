@@ -15,17 +15,19 @@ wizardPageThree::~wizardPageThree()
 
 
 QString wizardPageThree::onGetName(int val) {
+    int length = startInd.length();
     int zeros = startInd.length() - QString::number(startInd.toInt()).length()+1;
     QString txt = QString::number(startInd.toInt()+val);
-    return (QString("%1").arg(txt.toInt(),zeros,10,QChar('0')));
+    if (txt.length() > length) {
+        length = txt.length();
+    }
+    return (QString("%1").arg(txt.toInt(),length,10,QChar('0')));
 }
 
 void wizardPageThree::onActivate() {
     ui->tableWidget->setRowCount(0);
     for (int i = 0; i < numCells; ++i) {
         ui->tableWidget->insertRow(i);
-
-
 
         QString tempName = designator + onGetName(i);
         QLabel * name = new QLabel(tempName);

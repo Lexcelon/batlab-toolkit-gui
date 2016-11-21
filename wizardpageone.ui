@@ -107,13 +107,6 @@
      </item>
     </layout>
    </item>
-   <item>
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Disclaimer: You may accidentally kill yourself and everyone you love</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>
