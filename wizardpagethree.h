@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "globals.h"
 #include <QLabel>
+#include <QFile>
 
 namespace Ui {
 class wizardPageThree;
@@ -25,6 +26,7 @@ public slots:
     void onActivate();
     void onNumCycles(int);
     QString onGetName(int);
+    void onSaveProject();
 
 private:
     Ui::wizardPageThree *ui;
