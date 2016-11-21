@@ -6,9 +6,7 @@ wizardPageOne::wizardPageOne(QWidget *parent) :
     ui(new Ui::wizardPageOne)
 {
     ui->setupUi(this);
-
     ui->startingIndex->setValidator(new QIntValidator(0,0xFFFF));
-
 
     connect(ui->name,SIGNAL(editingFinished()),this,SLOT(onDesignator()));
     connect(ui->numCells,SIGNAL(valueChanged(int)),this,SLOT(onNumCells(int)));
@@ -30,8 +28,7 @@ void wizardPageOne::onUpdate() {
     emit emitProjectName(ui->projectName->text());
 }
 
-wizardPageOne::~wizardPageOne()
-{
+wizardPageOne::~wizardPageOne() {
     delete ui;
 }
 

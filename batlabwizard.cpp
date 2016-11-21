@@ -23,19 +23,19 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
     QGridLayout * grid = new QGridLayout();
     grid->addWidget(page1);
     QWizardPage * two = new QWizardPage();
-    two->setTitle("Page1");
+    two->setTitle("Project Setup");
     two->setLayout(grid);
 
     QGridLayout * grid1 = new QGridLayout();
     grid1->addWidget(page2);
     QWizardPage * three = new QWizardPage();
-    three->setTitle("Page2");
+    three->setTitle("Test Parameters");
     three->setLayout(grid1);
 
     QGridLayout * grid2 = new QGridLayout();
     grid2->addWidget(page3);
     QWizardPage * four = new QWizardPage();
-    four->setTitle("Page3");
+    four->setTitle("Finalize");
     four->setLayout(grid2);
 
     wiz->addPage(first);
@@ -63,6 +63,9 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
         }
     }
     );
+
+
+    wiz->setWizardStyle(QWizard::ModernStyle);
 }
 
 batlabWizard::~batlabWizard()
@@ -71,7 +74,8 @@ batlabWizard::~batlabWizard()
 }
 
 void batlabWizard::onShow() {
-    wiz->showFullScreen();
+    wiz->show();
+//    wiz->showFullScreen();
 }
 
 void batlabWizard::onIDChanged() {
