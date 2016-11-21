@@ -9,11 +9,6 @@ Batlab::Batlab(QWidget *parent) :
     // Setting up the gui with the same name in the forms directory
     ui->setupUi(this);
 
-
-//    batlabWizard a;
-//    a.onShow();
-
-
     tableWidget = ui->tableWidget;
 
     // For communication with batlab

@@ -25,6 +25,9 @@ QString wizardPageThree::onGetName(int val) {
 }
 
 void wizardPageThree::onActivate() {
+    QProgressDialog bar(tr("Creating %1 cells from parameters...").arg(numCells), tr("Cancel"), 0, numCells-1, this);
+    bar.setMinimumDuration(0);
+//    bar.show();
     ui->tableWidget->setRowCount(0);
     for (int i = 0; i < numCells; ++i) {
         ui->tableWidget->insertRow(i);
@@ -94,6 +97,8 @@ void wizardPageThree::onActivate() {
         ui->tableWidget->setCellWidget(i,14,poft);
 
         //QLineEdit * one = new QLineEdit();
+        bar.setValue(i);
+        QApplication::processEvents();
     }
 
     onSaveProject();
