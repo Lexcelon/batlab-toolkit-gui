@@ -12,6 +12,8 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
     connect(page1,SIGNAL(emitDesignator(QString)),page3,SLOT(onDesignator(QString)));
     connect(page1,SIGNAL(emitNumCells(int)),page3,SLOT(onNumCells(int)));
     connect(page1,SIGNAL(emitStartInd(QString)),page3,SLOT(onStartInd(QString)));
+    connect(page1,SIGNAL(emitProjectName(QString)),page3,SLOT(onProjectName(QString)));
+
 
     connect(page2,SIGNAL(emitCycles(int)),page3,SLOT(onNumCycles(int)));
     connect(page2,SIGNAL(emitParms(testParms)),page3,SLOT(onTestParms(testParms)));

@@ -27,6 +27,7 @@ public slots:
     void onNumCycles(int);
     QString onGetName(int);
     void onSaveProject();
+    void onProjectName(QString);
 
 private:
     Ui::wizardPageThree *ui;
@@ -36,6 +37,7 @@ private:
     int numCells;
     int numCycles;
     testParms parms;
+    QString projectName;
 };
 
 #endif // WIZARDPAGETHREE_H
