@@ -22,11 +22,14 @@ public slots:
     void onStartInd();
     void onNumCells(int val);
     void onNew(bool val);
+    void onProjectName();
+
     void onUpdate();
 
 signals:
     void emitDesignator(QString);
     void emitStartInd(QString);
+    void emitProjectName(QString);
     void emitNumCells(int);
     void emitIsNew(bool);
 
@@ -36,6 +39,7 @@ private:
     QString startInd;
     int numCells;
     bool isNew;
+    QString projectName;
 };
 
 #endif // WIZARDPAGEONE_H

@@ -98,7 +98,8 @@ void wizardPageThree::onActivate() {
 }
 
 void wizardPageThree::onSaveProject() {
-    QFile f( "testProj.csv" );
+
+    QFile f( projectName + ".csv" );
 
     if (f.open(QFile::WriteOnly | QFile::Truncate))
     {
@@ -166,4 +167,8 @@ void wizardPageThree::onTestParms(testParms val) {
 
 void wizardPageThree::onNumCycles(int val) {
     numCycles = val;
+}
+
+void wizardPageThree::onProjectName(QString val) {
+    projectName = val;
 }

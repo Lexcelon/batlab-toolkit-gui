@@ -13,7 +13,7 @@ wizardPageOne::wizardPageOne(QWidget *parent) :
     connect(ui->name,SIGNAL(editingFinished()),this,SLOT(onDesignator()));
     connect(ui->numCells,SIGNAL(valueChanged(int)),this,SLOT(onNumCells(int)));
     connect(ui->startingIndex,SIGNAL(editingFinished()),this,SLOT(onStartInd()));
-
+    connect(ui->projectName, SIGNAL(editingFinished()), this,SLOT(onProjectName()));
   //  connect(ui->startingIndex,SIGNAL(editingFinished()),this,SLOT(onFinish()));
 }
 
@@ -40,3 +40,5 @@ void wizardPageOne::onDesignator() { name = ui->name->text(); emit emitDesignato
 void wizardPageOne::onStartInd() { startInd = ui->startingIndex->text(); emit emitStartInd(startInd); }
 void wizardPageOne::onNumCells(int val) { numCells = val; emit emitNumCells(val); }
 void wizardPageOne::onNew(bool val) { isNew = val; emit emitIsNew(val); }
+void wizardPageOne::onProjectName() { projectName = ui->projectName->text(); emit emitProjectName(projectName); }
+
