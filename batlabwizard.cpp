@@ -2,7 +2,6 @@
 
 batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
 {
-
     wiz = new QWizard();
 
     wizardPageOne * page1 = new wizardPageOne();
@@ -14,16 +13,12 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
     connect(page1,SIGNAL(emitStartInd(QString)),page3,SLOT(onStartInd(QString)));
     connect(page1,SIGNAL(emitProjectName(QString)),page3,SLOT(onProjectName(QString)));
 
-
     connect(page2,SIGNAL(emitCycles(int)),page3,SLOT(onNumCycles(int)));
     connect(page2,SIGNAL(emitParms(testParms)),page3,SLOT(onTestParms(testParms)));
-
-
 
     QWizardPage * first = new QWizardPage();
     first->setTitle("Welcome to WIZARD");
     first->setSubTitle("Wanna wizard?");
-
 
     QGridLayout * grid = new QGridLayout();
     grid->addWidget(page1);
@@ -43,8 +38,6 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
     four->setTitle("Page3");
     four->setLayout(grid2);
 
-
-
     wiz->addPage(first);
     wiz->addPage(two);
     wiz->addPage(three);
@@ -55,13 +48,11 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
         if (wizForLambda->currentId()==1) {
             page1->onUpdate();
         }
-        if (wizForLambda->currentId()==3) {
-            qDebug() << "Here";
-            //page2->update();
-            page3->onActivate();
-        }
         if (wizForLambda->currentId()==2) {
             page2->onUpdate();
+        }
+        if (wizForLambda->currentId()==3) {
+            page3->onActivate();
         }
     }
     );
@@ -72,10 +63,6 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
         }
     }
     );
-
-    //qDebug() << connect(wiz->button(QWizard::NextButton),SIGNAL(clicked()),this,SLOT(onIDChanged()));
- //  connect(wiz->button(QWizard::NextButton),SIGNAL(clicked()),this,SLOT(onIDChanged()));
-    //wiz->show();
 }
 
 batlabWizard::~batlabWizard()
@@ -84,13 +71,8 @@ batlabWizard::~batlabWizard()
 }
 
 void batlabWizard::onShow() {
-//    wiz->show();
     wiz->showFullScreen();
 }
 
 void batlabWizard::onIDChanged() {
-    qDebug() << "val";
-   // if (val == 3) {
-        //page3->onActivate();
-    //}
 }
