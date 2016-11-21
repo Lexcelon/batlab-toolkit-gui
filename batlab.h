@@ -38,7 +38,7 @@ public slots:
     void onReceiveResponse(int,int,QString,int);
     void onReceiveStream(int,int,int,float,int,int,int);
     void onReceiveStreamExt(int,int,int,int,int);
-
+    void onNewProjectWizard();
     void onAddTests();
 
 
@@ -46,6 +46,7 @@ private:
     Ui::Batlab *ui = nullptr;
     QPushButton *test = nullptr;
     QPushButton *settingsB = nullptr;
+    QPushButton *newProjectWizard = nullptr;
     QPushButton *report = nullptr;
     QPushButton *options = nullptr;
     QPushButton *exit = nullptr;
