@@ -5,6 +5,7 @@
 #include "globals.h"
 #include <QLabel>
 #include <QFile>
+#include <QProgressDialog>
 
 namespace Ui {
 class wizardPageThree;
