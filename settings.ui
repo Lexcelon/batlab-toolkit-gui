@@ -123,10 +123,10 @@
      <item row="5" column="1">
       <widget class="QDoubleSpinBox" name="ltCutoffSB">
        <property name="minimum">
-        <double>-999999999999999.000000000000000</double>
+        <double>-273.000000000000000</double>
        </property>
        <property name="value">
-        <double>-999999.000000000000000</double>
+        <double>-20.000000000000000</double>
        </property>
       </widget>
      </item>

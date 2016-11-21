@@ -50,7 +50,7 @@ void batlabConfig::createSettings() {
     hvCV = 4.2f;
     lvCV = 2.8f;
     htCutoff = 45.0f;
-    ltCutoff = -INFINITY;
+    ltCutoff = -20.0f;
     ccCutoff = 3.0f;
     dcCutoff = 3.0f;
     rFreq = 1.0f;

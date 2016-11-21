@@ -16,7 +16,7 @@ wizardPageThree::~wizardPageThree()
 
 QString wizardPageThree::onGetName(int val) {
     int length = startInd.length();
-    int zeros = startInd.length() - QString::number(startInd.toInt()).length()+1;
+   // int zeros = startInd.length() - QString::number(startInd.toInt()).length()+1;
     QString txt = QString::number(startInd.toInt()+val);
     if (txt.length() > length) {
         length = txt.length();

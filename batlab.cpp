@@ -10,8 +10,8 @@ Batlab::Batlab(QWidget *parent) :
     ui->setupUi(this);
 
 
-    batlabWizard a;
-    a.onShow();
+//    batlabWizard a;
+//    a.onShow();
 
 
     tableWidget = ui->tableWidget;
@@ -28,12 +28,12 @@ Batlab::Batlab(QWidget *parent) :
     // Create the buttons we use in the main gui
     test = new QPushButton(QString("Test"));
     options = new QPushButton(QString("Options"));
-    settingsB = new QPushButton(QString("Settings"));
+    newProjectWizard = new QPushButton(QString("New Project Wizard"));
     report = new QPushButton(QString("Report"));
     exit = new QPushButton(QString("Exit"));
 
     // Place the buttons in the button box in our gui
-    ui->buttonBox->addButton(settingsB,QDialogButtonBox::ActionRole);
+    ui->buttonBox->addButton(newProjectWizard,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(report,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(options,QDialogButtonBox::ActionRole);
@@ -59,7 +59,7 @@ Batlab::Batlab(QWidget *parent) :
     // Making the buttons functional
     connect(exit,SIGNAL(clicked()),this,SLOT(close()));
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
-    connect(this->settingsB,SIGNAL(clicked()),configSettings,SLOT(show()));
+    connect(this->newProjectWizard,SIGNAL(clicked()),this,SLOT(onNewProjectWizard()));
 
     onAddTests();
 
@@ -90,6 +90,7 @@ Batlab::~Batlab()
     if (options) delete options;
     if (report) delete report;
     if (settingsB) delete settingsB;
+    if (newProjectWizard) delete newProjectWizard;
     delete ui;
 }
 
@@ -150,4 +151,9 @@ void Batlab::onAddTests() {
     }
 
     ui->tableWidget->insertRow(4);
+}
+
+void Batlab::onNewProjectWizard() {
+    batlabWizard a;
+    a.onShow();
 }
