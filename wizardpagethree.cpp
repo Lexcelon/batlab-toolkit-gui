@@ -49,52 +49,34 @@ void wizardPageThree::onActivate() {
         lvc->setValue(parms.lvc);
         ui->tableWidget->setCellWidget(i,3,lvc);
 
-        QDoubleSpinBox *  hvcv = new QDoubleSpinBox();
-        hvcv->setValue(parms.hvcv);
-        ui->tableWidget->setCellWidget(i,4,hvcv);
-
-        QDoubleSpinBox *  lvcv = new QDoubleSpinBox();
-        lvcv->setValue(parms.lvcv);
-        ui->tableWidget->setCellWidget(i,5,lvcv);
-
         QDoubleSpinBox *  htc = new QDoubleSpinBox();
         htc->setValue(parms.htc);
-        ui->tableWidget->setCellWidget(i,6,htc);
+        ui->tableWidget->setCellWidget(i,4,htc);
 
         QDoubleSpinBox *  ltc = new QDoubleSpinBox();
         ltc->setMinimum(-999999999999999.000000);
         ltc->setValue(parms.ltc);
-        ui->tableWidget->setCellWidget(i,7,ltc);
+        ui->tableWidget->setCellWidget(i,5,ltc);
 
         QDoubleSpinBox *  ccsc = new QDoubleSpinBox();
-        ccsc->setValue(parms.ccsc);
-        ui->tableWidget->setCellWidget(i,8,ccsc);
+        ccsc->setValue(ccr);
+        ui->tableWidget->setCellWidget(i,6,ccsc);
 
         QDoubleSpinBox *  dcsc = new QDoubleSpinBox();
-        dcsc->setValue(parms.dcsc);
-        ui->tableWidget->setCellWidget(i,9,dcsc);
+        dcsc->setValue(dcr);
+        ui->tableWidget->setCellWidget(i,7,dcsc);
 
         QDoubleSpinBox *  rf = new QDoubleSpinBox();
         rf->setValue(parms.rf);
-        ui->tableWidget->setCellWidget(i,10,rf);
+        ui->tableWidget->setCellWidget(i,8,rf);
 
         QDoubleSpinBox *  ccs = new QDoubleSpinBox();
         ccs->setValue(parms.ccs);
-        ui->tableWidget->setCellWidget(i,11,ccs);
+        ui->tableWidget->setCellWidget(i,9,ccs);
 
         QDoubleSpinBox *  sf = new QDoubleSpinBox();
         sf->setValue(parms.sf);
-        ui->tableWidget->setCellWidget(i,12,sf);
-
-        QSpinBox * pont = new QSpinBox();
-        pont->setMaximum(0xFFFF);
-        pont->setValue(parms.pont);
-        ui->tableWidget->setCellWidget(i,13,pont);
-
-        QSpinBox * poft = new QSpinBox();
-        poft->setMaximum(0xFFFF);
-        poft->setValue(parms.poft);
-        ui->tableWidget->setCellWidget(i,14,poft);
+        ui->tableWidget->setCellWidget(i,10,sf);
 
         //QLineEdit * one = new QLineEdit();
         bar.setValue(i);
@@ -106,7 +88,7 @@ void wizardPageThree::onActivate() {
 
 void wizardPageThree::onSaveProject() {
 
-    QFile f( projectName + ".csv" );
+    QFile f( projectName + ".blp" );
 
     if (f.open(QFile::WriteOnly | QFile::Truncate))
     {
@@ -140,13 +122,7 @@ void wizardPageThree::onSaveProject() {
                 case 8:
                 case 9:
                 case 10:
-                case 11:
-                case 12:
                     strList << " "+qobject_cast<QDoubleSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
-                    break;
-                case 13:
-                case 14:
-                    strList << " "+qobject_cast<QSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
                     break;
                 }
             }
@@ -178,4 +154,12 @@ void wizardPageThree::onNumCycles(int val) {
 
 void wizardPageThree::onProjectName(QString val) {
     projectName = val;
+}
+
+void wizardPageThree::onCCR(double val) {
+    ccr = val;
+}
+
+void wizardPageThree::onDCR(double val) {
+    dcr = val;
 }
