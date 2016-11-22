@@ -24,6 +24,8 @@ public slots:
     void onStartInd(QString);
     void onNumCells(int);
     void onTestParms(testParms);
+    void onCCR(double);
+    void onDCR(double);
     void onActivate();
     void onNumCycles(int);
     QString onGetName(int);
@@ -39,6 +41,9 @@ private:
     int numCycles;
     testParms parms;
     QString projectName;
+
+    double dcr;
+    double ccr;
 };
 
 #endif // WIZARDPAGETHREE_H

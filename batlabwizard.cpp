@@ -15,6 +15,8 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
 
     connect(page2,SIGNAL(emitCycles(int)),page3,SLOT(onNumCycles(int)));
     connect(page2,SIGNAL(emitParms(testParms)),page3,SLOT(onTestParms(testParms)));
+    connect(page2,SIGNAL(emitDCR(double)),page3,SLOT(onDCR(double)));
+    connect(page2,SIGNAL(emitCCR(double)),page3,SLOT(onCCR(double)));
 
     QWizardPage * first = new QWizardPage();
     first->setTitle("Welcome to WIZARD");

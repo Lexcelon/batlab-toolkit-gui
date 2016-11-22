@@ -24,8 +24,8 @@ public slots:
     void onLowVoltageCV(double val) { parms.lvcv = val;   emit emitParms(parms); }
     void onHighTempCutoff(double val) { parms.htc = val;   emit emitParms(parms); }
     void onLowTempCutoff(double val) { parms.ltc = val;   emit emitParms(parms); }
-    void onChargeCurrentSafetyCutoff(double val) { parms.ccsc = val;   emit emitParms(parms); }
-    void onDischargeCurrentSafetyCutoff(double val) { parms.dcsc = val;   emit emitParms(parms); }
+    void onChargeCRate(double val) { ccr = val;   emit emitCCR(ccr); }
+    void onDischargeCRate(double val) { dcr = val;   emit emitDCR(dcr); }
     void onReportingFrequency(double val) { parms.rf = val;   emit emitParms(parms); }
     void onConstantCurrentSetpoint(double val) { parms.ccs = val;   emit emitParms(parms); }
     void onSinewaveFrequency(double val) { parms.sf = val;   emit emitParms(parms); }
@@ -37,11 +37,15 @@ public slots:
 signals:
     void emitCycles(int);
     void emitParms(testParms);
+    void emitCCR(double);
+    void emitDCR(double);
 
 private:
     Ui::wizardPageTwo *ui;
     testParms parms;
     int cycles;
+    double ccr;
+    double dcr;
 };
 
 #endif // WIZARDPAGETWO_H

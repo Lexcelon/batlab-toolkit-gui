@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QTableWidget" name="tableWidget">
      <property name="columnCount">
-      <number>15</number>
+      <number>11</number>
      </property>
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>true</bool>
@@ -53,16 +53,6 @@
      </column>
      <column>
       <property name="text">
-       <string>High Voltage CV</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Low Voltage CV</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
        <string>High Temp Cutoff</string>
       </property>
      </column>
@@ -73,12 +63,12 @@
      </column>
      <column>
       <property name="text">
-       <string>Charge Current Safety Cutoff</string>
+       <string>Charge C Rate</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Discharge Current Safety Cutoff</string>
+       <string>Discharge C Rate</string>
       </property>
      </column>
      <column>
@@ -94,16 +84,6 @@
      <column>
       <property name="text">
        <string>Sinewave Frequency</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Pulse On Time</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Pulse Off Time</string>
       </property>
      </column>
     </widget>
