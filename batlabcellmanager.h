@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include "batlabcell.h"
+#include "batlabtestplan.h"
 #include <QDebug>
 
 
@@ -26,14 +27,34 @@ public slots:
     void onTestFinished(uchar key);
     void onGetTests(uchar key);
 
-    void onNewCell(QString name , QString number);
+    void onNewCell(QString id, testParms parms, double ccr, double dcr, double cap, int cycles);
+
+    void onCreateTestPlan(int numBatlabs);
+    void onStartTests();
+
+    batlabCell* onGetCell(int index) { return cellList.at(index); }
+
+    batlabCell* onGetCell(QString designator)
+    {
+        for (int i = 0; i < cellList.size(); ++i) {
+            if (cellList.at(i)->getDesignator() == designator) {
+                return cellList.at(i);
+            }
+        }
+        return nullptr;
+    }
+
 
 signals:
     void testFinished(uchar);
-    void emitTests(QVector<test>*);
+    void emitTests(QVector<modeCodes>*);
 
 private:
     QMap<uchar,batlabCell*> cells;
+    QVector<batlabCell*> cellList;
+
+    batlabTestPlan * testPlan;
+
 };
 
 #endif // BATLABCELLMANAGER_H

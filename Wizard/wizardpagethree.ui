@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QTableWidget" name="tableWidget">
      <property name="columnCount">
-      <number>11</number>
+      <number>13</number>
      </property>
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>true</bool>
@@ -39,6 +39,11 @@
      <column>
       <property name="text">
        <string>Cycles</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Rest Time</string>
       </property>
      </column>
      <column>
@@ -84,6 +89,11 @@
      <column>
       <property name="text">
        <string>Sinewave Frequency</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Capacity</string>
       </property>
      </column>
     </widget>

@@ -9,6 +9,9 @@ Batlab::Batlab(QWidget *parent) :
     // Setting up the gui with the same name in the forms directory
     ui->setupUi(this);
 
+
+
+
     tableWidget = ui->tableWidget;
 
     // For communication with batlab
@@ -56,8 +59,10 @@ Batlab::Batlab(QWidget *parent) :
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
     connect(this->newProjectWizard,SIGNAL(clicked()),this,SLOT(onNewProjectWizard()));
 
-    onAddTests();
 
+//    onLoadTest("default.blp");
+//    onAddTests();
+//    return;
 }
 
 void Batlab::onTest() {
@@ -149,6 +154,78 @@ void Batlab::onAddTests() {
 }
 
 void Batlab::onNewProjectWizard() {
-    batlabWizard a;
-    a.onShow();
+    batlabWizard * a = new batlabWizard();
+    connect(a, SIGNAL(emitFinished(QString)), this, SLOT(onLoadTest(QString)));
+    a->onShow();
+}
+
+void Batlab::onLoadTest(QString name) {
+    if (!name.endsWith(".blp",Qt::CaseInsensitive)) {
+        name = name + ".blp";
+    }
+
+    QFile f(name);
+
+    QVector<QString> labels;
+
+    if (f.open(QFile::ReadOnly)){
+
+        if (!f.atEnd()) {
+           QByteArray str = f.readLine();
+
+           qDebug() << str.split(',');
+
+           for (int i = 0; i < str.split(',').size(); ++i) {
+               labels.append(str.split(',').at(i));
+           }
+        }
+
+        while (!f.atEnd()) {
+            testParms tempParms;
+            int index = 0;
+
+            QByteArray str = f.readLine();
+            QList<QByteArray> strList = str.split(',');
+            QString cellname = strList.at(index++);
+            int numCycles = QString(strList.at(index++)).toInt();
+            tempParms.restTime = QString(strList.at(index++)).toInt();
+            tempParms.hightVoltageCutoff = QString(strList.at(index++)).toDouble();
+            tempParms.lowVoltageCutoff = QString(strList.at(index++)).toDouble();
+            tempParms.highTemperatureCutoff = QString(strList.at(index++)).toDouble();
+            tempParms.lowTemperatureCutoff = QString(strList.at(index++)).toDouble();
+            double ccr = QString(strList.at(index++)).toDouble();
+            double dcr = QString(strList.at(index++)).toDouble();
+            tempParms.reportingFrequency = QString(strList.at(index++)).toDouble();
+            tempParms.constantCurrentSetpoint = QString(strList.at(index++)).toDouble();
+            tempParms.sinewaveFrequency = QString(strList.at(index++)).toDouble();
+            double cap = QString(strList.at(index++)).toDouble();
+
+            tempParms.ccsc = (ccr)*cap;
+            tempParms.dcsc = (dcr)*cap;
+
+            int numberOfTests = numCycles * 2 + 1;
+            if (ui->tableWidget->columnCount() - 1 < numberOfTests) {
+                int colCount = ui->tableWidget->columnCount();
+                for (int i = 0; i < (numberOfTests - colCount + 1); ++i) {
+                    ui->tableWidget->insertColumn(ui->tableWidget->columnCount());
+                }
+            }
+
+            cellManager->onNewCell(cellname,tempParms,ccr,dcr,cap,numCycles);
+
+            QVector<modeCodes> *cellTests = cellManager->onGetCell(cellname)->getTests();
+            ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+            QTableWidgetItem * item = new QTableWidgetItem(cellname);
+            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,item);
+            for (int j = 0; j < cellTests->size(); j++) {
+                QString testString = modeRegCodeNames[cellTests->at(j)];
+                QTableWidgetItem * testItem = new QTableWidgetItem(testString);
+                ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,j+1,testItem);
+            }
+
+        }
+
+    }
+
+    cellManager->onCreateTestPlan(3);
 }

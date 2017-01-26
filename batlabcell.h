@@ -15,7 +15,7 @@ class batlabCell : public QObject
 public:
     batlabCell();
     batlabCell(uchar key);
-    batlabCell(QString designator, QString number);
+    batlabCell(QString designator, testParms parms, int cycles);
 
 
     ~batlabCell();
@@ -31,17 +31,22 @@ public:
     QVector<int> * getVoltagePhase() { return &voltagePhase; }
     QVector<int> * getCharge() { return &charge; }
 
-    QVector<test> * getTests() { return &tests; }
+    QVector<modeCodes>* getTests() { return &testsToRun; }
 
     uchar getUnit(){ return unit;}
     uchar getCell(){ return cell;}
     int getStatus(){ return status;}
     QString getStatusString() { return statusString; }
 
+    QString getDesignator() { return id; }
+
     void newTest(uchar testnum);
+
+    void onUpdateParameters(int unit, int cell);
 
 signals:
     void testFinished(uchar);
+    void updateParameter(int unit, int cell, writeVals val,int num);
 
 private:
     uchar unit;
@@ -57,8 +62,10 @@ private:
     int status;
     QString statusString;
 
-    QString name;
-    QString cellNumber;
+    QVector<modeCodes> testsToRun;
+
+    QString id;
+    testParms testParameters;
 
 };
 
