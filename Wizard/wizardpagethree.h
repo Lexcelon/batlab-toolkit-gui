@@ -2,7 +2,7 @@
 #define WIZARDPAGETHREE_H
 
 #include <QWidget>
-#include "globals.h"
+#include "../globals.h"
 #include <QLabel>
 #include <QFile>
 #include <QProgressDialog>
@@ -26,11 +26,14 @@ public slots:
     void onTestParms(testParms);
     void onCCR(double);
     void onDCR(double);
+    void onCapacity(double);
+    void onRestTime(int);
     void onActivate();
     void onNumCycles(int);
     QString onGetName(int);
     void onSaveProject();
     void onProjectName(QString);
+    QString onGetProjectName() { return projectName; }
 
 private:
     Ui::wizardPageThree *ui;
@@ -42,8 +45,10 @@ private:
     testParms parms;
     QString projectName;
 
-    double dcr;
-    double ccr;
+    double dischargeCurrentCRate;
+    double chargeCurrentCRate;
+    double capacity;
+    int restTime;
 };
 
 #endif // WIZARDPAGETHREE_H

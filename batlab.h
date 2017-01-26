@@ -40,6 +40,7 @@ public slots:
     void onReceiveStreamExt(int,int,int,int,int);
     void onNewProjectWizard();
     void onAddTests();
+    void onLoadTest(QString);
 
 
 private:

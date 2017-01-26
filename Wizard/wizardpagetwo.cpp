@@ -22,6 +22,8 @@ wizardPageTwo::wizardPageTwo(QWidget *parent) :
     connect(this->ui->sf,SIGNAL(valueChanged(double)),this,SLOT(onSinewaveFrequency(double)));
 
     connect(this->ui->cycles,SIGNAL(valueChanged(int)),this,SLOT(onCycles(int)));
+    connect(this->ui->sbRestTime,SIGNAL(valueChanged(int)),this,SLOT(onRestTime(int)));
+    connect(this->ui->capacity,SIGNAL(valueChanged(double)),this,SLOT(onCapacity(double)));
 
 }
 
@@ -35,4 +37,6 @@ void wizardPageTwo::onUpdate() {
     emit emitParms(parms);
     emit emitDCR(ui->dcr->value());
     emit emitCCR(ui->ccr->value());
+    emit emitCapacity(ui->capacity->value());
+    emit emitRestTime(ui->sbRestTime->value());
 }

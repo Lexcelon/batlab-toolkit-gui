@@ -30,53 +30,66 @@ void wizardPageThree::onActivate() {
 //    bar.show();
     ui->tableWidget->setRowCount(0);
     for (int i = 0; i < numCells; ++i) {
+        int index = 0;
         ui->tableWidget->insertRow(i);
 
         QString tempName = designator + onGetName(i);
         QLabel * name = new QLabel(tempName);
-        ui->tableWidget->setCellWidget(i,0,name);
+        ui->tableWidget->setCellWidget(i,index++,name);
 
         QSpinBox * cycleNum = new QSpinBox();
         cycleNum->setMaximum(0xFFFF);
         cycleNum->setValue(numCycles);
-        ui->tableWidget->setCellWidget(i,1,cycleNum);
+        ui->tableWidget->setCellWidget(i,index++,cycleNum);
 
-        QDoubleSpinBox *  hvc = new QDoubleSpinBox();
-        hvc->setValue(parms.hvc);
-        ui->tableWidget->setCellWidget(i,2,hvc);
+        QSpinBox * sbRestTime = new QSpinBox();
+        sbRestTime->setMaximum(0xFFFF);
+        sbRestTime->setValue(restTime);
+        ui->tableWidget->setCellWidget(i,index++,sbRestTime);
 
-        QDoubleSpinBox *  lvc = new QDoubleSpinBox();
-        lvc->setValue(parms.lvc);
-        ui->tableWidget->setCellWidget(i,3,lvc);
+        QDoubleSpinBox *  sbHighVoltageCutoff = new QDoubleSpinBox();
+        sbHighVoltageCutoff->setValue(parms.hightVoltageCutoff);
+        ui->tableWidget->setCellWidget(i,index++,sbHighVoltageCutoff);
 
-        QDoubleSpinBox *  htc = new QDoubleSpinBox();
-        htc->setValue(parms.htc);
-        ui->tableWidget->setCellWidget(i,4,htc);
+        QDoubleSpinBox *  sbLowVoltageCutoff= new QDoubleSpinBox();
+        sbLowVoltageCutoff->setValue(parms.lowVoltageCutoff);
+        ui->tableWidget->setCellWidget(i,index++,sbLowVoltageCutoff);
 
-        QDoubleSpinBox *  ltc = new QDoubleSpinBox();
-        ltc->setMinimum(-999999999999999.000000);
-        ltc->setValue(parms.ltc);
-        ui->tableWidget->setCellWidget(i,5,ltc);
+        QDoubleSpinBox *  sbHighTemperatureCutoff = new QDoubleSpinBox();
+        sbHighTemperatureCutoff->setValue(parms.highTemperatureCutoff);
+        ui->tableWidget->setCellWidget(i,index++,sbHighTemperatureCutoff);
 
-        QDoubleSpinBox *  ccsc = new QDoubleSpinBox();
-        ccsc->setValue(ccr);
-        ui->tableWidget->setCellWidget(i,6,ccsc);
+        QDoubleSpinBox *  sbLowTemperatureCutoff = new QDoubleSpinBox();
+        sbLowTemperatureCutoff->setMinimum(-999999999999999.000000);
+        sbLowTemperatureCutoff->setValue(parms.lowTemperatureCutoff);
+        ui->tableWidget->setCellWidget(i,index++,sbLowTemperatureCutoff);
 
-        QDoubleSpinBox *  dcsc = new QDoubleSpinBox();
-        dcsc->setValue(dcr);
-        ui->tableWidget->setCellWidget(i,7,dcsc);
+        QDoubleSpinBox *  sbChargeCurrrentCRate= new QDoubleSpinBox();
+        sbChargeCurrrentCRate->setValue(chargeCurrentCRate);
+        ui->tableWidget->setCellWidget(i,index++,sbChargeCurrrentCRate);
 
-        QDoubleSpinBox *  rf = new QDoubleSpinBox();
-        rf->setValue(parms.rf);
-        ui->tableWidget->setCellWidget(i,8,rf);
+        QDoubleSpinBox *  sbDischargeCurrrentCRate = new QDoubleSpinBox();
+        sbDischargeCurrrentCRate->setValue(dischargeCurrentCRate);
+        ui->tableWidget->setCellWidget(i,index++,sbDischargeCurrrentCRate);
 
-        QDoubleSpinBox *  ccs = new QDoubleSpinBox();
-        ccs->setValue(parms.ccs);
-        ui->tableWidget->setCellWidget(i,9,ccs);
+        QDoubleSpinBox *  sbReportingFrequency = new QDoubleSpinBox();
+        sbReportingFrequency->setValue(parms.reportingFrequency);
+        ui->tableWidget->setCellWidget(i,index++,sbReportingFrequency);
 
-        QDoubleSpinBox *  sf = new QDoubleSpinBox();
-        sf->setValue(parms.sf);
-        ui->tableWidget->setCellWidget(i,10,sf);
+        QDoubleSpinBox * sbConstantCurrentSetpoint = new QDoubleSpinBox();
+        sbConstantCurrentSetpoint->setValue(parms.constantCurrentSetpoint);
+        ui->tableWidget->setCellWidget(i,index++,sbConstantCurrentSetpoint);
+
+        QDoubleSpinBox *  sbSinewaveFrequency = new QDoubleSpinBox();
+        sbSinewaveFrequency->setMaximum(99999999999999.9f);
+        sbSinewaveFrequency->setValue(parms.sinewaveFrequency);
+        ui->tableWidget->setCellWidget(i,index++,sbSinewaveFrequency);
+
+        QDoubleSpinBox *  sbCapacity = new QDoubleSpinBox();
+        sbCapacity->setMaximum(9999999.9f);
+        sbCapacity->setValue(capacity);
+        ui->tableWidget->setCellWidget(i, index++, sbCapacity);
+
 
         //QLineEdit * one = new QLineEdit();
         bar.setValue(i);
@@ -95,8 +108,8 @@ void wizardPageThree::onSaveProject() {
         QTextStream data( &f );
         QStringList strList;
 
-        for(int c = 0; c < ui->tableWidget->columnCount(); c++) {
-            strList << " " + ui->tableWidget->horizontalHeaderItem(c)->data(Qt::DisplayRole).toString() + " ";
+        for(int d = 0; d < ui->tableWidget->columnCount(); d++) {
+            strList << " " + ui->tableWidget->horizontalHeaderItem(d)->data(Qt::DisplayRole).toString() + " ";
         }
 
         data << strList.join(",") + "\n";
@@ -111,9 +124,9 @@ void wizardPageThree::onSaveProject() {
                     strList << " "+qobject_cast<QLabel*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
                     break;
                 case 1:
+                case 2:
                     strList << " "+qobject_cast<QSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
                     break;
-                case 2:
                 case 3:
                 case 4:
                 case 5:
@@ -122,6 +135,8 @@ void wizardPageThree::onSaveProject() {
                 case 8:
                 case 9:
                 case 10:
+                case 11:
+                case 12:
                     strList << " "+qobject_cast<QDoubleSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
                     break;
                 }
@@ -157,9 +172,17 @@ void wizardPageThree::onProjectName(QString val) {
 }
 
 void wizardPageThree::onCCR(double val) {
-    ccr = val;
+    chargeCurrentCRate = val;
 }
 
 void wizardPageThree::onDCR(double val) {
-    dcr = val;
+    dischargeCurrentCRate = val;
+}
+
+void wizardPageThree::onCapacity(double val) {
+    capacity = val;
+}
+
+void wizardPageThree::onRestTime(int val) {
+    restTime = val;
 }

@@ -436,17 +436,18 @@ struct test {
 };
 
 struct testParms {
-    float hvc = 4.2f;
-    float lvc = 2.65f;
+    int restTime = 120;
+    float hightVoltageCutoff = 4.2f;
+    float lowVoltageCutoff = 2.65f;
     float hvcv = 4.2f;
     float lvcv = 2.8f;
-    float htc = 45.0f;
-    float ltc = -20.0f;
+    float highTemperatureCutoff = 45.0f;
+    float lowTemperatureCutoff = -20.0f;
     float ccsc = 3.0f;
     float dcsc = 3.0f;
-    float rf = 1.0f;
-    float ccs = 2.0f;
-    float sf = 1000.0f;
+    float reportingFrequency = 1.0f;
+    float constantCurrentSetpoint = 2.0f;
+    float sinewaveFrequency = 1000.0f;
     int pont = 600;
     int poft = 600;
 };

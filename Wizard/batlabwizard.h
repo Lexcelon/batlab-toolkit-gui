@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QWizard>
 #include <QWizardPage>
-#include "globals.h"
+#include "../globals.h"
 
 #include "wizardpageone.h"
 #include "wizardpagetwo.h"
@@ -18,6 +18,8 @@ public:
     ~batlabWizard();
 
 signals:
+
+    void emitFinished(QString projectName);
 
 public slots:
     void onShow();

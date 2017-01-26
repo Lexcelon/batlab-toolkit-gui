@@ -43,8 +43,9 @@ void batlabCellManager::onNewCell(uchar key) {
     connect(cells[key],SIGNAL(testFinished(uchar)),this,SLOT(onTestFinished(uchar)));
 }
 
-void batlabCellManager::onNewCell(QString name , QString number) {
-
+void batlabCellManager::onNewCell(QString id , testParms parms, double ccr, double dcr, double cap, int cycles) {
+    batlabCell * tempCell = new batlabCell(id,parms,cycles);
+    cellList.push_back(tempCell);
 }
 
 
@@ -101,3 +102,11 @@ void batlabCellManager::onPrintCell(uchar key, properties val) {
     }
 }
 
+void batlabCellManager::onCreateTestPlan(int numBatlabs) {
+    testPlan = new batlabTestPlan(numBatlabs,cellList);
+}
+
+
+void batlabCellManager::onStartTests() {
+    testPlan->onStartTests();
+}
