@@ -4,6 +4,7 @@
 #include <QObject>
 #include "globals.h"
 #include "batlabcell.h"
+#include "batlabcom.h"
 
 class batlabTestGroup : public QObject
 {
@@ -23,6 +24,10 @@ public slots:
     void onSetBatlabID(int num) { batlabId = num; }
     bool onGetIsRunning() {return isRunning; }
     void updateParms(int index);
+    void connectCom(batlabCom * com);
+    void receiveStream(int,int,int,float,int,int,int);
+    void receiveStreamExt(int,int,int,int,int);
+
 
 signals:
     void emitFinishedTests(int);

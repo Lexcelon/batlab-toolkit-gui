@@ -103,6 +103,7 @@ void batlabCellManager::onPrintCell(uchar key, properties val) {
 }
 
 void batlabCellManager::onCreateTestPlan(int numBatlabs) {
+    numberOfBatlabs = numBatlabs;
     testPlan = new batlabTestPlan(numBatlabs,cellList);
 }
 

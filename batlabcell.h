@@ -20,9 +20,6 @@ public:
 
     ~batlabCell();
 
-    void receiveStream(int,float,int,int,int);
-    void receiveStreamExt(int,int,int);
-
     QVector<int> * getTemperature() { return &temperature; }
     QVector<int> * getVoltage() { return &voltage; }
     QVector<int> * getCurrent() { return &current; }
@@ -47,6 +44,10 @@ public:
 signals:
     void testFinished(uchar);
     void updateParameter(int unit, int cell, writeVals val,int num);
+
+public slots:
+    void receiveStream(int,float,int,int,int);
+    void receiveStreamExt(int,int,int);
 
 private:
     uchar unit;

@@ -20,6 +20,13 @@ public slots:
     void onCreatePlan();
     void onStartTests();
     void onFinishedTests(int);
+    batlabTestGroup* getNextTestGroup()
+    {
+        if (!testGroupList.isEmpty()) {
+            return testGroupList.takeFirst();
+        }
+        return nullptr;
+    }
 
 private:
     int numberOfBatlabs = 0;
