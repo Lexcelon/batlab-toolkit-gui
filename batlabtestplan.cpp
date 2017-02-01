@@ -32,20 +32,13 @@ void batlabTestPlan::onCreatePlan() {
         }
         numCells -= j;
     }
-
-
-//    for (int i = 0; i < testGroupList.size(); ++i) {
-//        qDebug() << testGroupList[i]->onGetBatlabID();
-//        for (int j = 0; j < testGroupList[i]->onGetSize(); j++) {
-//            qDebug() << testGroupList[i]->onGetCellID(j);
-//        }
-//    }
 }
 
 void batlabTestPlan::onStartTests() {
         int i = 0;
         for (i = 0; i < ((testGroupList.size()>3)?3:testGroupList.size()); ++i) {
             testGroupList[i]->onSetBatlabID(i);
+
             testGroupList[i]->onStartTests();
 
             connect(testGroupList[i],SIGNAL(emitFinishedTests(int)),this,SLOT(onFinishedTests(int)));

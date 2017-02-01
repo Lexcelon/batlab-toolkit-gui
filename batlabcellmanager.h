@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include "batlabcell.h"
+#include "batlabcom.h"
 #include "batlabtestplan.h"
 #include <QDebug>
 
@@ -53,7 +54,11 @@ private:
     QMap<uchar,batlabCell*> cells;
     QVector<batlabCell*> cellList;
 
+    QVector<batlabCom*> comList;
+
     batlabTestPlan * testPlan;
+
+    int numberOfBatlabs;
 
 };
 
