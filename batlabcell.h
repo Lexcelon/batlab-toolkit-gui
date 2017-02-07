@@ -40,9 +40,12 @@ public:
     void newTest(uchar testnum);
 
     void onUpdateParameters(int unit, int cell);
+    testParms onGetParameters();
+
+    int onGetNextTest();
 
 signals:
-    void testFinished(uchar);
+    void testFinished(int cell, QString id, int testNum);
     void updateParameter(int unit, int cell, writeVals val,int num);
 
 public slots:
