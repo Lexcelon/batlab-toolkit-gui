@@ -37,15 +37,18 @@ void batlabCell::receiveStream(int stat,float temp,int curr, int volt,int cha) {
     voltage.append(volt);
     charge.append(cha);
 
-    if (!tests.isEmpty()) {
-        tests.last().temperature.append(temp);
-        tests.last().current.append(curr);
-        tests.last().voltage.append(volt);
-        tests.last().charge.append(cha);
-    }
+    if (status & 0x01)
+    {
+        test newTest;
+        newTest.temperature = temperature;
+        newTest.current = current;
+        newTest.voltage = voltage;
+        newTest.charge = charge;
 
-    if (status & 0x01) {
-        emit testFinished((unit << 2)|cell);
+        tests.push_back(newTest);
+        //used for daisy chaining
+//        emit testFinished((unit << 2)|cell);
+        emit testFinished(static_cast<int>(cell), id, tests.size());
     }
 }
 
@@ -55,7 +58,7 @@ void batlabCell::receiveStreamExt(int currAmp,int volPhase,int volAmp) {
     voltagePhase.append(volPhase);
     voltageAmplitude.append(volAmp);
 
-    if (!tests.isEmpty()) {
+    if (!tests.last()) {
         tests.last().currentAmplitude.append(currAmp);
         tests.last().voltagePhase.append(volPhase);
         tests.last().voltageAmplitude.append(volAmp);
@@ -66,6 +69,21 @@ void batlabCell::newTest(uchar testnum) {
     test newTest;
     newTest.mode = testnum;
     tests.push_back(newTest);
+}
+
+
+testParms batlabCell::onGetParameters()
+{
+    return testParameters;
+}
+
+int batlabCell::onGetNextTest()
+{
+    if (!testsToRun.isEmpty()) {
+        return testsToRun.takeFirst();
+    } else {
+        return -1;
+    }
 }
 
 void batlabCell::onUpdateParameters(int unit, int cell)

@@ -229,3 +229,14 @@ void Batlab::onLoadTest(QString name) {
 
     cellManager->onCreateTestPlan(3);
 }
+
+void Batlab::onFinishedTests(int cell, QString designator, int testNum)
+{
+    Q_UNUSED(cell)
+    for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
+        if (designator == ui->tableWidget->item(0,i)->text()) {
+            ui->tableWidget->item(i,testNum)->setBackgroundColor(Qt::green);
+            break;
+        }
+    }
+}

@@ -32,6 +32,7 @@ private:
     int numberOfBatlabs = 0;
     QVector<batlabCell*> cellList;
     QVector<batlabTestGroup*> testGroupList;
+    QVector<batlabCom*> comList;
 };
 
 #endif // BATLABTESTPLAN_H
