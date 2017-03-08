@@ -28,6 +28,9 @@ public slots:
         return nullptr;
     }
 
+signals:
+    void emitAllTestsFinished();
+
 private:
     int numberOfBatlabs = 0;
     QVector<batlabCell*> cellList;

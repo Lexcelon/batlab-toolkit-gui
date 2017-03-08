@@ -19,8 +19,11 @@ public:
     ~batlabCellManager();
 
 public slots:
-    void onReceiveStream(int,int,int,float,int,int,int);
-    void onReceiveStreamExt(int,int,int,int,int);
+//    void onReceiveStream(int,int,int,float,int,int,int);
+    void onReceiveStream(int, int, int, float, float, float);
+
+    //    void onReceiveStream(int,int,int,float,int,int,int);
+//    void onReceiveStreamExt(int,int,int,int,int);
     void onNewCell(uchar);
     void onDeleteCell(uchar);
     void onPrintCell(uchar key, properties val);
@@ -32,6 +35,7 @@ public slots:
 
     void onCreateTestPlan(int numBatlabs);
     void onStartTests();
+    void onAllTestsFinished();
 
     batlabCell* onGetCell(int index) { return cellList.at(index); }
 
@@ -51,6 +55,7 @@ signals:
     void emitTests(QVector<modeCodes>*);
 
 private:
+    void saveLevelOneData(batlabCell* cellPointer);
     QMap<uchar,batlabCell*> cells;
     QVector<batlabCell*> cellList;
 

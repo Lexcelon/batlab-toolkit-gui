@@ -19,9 +19,11 @@ public:
     ~batlabCom();
 
 signals:
-    void emitResponse(int,int,QString,int);
+    void emitResponse(int,int,bool,bool);
     void emitStream(int,int,int,float,int,int,int);
     void emitStreamExt(int,int,int,int,int);
+
+    void emitStream(int,int,int,float,float,float);
 
 
 public slots:

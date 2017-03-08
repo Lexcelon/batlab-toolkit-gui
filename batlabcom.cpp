@@ -30,35 +30,35 @@ void batlabCom::onRead() {
     while (len > 0)
     if ((uchar)rec[start] == 0xAA) {
         qDebug() << "RESPONSE PACKET";
-        qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
-        qDebug() << names[enumVals[(uchar)rec[start+2]]] +": " << (int)rec[start+3] << (int)rec[start+4];
+        qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
+        qDebug() << "Low Byte Fail: " << (bool)(rec[start+3]) << " High Byte Fail: " << (bool)(rec[start+4]);
 
-        emit emitResponse((int)(rec[start+1] >> 2),(int)(rec[start+1] & 0x03),names[enumVals[(uchar)rec[start+2]]], 256*(int)rec[start+3] + (int)rec[start+4]);
+        emit emitResponse((int)(rec[start+1]),(int)(rec[start+2]), (bool)(rec[start+3]), (bool)rec[start+4]);
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
         qDebug() << (int)(rec[start+1]);
-        int unit = (int)(rec[start+1] >> 2);
-        int cell = (int)(rec[start+1] & 0x03);
+        int cell = (int)(rec[start+1]);
         if ((uchar)rec[start+2] == 0x00) {
             qDebug() << "STREAM PACKET";
             qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
-            int status,temp,current,voltage,charge;
-            status = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
-            temp = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
-            current = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
-            voltage = 256*(uchar)rec[start+9] + (uchar)rec[start+10];
-            charge = 256*(uchar)rec[start+11] + (uchar)rec[start+12];
-            emit emitStream(unit,cell,status,getTemp(temp),current,voltage,charge);
-        } else {
-            qDebug() << "STREAM PACKET EXT";
-            qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
-            int currAmp,volPhase,volAmp;
-            currAmp = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
-            volPhase = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
-            volAmp = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
-            emit emitStreamExt(unit,cell,currAmp,volPhase,volAmp);
+            int mode, status, temp, current, voltage;
+            mode = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
+            status = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
+            temp = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
+            current = 256*(uchar)rec[start+9] + (uchar)rec[start+10];
+            voltage = 256*(uchar)rec[start+11] + (uchar)rec[start+12];
+            emit emitStream(cell,mode,status,getTemperature(temp),getCurrent(current),getVoltage(voltage));
         }
+//        else {
+//            qDebug() << "STREAM PACKET EXT";
+//            qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
+//            int currAmp,volPhase,volAmp;
+//            currAmp = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
+//            volPhase = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
+//            volAmp = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
+//            emit emitStreamExt(unit,cell,currAmp,volPhase,volAmp);
+//        }
         len-=13;
         start+=13;
     }

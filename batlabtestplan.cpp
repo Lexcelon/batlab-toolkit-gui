@@ -52,14 +52,19 @@ void batlabTestPlan::onStartTests() {
 void batlabTestPlan::onFinishedTests(int val) {
     testGroupList.removeAt(val);
     int i = 0;
-    while (i < testGroupList.size()) {
+    while ((i < testGroupList.size()) && (i < numberOfBatlabs)) {
         if (testGroupList[i]->onGetIsRunning()) {
-            i++;
         } else {
             testGroupList[i]->onSetBatlabID(val);
+            testGroupList[i]->connectCom(comList[i]);
             testGroupList[i]->onStartTests();
 
             connect(testGroupList[i],SIGNAL(emitFinishedTests(int)),this,SLOT(onFinishedTests(int)));
         }
+        i++;
+    }
+
+    if (i == 0) {
+        emit emitAllTestsFinished();
     }
 }

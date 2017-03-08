@@ -25,50 +25,89 @@ batlabCell::batlabCell(QString designator, testParms parms, int cycles)
     }
 }
 
-batlabCell::~batlabCell()
+void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float volt)
 {
-}
-
-void batlabCell::receiveStream(int stat,float temp,int curr, int volt,int cha) {
     status = stat;
     statusString = parseStatus(stat);
     temperature.append(temp);
     current.append(curr);
     voltage.append(volt);
-    charge.append(cha);
+    modes.append(mode);
 
     if (status & 0x01)
     {
-        test newTest;
-        newTest.temperature = temperature;
-        newTest.current = current;
-        newTest.voltage = voltage;
-        newTest.charge = charge;
-
+        testPacket newTest;
+        newTest.REG_TEMPERATURE = temperature;
+        newTest.REG_CURRENT = current;
+        newTest.REG_VOLTAGE = voltage;
+        newTest.REG_MODE = modes;
         tests.push_back(newTest);
+
+        temperature.clear();
+        current.clear();
+        voltage.clear();
+        modes.clear();
+
         //used for daisy chaining
-//        emit testFinished((unit << 2)|cell);
         emit testFinished(static_cast<int>(cell), id, tests.size());
     }
 }
 
 
-void batlabCell::receiveStreamExt(int currAmp,int volPhase,int volAmp) {
-    currentAmplitude.append(currAmp);
-    voltagePhase.append(volPhase);
-    voltageAmplitude.append(volAmp);
-
-    if (!tests.last()) {
-        tests.last().currentAmplitude.append(currAmp);
-        tests.last().voltagePhase.append(volPhase);
-        tests.last().voltageAmplitude.append(volAmp);
-    }
+batlabCell::~batlabCell()
+{
 }
+
+//void batlabCell::receiveStream(int stat,float temp,int curr, int volt,int cha) {
+//    status = stat;
+//    statusString = parseStatus(stat);
+//    temperature.append(temp);
+//    current.append(curr);
+//    voltage.append(volt);
+//    charge.append(cha);
+
+//    if (status & 0x01)
+//    {
+//        test newTest;
+//        newTest.temperature = temperature;
+//        newTest.current = current;
+//        newTest.voltage = voltage;
+//        newTest.charge = charge;
+//        newTest.testType = testsToRun.first();
+//        tests.push_back(newTest);
+
+//        temperature.clear();
+//        current.clear();
+//        voltage.clear();
+//        charge.clear();
+
+//        //used for daisy chaining
+////        emit testFinished((unit << 2)|cell);
+//        emit testFinished(static_cast<int>(cell), id, tests.size());
+//    }
+//}
+
+
+//void batlabCell::receiveStreamExt(int currAmp,int volPhase,int volAmp) {
+//    currentAmplitude.append(currAmp);
+//    voltagePhase.append(volPhase);
+//    voltageAmplitude.append(volAmp);
+
+//    if (status & 0x01) {
+//        tests.last().currentAmplitude = currentAmplitude;
+//        tests.last().voltagePhase = voltagePhase;
+//        tests.last().voltageAmplitude = voltageAmplitude;
+
+//        currentAmplitude.clear();
+//        voltagePhase.clear();
+//        voltageAmplitude.clear();
+//    }
+//}
 
 void batlabCell::newTest(uchar testnum) {
     test newTest;
     newTest.mode = testnum;
-    tests.push_back(newTest);
+//    tests.push_back(newTest);
 }
 
 
@@ -88,21 +127,21 @@ int batlabCell::onGetNextTest()
 
 void batlabCell::onUpdateParameters(int unit, int cell)
 {
-
-//    emit updateParameter(unit, cell, writeVals::chargeCurrentCutoff,testParameters.cc);
-//    emit updateParameter(unit, cell, writeVals::dischargeCurrentCutoff);
-//    emit updateParameter(unit, cell, writeVals::chargeCurrentSafetyCutoff,testParameters.chargeCurrentSafetyCutoff);
     emit updateParameter(unit, cell, writeVals::dischargeCurrentSafetyCutoff,testParameters.dcsc);
-//    emit updateParameter(unit, cell, writeVals::chargeCVCurrentCutoff,testParameters.);
-//    emit updateParameter(unit, cell, writeVals::dischargeCVCurrentCutoff);
-//    emit updateParameter(unit, cell, writeVals::chargeVoltageCutoff, testParameters.);
-//    emit updateParameter(unit, cell, writeVals::dischargeVoltageCutoff, testParameters.c);
     emit updateParameter(unit, cell, writeVals::highTempChargeSafetyCutoff, testParameters.highTemperatureCutoff);
-//    emit updateParameter(unit, cell, writeVals::highTempDischargeSafetyCutoff);
     emit updateParameter(unit, cell, writeVals::pulseOffTime,testParameters.poft);
     emit updateParameter(unit, cell, writeVals::pulseOnTime, testParameters.pont);
     emit updateParameter(unit, cell, writeVals::sinewaveFrequency,testParameters.sinewaveFrequency);
     emit updateParameter(unit, cell, writeVals::streamReportingPeriod, testParameters.reportingFrequency);
+
+//    emit updateParameter(unit, cell, writeVals::chargeCurrentCutoff,testParameters.cc);
+//    emit updateParameter(unit, cell, writeVals::dischargeCurrentCutoff);
+//    emit updateParameter(unit, cell, writeVals::chargeCurrentSafetyCutoff,testParameters.chargeCurrentSafetyCutoff);
+//    emit updateParameter(unit, cell, writeVals::chargeCVCurrentCutoff,testParameters.);
+//    emit updateParameter(unit, cell, writeVals::dischargeCVCurrentCutoff);
+//    emit updateParameter(unit, cell, writeVals::chargeVoltageCutoff, testParameters.);
+//    emit updateParameter(unit, cell, writeVals::dischargeVoltageCutoff, testParameters.c);
+//    emit updateParameter(unit, cell, writeVals::highTempDischargeSafetyCutoff);
 
 //    float hvc = 4.2f;
 //    float lvc = 2.65f;

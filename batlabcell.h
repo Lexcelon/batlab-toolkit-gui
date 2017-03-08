@@ -20,14 +20,15 @@ public:
 
     ~batlabCell();
 
-    QVector<int> * getTemperature() { return &temperature; }
-    QVector<int> * getVoltage() { return &voltage; }
-    QVector<int> * getCurrent() { return &current; }
+    QVector<int> * getModes() { return &modes; }
+    QVector<float> * getTemperature() { return &temperature; }
+    QVector<float> * getVoltage() { return &voltage; }
+    QVector<float> * getCurrent() { return &current; }
     QVector<int> * getCurrentAmplitude() { return &currentAmplitude; }
     QVector<int> * getVoltageAmplitude() { return &voltageAmplitude; }
     QVector<int> * getVoltagePhase() { return &voltagePhase; }
     QVector<int> * getCharge() { return &charge; }
-
+    QVector<testPacket> getTestData() { return tests; }
     QVector<modeCodes>* getTests() { return &testsToRun; }
 
     uchar getUnit(){ return unit;}
@@ -49,20 +50,24 @@ signals:
     void updateParameter(int unit, int cell, writeVals val,int num);
 
 public slots:
-    void receiveStream(int,float,int,int,int);
-    void receiveStreamExt(int,int,int);
+//    void receiveStream(int,float,int,int,int);
+//    void receiveStreamExt(int,int,int);
+
+    void receiveStream(int, int, float, float, float);
+
 
 private:
     uchar unit;
     uchar cell;
-    QVector<test> tests;
-    QVector<int> temperature;
-    QVector<int> voltage;
-    QVector<int> current;
+    QVector<testPacket> tests;
+    QVector<float> temperature;
+    QVector<float> voltage;
+    QVector<float> current;
     QVector<int> currentAmplitude;
     QVector<int> voltageAmplitude;
     QVector<int> voltagePhase;
     QVector<int> charge;
+    QVector<int> modes;
     int status;
     QString statusString;
 
