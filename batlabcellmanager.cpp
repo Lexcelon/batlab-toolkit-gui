@@ -1,4 +1,5 @@
 #include "batlabcellmanager.h"
+#include <QFile>
 
 batlabCellManager::batlabCellManager()
 {
@@ -14,10 +15,19 @@ batlabCellManager::~batlabCellManager()
 }
 
 
-void batlabCellManager::onReceiveStream(int unit,int cell,int status,float temp,int current,int voltage,int charge) {
-    uchar key = uchar(((unit<<2) + cell));
+//void batlabCellManager::onReceiveStream(int unit,int cell,int status,float temp,int current,int voltage,int charge) {
+//    uchar key = uchar(((unit<<2) + cell));
+//    if (cells.contains(key)) {
+//        cells[key]->receiveStream( status, temp, current, voltage, charge);
+//    } else {
+//        onNewCell(key);
+//    }
+//}
+
+void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage) {
+    uchar key = uchar(cell);
     if (cells.contains(key)) {
-        cells[key]->receiveStream( status, temp, current, voltage, charge);
+        cells[key]->receiveStream( mode, status, temp, current, voltage);
     } else {
         onNewCell(key);
     }
@@ -29,14 +39,14 @@ void batlabCellManager::onGetTests(uchar key) {
     }
 }
 
-void batlabCellManager::onReceiveStreamExt(int unit,int cell,int currentAmp,int voltagePhase,int voltageAmp) {
-    uchar key = uchar(((unit<<2) + cell));
-    if (cells.contains(key)) {
-        cells[key]->receiveStreamExt( currentAmp,voltagePhase,voltageAmp);
-    } else {
-        onNewCell(key);
-    }
-}
+//void batlabCellManager::onReceiveStreamExt(int unit,int cell,int currentAmp,int voltagePhase,int voltageAmp) {
+//    uchar key = uchar(((unit<<2) + cell));
+//    if (cells.contains(key)) {
+//        cells[key]->receiveStreamExt( currentAmp,voltagePhase,voltageAmp);
+//    } else {
+//        onNewCell(key);
+//    }
+//}
 
 void batlabCellManager::onNewCell(uchar key) {
     cells.insert(key,new batlabCell(key));
@@ -105,9 +115,72 @@ void batlabCellManager::onPrintCell(uchar key, properties val) {
 void batlabCellManager::onCreateTestPlan(int numBatlabs) {
     numberOfBatlabs = numBatlabs;
     testPlan = new batlabTestPlan(numBatlabs,cellList);
+    connect(testPlan, SIGNAL(emitAllTestsFinished()), this, SLOT(onAllTestsFinished()));
 }
 
 
 void batlabCellManager::onStartTests() {
     testPlan->onStartTests();
+}
+
+void batlabCellManager::onAllTestsFinished()
+{
+    for (int i = 0; i < cellList.size(); ++i) {
+        saveLevelOneData(cellList[i]);
+    }
+}
+
+void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
+{
+    QString id = cellPointer->getDesignator();
+    testParms tempParms = cellPointer->onGetParameters();
+    QVector<testPacket> tempTests = cellPointer->getTestData();
+
+
+    QFile f( "projectName.blp" );
+
+    if (f.open(QFile::Append))
+    {
+        QTextStream data( &f );
+        QStringList strList;
+
+        data << id + "\n";
+
+
+//        for(int d = 0; d < ui->tableWidget->columnCount(); d++) {
+//            strList << " " + ui->tableWidget->horizontalHeaderItem(d)->data(Qt::DisplayRole).toString() + " ";
+//        }
+
+//        data << strList.join(",") + "\n";
+
+//        for( int r = 0; r < ui->tableWidget->rowCount(); ++r )
+//        {
+//            strList.clear();
+//            for( int c = 0; c < ui->tableWidget->columnCount(); ++c )
+//            {
+//                switch(c) {
+//                case 0:
+//                    strList << " "+qobject_cast<QLabel*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
+//                    break;
+//                case 1:
+//                case 2:
+//                    strList << " "+qobject_cast<QSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
+//                    break;
+//                case 3:
+//                case 4:
+//                case 5:
+//                case 6:
+//                case 7:
+//                case 8:
+//                case 9:
+//                case 10:
+//                case 11:
+//                case 12:
+//                    strList << " "+qobject_cast<QDoubleSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
+//                    break;
+//                }
+        //            }
+        data << strList.join( "," )+"\n";
+    }
+    f.close();
 }

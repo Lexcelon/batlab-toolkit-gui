@@ -43,7 +43,7 @@ enum vals {
     pulseOnTime,
     pulseOffTime,
     NC_VOLTAGE,
-    SYSTEM_TIMER,
+    SYSTEM_TIMER1,
     STREAM_TIMER,
     CV_DUTY,
     PULSE_TIMER,
@@ -86,7 +86,7 @@ static QMap<vals, uchar> registers = {
     {pulseOnTime, 0x52},
     {pulseOffTime, 0x53},
     {NC_VOLTAGE, 0x54},
-    {SYSTEM_TIMER, 0x55},
+    {SYSTEM_TIMER1, 0x55},
     {STREAM_TIMER, 0x56},
     {CV_DUTY, 0x0B},
     {PULSE_TIMER, 0x0C},
@@ -129,7 +129,7 @@ static QMap<uchar, vals> enumVals = {
     { 0x52, pulseOnTime},
     { 0x53, pulseOffTime},
     { 0x54, NC_VOLTAGE},
-    { 0x55, SYSTEM_TIMER},
+    { 0x55, SYSTEM_TIMER1},
     { 0x56, STREAM_TIMER},
     { 0x0B, CV_DUTY},
     { 0x0C, PULSE_TIMER},
@@ -187,7 +187,7 @@ static QMap<vals, QString> names = {
     {pulseOnTime, "Pulse On Time"},
     {pulseOffTime, "Pulse Off Time"},
     {NC_VOLTAGE, "NC_VOLTAGE"},
-    {SYSTEM_TIMER, "SYSTEM_TIMER"},
+    {SYSTEM_TIMER1, "SYSTEM_TIMER"},
     {STREAM_TIMER, "STREAM_TIMER"},
     {CV_DUTY, "CV_DUTY"},
     {PULSE_TIMER, "PULSE_TIMER"},
@@ -394,6 +394,41 @@ static float getTemp(int val) {
     return T;
 }
 
+static float getTemperature(signed short val)
+{
+    float T;
+
+    T = static_cast<float>(val) / static_cast<float>(std::numeric_limits<signed short>::max()) * 5.0f;
+
+    return T;
+}
+
+static float getCurrent(signed short val)
+{
+    float T;
+
+    T = static_cast<float>(val) / static_cast<float>(std::numeric_limits<signed short>::max()) * 4.096f;
+
+    return T;
+}
+
+static float getVoltage(signed short val)
+{
+    float T;
+
+    T = static_cast<float>(val) / static_cast<float>(std::numeric_limits<signed short>::max()) * 4.5f;
+
+    return T;
+}
+
+static float getPhase(unsigned char val)
+{
+    float T;
+
+    T = static_cast<float>(val) / static_cast<float>(std::numeric_limits<unsigned char>::max()) * 360.0f;
+
+    return T;
+}
 
 enum class properties {
     unit,
@@ -433,7 +468,10 @@ struct test {
     QVector<int> voltagePhase;
     QVector<int> charge;
     uchar mode;
+    modeCodes testType;
 };
+
+
 
 struct testParms {
     int restTime = 120;
@@ -450,6 +488,90 @@ struct testParms {
     float sinewaveFrequency = 1000.0f;
     int pont = 600;
     int poft = 600;
+};
+
+
+//Status register codes
+#define STAT_VOLTAGE_LIMIT_CHG  0x0001
+#define STAT_VOLTAGE_LIMIT_DCHG 0x0002
+#define STAT_CURRENT_LIMIT_CHG  0x0004
+#define STAT_CURRENT_LIMIT_DCHG 0x0008
+#define STAT_TEMP_LIMIT_CHG     0x0010
+#define STAT_TEMP_LIMIT_DCHG    0x0020
+#define STAT_BACKWARDS          0x0040
+#define STAT_NO_CELL            0x0080
+
+#define ERR_VOLTAGE_LIMIT_CHG  0x0001
+#define ERR_VOLTAGE_LIMIT_DCHG 0x0002
+#define ERR_CURRENT_LIMIT_CHG  0x0004
+#define ERR_CURRENT_LIMIT_DCHG 0x0008
+#define ERR_TEMP_LIMIT_CHG     0x0010
+#define ERR_TEMP_LIMIT_DCHG    0x0020
+
+//Mode register codes
+#define MODE_NO_CELL           0x0000
+#define MODE_BACKWARDS         0x0001
+#define MODE_IDLE              0x0002
+#define MODE_CHARGE            0x0003
+#define MODE_DISCHARGE         0x0004
+#define MODE_IMPEDANCE         0x0005
+#define MODE_STOPPED           0x0006
+
+
+
+struct testPacket {
+    QVector<int> REG_MODE;
+    QVector<int> REG_STATUS;
+    QVector<float> REG_TEMPERATURE;
+    QVector<float> REG_CURRENT;
+    QVector<float> REG_VOLTAGE;
+};
+
+enum cellNamespace {
+    MODE,
+    ERROR,
+    STATUS,
+    CURRENT_SETPOINT,
+    REPORT_INTERVAL,
+
+    TEMPERATURE,
+    CURRENT,
+    VOLTAGE,
+    CHARGEL,
+    CHARGEH,
+
+    VOLTAGE_LIMIT_CHG,
+    VOLTAGE_LIMIT_DCHG,
+    CURRENT_LIMIT_CHG,
+    CURRENT_LIMIT_DCHG,
+    TEMP_LIMIT_CHG,
+    TEMP_LIMIIT_DCHG,
+
+    CURRENT_PHS,
+    VOLTAGE_PHS,
+    CURRENT_PP,
+    VOLTAGE_PP,
+
+    CURRENT_CALIB,
+    CURRENT_CALIB2,
+    TEMP_CALIB
+};
+
+enum unitNamespace {
+    SERIAL_NUM,
+    FIRMWARE_VER,
+    VCC,
+    SINE_FREQ,
+    SYSTEM_TIMER,
+    SETTINGS
+};
+
+enum commsNamespace {
+    LED0,
+    LED1,
+    LED2,
+    LED3,
+    EXTERNAL_PSU
 };
 
 #endif // GLOBALS

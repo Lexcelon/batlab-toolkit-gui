@@ -28,8 +28,10 @@ public slots:
     void connectCom(batlabCom * com);
     void disconnectCom(batlabCom * com);
 
-    void receiveStream(int,int,int,float,int,int,int);
-    void receiveStreamExt(int,int,int,int,int);
+    void receiveStream(int cell, int mode, int stat, float temp, float curr, float volt);
+
+//    void receiveStream(int,int,int,float,int,int,int);
+//    void receiveStreamExt(int,int,int,int,int);
 
     void onTestFinished(int, QString id, int testNum);
 
