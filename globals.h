@@ -473,21 +473,17 @@ struct test {
 
 
 
-struct testParms {
+struct testParms
+{
     int restTime = 120;
     float hightVoltageCutoff = 4.2f;
     float lowVoltageCutoff = 2.65f;
-    float hvcv = 4.2f;
-    float lvcv = 2.8f;
-    float highTemperatureCutoff = 45.0f;
-    float lowTemperatureCutoff = -20.0f;
-    float ccsc = 3.0f;
-    float dcsc = 3.0f;
+    float temperatureCutoffCharge = 45.0f;
+    float temperatureCutoffDischarge = -20.0f;
+    float currentCutoffCharge = 1.0f;
+    float currentCutoffDischarge = 1.0f;
     float reportingFrequency = 1.0f;
-    float constantCurrentSetpoint = 2.0f;
-    float sinewaveFrequency = 1000.0f;
-    int pont = 600;
-    int poft = 600;
+    float currentSetpoint = 2.0f;
 };
 
 

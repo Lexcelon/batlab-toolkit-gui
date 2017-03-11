@@ -39,15 +39,6 @@ void batlabCellManager::onGetTests(uchar key) {
     }
 }
 
-//void batlabCellManager::onReceiveStreamExt(int unit,int cell,int currentAmp,int voltagePhase,int voltageAmp) {
-//    uchar key = uchar(((unit<<2) + cell));
-//    if (cells.contains(key)) {
-//        cells[key]->receiveStreamExt( currentAmp,voltagePhase,voltageAmp);
-//    } else {
-//        onNewCell(key);
-//    }
-//}
-
 void batlabCellManager::onNewCell(uchar key) {
     cells.insert(key,new batlabCell(key));
     connect(cells[key],SIGNAL(testFinished(uchar)),this,SLOT(onTestFinished(uchar)));

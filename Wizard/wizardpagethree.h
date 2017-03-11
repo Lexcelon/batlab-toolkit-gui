@@ -24,8 +24,6 @@ public slots:
     void onStartInd(QString);
     void onNumCells(int);
     void onTestParms(testParms);
-    void onCCR(double);
-    void onDCR(double);
     void onCapacity(double);
     void onRestTime(int);
     void onActivate();
@@ -45,8 +43,6 @@ private:
     testParms parms;
     QString projectName;
 
-    double dischargeCurrentCRate;
-    double chargeCurrentCRate;
     double capacity;
     int restTime;
 };
