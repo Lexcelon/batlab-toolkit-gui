@@ -21,6 +21,20 @@ batlabCom::batlabCom(QObject *parent) : QObject(parent) {
      connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
 }
 
+
+batlabCom::batlabCom(QString item, QObject *parent) : QObject(parent)
+{
+    port = new QSerialPort();
+    port->setPortName(item);
+    port->setBaudRate(QSerialPort::Baud115200);
+    bool success = port->open(QSerialPort::ReadWrite);
+    if (!success) {
+        qDebug() << "Failure Opening Port";
+    }
+
+     connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
+}
+
 void batlabCom::onRead() {
     qint64 len = port->bytesAvailable();
     char * rec = new char[len];

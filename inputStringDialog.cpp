@@ -6,6 +6,7 @@ inputStringDialog::inputStringDialog(QWidget *parent) :
     ui(new Ui::inputStringDialog)
 {
     ui->setupUi(this);
+    ui->listWidget->setSelectionMode(QAbstractItemView::MultiSelection);
     connect(this, SIGNAL(accepted()), this, SLOT(onAccepted()));
 }
 
@@ -22,7 +23,7 @@ void inputStringDialog::onStringList(QStringList stringList)
 void inputStringDialog::onAccepted()
 {
     QStringList list;
-    for (int i = 0; i < ui->listWidget->size(); ++i) {
+    for (int i = 0; i < ui->listWidget->count(); ++i) {
         if (ui->listWidget->item(i)->isSelected()) {
             list << ui->listWidget->item(i)->text();
         }
