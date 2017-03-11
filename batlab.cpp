@@ -1,6 +1,7 @@
 #include "batlab.h"
 #include "ui_batlab.h"
 
+#include "inputStringDialog.h"
 
 Batlab::Batlab(QWidget *parent) :
     QMainWindow(parent),
@@ -60,7 +61,7 @@ Batlab::Batlab(QWidget *parent) :
     connect(exit,SIGNAL(clicked()),this,SLOT(close()));
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
     connect(this->newProjectWizard,SIGNAL(clicked()),this,SLOT(onNewProjectWizard()));
-    connect(connectToBatlabs, SIGNAL(clicked()),this,SLOT(onConnectToBatlabs()));
+    connect(connectToBatlabs, SIGNAL(clicked()),this,SLOT(onGetBatlabNames()));
 
 //    onLoadTest("default.blp");
 //    onAddTests();
@@ -239,7 +240,15 @@ void Batlab::onFinishedTests(int cell, QString designator, int testNum)
     }
 }
 
-void Batlab::onConnectToBatlabs()
+void Batlab::onConnectToBatlabs(QStringList names)
+{
+qDebug() << names;
+    for (int i = 0; i < names.size(); ++i) {
+        batlabComObjects.push_back(new batlabCom(names[i]));
+    }
+}
+
+void Batlab::onGetBatlabNames()
 {
     QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
     QStringList names;
@@ -247,7 +256,11 @@ void Batlab::onConnectToBatlabs()
         qDebug() << list[i].portName();
         names.append(list[i].portName());
     }
+    names << "hate" << "this";
+    inputStringDialog *dialog = new inputStringDialog();
+    dialog->onStringList(names);
+    connect(dialog, SIGNAL(accepted()), dialog, SLOT(deleteLater()));
+    connect(dialog, SIGNAL(emitList(QStringList)), this, SLOT(onConnectToBatlabs(QStringList)));
+    dialog->exec();
 
-    bool ok;
-    QString item = QInputDialog::getItem(nullptr,"Com Port Selection","Port Name: ",names,0,false,&ok);
 }

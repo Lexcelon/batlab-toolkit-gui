@@ -16,6 +16,7 @@ class batlabCom : public QObject
     Q_OBJECT
 public:
     explicit batlabCom(QObject *parent = 0);
+    batlabCom(QString item, QObject *parent = 0);
     ~batlabCom();
 
 signals:

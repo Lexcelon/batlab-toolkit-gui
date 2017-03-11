@@ -34,7 +34,8 @@ public:
     ~Batlab();
 
 public slots:
-    void onConnectToBatlabs();
+    void onConnectToBatlabs(QStringList names);
+    void onGetBatlabNames();
     void onTest();
     void onReceiveResponse(int,int,QString,int);
     void onReceiveStream(int,int,int,float,int,int,int);
@@ -57,6 +58,7 @@ private:
     QGraphicsView *glWidget = nullptr;
     batlabtest *testObj = nullptr;
     batlabCom * com = nullptr;
+    QVector<batlabCom*> batlabComObjects;
 
     settings * configSettings = nullptr;
 
