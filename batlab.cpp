@@ -247,6 +247,7 @@ void Batlab::onConnectToBatlabs()
         qDebug() << list[i].portName();
         names.append(list[i].portName());
     }
+
     bool ok;
     QString item = QInputDialog::getItem(nullptr,"Com Port Selection","Port Name: ",names,0,false,&ok);
 }
