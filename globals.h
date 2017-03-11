@@ -430,6 +430,56 @@ static float getPhase(unsigned char val)
     return T;
 }
 
+
+static int sendTemperatureLimits(float val)
+{
+    int T;
+
+    T = static_cast<int>(val / 5.0f * static_cast<float>(std::numeric_limits<int>::max()));
+
+    return T;
+}
+
+static int sendCurrentLimit(float val)
+{
+    int T;
+
+    T = static_cast<int>(val / 4.096f * static_cast<float>(std::numeric_limits<int>::max()));
+
+    return T;
+}
+
+static int sendVoltageLimit(float val)
+{
+    int T;
+
+    T = static_cast<int>(val / 4.5f * static_cast<float>(std::numeric_limits<int>::max()));
+
+    return T;
+}
+
+static int sendReportingFrequency(float val)
+{
+    int T;
+
+    T = static_cast<int>(val / 0.1f);
+
+    return T;
+}
+
+static int sendCurrentSetpoint(float val)
+{
+    int T;
+
+    if (val > 10.0f) {
+        val = 10.0f;
+    }
+
+    T = static_cast<int>(val*64);
+
+    return T;
+}
+
 enum class properties {
     unit,
     cell,
@@ -541,7 +591,7 @@ enum cellNamespace {
     CURRENT_LIMIT_CHG,
     CURRENT_LIMIT_DCHG,
     TEMP_LIMIT_CHG,
-    TEMP_LIMIIT_DCHG,
+    TEMP_LIMIT_DCHG,
 
     CURRENT_PHS,
     VOLTAGE_PHS,

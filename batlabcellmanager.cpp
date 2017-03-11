@@ -109,6 +109,13 @@ void batlabCellManager::onCreateTestPlan(int numBatlabs) {
     connect(testPlan, SIGNAL(emitAllTestsFinished()), this, SLOT(onAllTestsFinished()));
 }
 
+void batlabCellManager::onCreateTestPlan(QVector<batlabCom*> coms)
+{
+    numberOfBatlabs = coms.size();
+    testPlan = new batlabTestPlan(numberOfBatlabs, cellList, coms);
+    connect(testPlan, SIGNAL(emitAllTestsFinished()), this, SLOT(onAllTestsFinished()));
+}
+
 
 void batlabCellManager::onStartTests() {
     testPlan->onStartTests();

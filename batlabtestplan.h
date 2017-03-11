@@ -14,6 +14,8 @@ class batlabTestPlan : public QObject
 public:
     batlabTestPlan();
     batlabTestPlan(int numBatlabs, QVector<batlabCell*> list);
+    batlabTestPlan(int numBatlabs,QVector<batlabCell*> list, QVector<batlabCom*> coms);
+
     ~batlabTestPlan();
 
 public slots:

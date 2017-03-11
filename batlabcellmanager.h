@@ -32,6 +32,8 @@ public slots:
     void onNewCell(QString id, testParms parms, double ccr, double dcr, double cap, int cycles);
 
     void onCreateTestPlan(int numBatlabs);
+    void onCreateTestPlan(QVector<batlabCom*> coms);
+
     void onStartTests();
     void onAllTestsFinished();
 
@@ -50,7 +52,7 @@ public slots:
 
 signals:
     void testFinished(uchar);
-    void emitTests(QVector<modeCodes>*);
+    void emitTests(QVector<int>*);
 
 private:
     void saveLevelOneData(batlabCell* cellPointer);
