@@ -127,11 +127,7 @@ int batlabCell::onGetNextTest()
 
 void batlabCell::onUpdateParameters(int unit, int cell)
 {
-    emit updateParameter(unit, cell, writeVals::dischargeCurrentSafetyCutoff,testParameters.dcsc);
-    emit updateParameter(unit, cell, writeVals::highTempChargeSafetyCutoff, testParameters.highTemperatureCutoff);
-    emit updateParameter(unit, cell, writeVals::pulseOffTime,testParameters.poft);
-    emit updateParameter(unit, cell, writeVals::pulseOnTime, testParameters.pont);
-    emit updateParameter(unit, cell, writeVals::sinewaveFrequency,testParameters.sinewaveFrequency);
+    emit updateParameter(unit, cell, writeVals::highTempChargeSafetyCutoff, testParameters.temperatureCutoffCharge);
     emit updateParameter(unit, cell, writeVals::streamReportingPeriod, testParameters.reportingFrequency);
 
 //    emit updateParameter(unit, cell, writeVals::chargeCurrentCutoff,testParameters.cc);

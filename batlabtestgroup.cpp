@@ -107,10 +107,6 @@ void batlabTestGroup::updateParms(int index)
 {
    testParms testParameters = testGroup[index]->onGetParameters();
 
-   emit emitWriteReg(0, index, writeVals::dischargeCurrentSafetyCutoff,testParameters.dcsc);
-   emit emitWriteReg(0, index, writeVals::highTempChargeSafetyCutoff, testParameters.highTemperatureCutoff);
-   emit emitWriteReg(0, index, writeVals::pulseOffTime,testParameters.poft);
-   emit emitWriteReg(0, index, writeVals::pulseOnTime, testParameters.pont);
-   emit emitWriteReg(0, index, writeVals::sinewaveFrequency,testParameters.sinewaveFrequency);
+   emit emitWriteReg(0, index, writeVals::highTempChargeSafetyCutoff, testParameters.temperatureCutoffCharge);
    emit emitWriteReg(0, index, writeVals::streamReportingPeriod, testParameters.reportingFrequency);
 }

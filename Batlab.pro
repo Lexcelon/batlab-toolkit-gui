@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     Wizard/wizardpagethree.cpp \
     Wizard/batlabwizard.cpp \
     batlabtestgroup.cpp \
-    batlabtestplan.cpp
+    batlabtestplan.cpp \
+    inputStringDialog.cpp
 
 HEADERS  += batlab.h \
     batlabconfig.h \
@@ -45,7 +46,8 @@ HEADERS  += batlab.h \
     Wizard/wizardpagethree.h \
     Wizard/batlabwizard.h \
     batlabtestgroup.h \
-    batlabtestplan.h
+    batlabtestplan.h \
+    inputStringDialog.h
 
 FORMS    += batlab.ui \
     settings.ui \
@@ -53,6 +55,7 @@ FORMS    += batlab.ui \
     testwindow.ui \
     Wizard/wizardpageone.ui \
     Wizard/wizardpagetwo.ui \
-    Wizard/wizardpagethree.ui
+    Wizard/wizardpagethree.ui \
+    inputStringDialog.ui
 
 DISTFILES += 1010.bmp

@@ -39,7 +39,7 @@
      <item row="7" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Low Temp Cutoff</string>
+        <string>Temp Cutoff - Discharge</string>
        </property>
       </widget>
      </item>
@@ -69,14 +69,14 @@
      <item row="6" column="0">
       <widget class="QLabel" name="label_14">
        <property name="text">
-        <string>High Temp Cutoff</string>
+        <string>Temp Cutoff  - Charge</string>
        </property>
       </widget>
      </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_15">
        <property name="text">
-        <string>Disharge C rate</string>
+        <string>Current Cutoff - Discharge</string>
        </property>
       </widget>
      </item>
@@ -127,7 +127,7 @@
      <item row="11" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>Constant Current Setpoint</string>
+        <string>Current Setpoint</string>
        </property>
       </widget>
      </item>
@@ -194,7 +194,7 @@
      <item row="8" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Charge C Rate</string>
+        <string>Current Cutoff - Charge</string>
        </property>
       </widget>
      </item>
@@ -243,7 +243,7 @@
      <item row="8" column="2">
       <widget class="QLabel" name="label_22">
        <property name="text">
-        <string>C</string>
+        <string>A</string>
        </property>
       </widget>
      </item>
@@ -295,7 +295,7 @@
      <item row="9" column="2">
       <widget class="QLabel" name="label_23">
        <property name="text">
-        <string>C</string>
+        <string>A</string>
        </property>
       </widget>
      </item>

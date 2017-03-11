@@ -23,7 +23,8 @@ Batlab::Batlab(QWidget *parent) :
     // GUI for settings
     configSettings = new settings();
 
-    // Create the buttons we use in the main gui
+    // Create the buttons we use in the gui
+    connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
     test = new QPushButton(QString("Test"));
     options = new QPushButton(QString("Options"));
     newProjectWizard = new QPushButton(QString("New Project Wizard"));
@@ -32,6 +33,7 @@ Batlab::Batlab(QWidget *parent) :
 
     // Place the buttons in the button box in our gui
     ui->buttonBox->addButton(newProjectWizard,QDialogButtonBox::ActionRole);
+    ui->buttonBox->addButton(connectToBatlabs,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(report,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(options,QDialogButtonBox::ActionRole);
@@ -58,7 +60,7 @@ Batlab::Batlab(QWidget *parent) :
     connect(exit,SIGNAL(clicked()),this,SLOT(close()));
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
     connect(this->newProjectWizard,SIGNAL(clicked()),this,SLOT(onNewProjectWizard()));
-
+    connect(connectToBatlabs, SIGNAL(clicked()),this,SLOT(onConnectToBatlabs()));
 
 //    onLoadTest("default.blp");
 //    onAddTests();
@@ -191,17 +193,13 @@ void Batlab::onLoadTest(QString name) {
             tempParms.restTime = QString(strList.at(index++)).toInt();
             tempParms.hightVoltageCutoff = QString(strList.at(index++)).toDouble();
             tempParms.lowVoltageCutoff = QString(strList.at(index++)).toDouble();
-            tempParms.highTemperatureCutoff = QString(strList.at(index++)).toDouble();
-            tempParms.lowTemperatureCutoff = QString(strList.at(index++)).toDouble();
+            tempParms.temperatureCutoffCharge = QString(strList.at(index++)).toDouble();
+            tempParms.temperatureCutoffDischarge = QString(strList.at(index++)).toDouble();
             double ccr = QString(strList.at(index++)).toDouble();
             double dcr = QString(strList.at(index++)).toDouble();
             tempParms.reportingFrequency = QString(strList.at(index++)).toDouble();
-            tempParms.constantCurrentSetpoint = QString(strList.at(index++)).toDouble();
-            tempParms.sinewaveFrequency = QString(strList.at(index++)).toDouble();
+            tempParms.currentSetpoint = QString(strList.at(index++)).toDouble();
             double cap = QString(strList.at(index++)).toDouble();
-
-            tempParms.ccsc = (ccr)*cap;
-            tempParms.dcsc = (dcr)*cap;
 
             int numberOfTests = numCycles * 2 + 1;
             if (ui->tableWidget->columnCount() - 1 < numberOfTests) {
@@ -239,4 +237,16 @@ void Batlab::onFinishedTests(int cell, QString designator, int testNum)
             break;
         }
     }
+}
+
+void Batlab::onConnectToBatlabs()
+{
+    QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
+    QStringList names;
+    for (int i = 0; i< list.size(); ++i) {
+        qDebug() << list[i].portName();
+        names.append(list[i].portName());
+    }
+    bool ok;
+    QString item = QInputDialog::getItem(nullptr,"Com Port Selection","Port Name: ",names,0,false,&ok);
 }

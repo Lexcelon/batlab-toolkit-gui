@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QTableWidget" name="tableWidget">
      <property name="columnCount">
-      <number>13</number>
+      <number>12</number>
      </property>
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>true</bool>
@@ -58,22 +58,22 @@
      </column>
      <column>
       <property name="text">
-       <string>High Temp Cutoff</string>
+       <string>Temp Cutoff - Charge</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Low Temp Cutoff</string>
+       <string>Temp Cutoff - Discharge</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Charge C Rate</string>
+       <string>Current Cutoff - Charge</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Discharge C Rate</string>
+       <string>Current Cutoff - Discharge</string>
       </property>
      </column>
      <column>
@@ -84,11 +84,6 @@
      <column>
       <property name="text">
        <string>Constant Current Setpoint</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Sinewave Frequency</string>
       </property>
      </column>
      <column>
