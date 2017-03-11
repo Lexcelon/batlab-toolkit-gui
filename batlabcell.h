@@ -29,7 +29,7 @@ public:
     QVector<int> * getVoltagePhase() { return &voltagePhase; }
     QVector<int> * getCharge() { return &charge; }
     QVector<testPacket> getTestData() { return tests; }
-    QVector<modeCodes>* getTests() { return &testsToRun; }
+    QVector<int>* getTests() { return &testsToRun; }
 
     uchar getUnit(){ return unit;}
     uchar getCell(){ return cell;}
@@ -47,7 +47,7 @@ public:
 
 signals:
     void testFinished(int cell, QString id, int testNum);
-    void updateParameter(int unit, int cell, writeVals val,int num);
+    void updateParameter(int unit, int cell, cellNamespace val, int num);
 
 public slots:
 //    void receiveStream(int,float,int,int,int);
@@ -71,7 +71,7 @@ private:
     int status;
     QString statusString;
 
-    QVector<modeCodes> testsToRun;
+    QVector<int> testsToRun;
 
     QString id;
     testParms testParameters;

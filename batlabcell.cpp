@@ -16,25 +16,25 @@ batlabCell::batlabCell(QString designator, testParms parms, int cycles)
     testParameters = parms;
 
     if (cycles > 0) {
-        testsToRun.push_back(ccCharge);
+        testsToRun.push_back(MODE_CHARGE);
     }
 
     for (int i = 0; i < cycles; i++) {
-        testsToRun.push_back(ccDischarge);
-        testsToRun.push_back(ccCharge);
+        testsToRun.push_back(MODE_DISCHARGE);
+        testsToRun.push_back(MODE_CHARGE);
     }
 }
 
 void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float volt)
 {
     status = stat;
-    statusString = parseStatus(stat);
+//    statusString = parseStatus(stat);
     temperature.append(temp);
     current.append(curr);
     voltage.append(volt);
     modes.append(mode);
 
-    if (status & 0x01)
+    if (volt > testParameters.hightVoltageCutoff || volt < testParameters.lowVoltageCutoff)
     {
         testPacket newTest;
         newTest.REG_TEMPERATURE = temperature;
@@ -127,29 +127,12 @@ int batlabCell::onGetNextTest()
 
 void batlabCell::onUpdateParameters(int unit, int cell)
 {
-    emit updateParameter(unit, cell, writeVals::highTempChargeSafetyCutoff, testParameters.temperatureCutoffCharge);
-    emit updateParameter(unit, cell, writeVals::streamReportingPeriod, testParameters.reportingFrequency);
-
-//    emit updateParameter(unit, cell, writeVals::chargeCurrentCutoff,testParameters.cc);
-//    emit updateParameter(unit, cell, writeVals::dischargeCurrentCutoff);
-//    emit updateParameter(unit, cell, writeVals::chargeCurrentSafetyCutoff,testParameters.chargeCurrentSafetyCutoff);
-//    emit updateParameter(unit, cell, writeVals::chargeCVCurrentCutoff,testParameters.);
-//    emit updateParameter(unit, cell, writeVals::dischargeCVCurrentCutoff);
-//    emit updateParameter(unit, cell, writeVals::chargeVoltageCutoff, testParameters.);
-//    emit updateParameter(unit, cell, writeVals::dischargeVoltageCutoff, testParameters.c);
-//    emit updateParameter(unit, cell, writeVals::highTempDischargeSafetyCutoff);
-
-//    float hvc = 4.2f;
-//    float lvc = 2.65f;
-//    float hvcv = 4.2f;
-//    float lvcv = 2.8f;
-//    float htc = 45.0f;
-//    float ltc = -20.0f;
-//    float ccsc = 3.0f;
-//    float dcsc = 3.0f;
-//    float rf = 1.0f;
-//    float ccs = 2.0f;
-//    float sf = 1000.0f;
-//    int pont = 600;
-//    int poft = 600;
+    emit updateParameter(0xAA, cell, cellNamespace::VOLTAGE_LIMIT_CHG, sendVoltageLimit(testParameters.hightVoltageCutoff));
+    emit updateParameter(0xAA, cell, cellNamespace::VOLTAGE_LIMIT_DCHG, sendVoltageLimit(testParameters.lowVoltageCutoff));
+    emit updateParameter(0xAA, cell, cellNamespace::CURRENT_LIMIT_CHG,  sendCurrentLimit(testParameters.currentCutoffCharge));
+    emit updateParameter(0xAA, cell, cellNamespace::CURRENT_LIMIT_DCHG, sendCurrentLimit(testParameters.currentCutoffDischarge));
+    emit updateParameter(0xAA, cell, cellNamespace::TEMP_LIMIT_CHG,  sendTemperatureLimits(testParameters.temperatureCutoffCharge));
+    emit updateParameter(0xAA, cell, cellNamespace::TEMP_LIMIT_DCHG, sendTemperatureLimits(testParameters.temperatureCutoffDischarge));
+    emit updateParameter(0xAA, cell, cellNamespace::REPORT_INTERVAL, sendReportingFrequency(testParameters.reportingFrequency));
+    emit updateParameter(0xAA, cell, cellNamespace::CURRENT_SETPOINT, sendCurrentSetpoint(testParameters.currentSetpoint));
 }

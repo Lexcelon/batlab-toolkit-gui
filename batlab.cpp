@@ -16,7 +16,7 @@ Batlab::Batlab(QWidget *parent) :
     tableWidget = ui->tableWidget;
 
     // For communication with batlab
-    com = new batlabCom();
+    //com = new batlabCom();
 
     // Managing data from cells
     cellManager = new batlabCellManager();
@@ -212,13 +212,19 @@ void Batlab::onLoadTest(QString name) {
 
             cellManager->onNewCell(cellname,tempParms,ccr,dcr,cap,numCycles);
 
-            QVector<modeCodes> *cellTests = cellManager->onGetCell(cellname)->getTests();
+            QVector<int> *cellTests = cellManager->onGetCell(cellname)->getTests();
             ui->tableWidget->insertRow(ui->tableWidget->rowCount());
             QTableWidgetItem * item = new QTableWidgetItem(cellname);
             ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,item);
             for (int j = 0; j < cellTests->size(); j++) {
-                QString testString = modeRegCodeNames[cellTests->at(j)];
+                QString testString;// = modeRegCodeNames[cellTests->at(j)];
+                if (cellTests->at(j) == MODE_CHARGE) {
+                    testString = "CHARGE";
+                } else {
+                    testString = "DISCHARGE";
+                }
                 QTableWidgetItem * testItem = new QTableWidgetItem(testString);
+                testItem->setBackgroundColor(Qt::red);
                 ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,j+1,testItem);
             }
 
@@ -226,7 +232,7 @@ void Batlab::onLoadTest(QString name) {
 
     }
 
-    cellManager->onCreateTestPlan(3);
+    cellManager->onCreateTestPlan(batlabComObjects);
 }
 
 void Batlab::onFinishedTests(int cell, QString designator, int testNum)
@@ -256,7 +262,7 @@ void Batlab::onGetBatlabNames()
         qDebug() << list[i].portName();
         names.append(list[i].portName());
     }
-    names << "hate" << "this";
+    names << "test" << "string" << "list";
     inputStringDialog *dialog = new inputStringDialog();
     dialog->onStringList(names);
     connect(dialog, SIGNAL(accepted()), dialog, SLOT(deleteLater()));

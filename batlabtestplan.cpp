@@ -13,6 +13,15 @@ batlabTestPlan::batlabTestPlan(int numBatlabs,QVector<batlabCell*> list): QObjec
 }
 
 
+batlabTestPlan::batlabTestPlan(int numBatlabs,QVector<batlabCell*> list, QVector<batlabCom*> coms): QObject()
+{
+    comList = coms;
+    numberOfBatlabs = numBatlabs;
+    cellList = list;
+
+    onCreatePlan();
+}
+
 batlabTestPlan::~batlabTestPlan()
 {
 
@@ -34,7 +43,8 @@ void batlabTestPlan::onCreatePlan() {
     }
 }
 
-void batlabTestPlan::onStartTests() {
+void batlabTestPlan::onStartTests()
+{
         int i = 0;
 
         //old method used when we supported daisy chaining...could use in future
