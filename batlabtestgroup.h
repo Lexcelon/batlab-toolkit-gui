@@ -35,6 +35,8 @@ public slots:
 
     void onTestFinished(int, QString id, int testNum);
 
+    void startTests();
+
 signals:
     void emitFinishedTests(int, QString, int testNum);
     void emitWriteReg(int,int,writeVals,int);

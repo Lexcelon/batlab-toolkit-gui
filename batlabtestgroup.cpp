@@ -1,4 +1,5 @@
 #include "batlabtestgroup.h"
+#include <QTimer>
 
 batlabTestGroup::batlabTestGroup(): QObject()
 {
@@ -40,12 +41,7 @@ void batlabTestGroup::onStartTests() {
         connect(testGroup[i],SIGNAL(testFinished(int)),this,SLOT(onTestFinished(int)));
     }
 
-    for (int i = 0; i < testGroup.size(); ++i) {
-        int code = testGroup[i]->onGetNextTest();
-        emit emitWriteReg(0,i,writeVals::mode,code);
-        emit emitWriteReg(0,i,writeVals::command,commandCodes::start);
-        count = count ^ (0x0001 << i);
-    }
+    startTests();
 }
 
 void batlabTestGroup::connectCom(batlabCom * com)
@@ -92,13 +88,24 @@ void batlabTestGroup::onTestFinished(int cell, QString id, int testNum)
     count ^= (0x0001 << cell);
 
     if (count == 0x0000) {
+        int mSecRest = 0;
         for (int i = 0; i < testGroup.size(); ++i) {
-            int code = testGroup[i]->onGetNextTest();
-            if (code != -1) {
-                emit emitWriteReg(0,i,writeVals::mode,code);
-                emit emitWriteReg(0,i,writeVals::command,commandCodes::start);
-                count = count ^ (0x0001 << i);
-            }
+            if (mSecRest < testGroup[i]->onGetParameters().restTime * 1000)
+                mSecRest = testGroup[i]->onGetParameters().restTime * 1000;
+        }
+       QTimer::singleShot(mSecRest, this, SLOT(startTests()));
+//        startTests();
+    }
+}
+
+void batlabTestGroup::startTests()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        int code = testGroup[i]->onGetNextTest();
+        if (code != -1) {
+            emit emitWriteReg(0,i,writeVals::mode,code);
+            emit emitWriteReg(0,i,writeVals::command,commandCodes::start);
+            count = count ^ (0x0001 << i);
         }
     }
 }
