@@ -47,7 +47,7 @@ void batlabCom::onRead() {
         qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
         qDebug() << "Low Byte Fail: " << (bool)(rec[start+3]) << " High Byte Fail: " << (bool)(rec[start+4]);
 
-        emit emitResponse((int)(rec[start+1]),(int)(rec[start+2]), (bool)(rec[start+3]), (bool)rec[start+4]);
+        emit emitResponse((int)(rec[start+1]),(int)(rec[start+2]), (int)(rec[start+3]), (int)rec[start+4]);
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
@@ -82,20 +82,11 @@ batlabCom::~batlabCom() {
     port->close();
 }
 
-void batlabCom::onReadReg(int unit, int cell, vals val) {
+void batlabCom::onReadReg(int batlabNamespace, int batlabRegister) {
     char * data = new char[5];
-    uchar value;
-    //qDebug() << registers[val];
     data[0] = 0xAA;
-    if (val == numberOfConnectedUnits) {
-        value = 0xFF;
-    } else if (val == numberOfConnectedCells) {
-        value = unit;
-    } else {
-        value = ((unit<<2) + cell);
-    }
-    data[1] = value;
-    data[2] = registers[val];
+    data[1] = static_cast<uchar>(batlabNamespace);
+    data[2] = static_cast<uchar>(batlabRegister);
     data[3] = 0x00;
     data[4] = 0x00;
 
@@ -104,17 +95,16 @@ void batlabCom::onReadReg(int unit, int cell, vals val) {
 }
 
 
-void batlabCom::onWriteReg(int unit, int cell, writeVals val,int num) {
+void batlabCom::onWriteReg(int batlabNamespace, int batlabRegister,int num) {
     char * data = new char[5];
-    uchar value = ((unit<<2) + cell);
     uchar msb = ((uchar)((0xFF00 & num) >> 8));
     uchar lsb = ((uchar)(0x00FF & num));
     qDebug() << "WRITE MESSAGE";
-    qDebug() << "UNIT: " << unit << " CELL: " << cell << " REG NAME: " << writeNames[val] << " VALUE : " << num;
+    qDebug() << "NAMESPACE: " << batlabNamespace << " REGISTER: " << batlabRegister << " VALUE : " << num;
     qDebug() << msb << lsb;
     data[0] = 0xAA;
-    data[1] = value;
-    data[2] = writeRegisters[val]|0x80;
+    data[1] = static_cast<uchar>(batlabNamespace);
+    data[2] = static_cast<uchar>(batlabRegister) | 0x80;
     data[3] = msb;
     data[4] = lsb;
 

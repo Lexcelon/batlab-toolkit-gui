@@ -24,7 +24,7 @@ public slots:
 
     void onNewCell(uchar);
     void onDeleteCell(uchar);
-    void onPrintCell(uchar key, properties val);
+//    void onPrintCell(uchar key, properties val);
     void onNewTest(uchar key,uchar test);
     void onTestFinished(uchar key);
     void onGetTests(uchar key);
