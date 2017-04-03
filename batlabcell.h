@@ -45,6 +45,8 @@ public:
 
     int onGetNextTest();
 
+    void setSineFreq(float freq);
+
 signals:
     void testFinished(int cell, QString id, int testNum);
     void updateParameter(int unit, int cell, cellNamespace val, int num);
@@ -69,6 +71,7 @@ private:
     QVector<int> charge;
     QVector<int> modes;
     int status;
+    float sineFreq;
     QString statusString;
 
     QVector<int> testsToRun;

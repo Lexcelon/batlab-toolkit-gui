@@ -2,6 +2,7 @@
 
 batlabCell::batlabCell()
 {
+
 }
 
 batlabCell::batlabCell(uchar key)
@@ -105,8 +106,8 @@ batlabCell::~batlabCell()
 //}
 
 void batlabCell::newTest(uchar testnum) {
-    test newTest;
-    newTest.mode = testnum;
+//    test newTest;
+//    newTest.mode = testnum;
 //    tests.push_back(newTest);
 }
 
@@ -123,6 +124,11 @@ int batlabCell::onGetNextTest()
     } else {
         return -1;
     }
+}
+
+void batlabCell::setSineFreq(float freq)
+{
+    sineFreq = freq;
 }
 
 void batlabCell::onUpdateParameters(int unit, int cell)
