@@ -60,16 +60,18 @@ void batlabTestPlan::onStartTests()
 }
 
 void batlabTestPlan::onFinishedTests(int val) {
-    testGroupList.removeAt(val);
+//    testGroupList.removeAt(val);
+    testGroupList.removeOne(dynamic_cast<batlabTestGroup*>(sender()));
     int i = 0;
     while ((i < testGroupList.size()) && (i < numberOfBatlabs)) {
         if (testGroupList[i]->onGetIsRunning()) {
         } else {
+            testGroupList[i]->disconnectCom();
             testGroupList[i]->onSetBatlabID(val);
             testGroupList[i]->connectCom(comList[i]);
             testGroupList[i]->onStartTests();
 
-            connect(testGroupList[i],SIGNAL(emitFinishedTests(int)),this,SLOT(onFinishedTests(int)));
+            connect(testGroupList[i],SIGNAL(emitFinishedTests()),this,SLOT(onFinishedTests()));
         }
         i++;
     }

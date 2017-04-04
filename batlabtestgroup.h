@@ -26,7 +26,7 @@ public slots:
     void updateParms(int index);
 
     void connectCom(batlabCom * com);
-    void disconnectCom(batlabCom * com);
+    void disconnectCom();
 
     void receiveStream(int cell, int mode, int stat, float temp, float curr, float volt);
     void receiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
@@ -57,14 +57,14 @@ public slots:
     void onVerifyRestart();
 
 signals:
-    void emitFinishedTests(int, QString, int testNum);
+    void emitFinishedTests();
     void emitWriteReg(int,int,int);
     void emitReadReg(int,int);
 
 
 private:
     QVector<batlabCell*> testGroup;
-    batlabCom *comObject;
+    batlabCom *comObject = nullptr;
     int serialNumber = -1;
     int batlabId = -1;
     bool isRunning = false;

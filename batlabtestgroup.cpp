@@ -93,12 +93,16 @@ void batlabTestGroup::connectCom(batlabCom * com)
     }
 }
 
-void batlabTestGroup::disconnectCom(batlabCom * com)
+void batlabTestGroup::disconnectCom()
 {
-    disconnect(com,SIGNAL(emitStream(int,int,int,float,int,int,int)),this,SLOT(receiveStream(int,int,int,float,int,int,int)));
-    disconnect(this,SIGNAL(updateParameter(int,int,int,int)),com,SLOT(onWriteReg(int,int,int,int)));
+    disconnect(this,SIGNAL(emitWriteReg(int,int,int)),comObject,SLOT(onWriteReg(int,int,int)));
+    disconnect(this,SIGNAL(emitReadReg(int,int)),comObject,SLOT(onReadReg(int,int)));
+    disconnect(comObject,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
+    disconnect(comObject,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int,int)));
+    disconnect(comObject,SIGNAL(emitStream(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
+
     for (int i = 0; i < testGroup.size(); i++) {
-        disconnect(testGroup[i],SIGNAL(updateParameter(int,int,int,int)),com,SLOT(onWriteReg(int,int,int,int)));
+        disconnect(testGroup[i],SIGNAL(updateParameter(int,int,int,int)),comObject,SLOT(onWriteReg(int,int,int,int)));
     }
 }
 
@@ -130,7 +134,7 @@ void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int
 
 void batlabTestGroup::onTestFinished(int cell, QString id, int testNum)
 {
-    emit emitFinishedTests(cell, id, testNum);
+//    emit emitFinishedTests(cell, id, testNum);
     count ^= (0x0001 << cell);
 
     if (count == 0x0000) {
@@ -154,7 +158,13 @@ void batlabTestGroup::startTests()
             count = count ^ (0x0001 << i);
         }
     }
-    impedanceTimer->start(180000);
+
+    if (count == 0x0000) {
+        isRunning = false;
+        emit emitFinishedTests();
+    } else {
+        impedanceTimer->start(180000);
+    }
 }
 
 void batlabTestGroup::updateParms(int index)
