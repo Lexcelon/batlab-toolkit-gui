@@ -11,6 +11,10 @@ batlabTestGroup::batlabTestGroup(): QObject()
 batlabTestGroup::batlabTestGroup(int batlabNumber) : QObject(){
     batlabId = batlabNumber;
     count = 0;
+    impedanceTimer = new QTimer(this);
+    impedanceTimer->setSingleShot(true);
+    connect(impedanceTimer, &QTimer::timeout,
+            this, &batlabTestGroup::startImpedance);
 }
 
 batlabTestGroup::~batlabTestGroup()
@@ -78,9 +82,10 @@ void batlabTestGroup::onStartTests()
 void batlabTestGroup::connectCom(batlabCom * com)
 {
     comObject = com;
-    connect(this,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
+    connect(this,SIGNAL(emitWriteReg(int,int,int)),com,SLOT(onWriteReg(int,int,int)));
+    connect(this,SIGNAL(emitReadReg(int,int)),com,SLOT(onReadReg(int,int)));
     connect(com,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
-        connect(com,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int,int)));
+    connect(com,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int,int)));
     connect(com,SIGNAL(emitStream(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
 
     for (int i = 0; i < testGroup.size(); i++) {
@@ -108,7 +113,7 @@ void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int
     if (nameSpace == 4) {
         if (batlabRegister == unitNamespace::SINE_FREQ) {
             for (int i = 0; i < testGroup.size(); ++i) {
-                testGroup[i]->setSineFreq(static_cast<float>(value) * static_cast<float>(10000)/static_cast<float>(256));
+                testGroup[i]->setSineFreq(getSineFrequency(value));
             }
         }
     } else if (nameSpace == 0 || nameSpace == 1 || nameSpace == 2 || nameSpace == 3 ) {
@@ -118,15 +123,9 @@ void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int
     }
 }
 
-
-//void batlabTestGroup::receiveStream(int unit, int cell, int stat,float temp,int curr, int volt,int cha)
+//void batlabTestGroup::receiveWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 //{
-//    testGroup[cell]->receiveStream(stat,temp,curr,volt,cha);
-//}
 
-//void batlabTestGroup::receiveStreamExt(int unit, int cell, int currAmp,int volPhase,int volAmp)
-//{
-//    testGroup[cell]->receiveStreamExt(currAmp,volPhase,volAmp);
 //}
 
 void batlabTestGroup::onTestFinished(int cell, QString id, int testNum)
@@ -135,6 +134,7 @@ void batlabTestGroup::onTestFinished(int cell, QString id, int testNum)
     count ^= (0x0001 << cell);
 
     if (count == 0x0000) {
+        impedanceTimer->stop();
         int mSecRest = 0;
         for (int i = 0; i < testGroup.size(); ++i) {
             if (mSecRest < testGroup[i]->onGetParameters().restTime * 1000) {
@@ -150,11 +150,11 @@ void batlabTestGroup::startTests()
     for (int i = 0; i < testGroup.size(); ++i) {
         int code = testGroup[i]->onGetNextTest();
         if (code != -1) {
-//            emit emitWriteReg(0,i,writeVals::mode,code);
-//            emit emitWriteReg(0,i,writeVals::command,commandCodes::start);
+            emit emitWriteReg(i,cellNamespace::MODE,code);
             count = count ^ (0x0001 << i);
         }
     }
+    impedanceTimer->start(180000);
 }
 
 void batlabTestGroup::updateParms(int index)
@@ -163,4 +163,144 @@ void batlabTestGroup::updateParms(int index)
     testGroup[index]->onUpdateParameters(index);
 //   emit emitWriteReg(0, index, writeVals::highTempChargeSafetyCutoff, testParameters.temperatureCutoffCharge);
 //   emit emitWriteReg(0, index, writeVals::streamReportingPeriod, testParameters.reportingFrequency);
+}
+
+void batlabTestGroup::startImpedance()
+{
+    setImpedanceModes();
+}
+
+void batlabTestGroup::setImpedanceModes()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            emit emitWriteReg(i,cellNamespace::MODE,MODE_IMPEDANCE);
+        }
+    }
+
+    QTimer::singleShot(100,this,SLOT(onCheckImpedanceModes()));
+}
+
+void batlabTestGroup::onCheckImpedanceModes()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            emit emitReadReg(i,cellNamespace::MODE);
+        }
+    }
+    QTimer::singleShot(100,this,SLOT(onVerifyImpedanceModes()));
+}
+
+void batlabTestGroup::onVerifyImpedanceModes()
+{
+    bool isOkay = true;
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            if (testGroup[i]->getCurrentMode() != MODE_IMPEDANCE) {
+                isOkay = false;
+            }
+        }
+    }
+
+    if (isOkay == false) {
+        setImpedanceModes();
+    } else {
+        freqCounter = 0;
+        setFrequency();
+    }
+}
+
+void batlabTestGroup::setFrequency()
+{
+    emit emitWriteReg(0x0004,unitNamespace::SINE_FREQ, 1 << freqCounter);
+
+    QTimer::singleShot(100,this,SLOT(onCheckFrequency()));
+}
+
+void batlabTestGroup::onCheckFrequency()
+{
+    emit emitReadReg(0x0004,unitNamespace::SINE_FREQ);
+
+    QTimer::singleShot(100,this,SLOT(onVerifyFrequency()));
+}
+
+void batlabTestGroup::onVerifyFrequency()
+{
+    bool isOkay = true;
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            if (sendSineFrequency(testGroup[i]->getSineFreq()) != (1 << freqCounter)) {
+                isOkay = false;
+            }
+        }
+    }
+
+    if (isOkay == false) {
+        setFrequency();
+    } else {
+        QTimer::singleShot(1000,this,SLOT(onReadImpedance()));
+    }
+}
+
+void batlabTestGroup::onReadImpedance()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+
+            emit emitReadReg(i,cellNamespace::VOLTAGE_PHS);
+            //        this->thread()->sleep(50);
+            emit emitReadReg(i,cellNamespace::VOLTAGE_PP);
+            //        this->thread()->sleep(50);
+            emit emitReadReg(i,cellNamespace::CURRENT_PHS);
+            //        this->thread()->sleep(50);
+            emit emitReadReg(i,cellNamespace::CURRENT_PP);
+            //        this->thread()->sleep(50);
+        }
+    }
+
+    freqCounter++;
+    if (freqCounter > 3) {
+        onRestartTests();
+    } else {
+        setFrequency();
+    }
+}
+
+void batlabTestGroup::onRestartTests()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        int code = testGroup[i]->onGetNextTest();
+        if (code != -1) {
+            if (count & (0x0001 << i)) {
+                emit emitWriteReg(i,cellNamespace::MODE,code);
+            }
+        }
+    }
+}
+
+void batlabTestGroup::onCheckRestart()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        emit emitReadReg(i,cellNamespace::MODE);
+    }
+
+    QTimer::singleShot(100,this,SLOT(onVerifyRestart()));
+}
+
+void batlabTestGroup::onVerifyRestart()
+{
+    bool isOkay = true;
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            if (testGroup[i]->getCurrentMode() != testGroup[i]->onGetNextTest()) {
+                isOkay = false;
+            }
+        }
+    }
+
+    if (isOkay == false) {
+        onRestartTests();
+    } else {
+        impedanceTimer->start(180000);
+    }
 }
