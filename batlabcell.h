@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QString>
 #include "globals.h"
-
+#include <QTime>
 
 
 class batlabCell : public QObject
@@ -36,7 +36,6 @@ public:
 
     QString getDesignator() { return id; }
 
-    void newTest(uchar testnum);
 
     void onUpdateParameters(int cell);
     testParms onGetParameters();
@@ -46,15 +45,13 @@ public:
     void setSineFreq(float freq);
     void receiveReadResponse(int batlabRegister, int value);
 
+    void onStartTimer() {timer.start(); timer.restart();}
 
 signals:
-    void testFinished(int cell, QString id, int testNum);
+    void testFinished(int cell);
     void updateParameter(int unit, int cell, int val, int num);
 
 public slots:
-//    void receiveStream(int,float,int,int,int);
-//    void receiveStreamExt(int,int,int);
-
     void receiveStream(int, int, float, float, float);
 
 
@@ -62,14 +59,16 @@ private:
     uchar unit;
     uchar cell;
     QVector<testPacket> tests;
+    QVector<int> time;
     QVector<float> temperature;
     QVector<float> voltage;
     QVector<float> current;
     QVector<int> modes;
-    QVector<QPair<float,float>> voltagePhase;
-    QVector<QPair<float,float>> voltagePP;
-    QVector<QPair<float,float>> currentPP;
-    QVector<QPair<float,float>> currentPhase;
+    QVector<QPair<float,QPair<int,float>>> voltagePhase;
+    QVector<QPair<float,QPair<int,float>>> voltagePP;
+    QVector<QPair<float,QPair<int,float>>> currentPP;
+    QVector<QPair<float,QPair<int,float>>> currentPhase;
+    QTime timer;
 
     int currentMode;
 

@@ -55,7 +55,7 @@ void batlabCellManager::onTestFinished(uchar key) {
 }
 
 void batlabCellManager::onNewTest(uchar key,uchar test) {
-    cells[key]->newTest(test);
+//    cells[key]->newTest(test);
 }
 
 void batlabCellManager::onDeleteCell(uchar key) {
@@ -142,43 +142,67 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
         QTextStream data( &f );
         QStringList strList;
 
-        data << id + "\n";
+        data << ".." + id + "\n";
 
+        for (int i = 0; i < tempTests.size(); ++i) {
+            data << QString::number(tempTests[i].REG_MODE.first()) << "\n";
 
-//        for(int d = 0; d < ui->tableWidget->columnCount(); d++) {
-//            strList << " " + ui->tableWidget->horizontalHeaderItem(d)->data(Qt::DisplayRole).toString() + " ";
-//        }
+            strList.clear();
+            for (int j = 0; j < tempTests[i].TIME.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].TIME[j]) << " ";
+            }
 
-//        data << strList.join(",") + "\n";
+            data << strList.join(",") + "\n";
+            strList.clear();
 
-//        for( int r = 0; r < ui->tableWidget->rowCount(); ++r )
-//        {
-//            strList.clear();
-//            for( int c = 0; c < ui->tableWidget->columnCount(); ++c )
-//            {
-//                switch(c) {
-//                case 0:
-//                    strList << " "+qobject_cast<QLabel*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
-//                    break;
-//                case 1:
-//                case 2:
-//                    strList << " "+qobject_cast<QSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
-//                    break;
-//                case 3:
-//                case 4:
-//                case 5:
-//                case 6:
-//                case 7:
-//                case 8:
-//                case 9:
-//                case 10:
-//                case 11:
-//                case 12:
-//                    strList << " "+qobject_cast<QDoubleSpinBox*>(ui->tableWidget->cellWidget( r, c ))->text()+" ";
-//                    break;
-//                }
-        //            }
-        data << strList.join( "," )+"\n";
+            for (int j = 0; j < tempTests[i].REG_VOLTAGE.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].REG_VOLTAGE[j]) << " ";
+            }
+
+            data << strList.join(",") + "\n";
+            strList.clear();
+
+            for (int j = 0; j < tempTests[i].REG_CURRENT.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].REG_CURRENT[j]) << " ";
+            }
+
+            data << strList.join(",") + "\n";
+            strList.clear();
+
+            for (int j = 0; j < tempTests[i].REG_TEMPERATURE.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].REG_TEMPERATURE[j]) << " ";
+            }
+
+            data << strList.join(",") + "\n";
+            strList.clear();
+
+            for (int j = 0; j < tempTests[i].VOLTAGE_PP.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].VOLTAGE_PP[j].first) << " " << QString::number(tempTests[i].VOLTAGE_PP[j].second.first) << " " << QString::number(tempTests[i].VOLTAGE_PP[j].second.second) << " ";
+            }
+
+            data << strList.join(",") + "\n";
+            strList.clear();
+
+            for (int j = 0; j < tempTests[i].VOLTAGE_PHASE.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].VOLTAGE_PHASE[j].first) << " " << QString::number(tempTests[i].VOLTAGE_PHASE[j].second.first) << " " << QString::number(tempTests[i].VOLTAGE_PHASE[j].second.second) << " ";
+            }
+
+            data << strList.join(",") + "\n";
+            strList.clear();
+
+            for (int j = 0; j < tempTests[i].CURRENT_PP.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].CURRENT_PP[j].first) << " " << QString::number(tempTests[i].CURRENT_PP[j].second.first) << " " << QString::number(tempTests[i].CURRENT_PP[j].second.second) << " ";
+            }
+
+            data << strList.join(",") + "\n";
+            strList.clear();
+
+            for (int j = 0; j < tempTests[i].CURRENT_PHASE.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].CURRENT_PHASE[j].first) << " " << QString::number(tempTests[i].CURRENT_PHASE[j].second.first) << " " << QString::number(tempTests[i].CURRENT_PHASE[j].second.second) << " ";
+            }
+            data << strList.join(",") + "\n";
+            strList.clear();
+        }
     }
     f.close();
 }

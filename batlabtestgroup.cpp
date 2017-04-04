@@ -156,6 +156,7 @@ void batlabTestGroup::startTests()
         if (code != -1) {
             emit emitWriteReg(i,cellNamespace::MODE,code);
             count = count ^ (0x0001 << i);
+            testGroup[i]->onStartTimer();
         }
     }
 
