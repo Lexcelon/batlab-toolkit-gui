@@ -58,6 +58,8 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         currentPhase.clear();
         currentPP.clear();
 
+        testsToRun.removeFirst();
+
         //used for daisy chaining
         emit testFinished(static_cast<int>(cell), id, tests.size());
     }
@@ -129,7 +131,7 @@ testParms batlabCell::onGetParameters()
 int batlabCell::onGetNextTest()
 {
     if (!testsToRun.isEmpty()) {
-        return testsToRun.takeFirst();
+        return testsToRun.first();
     } else {
         return -1;
     }
@@ -154,6 +156,9 @@ void batlabCell::receiveReadResponse(int batlabRegister, int value)
         break;
     case cellNamespace::VOLTAGE_PP:
         voltagePP.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 4.5f / (static_cast<float>(pow(2,15)) - 1.0f)));
+        break;
+    case cellNamespace::MODE:
+        currentMode = value;
         break;
     default:
         break;

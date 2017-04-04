@@ -32,6 +32,8 @@ public:
     int getStatus(){ return status;}
     QString getStatusString() { return statusString; }
 
+    int getCurrentMode() { return currentMode; }
+
     QString getDesignator() { return id; }
 
     void newTest(uchar testnum);
@@ -40,7 +42,7 @@ public:
     testParms onGetParameters();
 
     int onGetNextTest();
-
+    float getSineFreq() { return sineFreq; }
     void setSineFreq(float freq);
     void receiveReadResponse(int batlabRegister, int value);
 
@@ -68,6 +70,8 @@ private:
     QVector<QPair<float,float>> voltagePP;
     QVector<QPair<float,float>> currentPP;
     QVector<QPair<float,float>> currentPhase;
+
+    int currentMode;
 
     int status;
     float sineFreq;
