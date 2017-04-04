@@ -18,14 +18,14 @@ public:
     ~batlabtest();
 
 public slots:
-    void onRegRead();
-    void onRegWrite();
-    void onPrintCell();
+//    void onRegRead();
+//    void onRegWrite();
+//    void onPrintCell();
 
 signals:
-    void emitReadReg(int,int,vals);
-    void emitWriteReg(int,int,writeVals,int);
-    void emitPrint(uchar,properties);
+//    void emitReadReg(int,int,vals);
+//    void emitWriteReg(int,int,writeVals,int);
+//    void emitPrint(uchar,properties);
 
 private:
     Ui::test *ui;
