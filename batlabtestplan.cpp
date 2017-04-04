@@ -60,7 +60,6 @@ void batlabTestPlan::onStartTests()
 }
 
 void batlabTestPlan::onFinishedTests(int val) {
-//    testGroupList.removeAt(val);
     testGroupList.removeOne(dynamic_cast<batlabTestGroup*>(sender()));
     int i = 0;
     while ((i < testGroupList.size()) && (i < numberOfBatlabs)) {

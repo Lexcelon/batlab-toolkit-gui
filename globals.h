@@ -171,15 +171,16 @@ struct testParms
 
 
 struct testPacket {
+    QVector<int> TIME;
     QVector<int> REG_MODE;
     QVector<int> REG_STATUS;
     QVector<float> REG_TEMPERATURE;
     QVector<float> REG_CURRENT;
     QVector<float> REG_VOLTAGE;
-    QVector<QPair<float,float>> VOLTAGE_PP;
-    QVector<QPair<float,float>> VOLTAGE_PHASE;
-    QVector<QPair<float,float>> CURRENT_PHASE;
-    QVector<QPair<float,float>> CURRENT_PP;
+    QVector<QPair<float,QPair<int,float>>> VOLTAGE_PP;
+    QVector<QPair<float,QPair<int,float>>> VOLTAGE_PHASE;
+    QVector<QPair<float,QPair<int,float>>> CURRENT_PHASE;
+    QVector<QPair<float,QPair<int,float>>> CURRENT_PP;
 };
 
 enum cellNamespace {

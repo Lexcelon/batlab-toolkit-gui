@@ -28,8 +28,10 @@ batlabCell::batlabCell(QString designator, testParms parms, int cycles)
 
 void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float volt)
 {
+    int elapsed = timer.elapsed();
     status = stat;
 //    statusString = parseStatus(stat);
+    time.append(elapsed);
     temperature.append(temp);
     current.append(curr);
     voltage.append(volt);
@@ -38,6 +40,7 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
     if (volt > testParameters.hightVoltageCutoff || volt < testParameters.lowVoltageCutoff)
     {
         testPacket newTest;
+        newTest.TIME = time;
         newTest.REG_TEMPERATURE = temperature;
         newTest.REG_CURRENT = current;
         newTest.REG_VOLTAGE = voltage;
@@ -52,6 +55,7 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         current.clear();
         voltage.clear();
         modes.clear();
+        time.clear();
 
         voltagePP.clear();
         voltagePhase.clear();
@@ -60,8 +64,7 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
 
         testsToRun.removeFirst();
 
-        //used for daisy chaining
-        emit testFinished(static_cast<int>(cell), id, tests.size());
+        emit testFinished(static_cast<int>(cell));
     }
 }
 
@@ -69,59 +72,6 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
 batlabCell::~batlabCell()
 {
 }
-
-//void batlabCell::receiveStream(int stat,float temp,int curr, int volt,int cha) {
-//    status = stat;
-//    statusString = parseStatus(stat);
-//    temperature.append(temp);
-//    current.append(curr);
-//    voltage.append(volt);
-//    charge.append(cha);
-
-//    if (status & 0x01)
-//    {
-//        test newTest;
-//        newTest.temperature = temperature;
-//        newTest.current = current;
-//        newTest.voltage = voltage;
-//        newTest.charge = charge;
-//        newTest.testType = testsToRun.first();
-//        tests.push_back(newTest);
-
-//        temperature.clear();
-//        current.clear();
-//        voltage.clear();
-//        charge.clear();
-
-//        //used for daisy chaining
-////        emit testFinished((unit << 2)|cell);
-//        emit testFinished(static_cast<int>(cell), id, tests.size());
-//    }
-//}
-
-
-//void batlabCell::receiveStreamExt(int currAmp,int volPhase,int volAmp) {
-//    currentAmplitude.append(currAmp);
-//    voltagePhase.append(volPhase);
-//    voltageAmplitude.append(volAmp);
-
-//    if (status & 0x01) {
-//        tests.last().currentAmplitude = currentAmplitude;
-//        tests.last().voltagePhase = voltagePhase;
-//        tests.last().voltageAmplitude = voltageAmplitude;
-
-//        currentAmplitude.clear();
-//        voltagePhase.clear();
-//        voltageAmplitude.clear();
-//    }
-//}
-
-void batlabCell::newTest(uchar testnum) {
-//    test newTest;
-//    newTest.mode = testnum;
-//    tests.push_back(newTest);
-}
-
 
 testParms batlabCell::onGetParameters()
 {
@@ -146,16 +96,16 @@ void batlabCell::receiveReadResponse(int batlabRegister, int value)
 {
     switch (batlabRegister) {
     case cellNamespace::CURRENT_PHS:
-        currentPhase.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 360.0f / 256.0f));
+        currentPhase.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 360.0f / 256.0f)));
         break;
     case cellNamespace::CURRENT_PP:
-        currentPP.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 4.096f / (pow(2,15) - 1.0f)));
+        currentPP.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 4.096f / (pow(2,15) - 1.0f))));
         break;
     case cellNamespace::VOLTAGE_PHS:
-        voltagePhase.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 360.0f / 256.0f));
+        voltagePhase.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 360.0f / 256.0f)));
         break;
     case cellNamespace::VOLTAGE_PP:
-        voltagePP.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 4.5f / (static_cast<float>(pow(2,15)) - 1.0f)));
+        voltagePP.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 4.5f / (static_cast<float>(pow(2,15)) - 1.0f))));
         break;
     case cellNamespace::MODE:
         currentMode = value;
