@@ -20,7 +20,8 @@ public:
     ~batlabCom();
 
 signals:
-    void emitResponse(int,int,int,int);
+    void emitReadResponse(int,int,int,int);
+    void emitWriteResponse(int,int,int,int);
     void emitStream(int,int,int,float,int,int,int);
     void emitStreamExt(int,int,int,int,int);
 
