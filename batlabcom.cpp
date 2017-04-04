@@ -47,12 +47,17 @@ void batlabCom::onRead() {
         qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
         qDebug() << "Low Byte Fail: " << (bool)(rec[start+3]) << " High Byte Fail: " << (bool)(rec[start+4]);
 
-        emit emitResponse((int)(rec[start+1]),(int)(rec[start+2]), (int)(rec[start+3]), (int)rec[start+4]);
+        if (rec[start+2] & 0x80) {
+            emit emitWriteResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]) ^ 0x0080, static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
+        } else {
+            emit emitReadResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]), static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
+        }
+
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
-        qDebug() << (int)(rec[start+1]);
-        int cell = (int)(rec[start+1]);
+        qDebug() << static_cast<int>(rec[start+1]);
+        int cell = static_cast<int>(rec[start+1]);
         if ((uchar)rec[start+2] == 0x00) {
             qDebug() << "STREAM PACKET";
             qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);

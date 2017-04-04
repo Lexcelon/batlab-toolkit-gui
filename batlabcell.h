@@ -24,10 +24,6 @@ public:
     QVector<float> * getTemperature() { return &temperature; }
     QVector<float> * getVoltage() { return &voltage; }
     QVector<float> * getCurrent() { return &current; }
-    QVector<int> * getCurrentAmplitude() { return &currentAmplitude; }
-    QVector<int> * getVoltageAmplitude() { return &voltageAmplitude; }
-    QVector<int> * getVoltagePhase() { return &voltagePhase; }
-    QVector<int> * getCharge() { return &charge; }
     QVector<testPacket> getTestData() { return tests; }
     QVector<int>* getTests() { return &testsToRun; }
 
@@ -40,16 +36,18 @@ public:
 
     void newTest(uchar testnum);
 
-    void onUpdateParameters(int unit, int cell);
+    void onUpdateParameters(int cell);
     testParms onGetParameters();
 
     int onGetNextTest();
 
     void setSineFreq(float freq);
+    void receiveReadResponse(int batlabRegister, int value);
+
 
 signals:
     void testFinished(int cell, QString id, int testNum);
-    void updateParameter(int unit, int cell, cellNamespace val, int num);
+    void updateParameter(int unit, int cell, int val, int num);
 
 public slots:
 //    void receiveStream(int,float,int,int,int);
@@ -65,11 +63,12 @@ private:
     QVector<float> temperature;
     QVector<float> voltage;
     QVector<float> current;
-    QVector<int> currentAmplitude;
-    QVector<int> voltageAmplitude;
-    QVector<int> voltagePhase;
-    QVector<int> charge;
     QVector<int> modes;
+    QVector<QPair<float,float>> voltagePhase;
+    QVector<QPair<float,float>> voltagePP;
+    QVector<QPair<float,float>> currentPP;
+    QVector<QPair<float,float>> currentPhase;
+
     int status;
     float sineFreq;
     QString statusString;

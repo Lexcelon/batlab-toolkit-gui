@@ -42,12 +42,21 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         newTest.REG_CURRENT = current;
         newTest.REG_VOLTAGE = voltage;
         newTest.REG_MODE = modes;
+        newTest.VOLTAGE_PP = voltagePP;
+        newTest.VOLTAGE_PHASE = voltagePhase;
+        newTest.CURRENT_PHASE = currentPhase;
+        newTest.CURRENT_PP = currentPP;
         tests.push_back(newTest);
 
         temperature.clear();
         current.clear();
         voltage.clear();
         modes.clear();
+
+        voltagePP.clear();
+        voltagePhase.clear();
+        currentPhase.clear();
+        currentPP.clear();
 
         //used for daisy chaining
         emit testFinished(static_cast<int>(cell), id, tests.size());
@@ -131,14 +140,34 @@ void batlabCell::setSineFreq(float freq)
     sineFreq = freq;
 }
 
-void batlabCell::onUpdateParameters(int unit, int cell)
+void batlabCell::receiveReadResponse(int batlabRegister, int value)
 {
-    emit updateParameter(0xAA, cell, cellNamespace::VOLTAGE_LIMIT_CHG, sendVoltageLimit(testParameters.hightVoltageCutoff));
-    emit updateParameter(0xAA, cell, cellNamespace::VOLTAGE_LIMIT_DCHG, sendVoltageLimit(testParameters.lowVoltageCutoff));
-    emit updateParameter(0xAA, cell, cellNamespace::CURRENT_LIMIT_CHG,  sendCurrentLimit(testParameters.currentCutoffCharge));
-    emit updateParameter(0xAA, cell, cellNamespace::CURRENT_LIMIT_DCHG, sendCurrentLimit(testParameters.currentCutoffDischarge));
-    emit updateParameter(0xAA, cell, cellNamespace::TEMP_LIMIT_CHG,  sendTemperatureLimits(testParameters.temperatureCutoffCharge));
-    emit updateParameter(0xAA, cell, cellNamespace::TEMP_LIMIT_DCHG, sendTemperatureLimits(testParameters.temperatureCutoffDischarge));
-    emit updateParameter(0xAA, cell, cellNamespace::REPORT_INTERVAL, sendReportingFrequency(testParameters.reportingFrequency));
-    emit updateParameter(0xAA, cell, cellNamespace::CURRENT_SETPOINT, sendCurrentSetpoint(testParameters.currentSetpoint));
+    switch (batlabRegister) {
+    case cellNamespace::CURRENT_PHS:
+        currentPhase.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 360.0f / 256.0f));
+        break;
+    case cellNamespace::CURRENT_PP:
+        currentPP.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 4.096f / (pow(2,15) - 1.0f)));
+        break;
+    case cellNamespace::VOLTAGE_PHS:
+        voltagePhase.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 360.0f / 256.0f));
+        break;
+    case cellNamespace::VOLTAGE_PP:
+        voltagePP.push_back(QPair<float,float>(sineFreq, static_cast<float>(value) * 4.5f / (static_cast<float>(pow(2,15)) - 1.0f)));
+        break;
+    default:
+        break;
+    }
+}
+
+void batlabCell::onUpdateParameters(int cell)
+{
+    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::VOLTAGE_LIMIT_CHG), sendVoltageLimit(testParameters.hightVoltageCutoff));
+    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::VOLTAGE_LIMIT_DCHG), sendVoltageLimit(testParameters.lowVoltageCutoff));
+    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::CURRENT_LIMIT_CHG),  sendCurrentLimit(testParameters.currentCutoffCharge));
+    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::CURRENT_LIMIT_DCHG), sendCurrentLimit(testParameters.currentCutoffDischarge));
+    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::TEMP_LIMIT_CHG),  sendTemperatureLimits(testParameters.temperatureCutoffCharge));
+    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::TEMP_LIMIT_DCHG), sendTemperatureLimits(testParameters.temperatureCutoffDischarge));
+    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testParameters.reportingFrequency));
+    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::CURRENT_SETPOINT), sendCurrentSetpoint(testParameters.currentSetpoint));
 }

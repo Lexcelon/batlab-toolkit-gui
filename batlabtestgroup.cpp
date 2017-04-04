@@ -79,20 +79,21 @@ void batlabTestGroup::connectCom(batlabCom * com)
 {
     comObject = com;
     connect(this,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
-    connect(com,SIGNAL(emitResponse(int,int,int,int)), this, SLOT(receiveResponse(int,int,int,int)));
+    connect(com,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
+        connect(com,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int,int)));
     connect(com,SIGNAL(emitStream(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
 
     for (int i = 0; i < testGroup.size(); i++) {
-        connect(testGroup[i],SIGNAL(updateParameter(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
+        connect(testGroup[i],SIGNAL(updateParameter(int,int,int,int)),com,SLOT(onWriteReg(int,int,int,int)));
     }
 }
 
 void batlabTestGroup::disconnectCom(batlabCom * com)
 {
     disconnect(com,SIGNAL(emitStream(int,int,int,float,int,int,int)),this,SLOT(receiveStream(int,int,int,float,int,int,int)));
-    disconnect(this,SIGNAL(updateParameter(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
+    disconnect(this,SIGNAL(updateParameter(int,int,int,int)),com,SLOT(onWriteReg(int,int,int,int)));
     for (int i = 0; i < testGroup.size(); i++) {
-        disconnect(testGroup[i],SIGNAL(updateParameter(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
+        disconnect(testGroup[i],SIGNAL(updateParameter(int,int,int,int)),com,SLOT(onWriteReg(int,int,int,int)));
     }
 }
 
@@ -101,7 +102,7 @@ void batlabTestGroup::receiveStream(int cell, int mode, int stat, float temp, fl
     testGroup[cell]->receiveStream(mode, stat, temp, curr, volt);
 }
 
-void batlabTestGroup::receiveResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     int value = static_cast<int>(lsb) | (static_cast<int>(msb) << 8);
     if (nameSpace == 4) {
@@ -111,7 +112,7 @@ void batlabTestGroup::receiveResponse(int nameSpace, int batlabRegister, int lsb
             }
         }
     } else if (nameSpace == 0 || nameSpace == 1 || nameSpace == 2 || nameSpace == 3 ) {
-//        if (batlabRegister == cellNamespace::)
+        testGroup[nameSpace]->receiveReadResponse(batlabRegister, value);
     } else {
 
     }
@@ -159,7 +160,7 @@ void batlabTestGroup::startTests()
 void batlabTestGroup::updateParms(int index)
 {
    testParms testParameters = testGroup[index]->onGetParameters();
-
+    testGroup[index]->onUpdateParameters(index);
 //   emit emitWriteReg(0, index, writeVals::highTempChargeSafetyCutoff, testParameters.temperatureCutoffCharge);
 //   emit emitWriteReg(0, index, writeVals::streamReportingPeriod, testParameters.reportingFrequency);
 }

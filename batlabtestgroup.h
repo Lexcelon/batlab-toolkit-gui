@@ -29,7 +29,7 @@ public slots:
     void disconnectCom(batlabCom * com);
 
     void receiveStream(int cell, int mode, int stat, float temp, float curr, float volt);
-    void receiveResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void receiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
 
 //    void receiveStream(int,int,int,float,int,int,int);
 //    void receiveStreamExt(int,int,int,int,int);

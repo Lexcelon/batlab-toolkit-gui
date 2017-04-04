@@ -571,6 +571,10 @@ struct testPacket {
     QVector<float> REG_TEMPERATURE;
     QVector<float> REG_CURRENT;
     QVector<float> REG_VOLTAGE;
+    QVector<QPair<float,float>> VOLTAGE_PP;
+    QVector<QPair<float,float>> VOLTAGE_PHASE;
+    QVector<QPair<float,float>> CURRENT_PHASE;
+    QVector<QPair<float,float>> CURRENT_PP;
 };
 
 enum cellNamespace {
