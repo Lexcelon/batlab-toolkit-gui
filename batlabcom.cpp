@@ -32,7 +32,8 @@ batlabCom::batlabCom(QString item, QObject *parent) : QObject(parent)
         qDebug() << "Failure Opening Port";
     }
 
-     connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
+    connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
+    onReadReg(0x04,unitNamespace::SERIAL_NUM);
 }
 
 void batlabCom::onRead() {
@@ -50,23 +51,36 @@ void batlabCom::onRead() {
         if (rec[start+2] & 0x80) {
             emit emitWriteResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]) ^ 0x0080, static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
         } else {
+            if (rec[start+2] == unitNamespace::SERIAL_NUM) {
+                serialNumber = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
+            }
             emit emitReadResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]), static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
         }
 
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
-        qDebug() << static_cast<int>(rec[start+1]);
+        qDebug() << static_cast<int>(rec[start+1])
+                << static_cast<int>(rec[start+2])
+                << static_cast<int>(rec[start+3])
+                << static_cast<int>(rec[start+4])
+                << static_cast<int>(rec[start+5])
+                << static_cast<int>(rec[start+6])
+                << static_cast<int>(rec[start+7])
+                << static_cast<int>(rec[start+8])
+                << static_cast<int>(rec[start+9])
+                << static_cast<int>(rec[start+10])
+                << static_cast<int>(rec[start+11])
+                << static_cast<int>(rec[start+12]);
+
         int cell = static_cast<int>(rec[start+1]);
         if ((uchar)rec[start+2] == 0x00) {
-            qDebug() << "STREAM PACKET";
-            qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
             int mode, status, temp, current, voltage;
-            mode = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
-            status = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
-            temp = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
-            current = 256*(uchar)rec[start+9] + (uchar)rec[start+10];
-            voltage = 256*(uchar)rec[start+11] + (uchar)rec[start+12];
+            mode =      (uchar)rec[start+3]  + 256*(uchar)rec[start+4];
+            status =    (uchar)rec[start+5]  + 256*(uchar)rec[start+6];
+            temp =      (uchar)rec[start+7]  + 256*(uchar)rec[start+8];
+            current =   (uchar)rec[start+9]  + 256*(uchar)rec[start+10];
+            voltage =   (uchar)rec[start+11] + 256*(uchar)rec[start+12];
             emit emitStream(cell,mode,status,getTemperature(temp),getCurrent(current),getVoltage(voltage));
         }
 //        else {

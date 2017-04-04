@@ -82,6 +82,7 @@ void batlabTestGroup::onStartTests()
 void batlabTestGroup::connectCom(batlabCom * com)
 {
     comObject = com;
+    serialNumber = com->getSerialNumber();
     connect(this,SIGNAL(emitWriteReg(int,int,int)),com,SLOT(onWriteReg(int,int,int)));
     connect(this,SIGNAL(emitReadReg(int,int)),com,SLOT(onReadReg(int,int)));
     connect(com,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));

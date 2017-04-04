@@ -68,19 +68,20 @@ Batlab::Batlab(QWidget *parent) :
 //    return;
 }
 
-void Batlab::onTest() {
+void Batlab::onTest()
+{
+    cellManager->onStartTests();
+//   // For testing communications with batlab
+//   if (testObj == nullptr) {
+//       testObj = new batlabtest();
+//       connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
+//       connect(testObj,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
+//       connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
+//   }
 
-   // For testing communications with batlab
-   if (testObj == nullptr) {
-       testObj = new batlabtest();
-       connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
-       connect(testObj,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
-       connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
-   }
-
-   //Can move window around
-   testObj->setModal(false);
-   testObj->show();
+//   //Can move window around
+//   testObj->setModal(false);
+//   testObj->show();
 }
 
 Batlab::~Batlab()
@@ -97,8 +98,8 @@ Batlab::~Batlab()
     delete ui;
 }
 
-void Batlab::onReceiveResponse(int a,int aa,QString aaa,int aaaa) {
-    QString str;
+void Batlab::onReceiveResponse(int nameSpace,int batlabRegister,int lsb,int msb) {
+//    QString str;
 //    if (aaa == names[numberOfConnectedUnits]) {
 //        str = ">> " + aaa + ": " + QString::number((aaaa) & 0x3F);
 //    } else if (aaa == names[status]){
@@ -112,8 +113,9 @@ void Batlab::onReceiveResponse(int a,int aa,QString aaa,int aaaa) {
 //    } else {
 //        str = ">> Unit: " + QString::number(a) + " Cell: " + QString::number(aa) + " " + aaa + ": " + QString::number(aaaa) +"\n";
 //    }
-    ui->textBrowser->insertPlainText(str);
-    ui->textBrowser->moveCursor(QTextCursor::End);
+//    ui->textBrowser->insertPlainText(str);
+//    ui->textBrowser->moveCursor(QTextCursor::End);
+
 }
 
 void Batlab::onReceiveStream(int unit,int cell,int status,float temp,int current,int voltage,int charge) {
@@ -262,11 +264,11 @@ void Batlab::onGetBatlabNames()
         qDebug() << list[i].portName();
         names.append(list[i].portName());
     }
-    names << "test" << "string" << "list";
-    inputStringDialog *dialog = new inputStringDialog();
-    dialog->onStringList(names);
-    connect(dialog, SIGNAL(accepted()), dialog, SLOT(deleteLater()));
-    connect(dialog, SIGNAL(emitList(QStringList)), this, SLOT(onConnectToBatlabs(QStringList)));
-    dialog->exec();
+//    names << "test" << "string" << "list";
+//    inputStringDialog *dialog = new inputStringDialog();
+//    dialog->onStringList(names);
+//    connect(dialog, SIGNAL(accepted()), dialog, SLOT(deleteLater()));
+//    connect(dialog, SIGNAL(emitList(QStringList)), this, SLOT(onConnectToBatlabs(QStringList)));
+//    dialog->exec();
 
 }
