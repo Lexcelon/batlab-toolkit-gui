@@ -32,11 +32,13 @@ public slots:
     void onRead();
     void onReadReg(int, int);
     void onWriteReg(int, int, int);
+    int getSerialNumber() {return serialNumber; }
     //float getTemp(int val);
 
 private:
     QSerialPort * port;
     QVector<uchar> data;
+    int serialNumber = -1;
 };
 
 #endif // BATLABCOM_H

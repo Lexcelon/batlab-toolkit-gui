@@ -25,12 +25,12 @@ batlabCellManager::~batlabCellManager()
 //}
 
 void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage) {
-    uchar key = uchar(cell);
-    if (cells.contains(key)) {
-        cells[key]->receiveStream( mode, status, temp, current, voltage);
-    } else {
-        onNewCell(key);
-    }
+//    uchar key = uchar(cell);
+//    if (cells.contains(key)) {
+//        cells[key]->receiveStream( mode, status, temp, current, voltage);
+//    } else {
+////        onNewCell(key);
+//    }
 }
 
 void batlabCellManager::onGetTests(uchar key) {
