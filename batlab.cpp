@@ -52,11 +52,6 @@ Batlab::Batlab(QWidget *parent) :
     connect(com,SIGNAL(emitStream(int,int,int,float,int,int,int)),this,SLOT(onReceiveStream(int,int,int,float,int,int,int)));
     connect(com,SIGNAL(emitStreamExt(int,int,int,int,int)),this,SLOT(onReceiveStreamExt(int,int,int,int,int)));
 
-    // Streaming data from comm object to appropriate cell in the cell manager
-    connect(com,SIGNAL(emitStream(int,int,int,float,int,int,int)),this,SLOT(onReceiveStream(int,int,int,float,int,int,int)));
-    connect(com,SIGNAL(emitStreamExt(int,int,int,int,int)),this,SLOT(onReceiveStreamExt(int,int,int,int,int)));
-
-
     // Making the buttons functional
     connect(exit,SIGNAL(clicked()),this,SLOT(close()));
     connect(test,SIGNAL(clicked()),this,SLOT(onTest()));
