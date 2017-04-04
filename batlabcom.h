@@ -20,7 +20,8 @@ public:
     ~batlabCom();
 
 signals:
-    void emitResponse(int,int,bool,bool);
+    void emitReadResponse(int,int,int,int);
+    void emitWriteResponse(int,int,int,int);
     void emitStream(int,int,int,float,int,int,int);
     void emitStreamExt(int,int,int,int,int);
 
@@ -29,8 +30,8 @@ signals:
 
 public slots:
     void onRead();
-    void onReadReg(int,int,vals);
-    void onWriteReg(int,int,writeVals,int);
+    void onReadReg(int, int);
+    void onWriteReg(int, int, int);
     //float getTemp(int val);
 
 private:

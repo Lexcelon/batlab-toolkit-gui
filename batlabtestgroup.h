@@ -26,24 +26,53 @@ public slots:
     void updateParms(int index);
 
     void connectCom(batlabCom * com);
-    void disconnectCom(batlabCom * com);
+    void disconnectCom();
 
     void receiveStream(int cell, int mode, int stat, float temp, float curr, float volt);
+    void receiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
 
 //    void receiveStream(int,int,int,float,int,int,int);
 //    void receiveStreamExt(int,int,int,int,int);
 
     void onTestFinished(int, QString id, int testNum);
 
+    void startTests();
+
+    int onPromptStart();
+
+    void startImpedance();
+
+    void setImpedanceModes();
+    void onCheckImpedanceModes();
+    void onVerifyImpedanceModes();
+
+    void setFrequency();
+    void onCheckFrequency();
+    void onVerifyFrequency();
+
+    void onReadImpedance();
+
+    void onRestartTests();
+    void onCheckRestart();
+    void onVerifyRestart();
+
 signals:
-    void emitFinishedTests(int, QString, int testNum);
-    void emitWriteReg(int,int,writeVals,int);
+    void emitFinishedTests();
+    void emitWriteReg(int,int,int);
+    void emitReadReg(int,int);
+
 
 private:
     QVector<batlabCell*> testGroup;
+    batlabCom *comObject = nullptr;
+    int serialNumber = -1;
     int batlabId = -1;
     bool isRunning = false;
     int count = 0x0000;
+    QTimer *impedanceTimer;
+
+    int freqCounter = 0;
+
 };
 
 #endif // BATLABTESTGROUP_H
