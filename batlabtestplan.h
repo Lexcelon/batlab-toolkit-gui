@@ -38,6 +38,7 @@ private:
     QVector<batlabCell*> cellList;
     QVector<batlabTestGroup*> testGroupList;
     QVector<batlabCom*> comList;
+    QVector<QThread*> threads;
 };
 
 #endif // BATLABTESTPLAN_H

@@ -57,7 +57,7 @@ public slots:
     void onVerifyRestart();
 
 signals:
-    void emitFinishedTests();
+    void emitFinishedTests(int);
     void emitWriteReg(int,int,int);
     void emitReadReg(int,int);
 
