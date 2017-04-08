@@ -22,12 +22,7 @@ public slots:
 //    void onReceiveStream(int,int,int,float,int,int,int);
     void onReceiveStream(int, int, int, float, float, float);
 
-    void onNewCell(uchar);
-    void onDeleteCell(uchar);
 //    void onPrintCell(uchar key, properties val);
-    void onNewTest(uchar key,uchar test);
-    void onTestFinished(uchar key);
-    void onGetTests(uchar key);
 
     void onNewCell(QString id, testParms parms, double ccr, double dcr, double cap, int cycles);
 
@@ -36,6 +31,8 @@ public slots:
 
     void onStartTests();
     void onAllTestsFinished();
+
+    void clean();
 
     batlabCell* onGetCell(int index) { return cellList.at(index); }
 
@@ -56,12 +53,11 @@ signals:
 
 private:
     void saveLevelOneData(batlabCell* cellPointer);
-    QMap<uchar,batlabCell*> cells;
     QVector<batlabCell*> cellList;
 
     QVector<batlabCom*> comList;
 
-    batlabTestPlan * testPlan;
+    batlabTestPlan * testPlan = nullptr;
 
     int numberOfBatlabs;
 

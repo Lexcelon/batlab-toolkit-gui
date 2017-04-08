@@ -14,7 +14,6 @@ class batlabCell : public QObject
 
 public:
     batlabCell();
-    batlabCell(uchar key);
     batlabCell(QString designator, testParms parms, int cycles);
 
 
@@ -49,7 +48,7 @@ public:
 
 signals:
     void testFinished(int cell);
-    void updateParameter(int unit, int cell, int val, int num);
+    void updateParameter(int unit, int cell, int val);
 
 public slots:
     void receiveStream(int, int, float, float, float);

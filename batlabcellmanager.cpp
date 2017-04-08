@@ -8,58 +8,17 @@ batlabCellManager::batlabCellManager()
 
 batlabCellManager::~batlabCellManager()
 {
-    uchar temp;
-    foreach(temp,cells.uniqueKeys()) {
-        cells.remove(temp);
-    }
+
 }
 
+void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage)
+{
 
-//void batlabCellManager::onReceiveStream(int unit,int cell,int status,float temp,int current,int voltage,int charge) {
-//    uchar key = uchar(((unit<<2) + cell));
-//    if (cells.contains(key)) {
-//        cells[key]->receiveStream( status, temp, current, voltage, charge);
-//    } else {
-//        onNewCell(key);
-//    }
-//}
-
-void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage) {
-//    uchar key = uchar(cell);
-//    if (cells.contains(key)) {
-//        cells[key]->receiveStream( mode, status, temp, current, voltage);
-//    } else {
-////        onNewCell(key);
-//    }
-}
-
-void batlabCellManager::onGetTests(uchar key) {
-    if (cells.contains(key)) {
-        emit emitTests(cells[key]->getTests());
-    }
-}
-
-void batlabCellManager::onNewCell(uchar key) {
-    cells.insert(key,new batlabCell(key));
-    connect(cells[key],SIGNAL(testFinished(uchar)),this,SLOT(onTestFinished(uchar)));
 }
 
 void batlabCellManager::onNewCell(QString id , testParms parms, double ccr, double dcr, double cap, int cycles) {
     batlabCell * tempCell = new batlabCell(id,parms,cycles);
     cellList.push_back(tempCell);
-}
-
-
-void batlabCellManager::onTestFinished(uchar key) {
-    emit testFinished(key);
-}
-
-void batlabCellManager::onNewTest(uchar key,uchar test) {
-//    cells[key]->newTest(test);
-}
-
-void batlabCellManager::onDeleteCell(uchar key) {
-    cells.remove(key);
 }
 
 //void batlabCellManager::onPrintCell(uchar key, properties val) {
@@ -125,6 +84,20 @@ void batlabCellManager::onAllTestsFinished()
 {
     for (int i = 0; i < cellList.size(); ++i) {
         saveLevelOneData(cellList[i]);
+    }
+}
+
+void batlabCellManager::clean()
+{
+    while (!cellList.isEmpty()) {
+        if (cellList.first() != nullptr) {
+            delete cellList.takeFirst();
+        }
+    }
+
+    if (testPlan) {
+        delete testPlan;
+        testPlan = nullptr;
     }
 }
 

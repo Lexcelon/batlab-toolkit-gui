@@ -49,13 +49,13 @@ void batlabTestPlan::onStartTests()
 
         //old method used when we supported daisy chaining...could use in future
 //        for (i = 0; i < ((testGroupList.size()>3)?3:testGroupList.size()); ++i) /{
-        for (i = 0; i < comList.size(); i++)
+        for (i = 0; i < comList.size() && i < testGroupList.size(); i++)
         {
+            connect(testGroupList[i],SIGNAL(emitFinishedTests(int)),this,SLOT(onFinishedTests(int)));
             testGroupList[i]->onSetBatlabID(i);
             testGroupList[i]->connectCom(comList[i]);
             testGroupList[i]->onStartTests();
 
-            connect(testGroupList[i],SIGNAL(emitFinishedTests(int)),this,SLOT(onFinishedTests(int)));
         }
 }
 
@@ -67,6 +67,8 @@ void batlabTestPlan::onFinishedTests(int val) {
         } else {
             testGroupList[i]->disconnectCom();
             testGroupList[i]->onSetBatlabID(val);
+
+            //dont think this is right...
             testGroupList[i]->connectCom(comList[i]);
             testGroupList[i]->onStartTests();
 

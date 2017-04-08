@@ -5,6 +5,10 @@
 batlabTestGroup::batlabTestGroup(): QObject()
 {
     count = 0;
+    impedanceTimer = new QTimer(this);
+    impedanceTimer->setSingleShot(true);
+    connect(impedanceTimer, &QTimer::timeout,
+            this, &batlabTestGroup::startImpedance);
 }
 
 
@@ -86,11 +90,11 @@ void batlabTestGroup::connectCom(batlabCom * com)
     connect(this,SIGNAL(emitWriteReg(int,int,int)),com,SLOT(onWriteReg(int,int,int)));
     connect(this,SIGNAL(emitReadReg(int,int)),com,SLOT(onReadReg(int,int)));
     connect(com,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
-    connect(com,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int,int)));
+    connect(com,SIGNAL(emitWriteResponse(int,int,int)), this, SLOT(receiveWriteResponse(int,int,int)));
     connect(com,SIGNAL(emitStream(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
 
     for (int i = 0; i < testGroup.size(); i++) {
-        connect(testGroup[i],SIGNAL(updateParameter(int,int,int,int)),com,SLOT(onWriteReg(int,int,int,int)));
+        connect(testGroup[i],SIGNAL(updateParameter(int,int,int)),com,SLOT(onWriteReg(int,int,int)));
     }
 }
 
@@ -115,6 +119,7 @@ void batlabTestGroup::receiveStream(int cell, int mode, int stat, float temp, fl
 void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     int value = static_cast<int>(lsb) | (static_cast<int>(msb) << 8);
+    int temp = static_cast<int>(lsb) << 8 | (static_cast<int>(msb));
     if (nameSpace == 4) {
         if (batlabRegister == unitNamespace::SINE_FREQ) {
             for (int i = 0; i < testGroup.size(); ++i) {
@@ -165,14 +170,15 @@ void batlabTestGroup::startTests()
         isRunning = false;
         emit emitFinishedTests();
     } else {
-        impedanceTimer->start(180000);
+        impedanceTimer->start(30000);
     }
 }
 
 void batlabTestGroup::updateParms(int index)
 {
    testParms testParameters = testGroup[index]->onGetParameters();
-    testGroup[index]->onUpdateParameters(index);
+   testGroup[index]->onUpdateParameters(index);
+
 //   emit emitWriteReg(0, index, writeVals::highTempChargeSafetyCutoff, testParameters.temperatureCutoffCharge);
 //   emit emitWriteReg(0, index, writeVals::streamReportingPeriod, testParameters.reportingFrequency);
 }

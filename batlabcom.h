@@ -21,11 +21,10 @@ public:
 
 signals:
     void emitReadResponse(int,int,int,int);
-    void emitWriteResponse(int,int,int,int);
-    void emitStream(int,int,int,float,int,int,int);
-    void emitStreamExt(int,int,int,int,int);
-
+    void emitWriteResponse(int,int,int,int);    
     void emitStream(int,int,int,float,float,float);
+    void emitReadCommand (int, int, int);
+    void emitWriteCommand(int, int, int, int);
 
 
 public slots:
@@ -33,7 +32,6 @@ public slots:
     void onReadReg(int, int);
     void onWriteReg(int, int, int);
     int getSerialNumber() {return serialNumber; }
-    //float getTemp(int val);
 
 private:
     QSerialPort * port;
