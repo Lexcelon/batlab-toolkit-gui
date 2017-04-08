@@ -44,15 +44,16 @@ void batlabCom::onRead() {
 
     while (len > 0)
     if ((uchar)rec[start] == 0xAA) {
-        qDebug() << "RESPONSE PACKET";
-        qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
-        qDebug() << "Low Byte Fail: " << (bool)(rec[start+3]) << " High Byte Fail: " << (bool)(rec[start+4]);
+        //qDebug() << "RESPONSE PACKET";
+        //qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
+        //qDebug() << "Low Byte Fail: " << (int)(rec[start+3]) << " High Byte Fail: " << (int)(rec[start+4]);
 
         if (rec[start+2] & 0x80) {
             emit emitWriteResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]) ^ 0x0080, static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
         } else {
             if (rec[start+2] == unitNamespace::SERIAL_NUM) {
                 serialNumber = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
+                qDebug() << "Serial  Number " << serialNumber;
             }
             emit emitReadResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]), static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
         }
@@ -83,15 +84,6 @@ void batlabCom::onRead() {
             voltage =   (uchar)rec[start+11] + 256*(uchar)rec[start+12];
             emit emitStream(cell,mode,status,getTemperature(temp),getCurrent(current),getVoltage(voltage));
         }
-//        else {
-//            qDebug() << "STREAM PACKET EXT";
-//            qDebug() << "Unit: " << (uchar)(rec[start+1] >> 2) << " Cell: " << (uchar)(rec[start+1] & 0x03);
-//            int currAmp,volPhase,volAmp;
-//            currAmp = 256*(uchar)rec[start+3] + (uchar)rec[start+4];
-//            volPhase = 256*(uchar)rec[start+5] + (uchar)rec[start+6];
-//            volAmp = 256*(uchar)rec[start+7] + (uchar)rec[start+8];
-//            emit emitStreamExt(unit,cell,currAmp,volPhase,volAmp);
-//        }
         len-=13;
         start+=13;
     }
@@ -101,31 +93,36 @@ batlabCom::~batlabCom() {
     port->close();
 }
 
-void batlabCom::onReadReg(int batlabNamespace, int batlabRegister) {
+void batlabCom::onReadReg(int batlabNamespace, int batlabRegister)
+{
+    emit emitReadCommand(serialNumber, batlabNamespace, batlabRegister);
+
     char * data = new char[5];
-    data[0] = 0xAA;
+    data[0] = static_cast<uchar>(0xAA);
     data[1] = static_cast<uchar>(batlabNamespace);
     data[2] = static_cast<uchar>(batlabRegister);
-    data[3] = 0x00;
-    data[4] = 0x00;
+    data[3] = static_cast<uchar>(0x00);
+    data[4] = static_cast<uchar>(0x00);
 
     port->write(data,5);
     port->waitForBytesWritten(1000);
 }
 
 
-void batlabCom::onWriteReg(int batlabNamespace, int batlabRegister,int num) {
+void batlabCom::onWriteReg(int batlabNamespace, int batlabRegister, int num)
+{
+    emit emitWriteCommand(serialNumber, batlabNamespace, batlabRegister, num);
     char * data = new char[5];
     uchar msb = ((uchar)((0xFF00 & num) >> 8));
     uchar lsb = ((uchar)(0x00FF & num));
     qDebug() << "WRITE MESSAGE";
     qDebug() << "NAMESPACE: " << batlabNamespace << " REGISTER: " << batlabRegister << " VALUE : " << num;
     qDebug() << msb << lsb;
-    data[0] = 0xAA;
+    data[0] = static_cast<uchar>(0xAA);
     data[1] = static_cast<uchar>(batlabNamespace);
     data[2] = static_cast<uchar>(batlabRegister) | 0x80;
-    data[3] = msb;
-    data[4] = lsb;
+    data[3] = lsb;
+    data[4] = msb;
 
     port->write(data,5);
     port->waitForBytesWritten(1000);

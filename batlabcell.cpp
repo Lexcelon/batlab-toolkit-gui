@@ -5,11 +5,6 @@ batlabCell::batlabCell()
 
 }
 
-batlabCell::batlabCell(uchar key)
-{
-    unit = key >> 2;
-    cell = key & 0x03;
-}
 
 batlabCell::batlabCell(QString designator, testParms parms, int cycles)
 {
@@ -29,6 +24,13 @@ batlabCell::batlabCell(QString designator, testParms parms, int cycles)
 void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float volt)
 {
     int elapsed = timer.elapsed();
+
+    if (mode != getCurrentMode()) {
+    }
+
+    if (status != 0x00) {
+
+    }
     status = stat;
 //    statusString = parseStatus(stat);
     time.append(elapsed);
@@ -117,12 +119,12 @@ void batlabCell::receiveReadResponse(int batlabRegister, int value)
 
 void batlabCell::onUpdateParameters(int cell)
 {
-    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::VOLTAGE_LIMIT_CHG), sendVoltageLimit(testParameters.hightVoltageCutoff));
-    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::VOLTAGE_LIMIT_DCHG), sendVoltageLimit(testParameters.lowVoltageCutoff));
-    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::CURRENT_LIMIT_CHG),  sendCurrentLimit(testParameters.currentCutoffCharge));
-    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::CURRENT_LIMIT_DCHG), sendCurrentLimit(testParameters.currentCutoffDischarge));
-    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::TEMP_LIMIT_CHG),  sendTemperatureLimits(testParameters.temperatureCutoffCharge));
-    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::TEMP_LIMIT_DCHG), sendTemperatureLimits(testParameters.temperatureCutoffDischarge));
-    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testParameters.reportingFrequency));
-    emit updateParameter(0xAA, cell, static_cast<int>(cellNamespace::CURRENT_SETPOINT), sendCurrentSetpoint(testParameters.currentSetpoint));
+    emit updateParameter(cell, static_cast<int>(cellNamespace::VOLTAGE_LIMIT_CHG), sendVoltageLimit(testParameters.hightVoltageCutoff));
+    emit updateParameter(cell, static_cast<int>(cellNamespace::VOLTAGE_LIMIT_DCHG), sendVoltageLimit(testParameters.lowVoltageCutoff));
+    emit updateParameter(cell, static_cast<int>(cellNamespace::CURRENT_LIMIT_CHG),  sendCurrentLimit(testParameters.currentCutoffCharge));
+    emit updateParameter(cell, static_cast<int>(cellNamespace::CURRENT_LIMIT_DCHG), sendCurrentLimit(testParameters.currentCutoffDischarge));
+    emit updateParameter(cell, static_cast<int>(cellNamespace::TEMP_LIMIT_CHG),  sendTemperatureLimits(testParameters.temperatureCutoffCharge));
+    emit updateParameter(cell, static_cast<int>(cellNamespace::TEMP_LIMIT_DCHG), sendTemperatureLimits(testParameters.temperatureCutoffDischarge));
+    emit updateParameter(cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testParameters.reportingFrequency));
+    emit updateParameter(cell, static_cast<int>(cellNamespace::CURRENT_SETPOINT), sendCurrentSetpoint(testParameters.currentSetpoint));
 }

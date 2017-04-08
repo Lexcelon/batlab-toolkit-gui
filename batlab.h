@@ -37,12 +37,17 @@ public slots:
     void onConnectToBatlabs(QStringList names);
     void onGetBatlabNames();
     void onTest();
-    void onReceiveResponse(int,int,int,int);
-    void onReceiveStream(int,int,int,float,int,int,int);
-    void onReceiveStreamExt(int,int,int,int,int);
+
+    void onReceiveWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
+    void onReceiveReadCommand(int serialNumber, int nameSpace,int batlabRegister);
+    void onReceiveWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage);
+
     void onNewProjectWizard();
     void onAddTests();
     void onLoadTest(QString);
+    void onLoadProject();
 
     void onFinishedTests(int cell, QString designator, int testNum);
 
@@ -50,14 +55,13 @@ private:
     Ui::Batlab *ui = nullptr;
     QPushButton *connectToBatlabs = nullptr;
     QPushButton *test = nullptr;
-    QPushButton *settingsB = nullptr;
+    QPushButton *loadProject = nullptr;
     QPushButton *newProjectWizard = nullptr;
     QPushButton *report = nullptr;
     QPushButton *options = nullptr;
     QPushButton *exit = nullptr;
     QGraphicsView *glWidget = nullptr;
     batlabtest *testObj = nullptr;
-    batlabCom * com = nullptr;
     QVector<batlabCom*> batlabComObjects;
 
     settings * configSettings = nullptr;

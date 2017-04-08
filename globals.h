@@ -90,7 +90,7 @@ static int sendReportingFrequency(float val)
 {
     int T;
 
-    T = static_cast<int>(val / 0.1f);
+    T = static_cast<int>(1.0f / 0.1f / val);
 
     return T;
 }
