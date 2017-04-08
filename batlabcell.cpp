@@ -29,7 +29,8 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
     }
 
     if (status != 0x00) {
-
+        emit emitError(id);
+        return;
     }
     status = stat;
 //    statusString = parseStatus(stat);

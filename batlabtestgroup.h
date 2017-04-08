@@ -56,6 +56,8 @@ public slots:
     void onCheckRestart();
     void onVerifyRestart();
 
+    void onError(QString);
+
 signals:
     void emitFinishedTests(int);
     void emitWriteReg(int,int,int);
