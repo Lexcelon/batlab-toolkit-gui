@@ -22,8 +22,6 @@ public slots:
     void onLowVoltageCutoff(double val) { parms.lowVoltageCutoff = val;   emit emitParms(parms); }
     void onHighTempCutoff(double val) { parms.temperatureCutoffCharge = val;   emit emitParms(parms); }
     void onLowTempCutoff(double val) { parms.temperatureCutoffDischarge = val;   emit emitParms(parms); }
-    void onChargeCRate(double val) { ccr = val;   emit emitCCR(ccr); }
-    void onDischargeCRate(double val) { dcr = val;   emit emitDCR(dcr); }
     void onReportingFrequency(double val) { parms.reportingFrequency = val;   emit emitParms(parms); }
     void onConstantCurrentSetpoint(double val) { parms.currentSetpoint = val;   emit emitParms(parms); }
     void onCapacity(double val) { capacity = val;   emit emitCapacity(capacity); }
@@ -34,8 +32,6 @@ public slots:
 signals:
     void emitCycles(int);
     void emitParms(testParms);
-    void emitCCR(double);
-    void emitDCR(double);
     void emitCapacity(double);
     void emitRestTime(int);
 
@@ -43,8 +39,6 @@ private:
     Ui::wizardPageTwo *ui;
     testParms parms;
     int cycles;
-    double ccr;
-    double dcr;
     double capacity;
     int restTime;
 };

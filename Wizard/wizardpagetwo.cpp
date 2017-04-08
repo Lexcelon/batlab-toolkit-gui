@@ -32,11 +32,10 @@ wizardPageTwo::~wizardPageTwo()
     delete ui;
 }
 
-void wizardPageTwo::onUpdate() {
+void wizardPageTwo::onUpdate()
+{
     emit emitCycles(ui->cycles->value());
     emit emitParms(parms);
-    emit emitDCR(ui->dcr->value());
-    emit emitCCR(ui->ccr->value());
     emit emitCapacity(ui->capacity->value());
     emit emitRestTime(ui->sbRestTime->value());
 }
