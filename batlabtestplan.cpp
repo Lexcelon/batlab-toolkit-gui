@@ -28,9 +28,14 @@ batlabTestPlan::~batlabTestPlan()
 }
 
 
-void batlabTestPlan::onCreatePlan() {
+void batlabTestPlan::onCreatePlan()
+{
     int numCells = cellList.size();
     int cellGroups = (int)ceil((double)numCells / 4.0f);
+
+    for (int i = 0; i < comList.size(); ++i) {
+        threads.push_back(new QThread());
+    }
 
     for (int i = 0; i < cellGroups; i++) {
         testGroupList.push_back(new batlabTestGroup());
@@ -59,7 +64,8 @@ void batlabTestPlan::onStartTests()
         }
 }
 
-void batlabTestPlan::onFinishedTests(int val) {
+void batlabTestPlan::onFinishedTests(int val)
+{
     testGroupList.removeOne(dynamic_cast<batlabTestGroup*>(sender()));
     int i = 0;
     while ((i < testGroupList.size()) && (i < numberOfBatlabs)) {
@@ -69,7 +75,7 @@ void batlabTestPlan::onFinishedTests(int val) {
             testGroupList[i]->onSetBatlabID(val);
 
             //dont think this is right...
-            testGroupList[i]->connectCom(comList[i]);
+            testGroupList[i]->connectCom(comList[val]);
             testGroupList[i]->onStartTests();
 
             connect(testGroupList[i],SIGNAL(emitFinishedTests()),this,SLOT(onFinishedTests()));

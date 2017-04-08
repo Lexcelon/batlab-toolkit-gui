@@ -168,7 +168,7 @@ void batlabTestGroup::startTests()
 
     if (count == 0x0000) {
         isRunning = false;
-        emit emitFinishedTests();
+        emit emitFinishedTests(batlabId);
     } else {
         impedanceTimer->start(30000);
     }
