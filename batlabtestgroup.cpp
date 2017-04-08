@@ -322,7 +322,7 @@ void batlabTestGroup::onVerifyRestart()
 void batlabTestGroup::onError(QString cellId)
 {
     int index = 0;
-    for (index = 0; index < testGroup.size(); ++i) {
+    for (index = 0; index < testGroup.size(); ++index) {
         if (cellId == testGroup[index]->getDesignator()) {
             break;
         }
