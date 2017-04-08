@@ -49,6 +49,8 @@ public:
 signals:
     void testFinished(int cell);
     void updateParameter(int unit, int cell, int val);
+    void emitError(QString);
+
 
 public slots:
     void receiveStream(int, int, float, float, float);

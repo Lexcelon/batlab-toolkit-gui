@@ -29,6 +29,8 @@ batlabTestGroup::~batlabTestGroup()
 void batlabTestGroup::onNewTest(batlabCell * newCell)
 {
     testGroup.push_back(newCell);
+    connect(newCell, &batlabCell::emitError,
+            this, &batlabTestGroup::onError);
 }
 
 int batlabTestGroup::onGetSize()
@@ -119,7 +121,6 @@ void batlabTestGroup::receiveStream(int cell, int mode, int stat, float temp, fl
 void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     int value = static_cast<int>(lsb) | (static_cast<int>(msb) << 8);
-    int temp = static_cast<int>(lsb) << 8 | (static_cast<int>(msb));
     if (nameSpace == 4) {
         if (batlabRegister == unitNamespace::SINE_FREQ) {
             for (int i = 0; i < testGroup.size(); ++i) {
@@ -264,15 +265,10 @@ void batlabTestGroup::onReadImpedance()
 {
     for (int i = 0; i < testGroup.size(); ++i) {
         if (count & (0x0001 << i)) {
-
             emit emitReadReg(i,cellNamespace::VOLTAGE_PHS);
-            //        this->thread()->sleep(50);
             emit emitReadReg(i,cellNamespace::VOLTAGE_PP);
-            //        this->thread()->sleep(50);
             emit emitReadReg(i,cellNamespace::CURRENT_PHS);
-            //        this->thread()->sleep(50);
             emit emitReadReg(i,cellNamespace::CURRENT_PP);
-            //        this->thread()->sleep(50);
         }
     }
 
@@ -321,4 +317,16 @@ void batlabTestGroup::onVerifyRestart()
     } else {
         impedanceTimer->start(180000);
     }
+}
+
+void batlabTestGroup::onError(QString cellId)
+{
+    int index = 0;
+    for (index = 0; index < testGroup.size(); ++i) {
+        if (cellId == testGroup[index]->getDesignator()) {
+            break;
+        }
+    }
+
+    emit emitReadReg(index, cellNamespace::ERROR);
 }
