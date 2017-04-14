@@ -22,6 +22,8 @@ public slots:
     void onLowVoltageCutoff(double val) { parms.lowVoltageCutoff = val;   emit emitParms(parms); }
     void onHighTempCutoff(double val) { parms.temperatureCutoffCharge = val;   emit emitParms(parms); }
     void onLowTempCutoff(double val) { parms.temperatureCutoffDischarge = val;   emit emitParms(parms); }
+    void onCurrentChargeCutoff(double val) { parms.currentCutoffCharge = val;   emit emitParms(parms);}
+    void onCurrentDischargeCutoff(double val) { parms.currentCutoffCharge = val;   emit emitParms(parms);}
     void onReportingFrequency(double val) { parms.reportingFrequency = val;   emit emitParms(parms); }
     void onConstantCurrentSetpoint(double val) { parms.currentSetpoint = val;   emit emitParms(parms); }
     void onCapacity(double val) { capacity = val;   emit emitCapacity(capacity); }

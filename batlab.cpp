@@ -257,8 +257,8 @@ void Batlab::onLoadTest(QString name)
             tempParms.lowVoltageCutoff = QString(strList.at(index++)).toDouble();
             tempParms.temperatureCutoffCharge = QString(strList.at(index++)).toDouble();
             tempParms.temperatureCutoffDischarge = QString(strList.at(index++)).toDouble();
-            double ccr = QString(strList.at(index++)).toDouble();
-            double dcr = QString(strList.at(index++)).toDouble();
+            tempParms.currentCutoffCharge = QString(strList.at(index++)).toDouble();
+            tempParms.currentCutoffDischarge = QString(strList.at(index++)).toDouble();
             tempParms.reportingFrequency = QString(strList.at(index++)).toDouble();
             tempParms.currentSetpoint = QString(strList.at(index++)).toDouble();
             double cap = QString(strList.at(index++)).toDouble();
@@ -271,7 +271,7 @@ void Batlab::onLoadTest(QString name)
                 }
             }
 
-            cellManager->onNewCell(cellname,tempParms,ccr,dcr,cap,numCycles);
+            cellManager->onNewCell(cellname,tempParms,cap,numCycles);
 
             QVector<int> *cellTests = cellManager->onGetCell(cellname)->getTests();
             ui->tableWidget->insertRow(ui->tableWidget->rowCount());
