@@ -90,7 +90,7 @@ static int sendReportingFrequency(float val)
 {
     int T;
 
-    T = static_cast<int>(1.0f / 0.1f / val);
+    T = static_cast<int>(val / 0.1f);
 
     return T;
 }
@@ -151,6 +151,7 @@ struct testParms
 #define STAT_TEMP_LIMIT_DCHG    0x0020
 #define STAT_BACKWARDS          0x0040
 #define STAT_NO_CELL            0x0080
+#define STAT_NO_PSU             0x0100
 
 #define ERR_VOLTAGE_LIMIT_CHG  0x0001
 #define ERR_VOLTAGE_LIMIT_DCHG 0x0002
@@ -158,6 +159,7 @@ struct testParms
 #define ERR_CURRENT_LIMIT_DCHG 0x0008
 #define ERR_TEMP_LIMIT_CHG     0x0010
 #define ERR_TEMP_LIMIT_DCHG    0x0020
+#define ERR_NO_PSU             0x0100
 
 //Mode register codes
 #define MODE_NO_CELL           0x0000

@@ -72,6 +72,7 @@ void wizardPageThree::onActivate() {
         ui->tableWidget->setCellWidget(i,index++,sbCurrrentCutoffDischarge);
 
         QDoubleSpinBox *  sbReportingFrequency = new QDoubleSpinBox();
+        sbReportingFrequency->setDecimals(1);
         sbReportingFrequency->setValue(parms.reportingFrequency);
         ui->tableWidget->setCellWidget(i,index++,sbReportingFrequency);
 
@@ -95,9 +96,9 @@ void wizardPageThree::onSaveProject() {
 
     QFile f( projectName + ".blp" );
 
-    if (f.open(QFile::WriteOnly | QFile::Truncate))
+    if (f.open(QFile::WriteOnly | QFile::Truncate | QIODevice::Text))
     {
-        QTextStream data( &f );
+        QTextStream data( &f);
         QStringList strList;
 
         for(int d = 0; d < ui->tableWidget->columnCount(); d++) {
@@ -134,7 +135,7 @@ void wizardPageThree::onSaveProject() {
                     break;
                 }
             }
-            data << strList.join( "," )+"\n";
+            data << strList.join( "," ) << endl;
         }
         f.close();
     }

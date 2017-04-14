@@ -129,6 +129,30 @@ void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int
         }
     } else if (nameSpace == 0 || nameSpace == 1 || nameSpace == 2 || nameSpace == 3 ) {
         testGroup[nameSpace]->receiveReadResponse(batlabRegister, value);
+        if (batlabRegister == cellNamespace::ERROR) {
+            switch (value) {
+            case ERR_CURRENT_LIMIT_CHG:
+
+                break;
+            case ERR_CURRENT_LIMIT_DCHG:
+
+                break;
+            case ERR_VOLTAGE_LIMIT_CHG:
+
+                break;
+            case ERR_VOLTAGE_LIMIT_DCHG:
+
+                break;
+            case ERR_TEMP_LIMIT_CHG:
+
+                break;
+            case ERR_TEMP_LIMIT_DCHG:
+
+                break;
+            default:
+                break;
+            }
+        }
     } else {
 
     }

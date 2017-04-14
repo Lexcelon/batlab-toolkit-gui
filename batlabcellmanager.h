@@ -24,7 +24,7 @@ public slots:
 
 //    void onPrintCell(uchar key, properties val);
 
-    void onNewCell(QString id, testParms parms, double ccr, double dcr, double cap, int cycles);
+    void onNewCell(QString id, testParms parms, double cap, int cycles);
 
     void onCreateTestPlan(int numBatlabs);
     void onCreateTestPlan(QVector<batlabCom*> coms);
