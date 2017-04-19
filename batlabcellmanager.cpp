@@ -214,7 +214,10 @@ void batlabCellManager::onProcessCellData()
 
 
     for (int i = 0; i < numberOfModules; ++i) {
-        cellsInModule[i] = cCellPreferenceIndices[cellToMatch];
+
+        for (int j = 0; j < cellsInModule.size(); ++j) {
+            cellsInModule[i][j] = cCellPreferenceIndices[cellToMatch][j];
+        }
 
         for (int k = 0; k < cCellPreferenceIndices[0].size(); ++ k) {
             for (int j = 0; j < numberOfCellsInModule; ++j) {
