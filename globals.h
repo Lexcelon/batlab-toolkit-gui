@@ -4,12 +4,30 @@
 #include <QString>
 #include <qmath.h>
 #include <QThread>
+#include <QGenericMatrix>
 #include <QVector>
 #include <QLayout>
 #include <QDebug>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
+
+
+static void populateVoltage(int numCells, QVector<float> voltages)
+{
+
+}
+
+
+static void populateCurrent(int numCells, QVector<float> voltages)
+{
+
+}
+
+static void populateSoC(int numCells, QVector<float> voltages)
+{
+
+}
 
 static float getTemp(int val) {
     float R = 10000/ ((pow(2,15)/float(val))-1);

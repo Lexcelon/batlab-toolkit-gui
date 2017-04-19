@@ -87,6 +87,92 @@ void batlabCellManager::onAllTestsFinished()
     }
 }
 
+void batlabCellManager::onProcessCellData()
+{
+    const int numCells = cellList.size();
+
+    float coefV = 1.0;
+    float coefI = 1.0;
+    float coefSoC = 1.0;
+
+    errorVoltage = new float*[numCells];
+    errorCurrent = new float*[numCells];
+    errorSoC = new float*[numCells];
+    float **metric = new float*[numCells];
+
+    for (int i = 0; i < numCells; ++i) {
+        errorVoltage[i] = new float[numCells];
+        errorCurrent[i] = new float[numCells];
+        errorSoC[i] = new float[numCells];
+        metric[i] = new float[numCells];
+    }
+
+    float *means = new float[numCells];
+    float *indices = new float[numCells];
+
+    for (int i = 0; i < numCells; i++) {
+        for (int j = 0; j <= i; j++) {
+
+            float sum = 0.0f;
+
+            for (int k = 0; k < cellList[i]->getVoltage()->size(); ++k) {
+                float diff = (cellList[i]->getVoltage())->at(k) - (cellList[j]->getVoltage())->at(k);
+                diff *= diff;
+                sum += diff;
+            }
+
+            errorVoltage[i][j] = sum;
+            errorVoltage[j][i] = errorVoltage[i][j];
+            errorVoltage[i][i] = 0;
+
+            sum = 0.0f;
+
+            for (int k = 0; k < cellList[i]->getCurrent()->size(); ++k) {
+                float diff = (cellList[i]->getCurrent())->at(k) - (cellList[j]->getCurrent())->at(k);
+                diff *= diff;
+                sum += diff;
+            }
+
+            errorCurrent[i][j] = sum;
+            errorCurrent[j][i] = errorCurrent[i][j];
+            errorCurrent[i][i] = 0;
+
+            sum = 0.0f;
+
+            for (int k = 0; k < cellList[i]->getSoC()->size(); ++k) {
+                float diff = (cellList[i]->getSoC())->at(k) - (cellList[j]->getSoC())->at(k);
+                diff *= diff;
+                sum += diff;
+            }
+            errorSoC[i][j] = sum;
+            errorSoC[j][i] = errorSoC[i][j];
+            errorSoC[i][i] = 0;
+        }
+    }
+
+
+
+    for (int i = 0; i < numCells; i++) {
+        for (int j = 0; j <= i ; j++) {
+            metric[i][j] = coefV * errorVoltage[i][j] + coefI * errorCurrent[i][j] + coefSoC * errorSoC[i][j];
+            metric[j][i] = coefV * errorVoltage[j][i] + coefI * errorCurrent[j][i] + coefSoC * errorSoC[j][i];
+        }
+        means[i] = 0.0f;
+    }
+
+
+
+    for (int i = 0; i < numCells; ++i) {
+        for (int j = 0; j < numCells; ++j) {
+            means[i] += metric[j][i];
+        }
+        means[i] /= numCells;
+    }
+
+
+    std::sort(means, means + numCells - 1, std::less<float>());
+}
+
 void batlabCellManager::clean()
 {
     while (!cellList.isEmpty()) {

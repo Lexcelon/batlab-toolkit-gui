@@ -23,6 +23,7 @@ public:
     QVector<float> * getTemperature() { return &temperature; }
     QVector<float> * getVoltage() { return &voltage; }
     QVector<float> * getCurrent() { return &current; }
+    QVector<float> * getSoC() { return &soc; }
     QVector<testPacket> getTestData() { return tests; }
     QVector<int>* getTests() { return &testsToRun; }
 
@@ -64,6 +65,7 @@ private:
     QVector<float> temperature;
     QVector<float> voltage;
     QVector<float> current;
+    QVector<float> soc;
     QVector<int> modes;
     QVector<QPair<float,QPair<int,float>>> voltagePhase;
     QVector<QPair<float,QPair<int,float>>> voltagePP;
