@@ -32,6 +32,8 @@ public slots:
     void onStartTests();
     void onAllTestsFinished();
 
+    void onProcessCellData();
+
     void clean();
 
     batlabCell* onGetCell(int index) { return cellList.at(index); }
@@ -58,6 +60,10 @@ private:
     QVector<batlabCom*> comList;
 
     batlabTestPlan * testPlan = nullptr;
+
+    float **errorVoltage;
+    float **errorCurrent;
+    float **errorSoC;
 
     int numberOfBatlabs;
 
