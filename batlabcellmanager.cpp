@@ -171,6 +171,8 @@ void batlabCellManager::onProcessCellData()
 
 
     std::sort(means, means + numCells - 1, std::less<float>());
+
+
 }
 
 void batlabCellManager::clean()
