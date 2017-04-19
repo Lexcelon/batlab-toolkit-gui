@@ -95,6 +95,10 @@ void batlabCellManager::onProcessCellData()
     float coefI = 1.0;
     float coefSoC = 1.0;
 
+    int numberOfCellsInModule = 2;
+    int numberOfModules = 3;
+    int numberOfCellsInPack = numberOfCellsInModule * numberOfModules;
+
     errorVoltage = new float*[numCells];
     errorCurrent = new float*[numCells];
     errorSoC = new float*[numCells];
@@ -107,8 +111,17 @@ void batlabCellManager::onProcessCellData()
         metric[i] = new float[numCells];
     }
 
-    float *means = new float[numCells];
-    float *indices = new float[numCells];
+    QVector<float> means(numCells);
+    QVector<int> ind;
+    for (int i = 0; i < numCells; ++i) {
+        ind.push_back(i);
+    }
+
+    QVector<QVector<int>> cellPreferenceIndices;
+
+    for (int i = 0; i < numCells; ++i) {
+        cellPreferenceIndices.push_back(QVector<int>(numCells));
+    }
 
     for (int i = 0; i < numCells; i++) {
         for (int j = 0; j <= i; j++) {
@@ -169,10 +182,59 @@ void batlabCellManager::onProcessCellData()
         means[i] /= numCells;
     }
 
+    bubblesort(means, ind);
 
-    std::sort(means, means + numCells - 1, std::less<float>());
+    for (int i = 0; i < numCells; ++i) {
+        QVector<float> tempData;
+        for (int j = 0; j < numCells; j++) {
+            tempData.push_back(metric[j][i]);
+        }
+        bubblesort(tempData,cellPreferenceIndices[i]);
+    }
+
+    int cellsLeftToPutInPack =  numberOfCellsInPack;
+    int startingIndex = cellsLeftToPutInPack;
+
+    QVector<QVector<float>> cellsInModule;
+    for (int i = 0; i < numberOfModules; ++i) {
+        QVector<float> temp;
+        for (int j = 0; j < numberOfCellsInModule; ++j) {
+            temp.push_back(0);
+        }
+        cellsInModule.push_back(temp);
+    }
+
+    QVector<int> availableCells(ind);
+
+    int cellToMatch = availableCells[startingIndex];
+    int cellIndToMatch;
+    int cellToRemove;
+
+    QVector<QVector<int>> cCellPreferenceIndices(cellPreferenceIndices);
 
 
+    for (int i = 0; i < numberOfModules; ++i) {
+        cellsInModule[i] = cCellPreferenceIndices[cellToMatch];
+
+        for (int k = 0; k < cCellPreferenceIndices[0].size(); ++ k) {
+            for (int j = 0; j < numberOfCellsInModule; ++j) {
+                cellToRemove = cellsInModule[i][j];
+                //removing celll
+
+
+                if (k == 0) {
+                    availableCells.remove(availableCells.indexOf(cellToRemove));
+                }
+            }
+        }
+
+
+        cellsLeftToPutInPack = cellsLeftToPutInPack - numberOfCellsInModule;
+        if (cellsLeftToPutInPack > 0) {
+            cellIndToMatch = cellsLeftToPutInPack;
+            cellToMatch = availableCells[cellIndToMatch];
+        }
+    }
 }
 
 void batlabCellManager::clean()

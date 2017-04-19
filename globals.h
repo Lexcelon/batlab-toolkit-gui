@@ -13,6 +13,23 @@
 #include <QDoubleSpinBox>
 
 
+static void bubblesort(QVector<float> data, QVector<int> &indices)
+{
+    for (int i = 0; i < data.size() - 1; ++i) {
+        for (int j = 0; j < data.size() - i ; ++j) {
+            if (data.at(j) > data.at(j+1)) {
+                float swap = data[j];
+                data[j] = data[j+1];
+                data[j+1] = swap;
+
+                swap = indices[j];
+                indices[j] = indices[j+1];
+                indices[j+1] = swap;
+            }
+        }
+    }
+}
+
 static void populateVoltage(int numCells, QVector<float> voltages)
 {
 
