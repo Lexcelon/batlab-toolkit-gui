@@ -51,6 +51,8 @@ Batlab::Batlab(QWidget *parent) :
             this, &Batlab::onGetBatlabNames);
     connect(loadProject, &QPushButton::clicked,
             this, &Batlab::onLoadProject);
+
+    cellManager->test();
 }
 
 void Batlab::onTest()

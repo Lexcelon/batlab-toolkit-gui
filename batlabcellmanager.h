@@ -19,6 +19,7 @@ public:
     ~batlabCellManager();
 
 public slots:
+    void test();
 //    void onReceiveStream(int,int,int,float,int,int,int);
     void onReceiveStream(int, int, int, float, float, float);
 
