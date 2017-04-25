@@ -203,13 +203,60 @@ void batlabTestGroup::updateParms(int index)
 {
    testParms testParameters = testGroup[index]->onGetParameters();
    testGroup[index]->onUpdateParameters(index);
+}
 
-//   emit emitWriteReg(0, index, writeVals::highTempChargeSafetyCutoff, testParameters.temperatureCutoffCharge);
-//   emit emitWriteReg(0, index, writeVals::streamReportingPeriod, testParameters.reportingFrequency);
+void batlabTestGroup::setChargeModes()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            emit emitWriteReg(i,cellNamespace::MODE,MODE_CHARGE);
+        }
+    }
+
+    QTimer::singleShot(100,this,SLOT(onCheckImpedanceModes()));
+}
+
+void batlabTestGroup::onCheckChargeModes()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            emit emitReadReg(i,cellNamespace::MODE);
+        }
+    }
+    QTimer::singleShot(100,this,SLOT(onVerifyImpedanceModes()));
+}
+
+void batlabTestGroup::onVerifyChargeModes()
+{
+    bool isOkay = true;
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            if (testGroup[i]->getCurrentMode() != MODE_CHARGE) {
+                isOkay = false;
+            }
+        }
+    }
+
+    if (isOkay == false) {
+        setChargeModes();
+    } else {
+        onReadCharge();
+    }
+}
+
+void batlabTestGroup::onReadCharge()
+{
+    for (int i = 0; i < testGroup.size(); ++i) {
+        if (count & (0x0001 << i)) {
+            emit emitReadReg(i,cellNamespace::CHARGEH);
+            emit emitReadReg(i,cellNamespace::CHARGEL);
+        }
+    }
 }
 
 void batlabTestGroup::startImpedance()
 {
+    setChargeModes();
     setImpedanceModes();
 }
 
@@ -289,9 +336,7 @@ void batlabTestGroup::onReadImpedance()
 {
     for (int i = 0; i < testGroup.size(); ++i) {
         if (count & (0x0001 << i)) {
-            emit emitReadReg(i,cellNamespace::VOLTAGE_PHS);
             emit emitReadReg(i,cellNamespace::VOLTAGE_PP);
-            emit emitReadReg(i,cellNamespace::CURRENT_PHS);
             emit emitReadReg(i,cellNamespace::CURRENT_PP);
         }
     }

@@ -41,16 +41,22 @@ public slots:
     int onPromptStart();
 
     void startImpedance();
+//    void startCharge();
 
     void setImpedanceModes();
     void onCheckImpedanceModes();
     void onVerifyImpedanceModes();
+
+    void setChargeModes();
+    void onCheckChargeModes();
+    void onVerifyChargeModes();
 
     void setFrequency();
     void onCheckFrequency();
     void onVerifyFrequency();
 
     void onReadImpedance();
+    void onReadCharge();
 
     void onRestartTests();
     void onCheckRestart();

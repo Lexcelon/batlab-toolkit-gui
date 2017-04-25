@@ -11,6 +11,36 @@ batlabCellManager::~batlabCellManager()
 
 }
 
+void batlabCellManager::test()
+{
+
+    for (int cells = 0; cells < 10; ++cells) {
+        cellList.push_back(new batlabCell);
+        QString name;
+        name = QString("C:/Users/Seikowave/Desktop/TestCell/cell%1.btf").arg(cells+1);
+        QFile inFile(name);
+        inFile.open(QIODevice::ReadOnly);
+        QTextStream stream(&inFile);
+
+        QString string;
+        for (int i = 0; i < 20366; ++i) {
+            stream >> string;
+            (cellList[cells]->getVoltage())->push_back(string.toDouble());
+        }
+        for (int i = 0; i < 20366; ++i) {
+            stream >> string;
+            (cellList[cells]->getCurrent())->push_back(string.toDouble());
+        }
+        for (int i = 0; i < 20366; ++i) {
+            stream >> string;
+            (cellList[cells]->getSoC())->push_back(string.toDouble());
+        }
+
+    }
+    onProcessCellData();
+
+}
+
 void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage)
 {
 
@@ -102,13 +132,16 @@ void batlabCellManager::onProcessCellData()
     errorVoltage = new float*[numCells];
     errorCurrent = new float*[numCells];
     errorSoC = new float*[numCells];
-    float **metric = new float*[numCells];
+    QVector<QVector<float>> metric;
+    metric.resize(numCells);
 
     for (int i = 0; i < numCells; ++i) {
         errorVoltage[i] = new float[numCells];
         errorCurrent[i] = new float[numCells];
         errorSoC[i] = new float[numCells];
-        metric[i] = new float[numCells];
+        QVector<float> temp;
+        temp.resize(numCells);
+        metric[i] = temp;
     }
 
     QVector<float> means(numCells);
@@ -121,6 +154,9 @@ void batlabCellManager::onProcessCellData()
 
     for (int i = 0; i < numCells; ++i) {
         cellPreferenceIndices.push_back(QVector<int>(numCells));
+        for (int j = 0; j < numCells; ++j) {
+            cellPreferenceIndices[i][j] = j;
+        }
     }
 
     for (int i = 0; i < numCells; i++) {
@@ -189,7 +225,7 @@ void batlabCellManager::onProcessCellData()
         for (int j = 0; j < numCells; j++) {
             tempData.push_back(metric[j][i]);
         }
-        bubblesort(tempData,cellPreferenceIndices[i]);
+        bubblesort(tempData,(cellPreferenceIndices[i]));
     }
 
     int cellsLeftToPutInPack =  numberOfCellsInPack;
@@ -206,7 +242,7 @@ void batlabCellManager::onProcessCellData()
 
     QVector<int> availableCells(ind);
 
-    int cellToMatch = availableCells[startingIndex];
+    int cellToMatch = availableCells[startingIndex-1];
     int cellIndToMatch;
     int cellToRemove;
 
@@ -215,15 +251,20 @@ void batlabCellManager::onProcessCellData()
 
     for (int i = 0; i < numberOfModules; ++i) {
 
-        for (int j = 0; j < cellsInModule.size(); ++j) {
+        for (int j = 0; j < numberOfCellsInModule; ++j) {
             cellsInModule[i][j] = cCellPreferenceIndices[cellToMatch][j];
         }
-
-        for (int k = 0; k < cCellPreferenceIndices[0].size(); ++ k) {
+//        qDebug() << cellsInModule;
+        for (int k = 0; k < numCells; ++ k) {
             for (int j = 0; j < numberOfCellsInModule; ++j) {
                 cellToRemove = cellsInModule[i][j];
-                //removing celll
-
+                //removing cell
+//                for (int l = (cCellPreferenceIndices[k]).size() -1; l >=0; --l) {
+//                    if (cCellPreferenceIndices[k][l] == cellToRemove) {
+//                        cCellPreferenceIndices[k].removeAt(l);
+//                    }
+                    cCellPreferenceIndices[k].removeAt(cCellPreferenceIndices[k].indexOf(cellToRemove));
+//                }
 
                 if (k == 0) {
                     availableCells.remove(availableCells.indexOf(cellToRemove));
@@ -235,9 +276,10 @@ void batlabCellManager::onProcessCellData()
         cellsLeftToPutInPack = cellsLeftToPutInPack - numberOfCellsInModule;
         if (cellsLeftToPutInPack > 0) {
             cellIndToMatch = cellsLeftToPutInPack;
-            cellToMatch = availableCells[cellIndToMatch];
+            cellToMatch = availableCells[cellIndToMatch-1];
         }
     }
+    qDebug() << cellsInModule;
 }
 
 void batlabCellManager::clean()

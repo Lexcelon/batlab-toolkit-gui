@@ -16,7 +16,7 @@
 static void bubblesort(QVector<float> data, QVector<int> &indices)
 {
     for (int i = 0; i < data.size() - 1; ++i) {
-        for (int j = 0; j < data.size() - i ; ++j) {
+        for (int j = 0; j < data.size() - 1 - i ; ++j) {
             if (data.at(j) > data.at(j+1)) {
                 float swap = data[j];
                 data[j] = data[j+1];
