@@ -49,6 +49,9 @@ public:
 
 signals:
     void testFinished(int cell);
+
+    // THIS NEEDS TO CHANGE BECAUSE IT IS TERRIBLE
+    void updateUI(QString designator, int testNumber);
     void updateParameter(int unit, int cell, int val);
     void emitError(QString);
 
@@ -67,10 +70,10 @@ private:
     QVector<float> current;
     QVector<float> soc;
     QVector<int> modes;
-    QVector<QPair<float,QPair<int,float>>> voltagePhase;
     QVector<QPair<float,QPair<int,float>>> voltagePP;
     QVector<QPair<float,QPair<int,float>>> currentPP;
-    QVector<QPair<float,QPair<int,float>>> currentPhase;
+    QVector<QPair<int,int>> chargeL;
+    QVector<QPair<int,int>> chargeH;
     QTime timer;
 
     int currentMode;

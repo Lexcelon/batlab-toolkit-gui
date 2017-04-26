@@ -294,6 +294,10 @@ void Batlab::onLoadTest(QString name)
         }
 
     }
+    for (int i = 0; i < cellManager->getCellList().size(); ++i) {
+        connect(cellManager->getCellList()[i], &batlabCell::updateUI,
+                this, &Batlab::onFinishedTests);
+    }
 }
 
 void Batlab::onLoadProject()
@@ -308,11 +312,10 @@ void Batlab::onLoadProject()
     onLoadTest(fileNames.first());
 }
 
-void Batlab::onFinishedTests(int cell, QString designator, int testNum)
+void Batlab::onFinishedTests(QString designator, int testNum)
 {
-    Q_UNUSED(cell)
     for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
-        if (designator == ui->tableWidget->item(0,i)->text()) {
+        if (designator == ui->tableWidget->item(i,0)->text()) {
             ui->tableWidget->item(i,testNum)->setBackgroundColor(Qt::green);
             break;
         }

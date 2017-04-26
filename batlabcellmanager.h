@@ -49,6 +49,7 @@ public slots:
         return nullptr;
     }
 
+    QVector<batlabCell*> getCellList() { return cellList; }
 
 signals:
     void testFinished(uchar);
