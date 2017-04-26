@@ -33,7 +33,6 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         return;
     }
     status = stat;
-//    statusString = parseStatus(stat);
     time.append(elapsed);
     temperature.append(temp);
     current.append(curr);
@@ -49,9 +48,10 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         newTest.REG_VOLTAGE = voltage;
         newTest.REG_MODE = modes;
         newTest.VOLTAGE_PP = voltagePP;
-        newTest.VOLTAGE_PHASE = voltagePhase;
-        newTest.CURRENT_PHASE = currentPhase;
         newTest.CURRENT_PP = currentPP;
+        for (int i = 0; (i < chargeH.size()) && (i < chargeL.size()); i++) {
+            newTest.CHARGE.push_back(QPair<int,int>(chargeL[i].first, chargeL[i].second + (chargeH[i].second << 16)));
+        }
         tests.push_back(newTest);
 
         temperature.clear();
@@ -61,13 +61,16 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         time.clear();
 
         voltagePP.clear();
-        voltagePhase.clear();
-        currentPhase.clear();
         currentPP.clear();
+
+        chargeL.clear();
+        chargeH.clear();
 
         testsToRun.removeFirst();
 
         emit testFinished(static_cast<int>(cell));
+        emit updateUI(id, tests.size());
+
     }
 }
 
@@ -98,17 +101,17 @@ void batlabCell::setSineFreq(float freq)
 void batlabCell::receiveReadResponse(int batlabRegister, int value)
 {
     switch (batlabRegister) {
-    case cellNamespace::CURRENT_PHS:
-        currentPhase.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 360.0f / 256.0f)));
-        break;
     case cellNamespace::CURRENT_PP:
         currentPP.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 4.096f / (pow(2,15) - 1.0f))));
         break;
-    case cellNamespace::VOLTAGE_PHS:
-        voltagePhase.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 360.0f / 256.0f)));
-        break;
     case cellNamespace::VOLTAGE_PP:
         voltagePP.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 4.5f / (static_cast<float>(pow(2,15)) - 1.0f))));
+        break;
+    case cellNamespace::CHARGEH:
+        chargeH.push_back(QPair<int,int>(timer.elapsed(), value));
+        break;
+    case cellNamespace::CHARGEL:
+        chargeL.push_back(QPair<int,int>(timer.elapsed(), value));
         break;
     case cellNamespace::MODE:
         currentMode = value;

@@ -49,7 +49,7 @@ public slots:
     void onLoadTest(QString);
     void onLoadProject();
 
-    void onFinishedTests(int cell, QString designator, int testNum);
+    void onFinishedTests(QString designator, int testNum);
 
 private:
     Ui::Batlab *ui = nullptr;

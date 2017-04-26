@@ -30,23 +30,24 @@ static void bubblesort(QVector<float> data, QVector<int> &indices)
     }
 }
 
-static void populateVoltage(int numCells, QVector<float> voltages)
+//static void populateVoltage(int numCells, QVector<float> voltages)
+//{
+
+//}
+
+
+//static void populateCurrent(int numCells, QVector<float> voltages)
+//{
+
+//}
+
+//static void populateSoC(int numCells, QVector<float> voltages)
+//{
+
+//}
+
+static float getTemp(int val)
 {
-
-}
-
-
-static void populateCurrent(int numCells, QVector<float> voltages)
-{
-
-}
-
-static void populateSoC(int numCells, QVector<float> voltages)
-{
-
-}
-
-static float getTemp(int val) {
     float R = 10000/ ((pow(2,15)/float(val))-1);
     float To = 25.0f + 273.15f;
     float Ro = 10000;
@@ -215,8 +216,7 @@ struct testPacket {
     QVector<float> REG_CURRENT;
     QVector<float> REG_VOLTAGE;
     QVector<QPair<float,QPair<int,float>>> VOLTAGE_PP;
-    QVector<QPair<float,QPair<int,float>>> VOLTAGE_PHASE;
-    QVector<QPair<float,QPair<int,float>>> CURRENT_PHASE;
+    QVector<QPair<int,int>> CHARGE;
     QVector<QPair<float,QPair<int,float>>> CURRENT_PP;
 };
 
