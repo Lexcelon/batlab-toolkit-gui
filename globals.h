@@ -216,8 +216,8 @@ struct testPacket {
     QVector<float> REG_CURRENT;
     QVector<float> REG_VOLTAGE;
     QVector<QPair<float,QPair<int,float>>> VOLTAGE_PP;
-    QVector<QPair<int,int>> CHARGE;
     QVector<QPair<float,QPair<int,float>>> CURRENT_PP;
+    QVector<QPair<int,int>> CHARGE;
 };
 
 enum cellNamespace {

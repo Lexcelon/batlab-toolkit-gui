@@ -14,9 +14,6 @@ Batlab::Batlab(QWidget *parent) :
     // Managing data from cells
     cellManager = new batlabCellManager();
 
-    // GUI for settings
-    configSettings = new settings();
-
     // Create the buttons we use in the gui
     connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
     test = new QPushButton(QString("Test"));
@@ -51,8 +48,6 @@ Batlab::Batlab(QWidget *parent) :
             this, &Batlab::onGetBatlabNames);
     connect(loadProject, &QPushButton::clicked,
             this, &Batlab::onLoadProject);
-
-    cellManager->test();
 }
 
 void Batlab::onTest()
@@ -79,8 +74,6 @@ void Batlab::onTest()
 
 Batlab::~Batlab()
 {
-    if (testObj) delete testObj;
-    if (configSettings) delete configSettings;
     if (exit) delete exit;
     if (test) delete test;
     if (options) delete options;
@@ -187,25 +180,9 @@ void Batlab::onReceiveStream(int cell,int mode,int status,float temp, float curr
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
 
-void Batlab::onAddTests() {
+void Batlab::onAddTests()
+{
 
-    int colCount = 10;
-    for (int i = 0; i < colCount; ++i) {
-        ui->tableWidget->insertColumn(i);
-    }
-    for (int i = 0; i < 10; i++) {
-
-        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-        QTableWidgetItem * item = new QTableWidgetItem("Test1");
-        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,item);
-        for (int j = 1; j < colCount; j++) {
-            QTableWidgetItem * testItem = new QTableWidgetItem("CCDC");
-            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,j,testItem);
-        }
-//        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-    }
-
-    ui->tableWidget->insertRow(4);
 }
 
 void Batlab::onNewProjectWizard() {
@@ -229,6 +206,8 @@ void Batlab::onLoadTest(QString name)
     if (!name.endsWith(".blp",Qt::CaseInsensitive)) {
         name = name + ".blp";
     }
+
+    cellManager->setProjectName(name.split(".").first());
 
     QFile f(name);
 

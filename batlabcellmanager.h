@@ -24,6 +24,7 @@ public slots:
     void onReceiveStream(int, int, int, float, float, float);
 
 //    void onPrintCell(uchar key, properties val);
+    void setProjectName(QString name);
 
     void onNewCell(QString id, testParms parms, double cap, int cycles);
 
@@ -68,6 +69,8 @@ private:
     float **errorSoC;
 
     int numberOfBatlabs;
+
+    QString projectName;
 
 };
 
