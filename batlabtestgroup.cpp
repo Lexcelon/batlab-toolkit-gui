@@ -92,7 +92,7 @@ void batlabTestGroup::connectCom(batlabCom * com)
     connect(this,SIGNAL(emitWriteReg(int,int,int)),com,SLOT(onWriteReg(int,int,int)));
     connect(this,SIGNAL(emitReadReg(int,int)),com,SLOT(onReadReg(int,int)));
     connect(com,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
-    connect(com,SIGNAL(emitWriteResponse(int,int,int)), this, SLOT(receiveWriteResponse(int,int,int)));
+    connect(com,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int)));
     connect(com,SIGNAL(emitStream(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
 
     for (int i = 0; i < testGroup.size(); i++) {
@@ -132,22 +132,22 @@ void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int
         if (batlabRegister == cellNamespace::ERROR) {
             switch (value) {
             case ERR_CURRENT_LIMIT_CHG:
-
+                qDebug() << Q_FUNC_INFO << value;
                 break;
             case ERR_CURRENT_LIMIT_DCHG:
-
+                qDebug() << Q_FUNC_INFO << value;
                 break;
             case ERR_VOLTAGE_LIMIT_CHG:
-
+                qDebug() << Q_FUNC_INFO << value;
                 break;
             case ERR_VOLTAGE_LIMIT_DCHG:
-
+                qDebug() << Q_FUNC_INFO << value;
                 break;
             case ERR_TEMP_LIMIT_CHG:
-
+                qDebug() << Q_FUNC_INFO << value;
                 break;
             case ERR_TEMP_LIMIT_DCHG:
-
+                qDebug() << Q_FUNC_INFO << value;
                 break;
             default:
                 break;
@@ -163,11 +163,13 @@ void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int
 
 //}
 
-void batlabTestGroup::onTestFinished(int cell, QString id, int testNum)
+void batlabTestGroup::onTestFinished(int cell)
 {
+    qDebug() << Q_FUNC_INFO << cell;
 //    emit emitFinishedTests(cell, id, testNum);
     count ^= (0x0001 << cell);
-
+    emit emitWriteReg(cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(0.0f));
+    emit emitWriteReg(cell, cellNamespace::MODE, MODE_STOPPED);
     if (count == 0x0000) {
         impedanceTimer->stop();
         int mSecRest = 0;
@@ -185,8 +187,11 @@ void batlabTestGroup::startTests()
     for (int i = 0; i < testGroup.size(); ++i) {
         int code = testGroup[i]->onGetNextTest();
         if (code != -1) {
+            qDebug() << count << code;
             emit emitWriteReg(i,cellNamespace::MODE,code);
+            emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testGroup[i]->onGetParameters().reportingFrequency));
             count = count ^ (0x0001 << i);
+            qDebug() << count << code;
             testGroup[i]->onStartTimer();
         }
     }
@@ -207,23 +212,23 @@ void batlabTestGroup::updateParms(int index)
 
 void batlabTestGroup::setChargeModes()
 {
-    for (int i = 0; i < testGroup.size(); ++i) {
-        if (count & (0x0001 << i)) {
-            emit emitWriteReg(i,cellNamespace::MODE,MODE_CHARGE);
-        }
-    }
+//    for (int i = 0; i < testGroup.size(); ++i) {
+//        if (count & (0x0001 << i)) {
+//            emit emitWriteReg(i,cellNamespace::MODE,MODE_CHARGE);
+//        }
+//    }
 
-    QTimer::singleShot(100,this,SLOT(onCheckImpedanceModes()));
+//    QTimer::singleShot(100,this,SLOT(onCheckImpedanceModes()));
 }
 
 void batlabTestGroup::onCheckChargeModes()
 {
-    for (int i = 0; i < testGroup.size(); ++i) {
-        if (count & (0x0001 << i)) {
-            emit emitReadReg(i,cellNamespace::MODE);
-        }
-    }
-    QTimer::singleShot(100,this,SLOT(onVerifyImpedanceModes()));
+//    for (int i = 0; i < testGroup.size(); ++i) {
+//        if (count & (0x0001 << i)) {
+//            emit emitReadReg(i,cellNamespace::MODE);
+//        }
+//    }
+//    QTimer::singleShot(100,this,SLOT(onVerifyImpedanceModes()));
 }
 
 void batlabTestGroup::onVerifyChargeModes()
@@ -256,7 +261,7 @@ void batlabTestGroup::onReadCharge()
 
 void batlabTestGroup::startImpedance()
 {
-    setChargeModes();
+    onReadCharge();
     setImpedanceModes();
 }
 
@@ -264,6 +269,7 @@ void batlabTestGroup::setImpedanceModes()
 {
     for (int i = 0; i < testGroup.size(); ++i) {
         if (count & (0x0001 << i)) {
+            emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(0.0f));
             emit emitWriteReg(i,cellNamespace::MODE,MODE_IMPEDANCE);
         }
     }
@@ -356,6 +362,7 @@ void batlabTestGroup::onRestartTests()
         if (code != -1) {
             if (count & (0x0001 << i)) {
                 emit emitWriteReg(i,cellNamespace::MODE,code);
+                emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testGroup[i]->onGetParameters().reportingFrequency));
             }
         }
     }

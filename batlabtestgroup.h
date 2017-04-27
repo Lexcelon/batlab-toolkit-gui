@@ -34,7 +34,7 @@ public slots:
 //    void receiveStream(int,int,int,float,int,int,int);
 //    void receiveStreamExt(int,int,int,int,int);
 
-    void onTestFinished(int, QString id, int testNum);
+    void onTestFinished(int);
 
     void startTests();
 

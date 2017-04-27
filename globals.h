@@ -99,16 +99,18 @@ static int sendTemperatureLimits(float val)
 {
     int T;
 
-    T = static_cast<int>(val / 5.0f * static_cast<float>(std::numeric_limits<int>::max()));
+    T = static_cast<int>(val / 5.0f * static_cast<float>(std::numeric_limits<signed short>::max()));
 
-    return T;
+//    return T;
+//    return (int)std::numeric_limits<signed short>::max();
+    return 0;
 }
 
 static int sendCurrentLimit(float val)
 {
     int T;
 
-    T = static_cast<int>(val / 4.096f * static_cast<float>(std::numeric_limits<int>::max()));
+    T = static_cast<int>(val / 4.096f * static_cast<float>(std::numeric_limits<signed short>::max()));
 
     return T;
 }
@@ -117,7 +119,7 @@ static int sendVoltageLimit(float val)
 {
     int T;
 
-    T = static_cast<int>(val / 4.5f * static_cast<float>(std::numeric_limits<int>::max()));
+    T = static_cast<int>(val / 4.5f * static_cast<float>(std::numeric_limits<signed short>::max()));
 
     return T;
 }
@@ -170,7 +172,7 @@ struct testParms
     float hightVoltageCutoff = 4.2f;
     float lowVoltageCutoff = 2.65f;
     float temperatureCutoffCharge = 45.0f;
-    float temperatureCutoffDischarge = -20.0f;
+    float temperatureCutoffDischarge = 0.0f;
     float currentCutoffCharge = 1.0f;
     float currentCutoffDischarge = 1.0f;
     float reportingFrequency = 1.0f;
@@ -252,6 +254,7 @@ enum cellNamespace {
 
 enum unitNamespace {
     SERIAL_NUM,
+    DEVICE_ID,
     FIRMWARE_VER,
     VCC,
     SINE_FREQ,

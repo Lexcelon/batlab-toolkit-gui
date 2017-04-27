@@ -44,9 +44,9 @@ void batlabCom::onRead() {
 
     while (len > 0)
     if ((uchar)rec[start] == 0xAA) {
-        //qDebug() << "RESPONSE PACKET";
-        //qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
-        //qDebug() << "Low Byte Fail: " << (int)(rec[start+3]) << " High Byte Fail: " << (int)(rec[start+4]);
+//        qDebug() << "RESPONSE PACKET";
+//        qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
+//        qDebug() << "Low Byte Fail: " << (int)(rec[start+3]) << " High Byte Fail: " << (int)(rec[start+4]);
 
         if (rec[start+2] & 0x80) {
             emit emitWriteResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]) ^ 0x0080, static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
@@ -61,18 +61,18 @@ void batlabCom::onRead() {
         len-=5;
         start +=5;
     } else if ((uchar)rec[start] == 0xAF) {
-        qDebug() << static_cast<int>(rec[start+1])
-                << static_cast<int>(rec[start+2])
-                << static_cast<int>(rec[start+3])
-                << static_cast<int>(rec[start+4])
-                << static_cast<int>(rec[start+5])
-                << static_cast<int>(rec[start+6])
-                << static_cast<int>(rec[start+7])
-                << static_cast<int>(rec[start+8])
-                << static_cast<int>(rec[start+9])
-                << static_cast<int>(rec[start+10])
-                << static_cast<int>(rec[start+11])
-                << static_cast<int>(rec[start+12]);
+//        qDebug() << static_cast<int>(rec[start+1])
+//                << static_cast<int>(rec[start+2])
+//                << static_cast<int>(rec[start+3])
+//                << static_cast<int>(rec[start+4])
+//                << static_cast<int>(rec[start+5])
+//                << static_cast<int>(rec[start+6])
+//                << static_cast<int>(rec[start+7])
+//                << static_cast<int>(rec[start+8])
+//                << static_cast<int>(rec[start+9])
+//                << static_cast<int>(rec[start+10])
+//                << static_cast<int>(rec[start+11])
+//                << static_cast<int>(rec[start+12]);
 
         int cell = static_cast<int>(rec[start+1]);
         if ((uchar)rec[start+2] == 0x00) {
@@ -116,7 +116,7 @@ void batlabCom::onWriteReg(int batlabNamespace, int batlabRegister, int num)
     uchar msb = ((uchar)((0xFF00 & num) >> 8));
     uchar lsb = ((uchar)(0x00FF & num));
     qDebug() << "WRITE MESSAGE";
-    qDebug() << "NAMESPACE: " << batlabNamespace << " REGISTER: " << batlabRegister << " VALUE : " << num;
+    qDebug() << "NAMESPACE: " << batlabNamespace << " REGISTER: " << batlabRegister << " VALUE : " << ushort(num);
     qDebug() << msb << lsb;
     data[0] = static_cast<uchar>(0xAA);
     data[1] = static_cast<uchar>(batlabNamespace);

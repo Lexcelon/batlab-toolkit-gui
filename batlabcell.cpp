@@ -23,12 +23,13 @@ batlabCell::batlabCell(QString designator, testParms parms, int cycles)
 
 void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float volt)
 {
+    qDebug() << Q_FUNC_INFO << mode << stat << temp << curr << volt;
     int elapsed = timer.elapsed();
 
     if (mode != getCurrentMode()) {
     }
 
-    if (status != 0x00) {
+    if (stat != 0x00) {
         emit emitError(id);
         return;
     }
@@ -39,8 +40,10 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
     voltage.append(volt);
     modes.append(mode);
 
-    if ((volt > testParameters.hightVoltageCutoff - 0.05f) || (volt < testParameters.lowVoltageCutoff + 0.05f))
-    {
+    if (((volt > testParameters.hightVoltageCutoff - 0.05f) && (mode == MODE_CHARGE)) || ((volt < testParameters.lowVoltageCutoff + 0.05f) && (mode == MODE_DISCHARGE)))
+    {        
+        emit testFinished(static_cast<int>(cell));
+        emit updateUI(id, tests.size());
         testPacket newTest;
         newTest.TIME = time;
         newTest.REG_TEMPERATURE = temperature;
@@ -66,10 +69,9 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         chargeL.clear();
         chargeH.clear();
 
-        testsToRun.removeFirst();
-
-        emit testFinished(static_cast<int>(cell));
-        emit updateUI(id, tests.size());
+        if (!testsToRun.isEmpty()) {
+            testsToRun.removeFirst();
+        }
 
     }
 }
@@ -100,6 +102,7 @@ void batlabCell::setSineFreq(float freq)
 
 void batlabCell::receiveReadResponse(int batlabRegister, int value)
 {
+    qDebug() << Q_FUNC_INFO << batlabRegister << value;
     switch (batlabRegister) {
     case cellNamespace::CURRENT_PP:
         currentPP.push_back(QPair<float,QPair<int,float>>(sineFreq, QPair<int,float>(timer.elapsed(),static_cast<float>(value) * 4.096f / (pow(2,15) - 1.0f))));
@@ -121,8 +124,17 @@ void batlabCell::receiveReadResponse(int batlabRegister, int value)
     }
 }
 
-void batlabCell::onUpdateParameters(int cell)
+void batlabCell::onUpdateParameters(int cells)
 {
+    cell = cells;
+    qDebug() << "Parameter: " << (testParameters.hightVoltageCutoff);
+    qDebug() << "Parameter: " << (testParameters.lowVoltageCutoff);
+//    qDebug() << "Parameter: " << (testParameters.currentCutoffCharge);
+//    qDebug() << "Parameter: " << (testParameters.currentCutoffDischarge);
+//    qDebug() << "Parameter: " << (testParameters.temperatureCutoffCharge);
+//    qDebug() << "Parameter: " << (testParameters.temperatureCutoffDischarge);
+//    qDebug() << "Parameter: " << (testParameters.reportingFrequency);
+//    qDebug() << "Parameter: " << (testParameters.currentSetpoint);
     emit updateParameter(cell, static_cast<int>(cellNamespace::VOLTAGE_LIMIT_CHG), sendVoltageLimit(testParameters.hightVoltageCutoff));
     emit updateParameter(cell, static_cast<int>(cellNamespace::VOLTAGE_LIMIT_DCHG), sendVoltageLimit(testParameters.lowVoltageCutoff));
     emit updateParameter(cell, static_cast<int>(cellNamespace::CURRENT_LIMIT_CHG),  sendCurrentLimit(testParameters.currentCutoffCharge));
