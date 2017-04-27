@@ -14,29 +14,29 @@ batlabCellManager::~batlabCellManager()
 void batlabCellManager::test()
 {
 
-    for (int cells = 0; cells < 10; ++cells) {
-        cellList.push_back(new batlabCell);
-        QString name;
-        name = QString("C:/Users/Seikowave/Desktop/TestCell/cell%1.btf").arg(cells+1);
-        QFile inFile(name);
-        inFile.open(QIODevice::ReadOnly);
-        QTextStream stream(&inFile);
+//    for (int cells = 0; cells < 10; ++cells) {
+//        cellList.push_back(new batlabCell);
+//        QString name;
+//        name = QString("C:/Users/Seikowave/Desktop/TestCell/cell%1.btf").arg(cells+1);
+//        QFile inFile(name);
+//        inFile.open(QIODevice::ReadOnly);
+//        QTextStream stream(&inFile);
 
-        QString string;
-        for (int i = 0; i < 20366; ++i) {
-            stream >> string;
-            (cellList[cells]->getVoltage())->push_back(string.toDouble());
-        }
-        for (int i = 0; i < 20366; ++i) {
-            stream >> string;
-            (cellList[cells]->getCurrent())->push_back(string.toDouble());
-        }
-        for (int i = 0; i < 20366; ++i) {
-            stream >> string;
-            (cellList[cells]->getSoC())->push_back(string.toDouble());
-        }
+//        QString string;
+//        for (int i = 0; i < 20366; ++i) {
+//            stream >> string;
+//            (cellList[cells]->getVoltage())->push_back(string.toDouble());
+//        }
+//        for (int i = 0; i < 20366; ++i) {
+//            stream >> string;
+//            (cellList[cells]->getCurrent())->push_back(string.toDouble());
+//        }
+//        for (int i = 0; i < 20366; ++i) {
+//            stream >> string;
+//            (cellList[cells]->getSoC())->push_back(string.toDouble());
+//        }
 
-    }
+//    }
     onProcessCellData();
 
 }
@@ -46,51 +46,15 @@ void batlabCellManager::onReceiveStream(int cell, int mode, int status, float te
 
 }
 
+void batlabCellManager::setProjectName(QString name)
+{
+    projectName = name;
+}
+
 void batlabCellManager::onNewCell(QString id , testParms parms, double cap, int cycles) {
     batlabCell * tempCell = new batlabCell(id,parms,cycles);
     cellList.push_back(tempCell);
 }
-
-//void batlabCellManager::onPrintCell(uchar key, properties val) {
-//    if (cells.contains(key))
-//    switch(val) {
-//    case properties::unit:
-//        qDebug() << QString("Unit: ") << cells[key]->getUnit();
-//        break;
-//    case properties::cell:
-//        qDebug() << QString("Cell: ") << cells[key]->getCell();
-//        break;
-//    case properties::status:
-//        qDebug() << QString("Status: ") << cells[key]->getStatus();
-//        break;
-//    case properties::statusString:
-//        qDebug() << QString("Status String: ") << cells[key]->getStatusString();
-//        break;
-//    case properties::temperature:
-//        qDebug() << QString("Temperature: ") << *cells[key]->getTemperature();
-//        break;
-//    case properties::voltage:
-//        qDebug() << QString("Voltage: ") << *cells[key]->getVoltage();
-//        break;
-//    case properties::current:
-//        qDebug() << QString("Current: ") << *cells[key]->getCurrent();
-//        break;
-//    case properties::charge:
-//        qDebug() << QString("Charge: ") << *cells[key]->getCharge();
-//        break;
-//    case properties::currentAmplitude:
-//        qDebug() << QString("Current Amplitude: ") << *cells[key]->getCurrentAmplitude();
-//        break;
-//    case properties::voltagePhase:
-//        qDebug() << QString("Voltage Phase: ") << *cells[key]->getVoltagePhase();
-//        break;
-//    case properties::voltageAmplitude:
-//        qDebug() << QString("Voltage Amplitude: ") << *cells[key]->getVoltageAmplitude();
-//        break;
-//    default:
-//        break;
-//    }
-//}
 
 void batlabCellManager::onCreateTestPlan(int numBatlabs) {
     numberOfBatlabs = numBatlabs;
@@ -164,8 +128,8 @@ void batlabCellManager::onProcessCellData()
 
             float sum = 0.0f;
 
-            for (int k = 0; k < cellList[i]->getVoltage()->size(); ++k) {
-                float diff = (cellList[i]->getVoltage())->at(k) - (cellList[j]->getVoltage())->at(k);
+            for (int k = 0; k < cellList[i]->getTestData().last().REG_VOLTAGE.size(); ++k) {
+                float diff = (cellList[i]->getTestData().last().REG_VOLTAGE.at(k) - cellList[j]->getTestData().last().REG_VOLTAGE.at(k));
                 diff *= diff;
                 sum += diff;
             }
@@ -176,8 +140,8 @@ void batlabCellManager::onProcessCellData()
 
             sum = 0.0f;
 
-            for (int k = 0; k < cellList[i]->getCurrent()->size(); ++k) {
-                float diff = (cellList[i]->getCurrent())->at(k) - (cellList[j]->getCurrent())->at(k);
+            for (int k = 0; k < cellList[i]->getTestData().last().REG_CURRENT.size(); ++k) {
+                float diff = (cellList[i]->getTestData().last().REG_CURRENT.at(k) - cellList[j]->getTestData().last().REG_CURRENT.at(k));
                 diff *= diff;
                 sum += diff;
             }
@@ -188,8 +152,8 @@ void batlabCellManager::onProcessCellData()
 
             sum = 0.0f;
 
-            for (int k = 0; k < cellList[i]->getSoC()->size(); ++k) {
-                float diff = (cellList[i]->getSoC())->at(k) - (cellList[j]->getSoC())->at(k);
+            for (int k = 0; k < cellList[i]->getTestData().last().CHARGE.size(); ++k) {
+                float diff = (cellList[i]->getTestData().last().CHARGE.at(k).second - cellList[j]->getTestData().last().CHARGE.at(k).second);
                 diff *= diff;
                 sum += diff;
             }
@@ -254,17 +218,11 @@ void batlabCellManager::onProcessCellData()
         for (int j = 0; j < numberOfCellsInModule; ++j) {
             cellsInModule[i][j] = cCellPreferenceIndices[cellToMatch][j];
         }
-//        qDebug() << cellsInModule;
+
         for (int k = 0; k < numCells; ++ k) {
             for (int j = 0; j < numberOfCellsInModule; ++j) {
                 cellToRemove = cellsInModule[i][j];
-                //removing cell
-//                for (int l = (cCellPreferenceIndices[k]).size() -1; l >=0; --l) {
-//                    if (cCellPreferenceIndices[k][l] == cellToRemove) {
-//                        cCellPreferenceIndices[k].removeAt(l);
-//                    }
-                    cCellPreferenceIndices[k].removeAt(cCellPreferenceIndices[k].indexOf(cellToRemove));
-//                }
+                cCellPreferenceIndices[k].removeAt(cCellPreferenceIndices[k].indexOf(cellToRemove));
 
                 if (k == 0) {
                     availableCells.remove(availableCells.indexOf(cellToRemove));
@@ -303,7 +261,7 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
     QVector<testPacket> tempTests = cellPointer->getTestData();
 
 
-    QFile f( "projectName.bld" );
+    QFile f( projectName + QString(".bld") );
 
     if (f.open(QFile::Append | QIODevice::Text))
     {
@@ -353,6 +311,13 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
 
             for (int j = 0; j < tempTests[i].CURRENT_PP.size(); ++j) {
                 strList << " " << QString::number(tempTests[i].CURRENT_PP[j].first) << " " << QString::number(tempTests[i].CURRENT_PP[j].second.first) << " " << QString::number(tempTests[i].CURRENT_PP[j].second.second) << " ";
+            }
+
+            data << strList.join(",") << endl;
+            strList.clear();
+
+            for (int j = 0; j < tempTests[i].CHARGE.size(); ++j) {
+                strList << " " << QString::number(tempTests[i].CHARGE[j].first) << " " << QString::number(tempTests[i].CHARGE[j].second) << " ";
             }
 
             data << strList.join(",") << endl;

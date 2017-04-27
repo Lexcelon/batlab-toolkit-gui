@@ -39,7 +39,7 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
     voltage.append(volt);
     modes.append(mode);
 
-    if (volt > testParameters.hightVoltageCutoff || volt < testParameters.lowVoltageCutoff)
+    if ((volt > testParameters.hightVoltageCutoff - 0.05f) || (volt < testParameters.lowVoltageCutoff + 0.05f))
     {
         testPacket newTest;
         newTest.TIME = time;

@@ -16,7 +16,6 @@ INCLUDEPATH += ./Wizard
 SOURCES += main.cpp\
     batlab.cpp \
     batlabconfig.cpp \
-    settings.cpp \
     batlabcom.cpp \
     test.cpp \
     batlabcellmanager.cpp \
@@ -33,7 +32,6 @@ SOURCES += main.cpp\
 
 HEADERS  += batlab.h \
     batlabconfig.h \
-    settings.h \
     batlabcom.h \
     test.h \
     globals.h \
@@ -50,7 +48,6 @@ HEADERS  += batlab.h \
     inputStringDialog.h
 
 FORMS    += batlab.ui \
-    settings.ui \
     test.ui \
     testwindow.ui \
     Wizard/wizardpageone.ui \

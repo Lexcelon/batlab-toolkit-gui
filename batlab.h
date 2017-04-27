@@ -60,11 +60,7 @@ private:
     QPushButton *report = nullptr;
     QPushButton *options = nullptr;
     QPushButton *exit = nullptr;
-    QGraphicsView *glWidget = nullptr;
-    batlabtest *testObj = nullptr;
     QVector<batlabCom*> batlabComObjects;
-
-    settings * configSettings = nullptr;
 
     batlabCellManager * cellManager = nullptr;
 
