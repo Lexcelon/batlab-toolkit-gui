@@ -96,7 +96,7 @@ void Batlab::onReceiveWriteCommand(int serialNumber, int nameSpace, int batlabRe
     }
 
     str += QString("Register #%1 - ").arg(batlabRegister);
-    str += QString("Value = %1").arg(value);
+    str += QString("Value = %1 \n").arg(value);
 
     ui->textBrowser->insertPlainText(str);
     ui->textBrowser->moveCursor(QTextCursor::End);
@@ -114,8 +114,8 @@ void Batlab::onReceiveReadCommand(int serialNumber, int nameSpace, int batlabReg
         str += QString("If you see this, then we have problems.");
     }
 
-    str += QString("Register #%1 - ").arg(batlabRegister);
-
+    str += QString("Register #%1 - \n").arg(batlabRegister);
+    qDebug() << str;
     ui->textBrowser->insertPlainText(str);
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
@@ -133,8 +133,8 @@ void Batlab::onReceiveWriteResponse(int nameSpace, int batlabRegister, int lsb, 
 
     str += QString("Register #%1 - ").arg(batlabRegister);
     str += QString("MSB: %1 - ").arg(msb,4,16);
-    str += QString("LSB: %1").arg(lsb,4,16);
-
+    str += QString("LSB: %1 \n").arg(lsb,4,16);
+qDebug() << str;
     ui->textBrowser->insertPlainText(str);
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
@@ -152,8 +152,8 @@ void Batlab::onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, i
 
     str += QString("Register #%1 - ").arg(batlabRegister);
     str += QString("MSB: %1 - ").arg(msb,4,16);
-    str += QString("LSB: %1").arg(lsb,4,16);
-
+    str += QString("LSB: %1 \n").arg(lsb,4,16);
+qDebug() << str;
     ui->textBrowser->insertPlainText(str);
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
@@ -168,14 +168,14 @@ void Batlab::onReceiveStream(int cell,int mode,int status,float temp, float curr
         }
     }
 
-    str += QString("Cell #%1 - Mode: %2 - Status: %3 - Temp: %4 Units- Current: %5 A - Voltage: %6 V")
+    str += QString("Cell #%1 - Mode: %2 - Status: %3 - Temp: %4 Units- Current: %5 A - Voltage: %6 V \n")
             .arg(cell)
             .arg(mode)
             .arg(status)
             .arg(temp)
             .arg(current)
             .arg(voltage);
-
+qDebug() << str;
     ui->textBrowser->insertPlainText(str);
     ui->textBrowser->moveCursor(QTextCursor::End);
 }
@@ -295,7 +295,7 @@ void Batlab::onFinishedTests(QString designator, int testNum)
 {
     for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
         if (designator == ui->tableWidget->item(i,0)->text()) {
-            ui->tableWidget->item(i,testNum)->setBackgroundColor(Qt::green);
+            ui->tableWidget->item(i,testNum+1)->setBackgroundColor(Qt::green);
             break;
         }
     }

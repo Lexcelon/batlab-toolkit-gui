@@ -275,49 +275,49 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
 
             strList.clear();
             for (int j = 0; j < tempTests[i].TIME.size(); ++j) {
-                strList << " " << QString::number(tempTests[i].TIME[j]) << " ";
+                strList << QString::number(tempTests[i].TIME[j]) ;
             }
 
             data << strList.join(",") << endl;
             strList.clear();
 
             for (int j = 0; j < tempTests[i].REG_VOLTAGE.size(); ++j) {
-                strList << " " << QString::number(tempTests[i].REG_VOLTAGE[j]) << " ";
+                strList <<  QString::number(tempTests[i].REG_VOLTAGE[j]);
             }
 
             data << strList.join(",") << endl;
             strList.clear();
 
             for (int j = 0; j < tempTests[i].REG_CURRENT.size(); ++j) {
-                strList << " " << QString::number(tempTests[i].REG_CURRENT[j]) << " ";
+                strList << QString::number(tempTests[i].REG_CURRENT[j]);
             }
 
             data << strList.join(",") << endl;
             strList.clear();
 
             for (int j = 0; j < tempTests[i].REG_TEMPERATURE.size(); ++j) {
-                strList << " " << QString::number(tempTests[i].REG_TEMPERATURE[j]) << " ";
+                strList << QString::number(tempTests[i].REG_TEMPERATURE[j]);
             }
 
             data << strList.join(",") << endl;
             strList.clear();
 
             for (int j = 0; j < tempTests[i].VOLTAGE_PP.size(); ++j) {
-                strList << " " << QString::number(tempTests[i].VOLTAGE_PP[j].first) << " " << QString::number(tempTests[i].VOLTAGE_PP[j].second.first) << " " << QString::number(tempTests[i].VOLTAGE_PP[j].second.second) << " ";
+                strList << QString::number(tempTests[i].VOLTAGE_PP[j].first) << QString::number(tempTests[i].VOLTAGE_PP[j].second.first) << QString::number(tempTests[i].VOLTAGE_PP[j].second.second);
             }
 
             data << strList.join(",") << endl;
             strList.clear();
 
             for (int j = 0; j < tempTests[i].CURRENT_PP.size(); ++j) {
-                strList << " " << QString::number(tempTests[i].CURRENT_PP[j].first) << " " << QString::number(tempTests[i].CURRENT_PP[j].second.first) << " " << QString::number(tempTests[i].CURRENT_PP[j].second.second) << " ";
+                strList << QString::number(tempTests[i].CURRENT_PP[j].first) <<  QString::number(tempTests[i].CURRENT_PP[j].second.first) << QString::number(tempTests[i].CURRENT_PP[j].second.second);
             }
 
             data << strList.join(",") << endl;
             strList.clear();
 
             for (int j = 0; j < tempTests[i].CHARGE.size(); ++j) {
-                strList << " " << QString::number(tempTests[i].CHARGE[j].first) << " " << QString::number(tempTests[i].CHARGE[j].second) << " ";
+                strList << QString::number(tempTests[i].CHARGE[j].first) << QString::number(tempTests[i].CHARGE[j].second) ;
             }
 
             data << strList.join(",") << endl;
