@@ -36,6 +36,9 @@ public slots:
 
     void onProcessCellData();
 
+    void onSetNumberOfModules(int numModules) { numberOfModules = numModules; }
+    void onSetNumberOfCellsPerModule(int numCells) { numberOfCellsPerModule = numCells; }
+
     void clean();
 
     batlabCell* onGetCell(int index) { return cellList.at(index); }
@@ -69,6 +72,9 @@ private:
     float **errorSoC;
 
     int numberOfBatlabs;
+
+    int numberOfCellsPerModule = 0;
+    int numberOfModules = 0;
 
     QString projectName;
 
