@@ -37,6 +37,7 @@ public slots:
     void onConnectToBatlabs(QStringList names);
     void onGetBatlabNames();
     void onTest();
+    void onReport();
 
     void onReceiveWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
     void onReceiveReadCommand(int serialNumber, int nameSpace,int batlabRegister);
