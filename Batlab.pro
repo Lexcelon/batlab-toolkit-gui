@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       *= core  serialport gui multimedia
+QT       *= core  serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -56,3 +56,5 @@ FORMS    += batlab.ui \
     inputStringDialog.ui
 
 DISTFILES += 1010.bmp
+
+DEPENDPATH  *= $$DESTDIR
