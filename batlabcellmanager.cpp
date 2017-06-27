@@ -89,9 +89,9 @@ void batlabCellManager::onProcessCellData()
     float coefI = 1.0;
     float coefSoC = 1.0;
 
-    int numberOfCellsInModule = 2;
-    int numberOfModules = 3;
-    int numberOfCellsInPack = numberOfCellsInModule * numberOfModules;
+//    int numberOfCellsInModule = 2;
+//    int numberOfModules = 3;
+    int numberOfCellsInPack = numberOfCellsPerModule * numberOfModules;
 
     errorVoltage = new float*[numCells];
     errorCurrent = new float*[numCells];
@@ -198,7 +198,7 @@ void batlabCellManager::onProcessCellData()
     QVector<QVector<float>> cellsInModule;
     for (int i = 0; i < numberOfModules; ++i) {
         QVector<float> temp;
-        for (int j = 0; j < numberOfCellsInModule; ++j) {
+        for (int j = 0; j < numberOfCellsPerModule; ++j) {
             temp.push_back(0);
         }
         cellsInModule.push_back(temp);
@@ -215,12 +215,12 @@ void batlabCellManager::onProcessCellData()
 
     for (int i = 0; i < numberOfModules; ++i) {
 
-        for (int j = 0; j < numberOfCellsInModule; ++j) {
+        for (int j = 0; j < numberOfCellsPerModule; ++j) {
             cellsInModule[i][j] = cCellPreferenceIndices[cellToMatch][j];
         }
 
         for (int k = 0; k < numCells; ++ k) {
-            for (int j = 0; j < numberOfCellsInModule; ++j) {
+            for (int j = 0; j < numberOfCellsPerModule; ++j) {
                 cellToRemove = cellsInModule[i][j];
                 cCellPreferenceIndices[k].removeAt(cCellPreferenceIndices[k].indexOf(cellToRemove));
 
@@ -231,7 +231,7 @@ void batlabCellManager::onProcessCellData()
         }
 
 
-        cellsLeftToPutInPack = cellsLeftToPutInPack - numberOfCellsInModule;
+        cellsLeftToPutInPack = cellsLeftToPutInPack - numberOfCellsPerModule;
         if (cellsLeftToPutInPack > 0) {
             cellIndToMatch = cellsLeftToPutInPack;
             cellToMatch = availableCells[cellIndToMatch-1];
