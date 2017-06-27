@@ -45,6 +45,10 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         emit testFinished(static_cast<int>(cell));
         emit updateUI(id, tests.size());
         testPacket newTest;
+
+        for (int i = time.size() - 1; i >= 0; ++i) {
+            time[i] -= time[0];
+        }
         newTest.TIME = time;
         newTest.REG_TEMPERATURE = temperature;
         newTest.REG_CURRENT = current;

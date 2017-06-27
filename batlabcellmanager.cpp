@@ -84,7 +84,7 @@ void batlabCellManager::onAllTestsFinished()
 void batlabCellManager::onProcessCellData()
 {
     const int numCells = cellList.size();
-
+    interpolateData();
     float coefV = 1.0;
     float coefI = 1.0;
     float coefSoC = 1.0;
@@ -128,8 +128,8 @@ void batlabCellManager::onProcessCellData()
 
             float sum = 0.0f;
 
-            for (int k = 0; k < cellList[i]->getTestData().last().REG_VOLTAGE.size(); ++k) {
-                float diff = (cellList[i]->getTestData().last().REG_VOLTAGE.at(k) - cellList[j]->getTestData().last().REG_VOLTAGE.at(k));
+            for (int k = 0; k < voltageTestData[i].size(); ++k) {
+                float diff = (voltageTestData[i].at(k) - voltageTestData[j].at(k));
                 diff *= diff;
                 sum += diff;
             }
@@ -140,8 +140,8 @@ void batlabCellManager::onProcessCellData()
 
             sum = 0.0f;
 
-            for (int k = 0; k < cellList[i]->getTestData().last().REG_CURRENT.size(); ++k) {
-                float diff = (cellList[i]->getTestData().last().REG_CURRENT.at(k) - cellList[j]->getTestData().last().REG_CURRENT.at(k));
+            for (int k = 0; k < currentTestData[i].size(); ++k) {
+                float diff = (currentTestData[i].at(k) - currentTestData[j].at(k));
                 diff *= diff;
                 sum += diff;
             }
@@ -152,8 +152,8 @@ void batlabCellManager::onProcessCellData()
 
             sum = 0.0f;
 
-            for (int k = 0; k < cellList[i]->getTestData().last().CHARGE.size(); ++k) {
-                float diff = (cellList[i]->getTestData().last().CHARGE.at(k).second - cellList[j]->getTestData().last().CHARGE.at(k).second);
+            for (int k = 0; k < chargeTestData[i].size(); ++k) {
+                float diff = (chargeTestData[i].at(k) - chargeTestData[j].at(k));
                 diff *= diff;
                 sum += diff;
             }
@@ -325,4 +325,85 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
         }
     }
     f.close();
+}
+
+
+
+
+void batlabCellManager::interpolateData()
+{
+    // create new time vector
+    QVector<int> timeVector;
+
+    //use max time
+    int maxTime = 0;
+
+    for (int i = 0; i < cellList.size(); ++i) {
+        int time = cellList[i]->getTestData().last().TIME.last();
+        if (time > maxTime) {
+            maxTime = time;
+        }
+    }
+
+    //fill time vector
+    for (int i = 0; i < floor(maxTime/500); ++i) {
+        timeVector.push_back(500 * i);
+    }
+    // interpolate data
+
+    voltageTestData.resize(cellList.size());
+    for (int i = 0; i < voltageTestData.size(); ++i) {
+        voltageTestData[i].resize(timeVector.size());
+    }
+
+    for (int i = 0; i < voltageTestData.size(); ++i) {
+        testPacket packet = cellList[i]->getTestData().last();
+        voltageTestData[i].push_back(packet.REG_VOLTAGE.first());
+        for (int j = 0; j < packet.REG_VOLTAGE.size() - 1; ++i) {
+            int k = 0;
+
+            if (packet.TIME[j] > (voltageTestData[i].size() * 500)) {
+                float slope;
+                slope = (packet.REG_VOLTAGE[j + 1] - packet.REG_VOLTAGE[j]) / static_cast<float>(1000);
+                voltageTestData[i].push_back(slope * ((voltageTestData[i].size() * 500) - packet.TIME[j]));
+                j--;
+            }
+        }
+
+        currentTestData[i].push_back(packet.REG_CURRENT.first());
+        for (int j = 0; j < packet.REG_CURRENT.size() - 1; ++i) {
+            int k = 0;
+
+            if (packet.TIME[j] > (currentTestData[i].size() * 500)) {
+                float slope;
+                slope = (packet.REG_CURRENT[j + 1] - packet.REG_CURRENT[j]) / static_cast<float>(1000);
+                currentTestData[i].push_back(slope * ((currentTestData[i].size() * 500) - packet.TIME[j]));
+                j--;
+            }
+        }
+
+        int maxCharge = 0;
+        for (int j = 0; j < packet.CHARGE.size(); ++j) {
+            if (maxCharge < packet.CHARGE[j].second) {
+                maxCharge = packet.CHARGE[j].second;
+            }
+        }
+
+        chargeTestData[i].push_back(packet.CHARGE.first().second);
+        for (int j = 0; j < packet.CHARGE.size() - 1; ++i) {
+            int k = 0;
+
+            if (packet.TIME[j] > (chargeTestData[i].size() * 500)) {
+                float slope;
+                slope = (packet.CHARGE[j + 1].second - packet.CHARGE[j].second) / static_cast<float>(1000);
+                chargeTestData[i].push_back(slope * ((chargeTestData[i].size() * 500) - packet.TIME[j]) / maxCharge);
+                j--;
+            }
+        }
+
+    }
+
+
+    // save/overwrite
+
 }

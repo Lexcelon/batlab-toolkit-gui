@@ -61,12 +61,16 @@ signals:
 
 private:
     void saveLevelOneData(batlabCell* cellPointer);
+    void interpolateData();
     QVector<batlabCell*> cellList;
 
     QVector<batlabCom*> comList;
 
     batlabTestPlan * testPlan = nullptr;
 
+    QVector<QVector<float>> voltageTestData;
+    QVector<QVector<float>> currentTestData;
+    QVector<QVector<int>> chargeTestData;
     float **errorVoltage;
     float **errorCurrent;
     float **errorSoC;
