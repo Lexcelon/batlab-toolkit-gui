@@ -190,6 +190,8 @@ struct testParms
 #define STAT_BACKWARDS          0x0040
 #define STAT_NO_CELL            0x0080
 #define STAT_NO_PSU             0x0100
+#define STAT_NOT_INITIALIZED    0x0200
+#define STAT_NOT_CALIBRATED     0x0400
 
 #define ERR_VOLTAGE_LIMIT_CHG  0x0001
 #define ERR_VOLTAGE_LIMIT_DCHG 0x0002
@@ -197,7 +199,13 @@ struct testParms
 #define ERR_CURRENT_LIMIT_DCHG 0x0008
 #define ERR_TEMP_LIMIT_CHG     0x0010
 #define ERR_TEMP_LIMIT_DCHG    0x0020
+#define ERR_BACKWARDS          0x0040
+#define ERR_NO_CELL            0x0080
 #define ERR_NO_PSU             0x0100
+
+#define SET_TRIM_OUTPUT        0x0001
+#define SET_VCC_COMPENSATION   0x0002
+#define SET_DEBUG              0x8000
 
 //Mode register codes
 #define MODE_NO_CELL           0x0000
@@ -207,8 +215,6 @@ struct testParms
 #define MODE_DISCHARGE         0x0004
 #define MODE_IMPEDANCE         0x0005
 #define MODE_STOPPED           0x0006
-
-
 
 struct testPacket {
     QVector<int> TIME;
@@ -242,14 +248,19 @@ enum cellNamespace {
     TEMP_LIMIT_CHG,
     TEMP_LIMIT_DCHG,
 
-    CURRENT_PHS,
-    VOLTAGE_PHS,
+    DUTY,
+    COMPENSATION,
     CURRENT_PP,
     VOLTAGE_PP,
 
-    CURRENT_CALIB,
-    CURRENT_CALIB2,
-    TEMP_CALIB
+    CURRENT_CALIB_OFF,
+    CURRENT_CALIB_SCA,
+    TEMP_CALIB_R,
+    TEMP_CALIB_B,
+    CURRENT_CALIB_PP,
+    VOLTAGE_CALIB_PP,
+    CURR_CALIB_PP_OFF,
+    VOLT_CALIB_PP_OFF
 };
 
 enum unitNamespace {
@@ -259,15 +270,34 @@ enum unitNamespace {
     VCC,
     SINE_FREQ,
     SYSTEM_TIMER,
-    SETTINGS
+    SETTINGS,
+    SINE_OFFSET,
+    SINE_MAGDIV,
+    LED_MESSAGE,
+    BOOTLOAD,
+    VOLT_CH_CALIB_OFF,
+    VOLT_CH_CALIB_SCA,
+    VOLT_DC_CALIB_OFF,
+    VOLT_DC_CALIB_SCA
+
 };
+
+namespace bootloader
+{
+    enum {
+        BOOTLOAD,
+        ADDR,
+        DATA
+    };
+}
 
 enum commsNamespace {
     LED0,
     LED1,
     LED2,
     LED3,
-    EXTERNAL_PSU
+    EXTERNAL_PSU,
+    EXTERNAL_PSU_VOLTAGE
 };
 
 #endif // GLOBALS

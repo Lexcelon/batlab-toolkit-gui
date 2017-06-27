@@ -90,8 +90,6 @@ void Batlab::onReport()
         cellManager->onSetNumberOfCellsPerModule(numberOfCellsPerModule);
         cellManager->onSetNumberOfModules(numberOfModules);
         cellManager->onProcessCellData();
-
-
     }
 }
 
