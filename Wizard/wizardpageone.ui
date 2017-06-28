@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>158</height>
+    <height>173</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -109,6 +109,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>projectName</tabstop>
+  <tabstop>numCells</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>name</tabstop>
+  <tabstop>startingIndex</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

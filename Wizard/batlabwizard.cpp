@@ -62,7 +62,7 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
     connect(wiz,&QWizard::finished, [&,wizForLambda,page3]() {
         if (wizForLambda->currentId()==3) {
             page3->onSaveProject();
-            emit emitFinished(page3->onGetProjectName() + ".blp");
+            emit emitFinished(page3->onGetProjectName());
         }
     }
     );

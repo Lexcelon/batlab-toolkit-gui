@@ -20,6 +20,7 @@
 #include "wizardpageone.h"
 #include "wizardpagetwo.h"
 #include "batlabwizard.h"
+#include <QCloseEvent>
 
 namespace Ui {
 class Batlab;
@@ -51,6 +52,24 @@ public slots:
     void onLoadProject();
 
     void onFinishedTests(QString designator, int testNum);
+
+    void onUpdateText(QString);
+
+signals:
+    void emitUpdateText(QString);
+protected:
+    void closeEvent(QCloseEvent *event)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Exit Batlab!", "Are you sure you want to quit?",
+                                      QMessageBox::Yes|QMessageBox::No);
+
+        if (reply == QMessageBox::Yes) {
+            event->accept();
+        } else {
+            event->ignore();
+        }
+    }
 
 private:
     Ui::Batlab *ui = nullptr;

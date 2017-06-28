@@ -1,11 +1,13 @@
 #include "wizardpagethree.h"
 #include "ui_wizardpagethree.h"
-
+#include <QFileDialog>
+#include <QMessageBox>
 wizardPageThree::wizardPageThree(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::wizardPageThree)
 {
     ui->setupUi(this);
+    ui->tableWidget->resizeColumnsToContents();
 }
 
 wizardPageThree::~wizardPageThree()
@@ -25,6 +27,9 @@ QString wizardPageThree::onGetName(int val) {
 }
 
 void wizardPageThree::onActivate() {
+
+    onGetFilepath();
+
     QProgressDialog bar(tr("Creating %1 cells from parameters...").arg(numCells), tr("Cancel"), 0, numCells-1, this);
     bar.setMinimumDuration(0);
 //    bar.show();
@@ -89,12 +94,27 @@ void wizardPageThree::onActivate() {
         QApplication::processEvents();
     }
 
-    onSaveProject();
+//    onGetFilepath();
+//    onSaveProject();
+}
+QString wizardPageThree::onGetFilepath()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Choose a directory to save your project file."),
+                                                "C:/",
+                                                QFileDialog::ShowDirsOnly
+                                                | QFileDialog::DontResolveSymlinks);
+    qDebug() << projectName;
+    projectName = dir + projectName;
+    return dir;
 }
 
-void wizardPageThree::onSaveProject() {
 
-    QFile f( projectName + ".blp" );
+void wizardPageThree::onSaveProject()
+{
+    if (!projectName.endsWith(".blp")) {
+        projectName.append(".blp");
+    }
+    QFile f( projectName );
 
     if (f.open(QFile::WriteOnly | QFile::Truncate | QIODevice::Text))
     {
@@ -138,6 +158,12 @@ void wizardPageThree::onSaveProject() {
             data << strList.join( "," ) << endl;
         }
         f.close();
+    } else {
+        QMessageBox::warning(this, "Access is denied!", "The file failed to open. Try running as administrator to write to that location. "
+                                                        "File was saved to executable directory.", QMessageBox::Ok);
+        QStringList list = projectName.split("/");
+        projectName = list.last();
+        this->onSaveProject();
     }
 }
 
