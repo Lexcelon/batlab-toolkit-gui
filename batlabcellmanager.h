@@ -55,6 +55,8 @@ public slots:
 
     QVector<batlabCell*> getCellList() { return cellList; }
 
+    bool getTestsRunning() { return testsRunning; }
+
 signals:
     void testFinished(uchar);
     void emitTests(QVector<int>*);
@@ -81,6 +83,8 @@ private:
     int numberOfModules = 0;
 
     QString projectName;
+
+    bool testsRunning = false;
 
 };
 

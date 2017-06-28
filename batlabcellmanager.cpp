@@ -71,6 +71,7 @@ void batlabCellManager::onCreateTestPlan(QVector<batlabCom*> coms)
 
 
 void batlabCellManager::onStartTests() {
+    testsRunning = true;
     testPlan->onStartTests();
 }
 
@@ -79,6 +80,7 @@ void batlabCellManager::onAllTestsFinished()
     for (int i = 0; i < cellList.size(); ++i) {
         saveLevelOneData(cellList[i]);
     }
+    testsRunning = false;
 }
 
 void batlabCellManager::onProcessCellData()

@@ -33,6 +33,8 @@ public slots:
     void onProjectName(QString);
     QString onGetProjectName() { return projectName; }
 
+    QString onGetFilepath();
+
 private:
     Ui::wizardPageThree *ui;
 

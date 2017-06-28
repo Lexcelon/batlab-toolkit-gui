@@ -2,6 +2,7 @@
 #include "ui_batlab.h"
 #include <QFileDialog>
 #include "inputStringDialog.h"
+#include <QScrollBar>
 
 Batlab::Batlab(QWidget *parent) :
     QMainWindow(parent),
@@ -50,15 +51,31 @@ Batlab::Batlab(QWidget *parent) :
             this, &Batlab::onGetBatlabNames);
     connect(loadProject, &QPushButton::clicked,
             this, &Batlab::onLoadProject);
+    connect(this, &Batlab::emitUpdateText,
+            this, &Batlab::onUpdateText);
 }
 
 void Batlab::onTest()
 {
-    if (batlabComObjects.size() > 0) {
-        cellManager->onCreateTestPlan(batlabComObjects);
-        cellManager->onStartTests();
+//    for (int i = 0; i < 200000; ++i) {
+//        if (i%10 == 0) {
+
+//            QString str = QString("Register #%1 - \n").arg(ui->textBrowser->verticalScrollBar()->maximum());
+//            emit emitUpdateText(str);
+//            QApplication::processEvents();
+//        }
+//    }
+    if (!cellManager->getTestsRunning()) {
+        if (batlabComObjects.size() > 0) {
+            cellManager->onCreateTestPlan(batlabComObjects);
+            cellManager->onStartTests();
+        } else {
+            QMessageBox::warning(this, "No Batlabs Connected", "Communications not established with any connected Batlabs!"
+                                                               " Verify that connections are in place and then select "
+                                                               "‘Connect to Batlab(s)’ option on the GUI Main Window.", QMessageBox::Ok);
+        }
     } else {
-        QMessageBox::warning(this, "No Batlabs Connected", "There are not any connected Batlabs! Make sure everything's hooked up right and try again.", QMessageBox::Ok);
+        QMessageBox::warning(this, "Tests are running!", "There are already tests running, please wait until tests are finished.", QMessageBox::Ok);
     }
 
 //   // For testing communications with batlab
@@ -119,13 +136,12 @@ void Batlab::onReceiveWriteCommand(int serialNumber, int nameSpace, int batlabRe
     str += QString("Register #%1 - ").arg(batlabRegister);
     str += QString("Value = %1 \n").arg(value);
 
-    ui->textBrowser->insertPlainText(str);
-    ui->textBrowser->moveCursor(QTextCursor::End);
+    emit emitUpdateText(str);
 }
 
 void Batlab::onReceiveReadCommand(int serialNumber, int nameSpace, int batlabRegister)
 {
-    QString str;
+    QString str = QString::number(ui->textBrowser->verticalScrollBar()->maximum());
     str += QString("READ: Batlab #%1 - ").arg(serialNumber);
     if (nameSpace >=0 && nameSpace < 4) {
         str += QString("Cell #%1 - ").arg(nameSpace);
@@ -137,8 +153,8 @@ void Batlab::onReceiveReadCommand(int serialNumber, int nameSpace, int batlabReg
 
     str += QString("Register #%1 - \n").arg(batlabRegister);
     qDebug() << str;
-    ui->textBrowser->insertPlainText(str);
-    ui->textBrowser->moveCursor(QTextCursor::End);
+
+    emit emitUpdateText(str);
 }
 
 void Batlab::onReceiveWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
@@ -156,8 +172,9 @@ void Batlab::onReceiveWriteResponse(int nameSpace, int batlabRegister, int lsb, 
     str += QString("MSB: %1 - ").arg(msb,4,16);
     str += QString("LSB: %1 \n").arg(lsb,4,16);
 qDebug() << str;
-    ui->textBrowser->insertPlainText(str);
-    ui->textBrowser->moveCursor(QTextCursor::End);
+
+
+    emit emitUpdateText(str);
 }
 
 void Batlab::onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
@@ -174,9 +191,10 @@ void Batlab::onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, i
     str += QString("Register #%1 - ").arg(batlabRegister);
     str += QString("MSB: %1 - ").arg(msb,4,16);
     str += QString("LSB: %1 \n").arg(lsb,4,16);
-qDebug() << str;
-    ui->textBrowser->insertPlainText(str);
-    ui->textBrowser->moveCursor(QTextCursor::End);
+    qDebug() << str;
+
+
+    emit emitUpdateText(str);
 }
 
 void Batlab::onReceiveStream(int cell,int mode,int status,float temp, float current, float voltage)
@@ -189,16 +207,16 @@ void Batlab::onReceiveStream(int cell,int mode,int status,float temp, float curr
         }
     }
 
-    str += QString("Cell #%1 - Mode: %2 - Status: %3 - Temp: %4 Units- Current: %5 A - Voltage: %6 V \n")
+    str += QString("Cell #%1 - Mode: %2 - Status: %3 - Temp: %4 C - Current: %5 A - Voltage: %6 V \n")
             .arg(cell)
             .arg(mode)
             .arg(status)
             .arg(temp)
             .arg(current)
             .arg(voltage);
-qDebug() << str;
-    ui->textBrowser->insertPlainText(str);
-    ui->textBrowser->moveCursor(QTextCursor::End);
+    qDebug() << str;
+
+    emit emitUpdateText(str);
 }
 
 void Batlab::onAddTests()
@@ -309,7 +327,8 @@ void Batlab::onLoadProject()
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
-    onLoadTest(fileNames.first());
+    if  (!fileNames.isEmpty())
+        onLoadTest(fileNames.first());
 }
 
 void Batlab::onFinishedTests(QString designator, int testNum)
@@ -319,6 +338,18 @@ void Batlab::onFinishedTests(QString designator, int testNum)
             ui->tableWidget->item(i,testNum+1)->setBackgroundColor(Qt::green);
             break;
         }
+    }
+}
+
+void Batlab::onUpdateText(QString str)
+{
+    static int i = 0;
+    str = QString("%1: %2 ").arg(++i).arg(QDateTime::currentDateTime().toString()) + str;
+    if (ui->textBrowser->verticalScrollBar()->value() >= (ui->textBrowser->verticalScrollBar()->maximum()-10)) {
+        ui->textBrowser->insertPlainText(str);
+        ui->textBrowser->moveCursor(QTextCursor::End);
+    } else {
+        ui->textBrowser->insertPlainText(str);
     }
 }
 
