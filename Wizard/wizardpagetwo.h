@@ -25,7 +25,8 @@ public slots:
     void onCurrentChargeCutoff(double val) { parms.currentCutoffCharge = val;   emit emitParms(parms);}
     void onCurrentDischargeCutoff(double val) { parms.currentCutoffCharge = val;   emit emitParms(parms);}
     void onReportingFrequency(double val) { parms.reportingFrequency = val;   emit emitParms(parms); }
-    void onConstantCurrentSetpoint(double val) { parms.currentSetpoint = val;   emit emitParms(parms); }
+    void onChargeCurrentSetpoint(double val) { parms.chargeCurrentSetpoint = val;   emit emitParms(parms); }
+    void onDischargeCurrentSetpoint(double val) { parms.dischargeCurrentSetpoint = val;   emit emitParms(parms); }
     void onCapacity(double val) { capacity = val;   emit emitCapacity(capacity); }
     void onRestTime(int val) { restTime = val;   emit emitRestTime(restTime); }
 

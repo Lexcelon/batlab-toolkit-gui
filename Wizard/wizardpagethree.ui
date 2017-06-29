@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QTableWidget" name="tableWidget">
      <property name="columnCount">
-      <number>12</number>
+      <number>9</number>
      </property>
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>true</bool>
@@ -39,11 +39,6 @@
      <column>
       <property name="text">
        <string>Cycles</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Rest Time</string>
       </property>
      </column>
      <column>
@@ -68,27 +63,17 @@
      </column>
      <column>
       <property name="text">
-       <string>Current Cutoff - Charge</string>
+       <string>Charge Current Setpoint</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Current Cutoff - Discharge</string>
+       <string>Discharge Current Setpoint</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Reporting Frequency</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Constant Current Setpoint</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Capacity</string>
+       <string>Estimated Capacity</string>
       </property>
      </column>
     </widget>

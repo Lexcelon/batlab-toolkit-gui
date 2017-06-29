@@ -85,6 +85,7 @@ private:
     QPushButton *exit = nullptr;
     QVector<batlabCom*> batlabComObjects;
 
+    batlabtest *testObj = nullptr;
     batlabCellManager * cellManager = nullptr;
 
     QTableWidget * tableWidget = nullptr;

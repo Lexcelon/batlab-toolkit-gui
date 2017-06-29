@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>173</height>
+    <height>133</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,75 +22,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="name">
-       <property name="text">
-        <string>default</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Designator: </string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QComboBox" name="comboBox">
-       <item>
-        <property name="text">
-         <string>New</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Used</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>New Cells or Used Cells? </string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="numCells">
-       <property name="maximum">
-        <number>999999999</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Number of Cells: </string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Starting Cell Number: </string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="startingIndex">
-       <property name="text">
-        <string>001</string>
-       </property>
-       <property name="placeholderText">
-        <string>001</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
@@ -105,6 +36,54 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Number of Cells: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="numCells">
+       <property name="maximum">
+        <number>999999999</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Designator: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="name">
+       <property name="text">
+        <string>default</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Starting Cell Number: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="startingIndex">
+       <property name="text">
+        <string>001</string>
+       </property>
+       <property name="placeholderText">
+        <string>001</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -112,7 +91,6 @@
  <tabstops>
   <tabstop>projectName</tabstop>
   <tabstop>numCells</tabstop>
-  <tabstop>comboBox</tabstop>
   <tabstop>name</tabstop>
   <tabstop>startingIndex</tabstop>
  </tabstops>

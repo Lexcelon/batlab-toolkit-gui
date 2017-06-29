@@ -71,8 +71,10 @@ void batlabCellManager::onCreateTestPlan(QVector<batlabCom*> coms)
 
 
 void batlabCellManager::onStartTests() {
-    testsRunning = true;
-    testPlan->onStartTests();
+    if (cellList.size() != 0) {
+        testsRunning = true;
+        testPlan->onStartTests();
+    }
 }
 
 void batlabCellManager::onAllTestsFinished()

@@ -41,6 +41,9 @@ private:
     QVector<uchar> data;
     int serialNumber = -1;
     QString portName;
+
+    int tempCalibB[4];
+    int tempCalibR[4];
 };
 
 #endif // BATLABCOM_H

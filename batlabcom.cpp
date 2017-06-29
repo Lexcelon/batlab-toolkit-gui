@@ -36,6 +36,14 @@ batlabCom::batlabCom(QString item, QObject *parent) : QObject(parent)
     connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
     qDebug() << "Read Serial Number";
     onReadReg(0x04,unitNamespace::SERIAL_NUM);
+    onReadReg(0x00,cellNamespace::TEMP_CALIB_B);
+    onReadReg(0x01,cellNamespace::TEMP_CALIB_B);
+    onReadReg(0x02,cellNamespace::TEMP_CALIB_B);
+    onReadReg(0x03,cellNamespace::TEMP_CALIB_B);
+    onReadReg(0x00,cellNamespace::TEMP_CALIB_R);
+    onReadReg(0x01,cellNamespace::TEMP_CALIB_R);
+    onReadReg(0x02,cellNamespace::TEMP_CALIB_R);
+    onReadReg(0x03,cellNamespace::TEMP_CALIB_R);
 }
 
 void batlabCom::onRead() {
@@ -56,6 +64,14 @@ void batlabCom::onRead() {
             if (rec[start+2] == unitNamespace::SERIAL_NUM) {
                 serialNumber = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
                 qDebug() << "Serial  Number " << serialNumber;
+            }
+
+            if (rec[start+2] == cellNamespace::TEMP_CALIB_B) {
+                tempCalibB[(uchar)(rec[start+1])] = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
+            }
+
+            if (rec[start+2] == cellNamespace::TEMP_CALIB_R) {
+                tempCalibR[(uchar)(rec[start+1])] = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
             }
             emit emitReadResponse(static_cast<int>((uchar)rec[start+1]), static_cast<int>((uchar)rec[start+2]), static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
         }
@@ -84,7 +100,7 @@ void batlabCom::onRead() {
             temp =      (uchar)rec[start+7]  + 256*(uchar)rec[start+8];
             current =   (uchar)rec[start+9]  + 256*(uchar)rec[start+10];
             voltage =   (uchar)rec[start+11] + 256*(uchar)rec[start+12];
-            emit emitStream(cell,mode,status,getTemperature(temp),getCurrent(current),getVoltage(voltage));
+            emit emitStream(cell,mode,status,getTemp(temp,tempCalibB[cell],tempCalibR[cell]),getCurrent(current),getVoltage(voltage));
         }
         len-=13;
         start+=13;

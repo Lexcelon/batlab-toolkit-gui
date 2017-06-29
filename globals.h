@@ -62,6 +62,24 @@ static float getTemp(int val)
     return T;
 }
 
+
+static float getTemp(int val, int tempCalibB, int tempCalibR)
+{
+    float Rtherm = static_cast<float>(tempCalibR) * 4.096 / (((pow(2,15) - 1)/ val) - 1);
+    float Tinv = 1 / 298.15 + log(Rtherm / 10000.) / tempCalibB;
+
+
+//    float R = 10000/ ((pow(2,15)/float(val))-1);
+//    float To = 25.0f + 273.15f;
+//    float Ro = 10000;
+//    float B = 3428;
+//    float Tinv = (1/To) + (log(R/Ro)/B);
+    float T = (1/Tinv) - 273.15f;
+    T = (T * 1.8f) +32;
+    return T;
+}
+
+
 static float getTemperature(signed short val)
 {
     float T;
@@ -172,15 +190,16 @@ static int sendSineFrequency(float val)
 
 struct testParms
 {
-    int restTime = 120;
+    int restTime = 10; //300;
     float hightVoltageCutoff = 4.2f;
     float lowVoltageCutoff = 2.65f;
     float temperatureCutoffCharge = 45.0f;
     float temperatureCutoffDischarge = 0.0f;
-    float currentCutoffCharge = 1.0f;
-    float currentCutoffDischarge = 1.0f;
+    float currentCutoffCharge = 4.096f;
+    float currentCutoffDischarge = 4.096f;
     float reportingFrequency = 1.0f;
-    float currentSetpoint = 2.0f;
+    float chargeCurrentSetpoint = 2.0f;
+    float dischargeCurrentSetpoint = 2.0f;
 };
 
 
