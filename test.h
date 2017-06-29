@@ -14,7 +14,7 @@ class batlabtest : public QDialog
     Q_OBJECT
 
 public:
-    explicit batlabtest(QWidget *parent = 0);
+    explicit batlabtest(QWidget *parent = 0, QVector<batlabCom*> com = QVector<batlabCom*>());
     ~batlabtest();
 
 public slots:
@@ -29,6 +29,7 @@ signals:
 
 private:
     Ui::test *ui;
+    QVector<batlabCom *> comObjects;
 
 };
 

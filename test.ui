@@ -219,13 +219,25 @@
     <rect>
      <x>280</x>
      <y>130</y>
-     <width>201</width>
+     <width>221</width>
      <height>121</height>
     </rect>
    </property>
    <property name="title">
     <string>Batlab #</string>
    </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Batlab S/N</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="comboBox"/>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

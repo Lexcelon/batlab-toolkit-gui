@@ -264,47 +264,70 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
     testParms tempParms = cellPointer->onGetParameters();
     QVector<testPacket> tempTests = cellPointer->getTestData();
 
+    for (int i = 0; i < tempTests.size(); ++i) {
+        QString filename = id;
 
-    QFile f( projectName + QString(".bld") );
+        if (tempTests[i].REG_MODE.contains(MODE_CHARGE)) {
+            filename += "Charge";
+        } else if (tempTests[i].REG_MODE.contains(MODE_DISCHARGE)) {
+            filename += "Discharge";
+        }
 
-    if (f.open(QFile::Append | QIODevice::Text))
-    {
-        QTextStream data( &f );
-        QStringList strList;
+        filename += tempTests[i].time.toString();
+        QFile f( filename + QString(".bld") );
 
-        data << ".." + id << endl;
+        if (f.open(QFile::Append | QIODevice::Text))
+        {
+            QTextStream data( &f );
+            QStringList strList;
 
-        for (int i = 0; i < tempTests.size(); ++i) {
-            data << QString::number(tempTests[i].REG_MODE.first()) << endl;
+                strList.clear();
+                for (int j = 0; j < tempTests[i].REG_MODE.size(); ++j) {
+                    strList << QString::number(tempTests[i].REG_MODE[j]) ;
+                }
 
-            strList.clear();
-            for (int j = 0; j < tempTests[i].TIME.size(); ++j) {
-                strList << QString::number(tempTests[i].TIME[j]) ;
-            }
+                data << strList.join(",") << endl;
+                strList.clear();
 
-            data << strList.join(",") << endl;
-            strList.clear();
+                for (int j = 0; j < tempTests[i].TIME.size(); ++j) {
+                    strList << QString::number(tempTests[i].TIME[j]) ;
+                }
 
-            for (int j = 0; j < tempTests[i].REG_VOLTAGE.size(); ++j) {
-                strList <<  QString::number(tempTests[i].REG_VOLTAGE[j]);
-            }
+                data << strList.join(",") << endl;
+                strList.clear();
 
-            data << strList.join(",") << endl;
-            strList.clear();
+                for (int j = 0; j < tempTests[i].REG_VOLTAGE.size(); ++j) {
+                    strList <<  QString::number(tempTests[i].REG_VOLTAGE[j]);
+                }
 
-            for (int j = 0; j < tempTests[i].REG_CURRENT.size(); ++j) {
-                strList << QString::number(tempTests[i].REG_CURRENT[j]);
-            }
+                data << strList.join(",") << endl;
+                strList.clear();
 
-            data << strList.join(",") << endl;
-            strList.clear();
+                for (int j = 0; j < tempTests[i].REG_CURRENT.size(); ++j) {
+                    strList << QString::number(tempTests[i].REG_CURRENT[j]);
+                }
 
-            for (int j = 0; j < tempTests[i].REG_TEMPERATURE.size(); ++j) {
-                strList << QString::number(tempTests[i].REG_TEMPERATURE[j]);
-            }
+                data << strList.join(",") << endl;
+                strList.clear();
 
-            data << strList.join(",") << endl;
-            strList.clear();
+                for (int j = 0; j < tempTests[i].REG_TEMPERATURE.size(); ++j) {
+                    strList << QString::number(tempTests[i].REG_TEMPERATURE[j]);
+                }
+
+                data << strList.join(",") << endl;
+                strList.clear();
+
+        }
+        f.close();
+
+        QString impedanceFilename;
+        impedanceFilename = id + "Impedance" + tempTests[i].time.toString();
+        QFile impedanceFile(impedanceFilename + ".bld");
+
+        if (impedanceFile.open(QFile::Append | QIODevice::Text))
+        {
+            QTextStream data( &f );
+            QStringList strList;
 
             for (int j = 0; j < tempTests[i].VOLTAGE_PP.size(); ++j) {
                 strList << QString::number(tempTests[i].VOLTAGE_PP[j].first) << QString::number(tempTests[i].VOLTAGE_PP[j].second.first) << QString::number(tempTests[i].VOLTAGE_PP[j].second.second);
@@ -319,6 +342,17 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
 
             data << strList.join(",") << endl;
             strList.clear();
+        }
+        impedanceFile.close();
+
+        QString chargeFilename;
+        chargeFilename = id + "Coloumbs" + tempTests[i].time.toString();
+        QFile chargeFile(chargeFilename + ".bld");
+
+        if (chargeFile.open(QFile::Append | QIODevice::Text))
+        {
+            QTextStream data( &f );
+            QStringList strList;
 
             for (int j = 0; j < tempTests[i].CHARGE.size(); ++j) {
                 strList << QString::number(tempTests[i].CHARGE[j].first) << QString::number(tempTests[i].CHARGE[j].second) ;
@@ -327,8 +361,9 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
             data << strList.join(",") << endl;
             strList.clear();
         }
+        chargeFile.close();
+
     }
-    f.close();
 }
 
 
