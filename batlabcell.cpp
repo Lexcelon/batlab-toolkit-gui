@@ -70,8 +70,7 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         voltagePP.clear();
         currentPP.clear();
 
-        chargeL.clear();
-        chargeH.clear();
+
 
         if (!testsToRun.isEmpty()) {
             testsToRun.removeFirst();
@@ -116,10 +115,19 @@ void batlabCell::receiveReadResponse(int batlabRegister, int value)
         break;
     case cellNamespace::CHARGEH:
         chargeH.push_back(QPair<int,int>(timer.elapsed(), value));
-//        tests.last().CHARGE.push_back(QPair<int,int>(chargeL[i].first, chargeL[i].second + (chargeH[i].second << 16)));
+        if (chargeH.size() > 0 && chargeL.size() > 0) {
+            tests.last().CHARGE.push_back(QPair<int,int>(timer.elapsed(), chargeL[0].second + (chargeH[0].second << 16)));
+            chargeL.clear();
+            chargeH.clear();
+        }
         break;
     case cellNamespace::CHARGEL:
         chargeL.push_back(QPair<int,int>(timer.elapsed(), value));
+        if (chargeH.size() > 0 && chargeL.size() > 0) {
+            tests.last().CHARGE.push_back(QPair<int,int>(timer.elapsed(), chargeL[0].second + (chargeH[0].second << 16)));
+            chargeL.clear();
+            chargeH.clear();
+        }
         break;
     case cellNamespace::MODE:
         currentMode = value;
