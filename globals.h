@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QDateTime>
 #include <QDoubleSpinBox>
 
 
@@ -240,6 +241,7 @@ struct testParms
 #define MODE_STOPPED           0x0006
 
 struct testPacket {
+    QDateTime time;
     QVector<int> TIME;
     QVector<int> REG_MODE;
     QVector<int> REG_STATUS;

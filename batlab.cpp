@@ -85,9 +85,9 @@ void Batlab::onReport()
 {
        // For testing communications with batlab - BRING THIS BACK EVENTUALLY
        if (testObj == nullptr) {
-           testObj = new batlabtest();
-           connect(testObj,SIGNAL(emitReadReg(int,int)),batlabComObjects.first(),SLOT(onReadReg(int,int)));
-           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),batlabComObjects.first(),SLOT(onWriteReg(int,int,int)));
+           testObj = new batlabtest(this, batlabComObjects);
+//           connect(testObj,SIGNAL(emitReadReg(int,int)),batlabComObjects.first(),SLOT(onReadReg(int,int)));
+//           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),batlabComObjects.first(),SLOT(onWriteReg(int,int,int)));
 //           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
        }
 
