@@ -78,7 +78,7 @@ void Batlab::onTest()
         QMessageBox::warning(this, "Tests are running!", "There are already tests running, please wait until tests are finished.", QMessageBox::Ok);
     }
 
-//   // For testing communications with batlab
+//   // For testing communications with batlab - BRING THIS BACK EVENTUALLY
 //   if (testObj == nullptr) {
 //       testObj = new batlabtest();
 //       connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
@@ -141,7 +141,7 @@ void Batlab::onReceiveWriteCommand(int serialNumber, int nameSpace, int batlabRe
 
 void Batlab::onReceiveReadCommand(int serialNumber, int nameSpace, int batlabRegister)
 {
-    QString str = QString::number(ui->textBrowser->verticalScrollBar()->maximum());
+    QString str;
     str += QString("READ: Batlab #%1 - ").arg(serialNumber);
     if (nameSpace >=0 && nameSpace < 4) {
         str += QString("Cell #%1 - ").arg(nameSpace);
@@ -357,19 +357,27 @@ void Batlab::onConnectToBatlabs(QStringList names)
 {
     qDebug() << names;
     for (int i = 0; i < names.size(); ++i) {
-        batlabComObjects.push_back(new batlabCom(names[i]));
-        connect(batlabComObjects[i], &batlabCom::emitReadCommand,
-                this, &Batlab::onReceiveReadCommand);
-        connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
-                this, &Batlab::onReceiveWriteCommand);
+        bool connectBatlab = true;
+        for (int j = 0; j < batlabComObjects.size(); ++j) {
+            if (batlabComObjects[j]->getName() == names[i]) {
+                connectBatlab = false;
+            }
+        }
+        if (connectBatlab) {
+            batlabComObjects.push_back(new batlabCom(names[i]));
+            connect(batlabComObjects[i], &batlabCom::emitReadCommand,
+                    this, &Batlab::onReceiveReadCommand);
+            connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
+                    this, &Batlab::onReceiveWriteCommand);
 
-        connect(batlabComObjects[i], &batlabCom::emitReadResponse,
-                this, &Batlab::onReceiveReadResponse);
-        connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
-                this, &Batlab::onReceiveWriteResponse);
+            connect(batlabComObjects[i], &batlabCom::emitReadResponse,
+                    this, &Batlab::onReceiveReadResponse);
+            connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
+                    this, &Batlab::onReceiveWriteResponse);
 
-        connect(batlabComObjects[i], &batlabCom::emitStream,
-                this, &Batlab::onReceiveStream);
+            connect(batlabComObjects[i], &batlabCom::emitStream,
+                    this, &Batlab::onReceiveStream);
+        }
     }
 }
 

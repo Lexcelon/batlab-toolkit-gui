@@ -19,6 +19,8 @@ public:
     batlabCom(QString item, QObject *parent = 0);
     ~batlabCom();
 
+    void setAllIdle();
+
 signals:
     void emitReadResponse(int,int,int,int);
     void emitWriteResponse(int,int,int,int);    
@@ -31,12 +33,14 @@ public slots:
     void onRead();
     void onReadReg(int, int);
     void onWriteReg(int, int, int);
+    QString getName() { return portName; }
     int getSerialNumber() {return serialNumber; }
 
 private:
     QSerialPort * port;
     QVector<uchar> data;
     int serialNumber = -1;
+    QString portName;
 };
 
 #endif // BATLABCOM_H
