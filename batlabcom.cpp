@@ -1,5 +1,5 @@
 #include "batlabcom.h"
-
+#include "globals.h"
 
 batlabCom::batlabCom(QObject *parent) : QObject(parent) {
     port = new QSerialPort();
@@ -25,6 +25,7 @@ batlabCom::batlabCom(QObject *parent) : QObject(parent) {
 batlabCom::batlabCom(QString item, QObject *parent) : QObject(parent)
 {
     port = new QSerialPort();
+    portName = item;
     port->setPortName(item);
     port->setBaudRate(QSerialPort::Baud115200);
     bool success = port->open(QSerialPort::ReadWrite);
@@ -33,6 +34,7 @@ batlabCom::batlabCom(QString item, QObject *parent) : QObject(parent)
     }
 
     connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
+    qDebug() << "Read Serial Number";
     onReadReg(0x04,unitNamespace::SERIAL_NUM);
 }
 
@@ -44,18 +46,18 @@ void batlabCom::onRead() {
 
     while (len > 0)
     if ((uchar)rec[start] == 0xAA) {
-//        qDebug() << "RESPONSE PACKET";
-//        qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
-//        qDebug() << "Low Byte Fail: " << (int)(rec[start+3]) << " High Byte Fail: " << (int)(rec[start+4]);
+        qDebug() << "RESPONSE PACKET";
+        qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
+        qDebug() << "Low Byte Fail: " << (int)(rec[start+3]) << " High Byte Fail: " << (int)(rec[start+4]);
 
         if (rec[start+2] & 0x80) {
-            emit emitWriteResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]) ^ 0x0080, static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
+            emit emitWriteResponse(static_cast<int>((uchar)rec[start+1]), static_cast<int>((uchar)rec[start+2]) ^ 0x0080, static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
         } else {
             if (rec[start+2] == unitNamespace::SERIAL_NUM) {
                 serialNumber = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
                 qDebug() << "Serial  Number " << serialNumber;
             }
-            emit emitReadResponse(static_cast<int>(rec[start+1]), static_cast<int>(rec[start+2]), static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
+            emit emitReadResponse(static_cast<int>((uchar)rec[start+1]), static_cast<int>((uchar)rec[start+2]), static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
         }
 
         len-=5;
@@ -91,6 +93,13 @@ void batlabCom::onRead() {
 
 batlabCom::~batlabCom() {
     port->close();
+}
+
+void batlabCom::setAllIdle()
+{
+    for (int i = 0; i < 4; ++i) {
+        onWriteReg(i, cellNamespace::MODE, MODE_IDLE);
+    }
 }
 
 void batlabCom::onReadReg(int batlabNamespace, int batlabRegister)

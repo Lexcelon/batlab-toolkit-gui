@@ -65,6 +65,9 @@ protected:
                                       QMessageBox::Yes|QMessageBox::No);
 
         if (reply == QMessageBox::Yes) {
+            for (int i = 0; i < batlabComObjects.size(); ++i) {
+                batlabComObjects[i]->setAllIdle();
+            }
             event->accept();
         } else {
             event->ignore();

@@ -46,6 +46,10 @@ static void bubblesort(QVector<float> data, QVector<int> &indices)
 
 //}
 
+static float getCharge(int val) {
+    return (6. * (static_cast<float>(val) / pow(2,15) )) * 4.096 / 9.765625;
+}
+
 static float getTemp(int val)
 {
     float R = 10000/ ((pow(2,15)/float(val))-1);
@@ -260,7 +264,8 @@ enum cellNamespace {
     CURRENT_CALIB_PP,
     VOLTAGE_CALIB_PP,
     CURR_CALIB_PP_OFF,
-    VOLT_CALIB_PP_OFF
+    VOLT_CALIB_PP_OFF,
+    LOCK
 };
 
 enum unitNamespace {

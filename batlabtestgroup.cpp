@@ -200,7 +200,7 @@ void batlabTestGroup::startTests()
         isRunning = false;
         emit emitFinishedTests(batlabId);
     } else {
-        impedanceTimer->start(30000);
+        impedanceTimer->start(10000);
     }
 }
 
@@ -233,6 +233,7 @@ void batlabTestGroup::onCheckChargeModes()
 
 void batlabTestGroup::onVerifyChargeModes()
 {
+    qDebug() << "This.";
     bool isOkay = true;
     for (int i = 0; i < testGroup.size(); ++i) {
         if (count & (0x0001 << i)) {
@@ -340,10 +341,13 @@ void batlabTestGroup::onVerifyFrequency()
 
 void batlabTestGroup::onReadImpedance()
 {
+    // risk here if the connections are not queued up right. We will want to change this so that the signals are the same.
     for (int i = 0; i < testGroup.size(); ++i) {
         if (count & (0x0001 << i)) {
+            emit emitWriteReg(i,cellNamespace::LOCK, 1);
             emit emitReadReg(i,cellNamespace::VOLTAGE_PP);
             emit emitReadReg(i,cellNamespace::CURRENT_PP);
+            emit emitWriteReg(i,cellNamespace::LOCK, 0);
         }
     }
 
@@ -391,7 +395,7 @@ void batlabTestGroup::onVerifyRestart()
     if (isOkay == false) {
         onRestartTests();
     } else {
-        impedanceTimer->start(180000);
+        impedanceTimer->start(10000);
     }
 }
 
