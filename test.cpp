@@ -29,18 +29,14 @@ batlabtest::~batlabtest()
     delete ui;
 }
 
-//void batlabtest::onRegRead() {
-//    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value(),vals(ui->comboBox->currentIndex()));
-//}
+void batlabtest::onRegRead() {
+    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value());
+}
 
-//void batlabtest::onRegWrite() {
+void batlabtest::onRegWrite() {
 
-//    if (writeVals(ui->regWriteBox->currentIndex())!=writeVals::command) {
-//        emit emitWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),writeVals(ui->regWriteBox->currentIndex()),ui->spinBox->value());
-//    } else {
-//        emit emitWriteReg(ui->unitNumber_2->value(),0,writeVals(ui->regWriteBox->currentIndex()),ui->spinBox->value());
-//    }
-//}
+    emit emitWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
+}
 
 //void batlabtest::onPrintCell() {
 //    emit emitPrint((uchar)((ui->unitNumber_3->value()<<2) + ui->cellNumber_3->value()), properties(ui->cellComboBox->currentIndex()));

@@ -169,6 +169,12 @@ void batlabTestGroup::onTestFinished(int cell)
 //    emit emitFinishedTests(cell, id, testNum);
     count ^= (0x0001 << cell);
     emit emitWriteReg(cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(0.0f));
+
+    emit emitWriteReg(cell, cellNamespace::LOCK, 1);
+    emit emitReadReg(cell, cellNamespace::CHARGEL);
+    emit emitReadReg(cell, cellNamespace::CHARGEH);
+    emit emitWriteReg(cell, cellNamespace::LOCK, 0);
+
     emit emitWriteReg(cell, cellNamespace::MODE, MODE_STOPPED);
     if (count == 0x0000) {
         impedanceTimer->stop();
@@ -187,7 +193,10 @@ void batlabTestGroup::startTests()
     for (int i = 0; i < testGroup.size(); ++i) {
         int code = testGroup[i]->onGetNextTest();
         if (code != -1) {
+            testGroup[i]->onUpdateParameters(i);
             qDebug() << count << code;
+            emit emitWriteReg(i,cellNamespace::CHARGEH,0);
+            emit emitWriteReg(i,cellNamespace::CHARGEL,0);
             emit emitWriteReg(i,cellNamespace::MODE,code);
             emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testGroup[i]->onGetParameters().reportingFrequency));
             count = count ^ (0x0001 << i);
@@ -200,7 +209,7 @@ void batlabTestGroup::startTests()
         isRunning = false;
         emit emitFinishedTests(batlabId);
     } else {
-        impedanceTimer->start(10000);
+        impedanceTimer->start(30000);
     }
 }
 
@@ -370,6 +379,7 @@ void batlabTestGroup::onRestartTests()
             }
         }
     }
+    onCheckRestart();
 }
 
 void batlabTestGroup::onCheckRestart()
@@ -395,7 +405,7 @@ void batlabTestGroup::onVerifyRestart()
     if (isOkay == false) {
         onRestartTests();
     } else {
-        impedanceTimer->start(10000);
+        impedanceTimer->start(180000);
     }
 }
 

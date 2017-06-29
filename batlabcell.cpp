@@ -46,7 +46,7 @@ void batlabCell::receiveStream(int mode, int stat, float temp, float curr, float
         emit updateUI(id, tests.size());
         testPacket newTest;
 
-        for (int i = time.size() - 1; i >= 0; ++i) {
+        for (int i = time.size() - 1; i >= 0; --i) {
             time[i] -= time[0];
         }
         newTest.TIME = time;
@@ -116,6 +116,7 @@ void batlabCell::receiveReadResponse(int batlabRegister, int value)
         break;
     case cellNamespace::CHARGEH:
         chargeH.push_back(QPair<int,int>(timer.elapsed(), value));
+//        tests.last().CHARGE.push_back(QPair<int,int>(chargeL[i].first, chargeL[i].second + (chargeH[i].second << 16)));
         break;
     case cellNamespace::CHARGEL:
         chargeL.push_back(QPair<int,int>(timer.elapsed(), value));
@@ -146,5 +147,10 @@ void batlabCell::onUpdateParameters(int cells)
     emit updateParameter(cell, static_cast<int>(cellNamespace::TEMP_LIMIT_CHG),  sendTemperatureLimits(testParameters.temperatureCutoffCharge));
     emit updateParameter(cell, static_cast<int>(cellNamespace::TEMP_LIMIT_DCHG), sendTemperatureLimits(testParameters.temperatureCutoffDischarge));
     emit updateParameter(cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testParameters.reportingFrequency));
-    emit updateParameter(cell, static_cast<int>(cellNamespace::CURRENT_SETPOINT), sendCurrentSetpoint(testParameters.currentSetpoint));
+
+    if (onGetNextTest() == MODE_CHARGE) {
+        emit updateParameter(cell, static_cast<int>(cellNamespace::CURRENT_SETPOINT), sendCurrentSetpoint(testParameters.chargeCurrentSetpoint));
+    } else if (onGetNextTest() == MODE_DISCHARGE){
+        emit updateParameter(cell, static_cast<int>(cellNamespace::CURRENT_SETPOINT), sendCurrentSetpoint(testParameters.dischargeCurrentSetpoint));
+    }
 }

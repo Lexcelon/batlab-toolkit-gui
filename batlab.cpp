@@ -78,36 +78,39 @@ void Batlab::onTest()
         QMessageBox::warning(this, "Tests are running!", "There are already tests running, please wait until tests are finished.", QMessageBox::Ok);
     }
 
-//   // For testing communications with batlab - BRING THIS BACK EVENTUALLY
-//   if (testObj == nullptr) {
-//       testObj = new batlabtest();
-//       connect(testObj,SIGNAL(emitReadReg(int,int,vals)),com,SLOT(onReadReg(int,int,vals)));
-//       connect(testObj,SIGNAL(emitWriteReg(int,int,writeVals,int)),com,SLOT(onWriteReg(int,int,writeVals,int)));
-//       connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
-//   }
 
-//   //Can move window around
-//   testObj->setModal(false);
-    //   testObj->show();
 }
 
 void Batlab::onReport()
 {
-    int numberOfModules = QInputDialog::getInt(this,"Input number of modules.","Please input the number of modules you are trying to make.",
-                         0,0);
+       // For testing communications with batlab - BRING THIS BACK EVENTUALLY
+       if (testObj == nullptr) {
+           testObj = new batlabtest();
+           connect(testObj,SIGNAL(emitReadReg(int,int)),batlabComObjects.first(),SLOT(onReadReg(int,int)));
+           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),batlabComObjects.first(),SLOT(onWriteReg(int,int,int)));
+//           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
+       }
 
-    int numberOfCellsPerModule = QInputDialog::getInt(this,"Input number of cells per module.",
-                                                       "Please input the number of cells per module you are trying to make.",0,0);
+       //Can move window around
+       testObj->setModal(false);
+           testObj->show();
 
-    if (cellManager->getCellList().size() > (numberOfCellsPerModule * numberOfModules)) {
-        QMessageBox::critical(this, "Not enough cells.",
-                              QString("You do not have enough cells to make %1 modules with %2 cells per module.").arg(numberOfModules).arg(numberOfCellsPerModule), QMessageBox::Ok);
-        return;
-    } else {
-        cellManager->onSetNumberOfCellsPerModule(numberOfCellsPerModule);
-        cellManager->onSetNumberOfModules(numberOfModules);
-        cellManager->onProcessCellData();
-    }
+
+//    int numberOfModules = QInputDialog::getInt(this,"Input number of modules.","Please input the number of modules you are trying to make.",
+//                         0,0);
+
+//    int numberOfCellsPerModule = QInputDialog::getInt(this,"Input number of cells per module.",
+//                                                       "Please input the number of cells per module you are trying to make.",0,0);
+
+//    if (cellManager->getCellList().size() > (numberOfCellsPerModule * numberOfModules)) {
+//        QMessageBox::critical(this, "Not enough cells.",
+//                              QString("You do not have enough cells to make %1 modules with %2 cells per module.").arg(numberOfModules).arg(numberOfCellsPerModule), QMessageBox::Ok);
+//        return;
+//    } else {
+//        cellManager->onSetNumberOfCellsPerModule(numberOfCellsPerModule);
+//        cellManager->onSetNumberOfModules(numberOfModules);
+//        cellManager->onProcessCellData();
+//    }
 }
 
 Batlab::~Batlab()
@@ -272,15 +275,16 @@ void Batlab::onLoadTest(QString name)
             QList<QByteArray> strList = str.split(',');
             QString cellname = strList.at(index++);
             int numCycles = QString(strList.at(index++)).toInt();
-            tempParms.restTime = QString(strList.at(index++)).toInt();
+//            tempParms.restTime = QString(strList.at(index++)).toInt();
             tempParms.hightVoltageCutoff = QString(strList.at(index++)).toDouble();
             tempParms.lowVoltageCutoff = QString(strList.at(index++)).toDouble();
             tempParms.temperatureCutoffCharge = QString(strList.at(index++)).toDouble();
             tempParms.temperatureCutoffDischarge = QString(strList.at(index++)).toDouble();
-            tempParms.currentCutoffCharge = QString(strList.at(index++)).toDouble();
-            tempParms.currentCutoffDischarge = QString(strList.at(index++)).toDouble();
-            tempParms.reportingFrequency = QString(strList.at(index++)).toDouble();
-            tempParms.currentSetpoint = QString(strList.at(index++)).toDouble();
+//            tempParms.currentCutoffCharge = QString(strList.at(index++)).toDouble();
+//            tempParms.currentCutoffDischarge = QString(strList.at(index++)).toDouble();
+//            tempParms.reportingFrequency = QString(strList.at(index++)).toDouble();
+            tempParms.chargeCurrentSetpoint = QString(strList.at(index++)).toDouble();
+            tempParms.dischargeCurrentSetpoint = QString(strList.at(index++)).toDouble();
             double cap = QString(strList.at(index++)).toDouble();
 
             int numberOfTests = numCycles * 2 + 1;
