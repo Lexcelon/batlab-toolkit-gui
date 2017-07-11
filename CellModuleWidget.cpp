@@ -26,6 +26,9 @@ CellModuleWidget::CellModuleWidget(int moduleNumber, QStringList cellList, QWidg
         box->setStyleSheet("QGroupBox{border:2px solid gray;border-radius:5px;margin-top: 1ex;}"
                                 " QGroupBox::title{subcontrol-origin: padding;subcontrol-position:top center;padding:0 0px;}");
         box->setMaximumHeight(100);
+        box->setMaximumWidth(100);
+        box->setMinimumHeight(100);
+        box->setMinimumWidth(100);
         QFont *font = const_cast<QFont*>(&(box->font()));
         font->setBold(true);
         font->setPointSize(10);
