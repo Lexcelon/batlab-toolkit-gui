@@ -180,7 +180,14 @@
                     </widget>
                    </item>
                    <item row="4" column="1">
-                    <widget class="QSpinBox" name="cellsPerModuleSpinbox"/>
+                    <widget class="QSpinBox" name="cellsPerModuleSpinbox">
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="maximum">
+                      <number>999999999</number>
+                     </property>
+                    </widget>
                    </item>
                    <item row="3" column="0">
                     <widget class="QLabel" name="label_2">
@@ -225,7 +232,14 @@
                     </widget>
                    </item>
                    <item row="3" column="1">
-                    <widget class="QSpinBox" name="numberOfModulesSpinbox"/>
+                    <widget class="QSpinBox" name="numberOfModulesSpinbox">
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="maximum">
+                      <number>999999999</number>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -261,7 +275,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>449</width>
+                <width>418</width>
                 <height>274</height>
                </rect>
               </property>

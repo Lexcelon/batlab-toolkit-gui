@@ -349,14 +349,16 @@ void Batlab::onProcessPack()
     int numberOfModules = ui->numberOfModulesSpinbox->value();
 
     int numberOfCellsPerModule = ui->cellsPerModuleSpinbox->value();
-qDebug() << cellManager->getCellList().size() << numberOfCellsPerModule << numberOfModules;
-    if (cellManager->getCellList().size() < (numberOfCellsPerModule * numberOfModules)) {
+    if ((cellManager->getCellList().size() < (numberOfCellsPerModule * numberOfModules))) {
         QMessageBox::critical(this, "Not enough cells.",
                               QString("You do not have enough cells to make %1 modules with %2 cells per module.").arg(numberOfModules).arg(numberOfCellsPerModule), QMessageBox::Ok);
         return;
     } else {
         cellManager->onSetNumberOfCellsPerModule(numberOfCellsPerModule);
         cellManager->onSetNumberOfModules(numberOfModules);
+        cellManager->onSetVoltageCoefficient(ui->voltageCoefficientSpinbox->value());
+        cellManager->onSetCurrentCoefficient(ui->currentCoefficientSpinbox->value());
+        cellManager->onSetChargeCoefficient(ui->chargeCoefficientSpinbox->value());
         cellManager->onProcessCellData();
     }
 }
