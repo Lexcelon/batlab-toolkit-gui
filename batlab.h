@@ -21,6 +21,7 @@
 #include "wizardpagetwo.h"
 #include "batlabwizard.h"
 #include <QCloseEvent>
+#include "TestData.h"
 
 namespace Ui {
 class Batlab;
@@ -50,6 +51,9 @@ public slots:
     void onAddTests();
     void onLoadTest(QString);
     void onLoadProject();
+
+    void onTestDataButton();
+    void onProcessPack();
 
     void onFinishedTests(QString designator, int testNum);
 

@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     batlabtestplan.cpp \
     inputStringDialog.cpp \
     HistogramWidget.cpp \
-    HistogramObject.cpp
+    HistogramObject.cpp \
+    TestData.cpp
 
 HEADERS  += batlab.h \
     batlabconfig.h \
@@ -49,7 +50,8 @@ HEADERS  += batlab.h \
     batlabtestplan.h \
     inputStringDialog.h \
     HistogramWidget.h \
-    HistogramObject.h
+    HistogramObject.h \
+    TestData.h
 
 FORMS    += batlab.ui \
     test.ui \

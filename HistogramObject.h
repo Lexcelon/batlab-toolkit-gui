@@ -5,6 +5,9 @@
 #include <QImage>
 #include <QBarSeries>
 #include <QValueAxis>
+#include <QTime>
+#include <QPair>
+
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -17,7 +20,9 @@ public:
 
 signals:
     void emitHistogram(QList<qreal>);
-    void emitDisplay(QBarSeries*, QValueAxis*, QValueAxis*);
+//    void emitDisplay(QBarSeries*, QValueAxis*, QValueAxis*);
+//    void emitDisplay(QList<QBarSet*>, QValueAxis*, QValueAxis*);
+    void emitDisplay(QList<qreal>, QPair<qreal,qreal>, QPair<qreal,qreal>,float,float,QList<QPair<qreal,qreal>>);
 
 public slots:
     void onRecieveImage(QImage image, int channels);
@@ -30,7 +35,11 @@ protected:
 private:
     QVector<qreal> values;
     QBarSeries *series = nullptr;
-    int mBinWidth = 1;
+    int mBinWidth = 256;
+    qreal mXMin = 0;
+    qreal mXMax = 0;
+    QTime timer;
+    int decimalPlaces = 10000;
 };
 
 #endif // HISTOGRAMOBJECT_H
