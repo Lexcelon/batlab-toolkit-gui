@@ -53,6 +53,11 @@ Batlab::Batlab(QWidget *parent) :
             this, &Batlab::onLoadProject);
     connect(this, &Batlab::emitUpdateText,
             this, &Batlab::onUpdateText);
+    connect(ui->testDataButton, &QPushButton::clicked,
+            this, &Batlab::onTestDataButton);
+    connect(ui->processPackButton, &QPushButton::clicked,
+            this, &Batlab::onProcessPack);
+    cellManager->test();
 }
 
 void Batlab::onTest()
@@ -94,23 +99,6 @@ void Batlab::onReport()
        //Can move window around
        testObj->setModal(false);
            testObj->show();
-
-
-//    int numberOfModules = QInputDialog::getInt(this,"Input number of modules.","Please input the number of modules you are trying to make.",
-//                         0,0);
-
-//    int numberOfCellsPerModule = QInputDialog::getInt(this,"Input number of cells per module.",
-//                                                       "Please input the number of cells per module you are trying to make.",0,0);
-
-//    if (cellManager->getCellList().size() > (numberOfCellsPerModule * numberOfModules)) {
-//        QMessageBox::critical(this, "Not enough cells.",
-//                              QString("You do not have enough cells to make %1 modules with %2 cells per module.").arg(numberOfModules).arg(numberOfCellsPerModule), QMessageBox::Ok);
-//        return;
-//    } else {
-//        cellManager->onSetNumberOfCellsPerModule(numberOfCellsPerModule);
-//        cellManager->onSetNumberOfModules(numberOfModules);
-//        cellManager->onProcessCellData();
-//    }
 }
 
 Batlab::~Batlab()
@@ -333,6 +321,40 @@ void Batlab::onLoadProject()
 
     if  (!fileNames.isEmpty())
         onLoadTest(fileNames.first());
+}
+
+void Batlab::onTestDataButton()
+{
+    QFileDialog dialog;
+    dialog.setDefaultSuffix(QString(".bld"));
+
+    QStringList fileNames;
+    if (dialog.exec())
+        fileNames = dialog.selectedFiles();
+
+    TestData *testData = new TestData;
+    testData->readTestData(fileNames.first());
+
+    ui->voltageGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_VOLTAGE);
+    ui->currentGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_CURRENT);
+    ui->temperatureGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_TEMPERATURE);
+}
+
+void Batlab::onProcessPack()
+{
+    int numberOfModules = ui->numberOfModulesSpinbox->value();
+
+    int numberOfCellsPerModule = ui->cellsPerModuleSpinbox->value();
+qDebug() << cellManager->getCellList().size() << numberOfCellsPerModule << numberOfModules;
+    if (cellManager->getCellList().size() < (numberOfCellsPerModule * numberOfModules)) {
+        QMessageBox::critical(this, "Not enough cells.",
+                              QString("You do not have enough cells to make %1 modules with %2 cells per module.").arg(numberOfModules).arg(numberOfCellsPerModule), QMessageBox::Ok);
+        return;
+    } else {
+        cellManager->onSetNumberOfCellsPerModule(numberOfCellsPerModule);
+        cellManager->onSetNumberOfModules(numberOfModules);
+        cellManager->onProcessCellData();
+    }
 }
 
 void Batlab::onFinishedTests(QString designator, int testNum)

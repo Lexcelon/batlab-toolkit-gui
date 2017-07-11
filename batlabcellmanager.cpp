@@ -14,31 +14,36 @@ batlabCellManager::~batlabCellManager()
 void batlabCellManager::test()
 {
 
-//    for (int cells = 0; cells < 10; ++cells) {
-//        cellList.push_back(new batlabCell);
-//        QString name;
-//        name = QString("C:/Users/Seikowave/Desktop/TestCell/cell%1.btf").arg(cells+1);
-//        QFile inFile(name);
-//        inFile.open(QIODevice::ReadOnly);
-//        QTextStream stream(&inFile);
-
-//        QString string;
-//        for (int i = 0; i < 20366; ++i) {
-//            stream >> string;
+    for (int cells = 0; cells < 10; ++cells) {
+        cellList.push_back(new batlabCell);
+        QString name;
+        name = QString("C:/Users/Seikowave/Desktop/TestCell/cell%1.btf").arg(cells+1);
+        QFile inFile(name);
+        inFile.open(QIODevice::ReadOnly);
+        QTextStream stream(&inFile);
+        voltageTestData.push_back(QVector<float>());
+        currentTestData.push_back(QVector<float>());
+        chargeTestData.push_back(QVector<int>());
+        QString string;
+        for (int i = 0; i < 20366; ++i) {
+            stream >> string;
+            voltageTestData[cells].push_back(string.toDouble());
 //            (cellList[cells]->getVoltage())->push_back(string.toDouble());
-//        }
-//        for (int i = 0; i < 20366; ++i) {
-//            stream >> string;
+        }
+        for (int i = 0; i < 20366; ++i) {
+            stream >> string;
+            currentTestData[cells].push_back(string.toDouble());
 //            (cellList[cells]->getCurrent())->push_back(string.toDouble());
-//        }
-//        for (int i = 0; i < 20366; ++i) {
-//            stream >> string;
+        }
+        for (int i = 0; i < 20366; ++i) {
+            stream >> string;
+            chargeTestData[cells].push_back(string.toInt());
 //            (cellList[cells]->getSoC())->push_back(string.toDouble());
-//        }
+        }
 
-//    }
-    onProcessCellData();
-
+    }
+//    onProcessCellData();
+qDebug() << Q_FUNC_INFO;
 }
 
 void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage)
@@ -88,7 +93,7 @@ void batlabCellManager::onAllTestsFinished()
 void batlabCellManager::onProcessCellData()
 {
     const int numCells = cellList.size();
-    interpolateData();
+//    interpolateData();
     float coefV = 1.0;
     float coefI = 1.0;
     float coefSoC = 1.0;
@@ -282,6 +287,7 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
             QStringList strList;
 
                 strList.clear();
+                strList << QString::number(tempTests[i].REG_MODE.size());
                 for (int j = 0; j < tempTests[i].REG_MODE.size(); ++j) {
                     strList << QString::number(tempTests[i].REG_MODE[j]) ;
                 }
@@ -289,6 +295,7 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
                 data << strList.join(",") << endl;
                 strList.clear();
 
+                strList << QString::number(tempTests[i].TIME.size());
                 for (int j = 0; j < tempTests[i].TIME.size(); ++j) {
                     strList << QString::number(tempTests[i].TIME[j]) ;
                 }
@@ -296,6 +303,7 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
                 data << strList.join(",") << endl;
                 strList.clear();
 
+                strList << QString::number(tempTests[i].REG_VOLTAGE.size());
                 for (int j = 0; j < tempTests[i].REG_VOLTAGE.size(); ++j) {
                     strList <<  QString::number(tempTests[i].REG_VOLTAGE[j]);
                 }
@@ -303,6 +311,7 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
                 data << strList.join(",") << endl;
                 strList.clear();
 
+                strList << QString::number(tempTests[i].REG_CURRENT.size());
                 for (int j = 0; j < tempTests[i].REG_CURRENT.size(); ++j) {
                     strList << QString::number(tempTests[i].REG_CURRENT[j]);
                 }
@@ -310,6 +319,7 @@ void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
                 data << strList.join(",") << endl;
                 strList.clear();
 
+                strList << QString::number(tempTests[i].REG_TEMPERATURE.size());
                 for (int j = 0; j < tempTests[i].REG_TEMPERATURE.size(); ++j) {
                     strList << QString::number(tempTests[i].REG_TEMPERATURE[j]);
                 }
