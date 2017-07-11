@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     inputStringDialog.cpp \
     HistogramWidget.cpp \
     HistogramObject.cpp \
-    TestData.cpp
+    TestData.cpp \
+    CellModuleWidget.cpp
 
 HEADERS  += batlab.h \
     batlabconfig.h \
@@ -51,7 +52,8 @@ HEADERS  += batlab.h \
     inputStringDialog.h \
     HistogramWidget.h \
     HistogramObject.h \
-    TestData.h
+    TestData.h \
+    CellModuleWidget.h
 
 FORMS    += batlab.ui \
     test.ui \
@@ -59,7 +61,8 @@ FORMS    += batlab.ui \
     Wizard/wizardpageone.ui \
     Wizard/wizardpagetwo.ui \
     Wizard/wizardpagethree.ui \
-    inputStringDialog.ui
+    inputStringDialog.ui \
+    CellModuleWidget.ui
 
 DISTFILES += 1010.bmp
 

@@ -3,6 +3,8 @@
 #include <QFileDialog>
 #include "inputStringDialog.h"
 #include <QScrollBar>
+#include <CellModuleWidget.h>
+#include <QSpacerItem>
 
 Batlab::Batlab(QWidget *parent) :
     QMainWindow(parent),
@@ -57,6 +59,8 @@ Batlab::Batlab(QWidget *parent) :
             this, &Batlab::onTestDataButton);
     connect(ui->processPackButton, &QPushButton::clicked,
             this, &Batlab::onProcessPack);
+    connect(cellManager, &batlabCellManager::emitPack,
+            this, &Batlab::onPackBuilt);
     cellManager->test();
 }
 
@@ -355,6 +359,30 @@ qDebug() << cellManager->getCellList().size() << numberOfCellsPerModule << numbe
         cellManager->onSetNumberOfModules(numberOfModules);
         cellManager->onProcessCellData();
     }
+}
+
+void clearLayout(QLayout *layout) {
+    QLayoutItem *item;
+    while((item = layout->takeAt(0))) {
+        if (item->layout()) {
+            clearLayout(item->layout());
+            delete item->layout();
+        }
+        if (item->widget()) {
+            delete item->widget();
+        }
+        delete item;
+    }
+}
+
+void Batlab::onPackBuilt(QVector<QStringList> list)
+{
+    clearLayout(ui->packLayout);
+    for (int i = 0; i < list.size(); ++i) {
+        ui->packLayout->addWidget(new CellModuleWidget(i, list[i]));
+        ui->packLayout->addSpacing(10);
+    }
+    ui->packLayout->addSpacerItem(new QSpacerItem(0 , 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void Batlab::onFinishedTests(QString designator, int testNum)

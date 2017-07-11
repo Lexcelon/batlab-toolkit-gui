@@ -54,6 +54,7 @@ public slots:
 
     void onTestDataButton();
     void onProcessPack();
+    void onPackBuilt(QVector<QStringList> list);
 
     void onFinishedTests(QString designator, int testNum);
 

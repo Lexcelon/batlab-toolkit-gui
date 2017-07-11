@@ -60,6 +60,7 @@ public slots:
 signals:
     void testFinished(uchar);
     void emitTests(QVector<int>*);
+    void emitPack(QVector<QStringList>);
 
 private:
     void saveLevelOneData(batlabCell* cellPointer);

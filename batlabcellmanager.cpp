@@ -16,6 +16,7 @@ void batlabCellManager::test()
 
     for (int cells = 0; cells < 10; ++cells) {
         cellList.push_back(new batlabCell);
+        cellList[cells]->setDesignator(QString("PoopCell%1").arg(cells));
         QString name;
         name = QString("C:/Users/Seikowave/Desktop/TestCell/cell%1.btf").arg(cells+1);
         QFile inFile(name);
@@ -246,7 +247,19 @@ void batlabCellManager::onProcessCellData()
             cellToMatch = availableCells[cellIndToMatch-1];
         }
     }
+
     qDebug() << cellsInModule;
+    QVector<QStringList> module;
+    for (int i = 0; i < cellsInModule.size(); ++i) {
+        QStringList list;
+        for (int j = 0; j < cellsInModule[i].size(); ++j) {
+            list.push_back(cellList[cellsInModule[i][j]]->getDesignator());
+        }
+//        qDebug() << list;
+        module.push_back(list);
+    }
+    emit emitPack(module);
+//    qDebug() << cellsInModule;
 }
 
 void batlabCellManager::clean()

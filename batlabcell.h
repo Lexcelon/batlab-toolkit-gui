@@ -35,6 +35,7 @@ public:
     int getCurrentMode() { return currentMode; }
 
     QString getDesignator() { return id; }
+    void setDesignator(QString name) { id = name; }
 
 
     void onUpdateParameters(int cell);
