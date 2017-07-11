@@ -38,6 +38,9 @@ public slots:
 
     void onSetNumberOfModules(int numModules) { numberOfModules = numModules; }
     void onSetNumberOfCellsPerModule(int numCells) { numberOfCellsPerModule = numCells; }
+    void onSetVoltageCoefficient(float coef) { coefV = coef; }
+    void onSetCurrentCoefficient(float coef) { coefI = coef; }
+    void onSetChargeCoefficient(float coef) { coefSoC = coef; }
 
     void clean();
 
@@ -82,6 +85,9 @@ private:
 
     int numberOfCellsPerModule = 0;
     int numberOfModules = 0;
+    float coefV = 1.0;
+    float coefI = 1.0;
+    float coefSoC = 1.0;
 
     QString projectName;
 

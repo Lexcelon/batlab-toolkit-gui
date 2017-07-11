@@ -95,9 +95,9 @@ void batlabCellManager::onProcessCellData()
 {
     const int numCells = cellList.size();
 //    interpolateData();
-    float coefV = 1.0;
-    float coefI = 1.0;
-    float coefSoC = 1.0;
+//    float coefV = 1.0;
+//    float coefI = 1.0;
+//    float coefSoC = 1.0;
 
 //    int numberOfCellsInModule = 2;
 //    int numberOfModules = 3;
