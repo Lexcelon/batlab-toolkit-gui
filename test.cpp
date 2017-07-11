@@ -23,7 +23,6 @@ batlabtest::batlabtest(QWidget *parent, QVector<batlabCom *> com) :
     }
     connect(ui->regRead,SIGNAL(clicked()),this,SLOT(onRegRead()));
     connect(ui->regWrite,SIGNAL(clicked()),this,SLOT(onRegWrite()));
-    connect(ui->print,SIGNAL(clicked()),this,SLOT(onPrintCell()));
 }
 
 batlabtest::~batlabtest()

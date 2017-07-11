@@ -12,6 +12,7 @@ Batlab::Batlab(QWidget *parent) :
 {
     // Setting up the gui with the same name in the forms directory
     ui->setupUi(this);
+    this->showMaximized();
     tableWidget = ui->tableWidget;
 
     // Managing data from cells
@@ -23,7 +24,7 @@ Batlab::Batlab(QWidget *parent) :
     loadProject = new QPushButton(QString("Load Project File"));
     options = new QPushButton(QString("Options"));
     newProjectWizard = new QPushButton(QString("New Project Wizard"));
-    report = new QPushButton(QString("Report"));
+    report = new QPushButton(QString("Debug GUI"));
     exit = new QPushButton(QString("Exit"));
 
     // Place the buttons in the button box in our gui
