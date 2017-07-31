@@ -14,35 +14,35 @@ batlabCellManager::~batlabCellManager()
 void batlabCellManager::test()
 {
 
-    for (int cells = 0; cells < 10; ++cells) {
-        cellList.push_back(new batlabCell);
-        cellList[cells]->setDesignator(QString("PoopCell%1").arg(cells));
-        QString name;
-        name = QString("C:/Users/Seikowave/Desktop/TestCell/cell%1.btf").arg(cells+1);
-        QFile inFile(name);
-        inFile.open(QIODevice::ReadOnly);
-        QTextStream stream(&inFile);
-        voltageTestData.push_back(QVector<float>());
-        currentTestData.push_back(QVector<float>());
-        chargeTestData.push_back(QVector<int>());
-        QString string;
-        for (int i = 0; i < 20366; ++i) {
-            stream >> string;
-            voltageTestData[cells].push_back(string.toDouble());
-//            (cellList[cells]->getVoltage())->push_back(string.toDouble());
-        }
-        for (int i = 0; i < 20366; ++i) {
-            stream >> string;
-            currentTestData[cells].push_back(string.toDouble());
-//            (cellList[cells]->getCurrent())->push_back(string.toDouble());
-        }
-        for (int i = 0; i < 20366; ++i) {
-            stream >> string;
-            chargeTestData[cells].push_back(string.toInt());
-//            (cellList[cells]->getSoC())->push_back(string.toDouble());
-        }
+//     for (int cells = 0; cells < 10; ++cells) {
+//         cellList.push_back(new batlabCell);
+//         cellList[cells]->setDesignator(QString("PoopCell%1").arg(cells));
+//         QString name;
+//         name = QString("C:/Users/Seikowave/Desktop/TestCell/cell%1.btf").arg(cells+1);
+//         QFile inFile(name);
+//         inFile.open(QIODevice::ReadOnly);
+//         QTextStream stream(&inFile);
+//         voltageTestData.push_back(QVector<float>());
+//         currentTestData.push_back(QVector<float>());
+//         chargeTestData.push_back(QVector<int>());
+//         QString string;
+//         for (int i = 0; i < 20366; ++i) {
+//             stream >> string;
+//             voltageTestData[cells].push_back(string.toDouble());
+// //            (cellList[cells]->getVoltage())->push_back(string.toDouble());
+//         }
+//         for (int i = 0; i < 20366; ++i) {
+//             stream >> string;
+//             currentTestData[cells].push_back(string.toDouble());
+// //            (cellList[cells]->getCurrent())->push_back(string.toDouble());
+//         }
+//         for (int i = 0; i < 20366; ++i) {
+//             stream >> string;
+//             chargeTestData[cells].push_back(string.toInt());
+// //            (cellList[cells]->getSoC())->push_back(string.toDouble());
+//         }
 
-    }
+//     }
 //    onProcessCellData();
 qDebug() << Q_FUNC_INFO;
 }
