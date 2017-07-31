@@ -13,6 +13,10 @@ TEMPLATE = app
 
 INCLUDEPATH += ./Wizard
 
+@
+CONFIG += debug_and_release
+@
+
 SOURCES += main.cpp\
     batlab.cpp \
     batlabconfig.cpp \
