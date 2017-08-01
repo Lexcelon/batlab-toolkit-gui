@@ -1,3 +1,5 @@
 syntax: glob
 
-build/
+build/*
+build_linux/*
+build_windows/*
