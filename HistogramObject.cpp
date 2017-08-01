@@ -31,7 +31,7 @@ void HistogramObject::onRecieveValues(QVector<qreal> list)
 {
     mBinWidth = ceil(sqrt(list.size()));
     for (int i = list.size()-1; i >= 0; --i) {
-        if (!isnan(list[i]) && list[i] < std::numeric_limits<float>::max()) {
+        if (!std::isnan(list[i]) && list[i] < std::numeric_limits<float>::max()) {
             list[i] *= decimalPlaces;
         } else {
             list.removeAt(i);
