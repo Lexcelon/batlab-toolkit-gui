@@ -19,12 +19,12 @@
 #include <QSpinBox>
 #include "wizardpageone.h"
 #include "wizardpagetwo.h"
-#include "batlabwizard.h"
+#include "newTestScheduleWizard.h"
 #include <QCloseEvent>
 #include "TestData.h"
 
 namespace Ui {
-class Batlab;
+class MainWindow;
 }
 
 class Batlab : public QMainWindow
@@ -80,7 +80,7 @@ protected:
     }
 
 private:
-    Ui::Batlab *ui = nullptr;
+    Ui::MainWindow *ui = nullptr;
     QPushButton *connectToBatlabs = nullptr;
     QPushButton *test = nullptr;
     QPushButton *loadProject = nullptr;
