@@ -10,12 +10,12 @@
 #include "wizardpagetwo.h"
 #include "wizardpagethree.h"
 
-class batlabWizard : public QObject
+class newTestScheduleWizard : public QObject
 {
     Q_OBJECT
 public:
-    explicit batlabWizard(QObject *parent = 0);
-    ~batlabWizard();
+    explicit newTestScheduleWizard(QObject *parent = 0);
+    ~newTestScheduleWizard();
 
 signals:
 

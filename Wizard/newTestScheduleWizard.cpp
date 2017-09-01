@@ -1,6 +1,6 @@
-#include "batlabwizard.h"
+#include "newTestScheduleWizard.h"
 
-batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
+newTestScheduleWizard::newTestScheduleWizard(QObject *parent) : QObject(parent)
 {
     wiz = new QWizard();
 
@@ -70,15 +70,15 @@ batlabWizard::batlabWizard(QObject *parent) : QObject(parent)
     wiz->setWizardStyle(QWizard::ModernStyle);
 }
 
-batlabWizard::~batlabWizard()
+newTestScheduleWizard::~newTestScheduleWizard()
 {
 
 }
 
-void batlabWizard::onShow() {
+void newTestScheduleWizard::onShow() {
     wiz->show();
 //    wiz->showFullScreen();
 }
 
-void batlabWizard::onIDChanged() {
+void newTestScheduleWizard::onIDChanged() {
 }

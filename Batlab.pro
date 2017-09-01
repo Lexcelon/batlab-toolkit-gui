@@ -29,14 +29,14 @@ SOURCES += main.cpp\
     Wizard/wizardpageone.cpp \
     Wizard/wizardpagetwo.cpp \
     Wizard/wizardpagethree.cpp \
-    Wizard/batlabwizard.cpp \
     batlabtestgroup.cpp \
     batlabtestplan.cpp \
     inputStringDialog.cpp \
     HistogramWidget.cpp \
     HistogramObject.cpp \
     TestData.cpp \
-    CellModuleWidget.cpp
+    CellModuleWidget.cpp \
+    Wizard/newTestScheduleWizard.cpp
 
 HEADERS  += batlab.h \
     batlabconfig.h \
@@ -50,23 +50,24 @@ HEADERS  += batlab.h \
     Wizard/wizardpageone.h \
     Wizard/wizardpagetwo.h \
     Wizard/wizardpagethree.h \
-    Wizard/batlabwizard.h \
     batlabtestgroup.h \
     batlabtestplan.h \
     inputStringDialog.h \
     HistogramWidget.h \
     HistogramObject.h \
     TestData.h \
-    CellModuleWidget.h
+    CellModuleWidget.h \
+    Wizard/newTestScheduleWizard.h
 
-FORMS    += batlab.ui \
+FORMS    += \
     test.ui \
     testwindow.ui \
     Wizard/wizardpageone.ui \
     Wizard/wizardpagetwo.ui \
     Wizard/wizardpagethree.ui \
     inputStringDialog.ui \
-    CellModuleWidget.ui
+    CellModuleWidget.ui \
+    MainWindow.ui
 
 DISTFILES += 1010.bmp
 

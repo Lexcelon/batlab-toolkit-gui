@@ -1,5 +1,5 @@
 #include "batlab.h"
-#include "ui_batlab.h"
+#include "ui_MainWindow.h"
 #include <QFileDialog>
 #include "inputStringDialog.h"
 #include <QScrollBar>
@@ -8,7 +8,7 @@
 
 Batlab::Batlab(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::Batlab)
+    ui(new Ui::MainWindow)
 {
     // Setting up the gui with the same name in the forms directory
     ui->setupUi(this);
@@ -221,12 +221,12 @@ void Batlab::onAddTests()
 }
 
 void Batlab::onNewProjectWizard() {
-    batlabWizard * a = new batlabWizard();
+    newTestScheduleWizard * a = new newTestScheduleWizard();
     connect(a, SIGNAL(emitFinished(QString)), this, SLOT(onLoadTest(QString)));
     a->onShow();
 }
 
-void Batlab::onLoadTest(QString name)
+void Batlab::onLoadTest(QString fileName)
 {
     ui->tableWidget->clearContents();
     while( ui->tableWidget->rowCount() > 0) {
@@ -238,13 +238,13 @@ void Batlab::onLoadTest(QString name)
 
     cellManager->clean();
 
-    if (!name.endsWith(".blp",Qt::CaseInsensitive)) {
-        name = name + ".blp";
+    if (!fileName.endsWith(".blp",Qt::CaseInsensitive)) {
+        fileName = fileName + ".blp";
     }
 
-    cellManager->setProjectName(name.split(".").first());
+    cellManager->setProjectName(fileName.split(".").first());
 
-    QFile f(name);
+    QFile f(fileName);
 
     QVector<QString> labels;
 

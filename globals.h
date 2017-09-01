@@ -31,22 +31,6 @@ static void bubblesort(QVector<float> data, QVector<int> &indices)
     }
 }
 
-//static void populateVoltage(int numCells, QVector<float> voltages)
-//{
-
-//}
-
-
-//static void populateCurrent(int numCells, QVector<float> voltages)
-//{
-
-//}
-
-//static void populateSoC(int numCells, QVector<float> voltages)
-//{
-
-//}
-
 static float getCharge(int val) {
     return (6. * (static_cast<float>(val) / pow(2,15) )) * 4.096 / 9.765625;
 }
