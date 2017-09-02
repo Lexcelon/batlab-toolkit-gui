@@ -18,7 +18,6 @@ CONFIG += debug_and_release
 @
 
 SOURCES += main.cpp\
-    batlab.cpp \
     batlabconfig.cpp \
     batlabcom.cpp \
     test.cpp \
@@ -36,9 +35,10 @@ SOURCES += main.cpp\
     HistogramObject.cpp \
     TestData.cpp \
     CellModuleWidget.cpp \
-    Wizard/newTestScheduleWizard.cpp
+    Wizard/newTestScheduleWizard.cpp \
+    BatlabApp.cpp
 
-HEADERS  += batlab.h \
+HEADERS  += \
     batlabconfig.h \
     batlabcom.h \
     test.h \
@@ -57,7 +57,8 @@ HEADERS  += batlab.h \
     HistogramObject.h \
     TestData.h \
     CellModuleWidget.h \
-    Wizard/newTestScheduleWizard.h
+    Wizard/newTestScheduleWizard.h \
+    BatlabApp.h
 
 FORMS    += \
     test.ui \

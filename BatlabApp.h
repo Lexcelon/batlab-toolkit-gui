@@ -27,13 +27,13 @@ namespace Ui {
 class MainWindow;
 }
 
-class Batlab : public QMainWindow
+class BatlabApp : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit Batlab(QWidget *parent = 0);
-    ~Batlab();
+    explicit BatlabApp(QWidget *parent = 0);
+    ~BatlabApp();
 
 public slots:
     void onConnectToBatlabs(QStringList names);
