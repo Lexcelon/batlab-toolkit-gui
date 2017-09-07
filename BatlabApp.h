@@ -11,6 +11,7 @@
 #include "batlabcom.h"
 #include "batlabcellmanager.h"
 #include "globals.h"
+#include "GUIversion.h"
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QWizard>
