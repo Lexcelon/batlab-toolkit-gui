@@ -187,6 +187,97 @@ struct testParms
     float dischargeCurrentSetpoint = 2.0f;
 };
 
+// Builtin variable default values and bounds
+
+// Unit: Cells
+#define MAXIMUM_NUM_CELLS                       10000   //?
+
+// Unit: Volts
+#define HIGH_VOLTAGE_CUTOFF_DEFAULT             0.0     //?
+#define HIGH_VOLTAGE_CUTOFF_MIN                 0.0     //?
+#define HIGH_VOLTAGE_CUTOFF_MAX                 0.0     //?
+
+// Unit: Volts
+#define LOW_VOLTAGE_CUTOFF_DEFAULT              0.0     //?
+#define LOW_VOLTAGE_CUTOFF_MIN                  0.0     //?
+#define LOW_VOLTAGE_CUTOFF_MAX                  0.0     //?
+
+// Unit: Celsius
+#define CHARGE_TEMP_CUTOFF_DEFAULT              45.0    //?
+#define CHARGE_TEMP_CUTOFF_MIN                  0.0     //?
+#define CHARGE_TEMP_CUTOFF_MAX                  0.0     //?
+
+// Unit: Celsius
+#define DISCHARGE_TEMP_CUTOFF_DEFAULT           0.0     //?
+#define DISCHARGE_TEMP_CUTOFF_MIN               0.0     //?
+#define DISCHARGE_TEMP_CUTOFF_MAX               0.0     //?
+
+// Unit: Amps
+#define CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT    4.096
+#define CHARGE_CURRENT_SAFETY_CUTOFF_MIN        0.0     //?
+#define CHARGE_CURRENT_SAFETY_CUTOFF_MAX        4.096
+
+// Unit: Amps
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT 4.096
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN     0.0     //?
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX     4.096
+
+// Unit: Seconds
+#define IMPEDANCE_REPORTING_PERIOD_DEFAULT      300
+#define IMPEDANCE_REPORTING_PERIOD_MIN          0       //?
+#define IMPEDANCE_REPORTING_PERIOD_MAX          0       //?
+
+// Unit: Seconds
+#define REPORTING_PERIOD_DEFAULT                0       //?
+#define REPORTING_PERIOD_MIN                    0       //?
+#define REPORTING_PERIOD_MAX                    0       //?
+
+// Unit: Hz
+#define SINE_WAVE_FREQUENCY_DEFAULT             0.0     //?
+#define SINE_WAVE_FREQUENCY_MIN                 0.0     //?
+#define SINE_WAVE_FREQUENCY_MAX                 0.0     //?
+
+#define SINE_WAVE_MAGNITUDE_DEFAULT             0
+#define SINE_WAVE_MAGNITUDE_MIN                 0
+#define SINE_WAVE_MAGNITUDE_MAX                 2
+
+// Unit: Cycles
+#define NUM_WARMUP_CYCLES_DEFAULT               0
+#define NUM_WARMUP_CYCLES_MIN                   0
+#define NUM_WARMUP_CYCLES_MAX                   0       //?
+
+// Unit: Cycles
+#define NUM_MEASUREMENT_CYCLES_DEFAULT          1
+#define NUM_MEASUREMENT_CYCLES_MIN              0
+#define NUM_MEASUREMENT_CYCLES_MAX              0       //?
+
+// Unit: Amps
+#define CHARGE_RATE_DEFAULT                     0.0     //?
+#define CHARGE_RATE_MIN                         0.0     //?
+#define CHARGE_RATE_MAX                         0.0     //? I think we can remove this variable and use the set CHARGE_CURRENT_SAFETY_CUTOFF
+
+// Unit: Amps
+#define DISCHARGE_RATE_DEFAULT                  0.0     //?
+#define DISCHARGE_RATE_MIN                      0.0     //?
+#define DISCHARGE_RATE_MAX                      0.0     //? I think we can remove this variable and use the set DISCHARGE_CURRENT_SAFETY_CUTOFF
+
+// Unit: Boolean
+#define STORAGE_DISCHARGE_DEFAULT               true
+
+// Unit: Volts
+#define STORAGE_DISCHARGE_VOLTAGE_DEFAULT       0.0     //?
+#define STORAGE_DISCHARGE_VOLTAGE_MIN           0.0     //? 0 makes sense to me but perhaps we want to make it something close but not exactly 0, in case the discharge gets asymptotic or something
+#define STORAGE_DISCHARGE_VOLTAGE_MAX           0.0     //? I think we can remove this variable and use the maximum voltage of the cells, or maybe it needs to be something close but not exactly the max?
+
+// Unit: Ohms
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT  0.0     //?
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN      0.0     //?
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX      0.0     //?
+
+// Unit: Seconds
+#define REST_PERIOD_DEFAULT                     60
+#define REST_PERIOD_MIN                         0
+#define REST_PERIOD_MAX                         0       //?
 
 //Status register codes
 #define STAT_VOLTAGE_LIMIT_CHG  0x0001

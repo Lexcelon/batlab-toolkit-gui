@@ -58,7 +58,8 @@ HEADERS  += \
     TestData.h \
     CellModuleWidget.h \
     Wizard/newTestScheduleWizard.h \
-    BatlabApp.h
+    BatlabApp.h \
+    GUIversion.h
 
 FORMS    += \
     test.ui \
