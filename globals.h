@@ -190,52 +190,52 @@ struct testParms
 // Builtin variable default values and bounds
 
 // Unit: Cells
-#define MAXIMUM_NUM_CELLS                       10000   //?
+#define MAXIMUM_NUM_CELLS                       1000
 
 // Unit: Volts
-#define HIGH_VOLTAGE_CUTOFF_DEFAULT             0.0     //?
-#define HIGH_VOLTAGE_CUTOFF_MIN                 0.0     //?
-#define HIGH_VOLTAGE_CUTOFF_MAX                 0.0     //?
+#define HIGH_VOLTAGE_CUTOFF_DEFAULT             4.2
+#define HIGH_VOLTAGE_CUTOFF_MIN                 3.0
+#define HIGH_VOLTAGE_CUTOFF_MAX                 4.4
 
 // Unit: Volts
-#define LOW_VOLTAGE_CUTOFF_DEFAULT              0.0     //?
-#define LOW_VOLTAGE_CUTOFF_MIN                  0.0     //?
-#define LOW_VOLTAGE_CUTOFF_MAX                  0.0     //?
+#define LOW_VOLTAGE_CUTOFF_DEFAULT              2.5
+#define LOW_VOLTAGE_CUTOFF_MIN                  2.0
+#define LOW_VOLTAGE_CUTOFF_MAX                  3.6
 
 // Unit: Celsius
-#define CHARGE_TEMP_CUTOFF_DEFAULT              45.0    //?
-#define CHARGE_TEMP_CUTOFF_MIN                  0.0     //?
-#define CHARGE_TEMP_CUTOFF_MAX                  0.0     //?
+#define CHARGE_TEMP_CUTOFF_DEFAULT              45.0
+#define CHARGE_TEMP_CUTOFF_MIN                  25.0
+#define CHARGE_TEMP_CUTOFF_MAX                  80.0
 
 // Unit: Celsius
-#define DISCHARGE_TEMP_CUTOFF_DEFAULT           0.0     //?
-#define DISCHARGE_TEMP_CUTOFF_MIN               0.0     //?
-#define DISCHARGE_TEMP_CUTOFF_MAX               0.0     //?
+#define DISCHARGE_TEMP_CUTOFF_DEFAULT           65.0
+#define DISCHARGE_TEMP_CUTOFF_MIN               25.0
+#define DISCHARGE_TEMP_CUTOFF_MAX               80.0
 
 // Unit: Amps
 #define CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT    4.096
-#define CHARGE_CURRENT_SAFETY_CUTOFF_MIN        0.0     //?
+#define CHARGE_CURRENT_SAFETY_CUTOFF_MIN        0.0
 #define CHARGE_CURRENT_SAFETY_CUTOFF_MAX        4.096
 
 // Unit: Amps
 #define DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT 4.096
-#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN     0.0     //?
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN     0.0
 #define DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX     4.096
 
 // Unit: Seconds
-#define IMPEDANCE_REPORTING_PERIOD_DEFAULT      300
-#define IMPEDANCE_REPORTING_PERIOD_MIN          0       //?
-#define IMPEDANCE_REPORTING_PERIOD_MAX          0       //?
+#define IMPEDANCE_REPORTING_PERIOD_DEFAULT      300.0
+#define IMPEDANCE_REPORTING_PERIOD_MIN          10.0
+#define IMPEDANCE_REPORTING_PERIOD_MAX          3600.0
 
 // Unit: Seconds
-#define REPORTING_PERIOD_DEFAULT                0       //?
-#define REPORTING_PERIOD_MIN                    0       //?
-#define REPORTING_PERIOD_MAX                    0       //?
+#define REPORTING_PERIOD_DEFAULT                1.0
+#define REPORTING_PERIOD_MIN                    0.5
+#define REPORTING_PERIOD_MAX                    3600.0
 
 // Unit: Hz
-#define SINE_WAVE_FREQUENCY_DEFAULT             0.0     //?
-#define SINE_WAVE_FREQUENCY_MIN                 0.0     //?
-#define SINE_WAVE_FREQUENCY_MAX                 0.0     //?
+#define SINE_WAVE_FREQUENCY_DEFAULT             39.0625
+#define SINE_WAVE_FREQUENCY_MIN                 39.0625
+#define SINE_WAVE_FREQUENCY_MAX                 1054.6875
 
 #define SINE_WAVE_MAGNITUDE_DEFAULT             0
 #define SINE_WAVE_MAGNITUDE_MIN                 0
@@ -244,40 +244,40 @@ struct testParms
 // Unit: Cycles
 #define NUM_WARMUP_CYCLES_DEFAULT               0
 #define NUM_WARMUP_CYCLES_MIN                   0
-#define NUM_WARMUP_CYCLES_MAX                   0       //?
+#define NUM_WARMUP_CYCLES_MAX                   100
 
 // Unit: Cycles
 #define NUM_MEASUREMENT_CYCLES_DEFAULT          1
 #define NUM_MEASUREMENT_CYCLES_MIN              0
-#define NUM_MEASUREMENT_CYCLES_MAX              0       //?
+#define NUM_MEASUREMENT_CYCLES_MAX              10000
 
 // Unit: Amps
-#define CHARGE_RATE_DEFAULT                     0.0     //?
-#define CHARGE_RATE_MIN                         0.0     //?
-#define CHARGE_RATE_MAX                         0.0     //? I think we can remove this variable and use the set CHARGE_CURRENT_SAFETY_CUTOFF
+#define CHARGE_RATE_DEFAULT                     2.0
+#define CHARGE_RATE_MIN                         0.25
+// #define CHARGE_RATE_MAX                         CHARGE_CURRENT_SAFETY_CUTOFF
 
 // Unit: Amps
-#define DISCHARGE_RATE_DEFAULT                  0.0     //?
-#define DISCHARGE_RATE_MIN                      0.0     //?
-#define DISCHARGE_RATE_MAX                      0.0     //? I think we can remove this variable and use the set DISCHARGE_CURRENT_SAFETY_CUTOFF
+#define DISCHARGE_RATE_DEFAULT                  2.0
+#define DISCHARGE_RATE_MIN                      0.25
+// #define DISCHARGE_RATE_MAX                      DISCHARGE_CURRENT_SAFETY_CUTOFF
 
 // Unit: Boolean
 #define STORAGE_DISCHARGE_DEFAULT               true
 
 // Unit: Volts
-#define STORAGE_DISCHARGE_VOLTAGE_DEFAULT       0.0     //?
-#define STORAGE_DISCHARGE_VOLTAGE_MIN           0.0     //? 0 makes sense to me but perhaps we want to make it something close but not exactly 0, in case the discharge gets asymptotic or something
-#define STORAGE_DISCHARGE_VOLTAGE_MAX           0.0     //? I think we can remove this variable and use the maximum voltage of the cells, or maybe it needs to be something close but not exactly the max?
+#define STORAGE_DISCHARGE_VOLTAGE_DEFAULT       3.7
+#define STORAGE_DISCHARGE_VOLTAGE_MIN           2.0
+// #define STORAGE_DISCHARGE_VOLTAGE_MAX           HIGH_VOLTAGE_CUTOFF_MAX
 
 // Unit: Ohms
-#define ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT  0.0     //?
-#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN      0.0     //?
-#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX      0.0     //?
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT  0.2
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN      0.02
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX      200.0
 
 // Unit: Seconds
-#define REST_PERIOD_DEFAULT                     60
-#define REST_PERIOD_MIN                         0
-#define REST_PERIOD_MAX                         0       //?
+#define REST_PERIOD_DEFAULT                     60.0
+#define REST_PERIOD_MIN                         0.0
+#define REST_PERIOD_MAX                         3600.0
 
 //Status register codes
 #define STAT_VOLTAGE_LIMIT_CHG  0x0001
