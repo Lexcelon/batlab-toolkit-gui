@@ -254,12 +254,12 @@ struct testParms
 // Unit: Amps
 #define CHARGE_RATE_DEFAULT                     2.0
 #define CHARGE_RATE_MIN                         0.25
-// #define CHARGE_RATE_MAX                         CHARGE_CURRENT_SAFETY_CUTOFF
+// #define CHARGE_RATE_MAX                         CHARGE_CURRENT_SAFETY_CUTOFF used instead of new value
 
 // Unit: Amps
 #define DISCHARGE_RATE_DEFAULT                  2.0
 #define DISCHARGE_RATE_MIN                      0.25
-// #define DISCHARGE_RATE_MAX                      DISCHARGE_CURRENT_SAFETY_CUTOFF
+// #define DISCHARGE_RATE_MAX                      DISCHARGE_CURRENT_SAFETY_CUTOFF used instead of new value
 
 // Unit: Boolean
 #define STORAGE_DISCHARGE_DEFAULT               true
@@ -267,7 +267,7 @@ struct testParms
 // Unit: Volts
 #define STORAGE_DISCHARGE_VOLTAGE_DEFAULT       3.7
 #define STORAGE_DISCHARGE_VOLTAGE_MIN           2.0
-// #define STORAGE_DISCHARGE_VOLTAGE_MAX           HIGH_VOLTAGE_CUTOFF_MAX
+// #define STORAGE_DISCHARGE_VOLTAGE_MAX           HIGH_VOLTAGE_CUTOFF_MAX used instead of new value
 
 // Unit: Ohms
 #define ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT  0.2
