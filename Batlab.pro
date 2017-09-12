@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       *= core  serialport charts multimedia widgets
+QT *=  core serialport charts multimedia widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -36,7 +36,9 @@ SOURCES += main.cpp\
     TestData.cpp \
     CellModuleWidget.cpp \
     Wizard/newTestScheduleWizard.cpp \
-    BatlabApp.cpp
+    BatlabMainWindow.cpp \
+    dialogs/newcellplaylistwizard/newcellplaylistwizard.cpp \
+    globals.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -58,8 +60,9 @@ HEADERS  += \
     TestData.h \
     CellModuleWidget.h \
     Wizard/newTestScheduleWizard.h \
-    BatlabApp.h \
-    GUIversion.h
+    BatlabMainWindow.h \
+    GUIversion.h \
+    dialogs/newcellplaylistwizard/newcellplaylistwizard.h
 
 FORMS    += \
     test.ui \

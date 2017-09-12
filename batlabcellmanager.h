@@ -20,13 +20,11 @@ public:
 
 public slots:
     void test();
-//    void onReceiveStream(int,int,int,float,int,int,int);
-    void onReceiveStream(int, int, int, float, float, float);
 
 //    void onPrintCell(uchar key, properties val);
     void setProjectName(QString name);
 
-    void onNewCell(QString id, testParms parms, double cap, int cycles);
+    void onNewCell(QString id, testParms parms, int cycles);
 
     void onCreateTestPlan(int numBatlabs);
     void onCreateTestPlan(QVector<batlabCom*> coms);

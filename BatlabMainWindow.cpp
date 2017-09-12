@@ -1,4 +1,4 @@
-#include "BatlabApp.h"
+#include "BatlabMainWindow.h"
 #include "ui_MainWindow.h"
 #include <QFileDialog>
 #include "inputStringDialog.h"
@@ -6,7 +6,7 @@
 #include <CellModuleWidget.h>
 #include <QSpacerItem>
 
-BatlabApp::BatlabApp(QWidget *parent) :
+BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -43,29 +43,33 @@ BatlabApp::BatlabApp(QWidget *parent) :
 
     // Making the buttons functional
     connect(exit, &QPushButton::clicked,
-            this, &BatlabApp::close);
+            this, &BatlabMainWindow::close);
     connect(test, &QPushButton::clicked,
-            this, &BatlabApp::onTest);
+            this, &BatlabMainWindow::onTest);
     connect(report, &QPushButton::clicked,
-            this, &BatlabApp::onReport);
+            this, &BatlabMainWindow::onReport);
     connect(newProjectWizard,&QPushButton::clicked,
-            this, &BatlabApp::onNewProjectWizard);
+            this, &BatlabMainWindow::onNewProjectWizard);
     connect(connectToBatlabs, &QPushButton::clicked,
-            this, &BatlabApp::onGetBatlabNames);
+            this, &BatlabMainWindow::onGetBatlabNames);
     connect(loadProject, &QPushButton::clicked,
-            this, &BatlabApp::onLoadProject);
-    connect(this, &BatlabApp::emitUpdateText,
-            this, &BatlabApp::onUpdateText);
+            this, &BatlabMainWindow::onLoadProject);
+    connect(this, &BatlabMainWindow::emitUpdateText,
+            this, &BatlabMainWindow::onUpdateText);
     connect(ui->testDataButton, &QPushButton::clicked,
-            this, &BatlabApp::onTestDataButton);
+            this, &BatlabMainWindow::onTestDataButton);
     connect(ui->processPackButton, &QPushButton::clicked,
-            this, &BatlabApp::onProcessPack);
+            this, &BatlabMainWindow::onProcessPack);
     connect(cellManager, &batlabCellManager::emitPack,
-            this, &BatlabApp::onPackBuilt);
+            this, &BatlabMainWindow::onPackBuilt);
+
+    connect(ui->newCellPlaylistButton, &QPushButton::clicked,
+            this, &BatlabMainWindow::onNewCellPlaylistWizard);
+
     cellManager->test();
 }
 
-void BatlabApp::onTest()
+void BatlabMainWindow::onTest()
 {
 //    for (int i = 0; i < 200000; ++i) {
 //        if (i%10 == 0) {
@@ -91,7 +95,7 @@ void BatlabApp::onTest()
 
 }
 
-void BatlabApp::onReport()
+void BatlabMainWindow::onReport()
 {
        // For testing communications with batlab - BRING THIS BACK EVENTUALLY
        if (testObj == nullptr) {
@@ -106,7 +110,7 @@ void BatlabApp::onReport()
            testObj->show();
 }
 
-BatlabApp::~BatlabApp()
+BatlabMainWindow::~BatlabMainWindow()
 {
     if (exit) delete exit;
     if (test) delete test;
@@ -117,7 +121,7 @@ BatlabApp::~BatlabApp()
     delete ui;
 }
 
-void BatlabApp::onReceiveWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
+void BatlabMainWindow::onReceiveWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
 {
     QString str;
     str += QString("WRITE: Batlab #%1 - ").arg(serialNumber);
@@ -135,7 +139,7 @@ void BatlabApp::onReceiveWriteCommand(int serialNumber, int nameSpace, int batla
     emit emitUpdateText(str);
 }
 
-void BatlabApp::onReceiveReadCommand(int serialNumber, int nameSpace, int batlabRegister)
+void BatlabMainWindow::onReceiveReadCommand(int serialNumber, int nameSpace, int batlabRegister)
 {
     QString str;
     str += QString("READ: Batlab #%1 - ").arg(serialNumber);
@@ -153,7 +157,7 @@ void BatlabApp::onReceiveReadCommand(int serialNumber, int nameSpace, int batlab
     emit emitUpdateText(str);
 }
 
-void BatlabApp::onReceiveWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void BatlabMainWindow::onReceiveWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     QString str = QString("WRITE RESPONSE: ");
     if (nameSpace >=0 && nameSpace < 4) {
@@ -173,7 +177,7 @@ qDebug() << str;
     emit emitUpdateText(str);
 }
 
-void BatlabApp::onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void BatlabMainWindow::onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     QString str = QString("READ RESPONSE: ");
     if (nameSpace >=0 && nameSpace < 4) {
@@ -193,7 +197,7 @@ void BatlabApp::onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb
     emit emitUpdateText(str);
 }
 
-void BatlabApp::onReceiveStream(int cell,int mode,int status,float temp, float current, float voltage)
+void BatlabMainWindow::onReceiveStream(int cell,int mode,int status,float temp, float current, float voltage)
 {
     QString str = QString("STREAM PACKET: ");
 
@@ -215,18 +219,25 @@ void BatlabApp::onReceiveStream(int cell,int mode,int status,float temp, float c
     emit emitUpdateText(str);
 }
 
-void BatlabApp::onAddTests()
+void BatlabMainWindow::onAddTests()
 {
 
 }
 
-void BatlabApp::onNewProjectWizard() {
+void BatlabMainWindow::onNewProjectWizard() {
     newTestScheduleWizard * a = new newTestScheduleWizard();
     connect(a, SIGNAL(emitFinished(QString)), this, SLOT(onLoadTest(QString)));
     a->onShow();
 }
 
-void BatlabApp::onLoadTest(QString fileName)
+void BatlabMainWindow::onNewCellPlaylistWizard() {
+    NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
+    connect(wizard, SIGNAL(emitFinished(QString)), this, SLOT(onLoadTest(QString)));
+    wizard->setWizardStyle(QWizard::ModernStyle);
+    wizard->show();
+}
+
+void BatlabMainWindow::onLoadTest(QString fileName)
 {
     ui->tableWidget->clearContents();
     while( ui->tableWidget->rowCount() > 0) {
@@ -278,7 +289,7 @@ void BatlabApp::onLoadTest(QString fileName)
 //            tempParms.reportingFrequency = QString(strList.at(index++)).toDouble();
             tempParms.chargeCurrentSetpoint = QString(strList.at(index++)).toDouble();
             tempParms.dischargeCurrentSetpoint = QString(strList.at(index++)).toDouble();
-            double cap = QString(strList.at(index++)).toDouble();
+//            double cap = QString(strList.at(index++)).toDouble();
 
             int numberOfTests = numCycles * 2 + 1;
             if (ui->tableWidget->columnCount() - 1 < numberOfTests) {
@@ -288,7 +299,7 @@ void BatlabApp::onLoadTest(QString fileName)
                 }
             }
 
-            cellManager->onNewCell(cellname,tempParms,cap,numCycles);
+            cellManager->onNewCell(cellname,tempParms,numCycles);
 
             QVector<int> *cellTests = cellManager->onGetCell(cellname)->getTests();
             ui->tableWidget->insertRow(ui->tableWidget->rowCount());
@@ -311,11 +322,11 @@ void BatlabApp::onLoadTest(QString fileName)
     }
     for (int i = 0; i < cellManager->getCellList().size(); ++i) {
         connect(cellManager->getCellList()[i], &batlabCell::updateUI,
-                this, &BatlabApp::onFinishedTests);
+                this, &BatlabMainWindow::onFinishedTests);
     }
 }
 
-void BatlabApp::onLoadProject()
+void BatlabMainWindow::onLoadProject()
 {
     QFileDialog dialog;
     dialog.setDefaultSuffix(QString(".blp"));
@@ -328,7 +339,7 @@ void BatlabApp::onLoadProject()
         onLoadTest(fileNames.first());
 }
 
-void BatlabApp::onTestDataButton()
+void BatlabMainWindow::onTestDataButton()
 {
     QFileDialog dialog;
     dialog.setDefaultSuffix(QString(".bld"));
@@ -345,7 +356,7 @@ void BatlabApp::onTestDataButton()
     ui->temperatureGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_TEMPERATURE);
 }
 
-void BatlabApp::onProcessPack()
+void BatlabMainWindow::onProcessPack()
 {
     int numberOfModules = ui->numberOfModulesSpinbox->value();
 
@@ -378,7 +389,7 @@ void clearLayout(QLayout *layout) {
     }
 }
 
-void BatlabApp::onPackBuilt(QVector<QStringList> list)
+void BatlabMainWindow::onPackBuilt(QVector<QStringList> list)
 {
     clearLayout(ui->packLayout);
     for (int i = 0; i < list.size(); ++i) {
@@ -388,7 +399,7 @@ void BatlabApp::onPackBuilt(QVector<QStringList> list)
     ui->packLayout->addSpacerItem(new QSpacerItem(0 , 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
-void BatlabApp::onFinishedTests(QString designator, int testNum)
+void BatlabMainWindow::onFinishedTests(QString designator, int testNum)
 {
     for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
         if (designator == ui->tableWidget->item(i,0)->text()) {
@@ -398,7 +409,7 @@ void BatlabApp::onFinishedTests(QString designator, int testNum)
     }
 }
 
-void BatlabApp::onUpdateText(QString str)
+void BatlabMainWindow::onUpdateText(QString str)
 {
     static int i = 0;
     str = QString("%1: %2 ").arg(++i).arg(QDateTime::currentDateTime().toString()) + str;
@@ -410,7 +421,7 @@ void BatlabApp::onUpdateText(QString str)
     }
 }
 
-void BatlabApp::onConnectToBatlabs(QStringList names)
+void BatlabMainWindow::onConnectToBatlabs(QStringList names)
 {
     qDebug() << names;
     for (int i = 0; i < names.size(); ++i) {
@@ -423,22 +434,22 @@ void BatlabApp::onConnectToBatlabs(QStringList names)
         if (connectBatlab) {
             batlabComObjects.push_back(new batlabCom(names[i]));
             connect(batlabComObjects[i], &batlabCom::emitReadCommand,
-                    this, &BatlabApp::onReceiveReadCommand);
+                    this, &BatlabMainWindow::onReceiveReadCommand);
             connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
-                    this, &BatlabApp::onReceiveWriteCommand);
+                    this, &BatlabMainWindow::onReceiveWriteCommand);
 
             connect(batlabComObjects[i], &batlabCom::emitReadResponse,
-                    this, &BatlabApp::onReceiveReadResponse);
+                    this, &BatlabMainWindow::onReceiveReadResponse);
             connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
-                    this, &BatlabApp::onReceiveWriteResponse);
+                    this, &BatlabMainWindow::onReceiveWriteResponse);
 
             connect(batlabComObjects[i], &batlabCom::emitStream,
-                    this, &BatlabApp::onReceiveStream);
+                    this, &BatlabMainWindow::onReceiveStream);
         }
     }
 }
 
-void BatlabApp::onGetBatlabNames()
+void BatlabMainWindow::onGetBatlabNames()
 {
     QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
     QStringList names;
