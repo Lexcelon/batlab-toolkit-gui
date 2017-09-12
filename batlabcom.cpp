@@ -100,7 +100,7 @@ void batlabCom::onRead() {
             temp =      (uchar)rec[start+7]  + 256*(uchar)rec[start+8];
             current =   (uchar)rec[start+9]  + 256*(uchar)rec[start+10];
             voltage =   (uchar)rec[start+11] + 256*(uchar)rec[start+12];
-            emit emitStream(cell,mode,status,getTemp(temp,tempCalibB[cell],tempCalibR[cell]),getCurrent(current),getVoltage(voltage));
+            emit emitStream(cell,mode,status,BatlabLib::getTemp(temp,tempCalibB[cell],tempCalibR[cell]),BatlabLib::getCurrent(current),BatlabLib::getVoltage(voltage));
         }
         len-=13;
         start+=13;

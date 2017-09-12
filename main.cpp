@@ -1,16 +1,15 @@
-#include "BatlabApp.h"
 #include <QApplication>
 #include <QObject>
 #include <QWidget>
 
+#include "BatlabMainWindow.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
-    // Create the gui and show it
-    BatlabApp w;
-    w.show();
+    BatlabMainWindow window;
+    window.show();
 
-    return a.exec();
+    return app.exec();
 }

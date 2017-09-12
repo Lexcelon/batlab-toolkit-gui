@@ -50,7 +50,7 @@ QString batlabTestGroup::onGetCellID(int index)
 
 int batlabTestGroup::onPromptStart()
 {
-    int returnCode;
+    int returnCode = QMessageBox::No;
     switch (testGroup.size()) {
     case 1:
         returnCode = QMessageBox::warning(0, tr("Starting Test"), tr("Please insert cell %1 into slots 0 for Batlab %2.").arg(testGroup[0]->getDesignator()).arg(serialNumber), QMessageBox::Yes|QMessageBox::No, QMessageBox::No);
@@ -124,7 +124,7 @@ void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int
     if (nameSpace == 4) {
         if (batlabRegister == unitNamespace::SINE_FREQ) {
             for (int i = 0; i < testGroup.size(); ++i) {
-                testGroup[i]->setSineFreq(getSineFrequency(value));
+                testGroup[i]->setSineFreq(BatlabLib::getSineFrequency(value));
             }
         }
     } else if (nameSpace == 0 || nameSpace == 1 || nameSpace == 2 || nameSpace == 3 ) {
@@ -168,7 +168,7 @@ void batlabTestGroup::onTestFinished(int cell)
     qDebug() << Q_FUNC_INFO << cell;
 //    emit emitFinishedTests(cell, id, testNum);
     count ^= (0x0001 << cell);
-    emit emitWriteReg(cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(0.0f));
+    emit emitWriteReg(cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), BatlabLib::sendReportingFrequency(0.0f));
 
     emit emitWriteReg(cell, cellNamespace::LOCK, 1);
     emit emitReadReg(cell, cellNamespace::CHARGEL);
@@ -198,7 +198,7 @@ void batlabTestGroup::startTests()
             emit emitWriteReg(i,cellNamespace::CHARGEH,0);
             emit emitWriteReg(i,cellNamespace::CHARGEL,0);
             emit emitWriteReg(i,cellNamespace::MODE,code);
-            emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testGroup[i]->onGetParameters().reportingFrequency));
+            emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), BatlabLib::sendReportingFrequency(testGroup[i]->onGetParameters().reportingFrequency));
             count = count ^ (0x0001 << i);
             qDebug() << count << code;
             testGroup[i]->onStartTimer();
@@ -215,7 +215,7 @@ void batlabTestGroup::startTests()
 
 void batlabTestGroup::updateParms(int index)
 {
-   testParms testParameters = testGroup[index]->onGetParameters();
+//   testParms testParameters = testGroup[index]->onGetParameters();
    testGroup[index]->onUpdateParameters(index);
 }
 
@@ -279,7 +279,7 @@ void batlabTestGroup::setImpedanceModes()
 {
     for (int i = 0; i < testGroup.size(); ++i) {
         if (count & (0x0001 << i)) {
-            emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(0.0f));
+            emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), BatlabLib::sendReportingFrequency(0.0f));
             emit emitWriteReg(i,cellNamespace::MODE,MODE_IMPEDANCE);
         }
     }
@@ -335,7 +335,7 @@ void batlabTestGroup::onVerifyFrequency()
     bool isOkay = true;
     for (int i = 0; i < testGroup.size(); ++i) {
         if (count & (0x0001 << i)) {
-            if (sendSineFrequency(testGroup[i]->getSineFreq()) != (1 << freqCounter)) {
+            if (BatlabLib::sendSineFrequency(testGroup[i]->getSineFreq()) != (1 << freqCounter)) {
                 isOkay = false;
             }
         }
@@ -375,7 +375,7 @@ void batlabTestGroup::onRestartTests()
         if (code != -1) {
             if (count & (0x0001 << i)) {
                 emit emitWriteReg(i,cellNamespace::MODE,code);
-                emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), sendReportingFrequency(testGroup[i]->onGetParameters().reportingFrequency));
+                emit emitWriteReg(i, static_cast<int>(cellNamespace::REPORT_INTERVAL), BatlabLib::sendReportingFrequency(testGroup[i]->onGetParameters().reportingFrequency));
             }
         }
     }

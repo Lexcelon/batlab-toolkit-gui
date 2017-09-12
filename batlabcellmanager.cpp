@@ -47,17 +47,17 @@ void batlabCellManager::test()
 qDebug() << Q_FUNC_INFO;
 }
 
-void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage)
-{
+//void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage)
+//{
 
-}
+//}
 
 void batlabCellManager::setProjectName(QString name)
 {
     projectName = name;
 }
 
-void batlabCellManager::onNewCell(QString id , testParms parms, double cap, int cycles) {
+void batlabCellManager::onNewCell(QString id, testParms parms, int cycles) {
     batlabCell * tempCell = new batlabCell(id,parms,cycles);
     cellList.push_back(tempCell);
 }
@@ -192,14 +192,14 @@ void batlabCellManager::onProcessCellData()
         means[i] /= numCells;
     }
 
-    bubblesort(means, ind);
+    BatlabLib::bubblesort(means, ind);
 
     for (int i = 0; i < numCells; ++i) {
         QVector<float> tempData;
         for (int j = 0; j < numCells; j++) {
             tempData.push_back(metric[j][i]);
         }
-        bubblesort(tempData,(cellPreferenceIndices[i]));
+        BatlabLib::bubblesort(tempData,(cellPreferenceIndices[i]));
     }
 
     int cellsLeftToPutInPack =  numberOfCellsInPack;
@@ -279,7 +279,7 @@ void batlabCellManager::clean()
 void batlabCellManager::saveLevelOneData(batlabCell* cellPointer)
 {
     QString id = cellPointer->getDesignator();
-    testParms tempParms = cellPointer->onGetParameters();
+//    testParms tempParms = cellPointer->onGetParameters();
     QVector<testPacket> tempTests = cellPointer->getTestData();
 
     for (int i = 0; i < tempTests.size(); ++i) {
@@ -422,7 +422,7 @@ void batlabCellManager::interpolateData()
         testPacket packet = cellList[i]->getTestData().last();
         voltageTestData[i].push_back(packet.REG_VOLTAGE.first());
         for (int j = 0; j < packet.REG_VOLTAGE.size() - 1; ++i) {
-            int k = 0;
+//            int k = 0;
 
             if (packet.TIME[j] > (voltageTestData[i].size() * 500)) {
                 float slope;
@@ -434,7 +434,7 @@ void batlabCellManager::interpolateData()
 
         currentTestData[i].push_back(packet.REG_CURRENT.first());
         for (int j = 0; j < packet.REG_CURRENT.size() - 1; ++i) {
-            int k = 0;
+//            int k = 0;
 
             if (packet.TIME[j] > (currentTestData[i].size() * 500)) {
                 float slope;
@@ -453,7 +453,7 @@ void batlabCellManager::interpolateData()
 
         chargeTestData[i].push_back(packet.CHARGE.first().second);
         for (int j = 0; j < packet.CHARGE.size() - 1; ++i) {
-            int k = 0;
+//            int k = 0;
 
             if (packet.TIME[j] > (chargeTestData[i].size() * 500)) {
                 float slope;

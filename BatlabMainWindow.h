@@ -5,36 +5,37 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QGraphicsView>
-#include "batlabconfig.h"
-#include "settings.h"
-#include "test.h"
-#include "batlabcom.h"
-#include "batlabcellmanager.h"
-#include "globals.h"
-#include "GUIversion.h"
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QWizard>
 #include <QWizardPage>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QCloseEvent>
+
+#include "batlabconfig.h"
+#include "settings.h"
+#include "test.h"
+#include "batlabcom.h"
+#include "batlabcellmanager.h"
+#include "GUIversion.h"
 #include "wizardpageone.h"
 #include "wizardpagetwo.h"
 #include "newTestScheduleWizard.h"
-#include <QCloseEvent>
+#include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "TestData.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class BatlabApp : public QMainWindow
+class BatlabMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit BatlabApp(QWidget *parent = 0);
-    ~BatlabApp();
+    explicit BatlabMainWindow(QWidget *parent = 0);
+    ~BatlabMainWindow();
 
 public slots:
     void onConnectToBatlabs(QStringList names);
@@ -48,6 +49,7 @@ public slots:
     void onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
     void onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage);
 
+    void onNewCellPlaylistWizard();
     void onNewProjectWizard();
     void onAddTests();
     void onLoadTest(QString);
@@ -67,7 +69,7 @@ protected:
     void closeEvent(QCloseEvent *event)
     {
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Exit Batlab!", "Are you sure you want to quit?",
+        reply = QMessageBox::question(this, "Exit Batlab", "Are you sure you want to quit?",
                                       QMessageBox::Yes|QMessageBox::No);
 
         if (reply == QMessageBox::Yes) {
