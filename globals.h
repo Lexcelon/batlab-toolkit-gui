@@ -14,7 +14,6 @@
 #include <QDateTime>
 #include <QDoubleSpinBox>
 
-
 namespace BatlabLib
 {
     void bubblesort(QVector<float> data, QVector<int> &indices);
@@ -51,7 +50,10 @@ struct testParms
 // Builtin variable default values and bounds
 
 // Unit: Cells
+#define MINIMUM_NUM_CELLS                       1
 #define MAXIMUM_NUM_CELLS                       1000
+#define MINIMUM_STARTING_CELL_NUMBER            0
+#define MAXIMUM_STARTING_CELL_NUMBER            100000
 
 // Unit: Volts
 #define HIGH_VOLTAGE_CUTOFF_DEFAULT             4.2
@@ -191,7 +193,7 @@ struct testPacket {
 
 enum cellNamespace {
     MODE,
-    ERROR,
+    CELL_ERROR,
     STATUS,
     CURRENT_SETPOINT,
     REPORT_INTERVAL,
