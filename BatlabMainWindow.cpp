@@ -22,7 +22,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
     test = new QPushButton(QString("Test"));
     loadProject = new QPushButton(QString("Load Project File"));
-    options = new QPushButton(QString("Options"));
     newProjectWizard = new QPushButton(QString("New Project Wizard"));
     report = new QPushButton(QString("Debug GUI"));
     exit = new QPushButton(QString("Exit"));
@@ -33,7 +32,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     ui->buttonBox->addButton(connectToBatlabs,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(report,QDialogButtonBox::ActionRole);
-    ui->buttonBox->addButton(options,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(exit,QDialogButtonBox::ActionRole);
 
     // PLACEHOLDER TEXT WILL REMOVE
@@ -114,7 +112,6 @@ BatlabMainWindow::~BatlabMainWindow()
 {
     if (exit) delete exit;
     if (test) delete test;
-    if (options) delete options;
     if (report) delete report;
     if (loadProject) delete loadProject;
     if (newProjectWizard) delete newProjectWizard;
