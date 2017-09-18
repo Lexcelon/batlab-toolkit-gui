@@ -36,11 +36,15 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     setTitle(tr("Basic Setup"));
     setSubTitle(tr("Provide basic setup information for a new cell playlist."));
 
-    cellPlaylistNameLabel = new QLabel(tr("Playlist Name:"));
+    cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));
     cellPlaylistNameLineEdit = new QLineEdit;
-    // TODO validate this is a valid filename
+    // Validate that the cell playlist name only contains valid characters
+    QRegExp cellPlaylistNameRx("^[ \\w\\-\\.]+$");
+    QValidator *cellPlaylistNameValidator = new QRegExpValidator(cellPlaylistNameRx);
+    cellPlaylistNameLineEdit->setValidator(cellPlaylistNameValidator);
+    // TODO trim whitespace from strings in fields with simplified()
 
-    groupBox = new QGroupBox(tr("Select a cell chemistry type"));
+    groupBox = new QGroupBox(tr("Cell chemistry type"));
     lipoRadioButton = new QRadioButton(tr("Lithium Polymer (also called Lithium-Ion Polymer, LiPo, LIP or Li-poly)"));
     ironPhosphateRadioButton = new QRadioButton(tr(qPrintable(QString::fromUtf8("Lithium Iron Phosphate (also called LiFePO\u2084 or LFP)"))));
     otherRadioButton = new QRadioButton(tr("Other"));
@@ -53,9 +57,37 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     groupBoxLayout->addWidget(otherRadioButton);
     groupBox->setLayout(groupBoxLayout);
 
+    sameTypeLabel = new QLabel(tr("Please note that all cells in a playlist must be of the same type."));
+    sameTypeLabel->setWordWrap(true);
+
+    numCellsLabel = new QLabel(tr("Number of cells:"));
+    numCellsSpinBox = new QSpinBox;
+    numCellsSpinBox->setMinimum(MINIMUM_NUM_CELLS);
+    numCellsSpinBox->setMaximum(MAXIMUM_NUM_CELLS);
+
+    cellDesignatorLabel = new QLabel(tr("Cell designator:"));
+    cellDesignatorLineEdit = new QLineEdit;
+    // Validate that the cell playlist name only contains valid characters
+    QRegExp cellDesignatorRx("^[ \\w\\-\\.]+$");
+    QValidator *cellDesignatorValidator = new QRegExpValidator(cellDesignatorRx);
+    cellPlaylistNameLineEdit->setValidator(cellDesignatorValidator);
+    // TODO trim whitespace from strings in fields with simplified()
+
+    startingCellNumberLabel = new QLabel(tr("Starting cell number:"));
+    startingCellNumberSpinBox = new QSpinBox;
+    startingCellNumberSpinBox->setMinimum(MINIMUM_STARTING_CELL_NUMBER);
+    startingCellNumberSpinBox->setMaximum(MAXIMUM_STARTING_CELL_NUMBER);
+
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(cellPlaylistNameLabel, 0, 0);
     layout->addWidget(cellPlaylistNameLineEdit, 0, 1);
     layout->addWidget(groupBox, 1, 0, 1, 2);
+    layout->addWidget(sameTypeLabel, 2, 0, 1, 2);
+    layout->addWidget(numCellsLabel, 3, 0);
+    layout->addWidget(numCellsSpinBox, 3, 1);
+    layout->addWidget(cellDesignatorLabel, 4, 0);
+    layout->addWidget(cellDesignatorLineEdit, 4, 1);
+    layout->addWidget(startingCellNumberLabel, 5, 0);
+    layout->addWidget(startingCellNumberSpinBox, 5, 1);
     setLayout(layout);
 }

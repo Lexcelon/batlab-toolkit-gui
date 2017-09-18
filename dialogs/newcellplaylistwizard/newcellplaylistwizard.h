@@ -2,11 +2,13 @@
 #define NEWCELLPLAYLISTWIZARD_H
 
 #include <QWizard>
+#include "globals.h"
 
 class QLabel;
 class QLineEdit;
 class QGroupBox;
 class QRadioButton;
+class QSpinBox;
 
 class NewCellPlaylistWizard : public QWizard
 {
@@ -43,6 +45,13 @@ private:
     QRadioButton *lipoRadioButton;
     QRadioButton *ironPhosphateRadioButton;
     QRadioButton *otherRadioButton;
+    QLabel *sameTypeLabel;
+    QLabel *numCellsLabel;
+    QSpinBox *numCellsSpinBox;
+    QLabel *cellDesignatorLabel;
+    QLineEdit *cellDesignatorLineEdit;
+    QLabel *startingCellNumberLabel;
+    QSpinBox *startingCellNumberSpinBox;
 };
 
 #endif // NEWCELLPLAYLISTWIZARD_H

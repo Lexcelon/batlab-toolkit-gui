@@ -129,7 +129,7 @@ void batlabTestGroup::receiveReadResponse(int nameSpace, int batlabRegister, int
         }
     } else if (nameSpace == 0 || nameSpace == 1 || nameSpace == 2 || nameSpace == 3 ) {
         testGroup[nameSpace]->receiveReadResponse(batlabRegister, value);
-        if (batlabRegister == cellNamespace::ERROR) {
+        if (batlabRegister == cellNamespace::CELL_ERROR) {
             switch (value) {
             case ERR_CURRENT_LIMIT_CHG:
                 qDebug() << Q_FUNC_INFO << value;
@@ -418,5 +418,5 @@ void batlabTestGroup::onError(QString cellId)
         }
     }
 
-    emit emitReadReg(index, cellNamespace::ERROR);
+    emit emitReadReg(index, cellNamespace::CELL_ERROR);
 }
