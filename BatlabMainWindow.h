@@ -89,7 +89,6 @@ private:
     QPushButton *loadProject = nullptr;
     QPushButton *newProjectWizard = nullptr;
     QPushButton *report = nullptr;
-    QPushButton *options = nullptr;
     QPushButton *exit = nullptr;
     QVector<batlabCom*> batlabComObjects;
 
