@@ -31,6 +31,18 @@ IntroPage::IntroPage(QWidget *parent) : QWizardPage(parent)
     setLayout(layout);
 }
 
+void BasicSetupPage::updateExampleCellName()
+{
+    QString designator = this->cellDesignatorLineEdit->text();
+    int numCells = this->numCellsSpinBox->value();
+    int startingCellNumber = this->startingCellNumberSpinBox->value();
+    int maxCellNumber = numCells + startingCellNumber;
+    int digits = std::max((int) log10((double) maxCellNumber) + 1, 3);
+    QString startingCellNumberStr = QString("%1").arg(startingCellNumber, digits, 10, QChar('0'));
+
+    this->exampleCellName->setText(designator + "_" + startingCellNumberStr);
+}
+
 BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
 {
     setTitle(tr("Basic Setup"));
@@ -38,13 +50,13 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
 
     cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));
     cellPlaylistNameLineEdit = new QLineEdit;
-    // Validate that the cell playlist name only contains valid characters
+    // Only valid characters
     QRegExp cellPlaylistNameRx("^[ \\w\\-\\.]+$");
     QValidator *cellPlaylistNameValidator = new QRegExpValidator(cellPlaylistNameRx);
     cellPlaylistNameLineEdit->setValidator(cellPlaylistNameValidator);
     // TODO trim whitespace from strings in fields with simplified()
 
-    groupBox = new QGroupBox(tr("Cell chemistry type"));
+    selectChemistryBox = new QGroupBox(tr("Cell chemistry type"));
     lipoRadioButton = new QRadioButton(tr("Lithium Polymer (also called Lithium-Ion Polymer, LiPo, LIP or Li-poly)"));
     ironPhosphateRadioButton = new QRadioButton(tr(qPrintable(QString::fromUtf8("Lithium Iron Phosphate (also called LiFePO\u2084 or LFP)"))));
     otherRadioButton = new QRadioButton(tr("Other"));
@@ -55,7 +67,7 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     groupBoxLayout->addWidget(lipoRadioButton);
     groupBoxLayout->addWidget(ironPhosphateRadioButton);
     groupBoxLayout->addWidget(otherRadioButton);
-    groupBox->setLayout(groupBoxLayout);
+    selectChemistryBox->setLayout(groupBoxLayout);
 
     sameTypeLabel = new QLabel(tr("Please note that all cells in a playlist must be of the same type."));
     sameTypeLabel->setWordWrap(true);
@@ -67,8 +79,9 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
 
     cellDesignatorLabel = new QLabel(tr("Cell designator:"));
     cellDesignatorLineEdit = new QLineEdit;
-    // Validate that the cell playlist name only contains valid characters
-    QRegExp cellDesignatorRx("^[ \\w\\-\\.]+$");
+    cellDesignatorLineEdit->setText("CELL");
+    // Only valid characters
+    QRegExp cellDesignatorRx("^[\\w\\-\\.]+$");
     QValidator *cellDesignatorValidator = new QRegExpValidator(cellDesignatorRx);
     cellPlaylistNameLineEdit->setValidator(cellDesignatorValidator);
     // TODO trim whitespace from strings in fields with simplified()
@@ -78,10 +91,29 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     startingCellNumberSpinBox->setMinimum(MINIMUM_STARTING_CELL_NUMBER);
     startingCellNumberSpinBox->setMaximum(MAXIMUM_STARTING_CELL_NUMBER);
 
+    exampleCellNameLabel = new QLabel(tr("Example cell name:"));
+    exampleCellName = new QLabel;
+
+    registerField("cellPlaylistName*", cellPlaylistNameLineEdit);
+    registerField("lipoChemistry", lipoRadioButton);
+    registerField("ironPhosphateChemistry", ironPhosphateRadioButton);
+    registerField("otherChemistry", otherRadioButton);
+    registerField("numCells", numCellsSpinBox);
+    registerField("cellDesignator*", cellDesignatorLineEdit);
+    registerField("startingCellNumber", startingCellNumberSpinBox);
+
+    // Update the example cell name when the designator or starting cell number are changed
+    connect(cellDesignatorLineEdit, &QLineEdit::textChanged, this, &BasicSetupPage::updateExampleCellName);
+    // The static_cast is needed for these because QSpinBox overloads valueChanged and we need to specify which one we want
+    // https://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
+    connect(startingCellNumberSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BasicSetupPage::updateExampleCellName);
+    connect(numCellsSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &BasicSetupPage::updateExampleCellName);
+    this->updateExampleCellName();
+
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(cellPlaylistNameLabel, 0, 0);
     layout->addWidget(cellPlaylistNameLineEdit, 0, 1);
-    layout->addWidget(groupBox, 1, 0, 1, 2);
+    layout->addWidget(selectChemistryBox, 1, 0, 1, 2);
     layout->addWidget(sameTypeLabel, 2, 0, 1, 2);
     layout->addWidget(numCellsLabel, 3, 0);
     layout->addWidget(numCellsSpinBox, 3, 1);
@@ -89,5 +121,7 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     layout->addWidget(cellDesignatorLineEdit, 4, 1);
     layout->addWidget(startingCellNumberLabel, 5, 0);
     layout->addWidget(startingCellNumberSpinBox, 5, 1);
+    layout->addWidget(exampleCellNameLabel, 6, 0);
+    layout->addWidget(exampleCellName, 6, 1);
     setLayout(layout);
 }
