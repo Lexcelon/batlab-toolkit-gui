@@ -57,4 +57,13 @@ private:
     QLabel *exampleCellName;
 };
 
+class ConfigPlaylistPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    ConfigPlaylistPage(QWidget *parent = 0);
+
+};
+
 #endif // NEWCELLPLAYLISTWIZARD_H

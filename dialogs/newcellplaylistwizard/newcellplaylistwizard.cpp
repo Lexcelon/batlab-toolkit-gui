@@ -11,6 +11,7 @@ NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
 {
     addPage(new IntroPage);
     addPage(new BasicSetupPage);
+    addPage(new ConfigPlaylistPage);
 
     setWindowTitle(tr("New Cell Playlist"));
 }
@@ -46,7 +47,7 @@ void BasicSetupPage::updateExampleCellName()
 BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
 {
     setTitle(tr("Basic Setup"));
-    setSubTitle(tr("Provide basic setup information for a new cell playlist."));
+    setSubTitle(tr("Provide basic setup information for a new cell playlist. Please fill all fields."));
 
     cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));
     cellPlaylistNameLineEdit = new QLineEdit;
@@ -99,7 +100,7 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     registerField("ironPhosphateChemistry", ironPhosphateRadioButton);
     registerField("otherChemistry", otherRadioButton);
     registerField("numCells", numCellsSpinBox);
-    registerField("cellDesignator*", cellDesignatorLineEdit);
+    registerField("cellDesignator", cellDesignatorLineEdit);
     registerField("startingCellNumber", startingCellNumberSpinBox);
 
     // Update the example cell name when the designator or starting cell number are changed
@@ -123,5 +124,14 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     layout->addWidget(startingCellNumberSpinBox, 5, 1);
     layout->addWidget(exampleCellNameLabel, 6, 0);
     layout->addWidget(exampleCellName, 6, 1);
+    setLayout(layout);
+}
+
+ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
+{
+    setTitle(tr("Configure Playlist Settings"));
+    setSubTitle(tr("Configure the specific settings of your playlist."));
+
+    QGridLayout *layout = new QGridLayout;
     setLayout(layout);
 }
