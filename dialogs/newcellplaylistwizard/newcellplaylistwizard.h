@@ -37,11 +37,12 @@ class BasicSetupPage : public QWizardPage
 
 public:
     BasicSetupPage(QWidget *parent = 0);
+    void updateExampleCellName();
 
 private:
     QLabel *cellPlaylistNameLabel;
     QLineEdit *cellPlaylistNameLineEdit;
-    QGroupBox *groupBox;
+    QGroupBox *selectChemistryBox;
     QRadioButton *lipoRadioButton;
     QRadioButton *ironPhosphateRadioButton;
     QRadioButton *otherRadioButton;
@@ -52,6 +53,8 @@ private:
     QLineEdit *cellDesignatorLineEdit;
     QLabel *startingCellNumberLabel;
     QSpinBox *startingCellNumberSpinBox;
+    QLabel *exampleCellNameLabel;
+    QLabel *exampleCellName;
 };
 
 #endif // NEWCELLPLAYLISTWIZARD_H
