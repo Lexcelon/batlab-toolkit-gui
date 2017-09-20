@@ -127,11 +127,43 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     setLayout(layout);
 }
 
+void ConfigPlaylistPage::initializePage()
+{
+
+}
+
 ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
 {
     setTitle(tr("Configure Playlist Settings"));
     setSubTitle(tr("Configure the specific settings of your playlist."));
 
+    numWarmupCyclesLabel = new QLabel(tr("Number of warmup cycles:"));
+    numWarmupCyclesSpinBox = new QSpinBox;
+    numWarmupCyclesSpinBox->setMinimum(NUM_WARMUP_CYCLES_MIN);
+    numWarmupCyclesSpinBox->setMaximum(NUM_WARMUP_CYCLES_MAX);
+    numWarmupCyclesSpinBox->setValue(NUM_WARMUP_CYCLES_DEFAULT);
+
+    numMeasurementCyclesLabel = new QLabel(tr("Number of measurement cycles:"));
+    numMeasurementCyclesSpinBox = new QSpinBox;
+    numMeasurementCyclesSpinBox->setMinimum(NUM_MEASUREMENT_CYCLES_MIN);
+    numMeasurementCyclesSpinBox->setMaximum(NUM_MEASUREMENT_CYCLES_MAX);
+    numMeasurementCyclesSpinBox->setValue(NUM_MEASUREMENT_CYCLES_DEFAULT);
+
+    storageDischargeCheckBox = new QCheckBox;
+    storageDischargeCheckBox->setChecked(STORAGE_DISCHARGE_DEFAULT);
+    storageDischargeLabel = new QLabel(tr("Discharge cells to storage voltage after testing"));
+
+    advancedExtension = new QWidget;
+
+    highVoltageCutoffLabel = new QLabel(tr("High voltage cutoff:"));
+
+
     QGridLayout *layout = new QGridLayout;
+    layout->addWidget(numWarmupCyclesLabel, 0, 0);
+    layout->addWidget(numWarmupCyclesSpinBox, 0, 1);
+    layout->addWidget(numMeasurementCyclesLabel, 1, 0);
+    layout->addWidget(numMeasurementCyclesSpinBox, 1, 1);
+    layout->addWidget(storageDischargeCheckBox, 2, 0);
+    layout->addWidget(storageDischargeLabel, 2, 1);
     setLayout(layout);
 }

@@ -9,6 +9,7 @@ class QLineEdit;
 class QGroupBox;
 class QRadioButton;
 class QSpinBox;
+class QCheckBox;
 
 class NewCellPlaylistWizard : public QWizard
 {
@@ -63,7 +64,38 @@ class ConfigPlaylistPage : public QWizardPage
 
 public:
     ConfigPlaylistPage(QWidget *parent = 0);
+    void initializePage();
 
+private:
+    QLabel *numWarmupCyclesLabel;
+    QSpinBox *numWarmupCyclesSpinBox;
+    QLabel *numMeasurementCyclesLabel;
+    QSpinBox *numMeasurementCyclesSpinBox;
+    QCheckBox *storageDischargeCheckBox;
+    QLabel *storageDischargeLabel;
+    QLabel *restPeriodLabel;
+    QSpinBox *restPeriodSpinBox;
+    QWidget *advancedExtension;
+    QLabel *highVoltageCutoffLabel;
+    QSpinBox *highVoltageCutoffSpinBox;
+    QLabel *lowVoltageCutoffLabel;
+    QSpinBox *lowVoltageCutoffSpinBox;
+    QLabel *chargeTemperatureCutoffLabel;
+    QSpinBox *chargeTemperatureCutoffSpinBox;
+    QLabel *dischargeTemperatureCutoffLabel;
+    QSpinBox *dischargeTemperatureCutoffSpinBox;
+    QLabel *chargeCurrentSafetyCutoffLabel;
+    QSpinBox *chargeCurrentSafetyCutoffSpinBox;
+    QLabel *dischargeCurrentSafetyCutoffLabel;
+    QSpinBox *dischargeCurrentSafetyCurrentSpinBox;
+    QLabel *chargeRateLabel;
+    QSpinBox *chargeRateSpinBox;
+    QLabel *dischargeRateLabel;
+    QSpinBox *dischargeRateSpinBox;
+    QLabel *storageDischargeVoltageLabel;
+    QSpinBox *storageDischargeVoltageSpinBox;
+    QLabel *acceptableImpedanceThresholdLabel;
+    QSpinBox *acceptableImpedanceThresholdSpinBox;
 };
 
 #endif // NEWCELLPLAYLISTWIZARD_H
