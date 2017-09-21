@@ -137,6 +137,8 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     setTitle(tr("Configure Playlist Settings"));
     setSubTitle(tr("Configure the specific settings of your playlist."));
 
+    basicConfigWidget = new QWidget;
+
     numWarmupCyclesLabel = new QLabel(tr("Number of warmup cycles:"));
     numWarmupCyclesSpinBox = new QSpinBox;
     numWarmupCyclesSpinBox->setMinimum(NUM_WARMUP_CYCLES_MIN);
@@ -153,17 +155,35 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     storageDischargeCheckBox->setChecked(STORAGE_DISCHARGE_DEFAULT);
     storageDischargeLabel = new QLabel(tr("Discharge cells to storage voltage after testing"));
 
-    advancedExtension = new QWidget;
-
     highVoltageCutoffLabel = new QLabel(tr("High voltage cutoff:"));
+    highVoltageCutoffSpinBox = new QSpinBox;
 
+    QGridLayout *basicConfigLayout = new QGridLayout;
+    basicConfigLayout->addWidget(numWarmupCyclesLabel, 0, 0);
+    basicConfigLayout->addWidget(numWarmupCyclesSpinBox, 0, 1);
+    basicConfigLayout->addWidget(numMeasurementCyclesLabel, 1, 0);
+    basicConfigLayout->addWidget(numMeasurementCyclesSpinBox, 1, 1);
+    basicConfigLayout->addWidget(storageDischargeCheckBox, 2, 0);
+    basicConfigLayout->addWidget(storageDischargeLabel, 2, 1);
+    basicConfigWidget->setLayout(basicConfigLayout);
 
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(numWarmupCyclesLabel, 0, 0);
-    layout->addWidget(numWarmupCyclesSpinBox, 0, 1);
-    layout->addWidget(numMeasurementCyclesLabel, 1, 0);
-    layout->addWidget(numMeasurementCyclesSpinBox, 1, 1);
-    layout->addWidget(storageDischargeCheckBox, 2, 0);
-    layout->addWidget(storageDischargeLabel, 2, 1);
+    advancedConfigButton = new QPushButton(tr("Advanced"));
+    advancedConfigButton->setCheckable(true);
+    advancedConfigButton->setChecked(false);
+
+    advancedConfigExtensionWidget = new QWidget;
+    advancedConfigExtensionWidget->setVisible(false);
+
+    QGridLayout *advancedExtensionLayout = new QGridLayout;
+    advancedExtensionLayout->addWidget(highVoltageCutoffLabel, 0, 0);
+    advancedExtensionLayout->addWidget(highVoltageCutoffSpinBox, 0, 1);
+    advancedConfigExtensionWidget->setLayout(advancedExtensionLayout);
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(basicConfigWidget);
+    layout->addWidget(advancedConfigButton);
+    layout->addWidget(advancedConfigExtensionWidget);
     setLayout(layout);
+
+    connect(advancedConfigButton, &QPushButton::toggled, advancedConfigExtensionWidget, &QWidget::setVisible);
 }
