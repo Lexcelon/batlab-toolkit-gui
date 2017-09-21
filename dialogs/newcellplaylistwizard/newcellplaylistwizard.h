@@ -75,7 +75,7 @@ private:
     QLabel *storageDischargeLabel;
     QLabel *restPeriodLabel;
     QSpinBox *restPeriodSpinBox;
-    QWidget *advancedExtension;
+    QWidget *advancedConfigExtensionWidget;
     QLabel *highVoltageCutoffLabel;
     QSpinBox *highVoltageCutoffSpinBox;
     QLabel *lowVoltageCutoffLabel;
@@ -96,6 +96,8 @@ private:
     QSpinBox *storageDischargeVoltageSpinBox;
     QLabel *acceptableImpedanceThresholdLabel;
     QSpinBox *acceptableImpedanceThresholdSpinBox;
+    QWidget *basicConfigWidget;
+    QPushButton *advancedConfigButton;
 };
 
 #endif // NEWCELLPLAYLISTWIZARD_H
