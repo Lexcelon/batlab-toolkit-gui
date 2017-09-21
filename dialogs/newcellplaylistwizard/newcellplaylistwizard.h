@@ -69,33 +69,58 @@ public:
 private:
     QLabel *numWarmupCyclesLabel;
     QSpinBox *numWarmupCyclesSpinBox;
+
     QLabel *numMeasurementCyclesLabel;
     QSpinBox *numMeasurementCyclesSpinBox;
+
     QCheckBox *storageDischargeCheckBox;
-    QLabel *storageDischargeLabel;
+
+    QWidget *advancedConfigExtensionWidget;
+
     QLabel *restPeriodLabel;
     QSpinBox *restPeriodSpinBox;
-    QWidget *advancedConfigExtensionWidget;
+    QLabel *restPeriodUnit;
+
     QLabel *highVoltageCutoffLabel;
     QSpinBox *highVoltageCutoffSpinBox;
+    QLabel *highVoltageCutoffUnit;
+
     QLabel *lowVoltageCutoffLabel;
     QSpinBox *lowVoltageCutoffSpinBox;
+    QLabel *lowVoltageCutoffUnit;
+
     QLabel *chargeTemperatureCutoffLabel;
     QSpinBox *chargeTemperatureCutoffSpinBox;
+    QLabel *chargeTemperatureCutoffUnit;
+
     QLabel *dischargeTemperatureCutoffLabel;
     QSpinBox *dischargeTemperatureCutoffSpinBox;
+    QLabel *dischargeTemperatureCutoffUnit;
+
     QLabel *chargeCurrentSafetyCutoffLabel;
     QSpinBox *chargeCurrentSafetyCutoffSpinBox;
+    QLabel *chargeCurrentSafetyCutoffUnit;
+
     QLabel *dischargeCurrentSafetyCutoffLabel;
-    QSpinBox *dischargeCurrentSafetyCurrentSpinBox;
+    QSpinBox *dischargeCurrentSafetyCutoffSpinBox;
+    QLabel *dischargeCurrentSafetyCutoffUnit;
+
     QLabel *chargeRateLabel;
     QSpinBox *chargeRateSpinBox;
+    QLabel *chargeRateUnit;
+
     QLabel *dischargeRateLabel;
     QSpinBox *dischargeRateSpinBox;
+    QLabel *dischargeRateUnit;
+
     QLabel *storageDischargeVoltageLabel;
     QSpinBox *storageDischargeVoltageSpinBox;
-    QLabel *acceptableImpedanceThresholdLabel;
-    QSpinBox *acceptableImpedanceThresholdSpinBox;
+    QLabel *storageDischargeVoltageUnit;
+
+    QLabel *acceptableCellImpedanceThresholdLabel;
+    QSpinBox *acceptableCellImpedanceThresholdSpinBox;
+    QLabel *acceptableCellImpedanceThresholdUnit;
+
     QWidget *basicConfigWidget;
     QPushButton *advancedConfigButton;
 };

@@ -13,6 +13,9 @@ NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
     addPage(new BasicSetupPage);
     addPage(new ConfigPlaylistPage);
 
+    // TODO set this to good size once wizard implementation complete
+    this->setMinimumSize(500, 600);
+
     setWindowTitle(tr("New Cell Playlist"));
 }
 
@@ -129,7 +132,15 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
 
 void ConfigPlaylistPage::initializePage()
 {
+    numWarmupCyclesSpinBox->setMinimum(NUM_WARMUP_CYCLES_MIN);
+    numWarmupCyclesSpinBox->setMaximum(NUM_WARMUP_CYCLES_MAX);
+    numWarmupCyclesSpinBox->setValue(NUM_WARMUP_CYCLES_DEFAULT);
 
+    numMeasurementCyclesSpinBox->setMinimum(NUM_MEASUREMENT_CYCLES_MIN);
+    numMeasurementCyclesSpinBox->setMaximum(NUM_MEASUREMENT_CYCLES_MAX);
+    numMeasurementCyclesSpinBox->setValue(NUM_MEASUREMENT_CYCLES_DEFAULT);
+
+    storageDischargeCheckBox->setChecked(STORAGE_DISCHARGE_DEFAULT);
 }
 
 ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
@@ -141,22 +152,11 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
 
     numWarmupCyclesLabel = new QLabel(tr("Number of warmup cycles:"));
     numWarmupCyclesSpinBox = new QSpinBox;
-    numWarmupCyclesSpinBox->setMinimum(NUM_WARMUP_CYCLES_MIN);
-    numWarmupCyclesSpinBox->setMaximum(NUM_WARMUP_CYCLES_MAX);
-    numWarmupCyclesSpinBox->setValue(NUM_WARMUP_CYCLES_DEFAULT);
 
     numMeasurementCyclesLabel = new QLabel(tr("Number of measurement cycles:"));
     numMeasurementCyclesSpinBox = new QSpinBox;
-    numMeasurementCyclesSpinBox->setMinimum(NUM_MEASUREMENT_CYCLES_MIN);
-    numMeasurementCyclesSpinBox->setMaximum(NUM_MEASUREMENT_CYCLES_MAX);
-    numMeasurementCyclesSpinBox->setValue(NUM_MEASUREMENT_CYCLES_DEFAULT);
 
-    storageDischargeCheckBox = new QCheckBox;
-    storageDischargeCheckBox->setChecked(STORAGE_DISCHARGE_DEFAULT);
-    storageDischargeLabel = new QLabel(tr("Discharge cells to storage voltage after testing"));
-
-    highVoltageCutoffLabel = new QLabel(tr("High voltage cutoff:"));
-    highVoltageCutoffSpinBox = new QSpinBox;
+    storageDischargeCheckBox = new QCheckBox(tr("Discharge to storage voltage after testing"));
 
     QGridLayout *basicConfigLayout = new QGridLayout;
     basicConfigLayout->addWidget(numWarmupCyclesLabel, 0, 0);
@@ -164,26 +164,105 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     basicConfigLayout->addWidget(numMeasurementCyclesLabel, 1, 0);
     basicConfigLayout->addWidget(numMeasurementCyclesSpinBox, 1, 1);
     basicConfigLayout->addWidget(storageDischargeCheckBox, 2, 0);
-    basicConfigLayout->addWidget(storageDischargeLabel, 2, 1);
     basicConfigWidget->setLayout(basicConfigLayout);
 
     advancedConfigButton = new QPushButton(tr("Advanced"));
     advancedConfigButton->setCheckable(true);
     advancedConfigButton->setChecked(false);
+    advancedConfigButton->setMaximumWidth(80);
 
     advancedConfigExtensionWidget = new QWidget;
-    advancedConfigExtensionWidget->setVisible(false);
+    // Do not show the advanced options by default
+    advancedConfigExtensionWidget->hide();
+
+    restPeriodLabel = new QLabel(tr("Rest period:"));
+    restPeriodSpinBox = new QSpinBox;
+    restPeriodUnit = new QLabel(tr("sec"));
+
+    highVoltageCutoffLabel = new QLabel(tr("High voltage cutoff:"));
+    highVoltageCutoffSpinBox = new QSpinBox;
+    highVoltageCutoffUnit = new QLabel(tr("V"));
+
+    lowVoltageCutoffLabel = new QLabel(tr("Low voltage cutoff:"));
+    lowVoltageCutoffSpinBox = new QSpinBox;
+    lowVoltageCutoffUnit = new QLabel(tr("V"));
+
+    chargeTemperatureCutoffLabel = new QLabel(tr("Charge temperature cutoff:"));
+    chargeTemperatureCutoffSpinBox = new QSpinBox;
+    chargeTemperatureCutoffUnit = new QLabel(tr("°C"));
+
+    dischargeTemperatureCutoffLabel = new QLabel(tr("Discharge temperature cutoff:"));
+    dischargeTemperatureCutoffSpinBox = new QSpinBox;
+    dischargeTemperatureCutoffUnit = new QLabel(tr("°C"));
+
+    chargeCurrentSafetyCutoffLabel = new QLabel(tr("Charge current safety cutoff:"));
+    chargeCurrentSafetyCutoffSpinBox = new QSpinBox;
+    chargeCurrentSafetyCutoffUnit = new QLabel(tr("A"));
+
+    dischargeCurrentSafetyCutoffLabel = new QLabel(tr("Discharge current safety cutoff:"));
+    dischargeCurrentSafetyCutoffSpinBox = new QSpinBox;
+    dischargeCurrentSafetyCutoffUnit = new QLabel(tr("A"));
+
+    chargeRateLabel = new QLabel(tr("Charge rate:"));
+    chargeRateSpinBox = new QSpinBox;
+    chargeRateUnit = new QLabel(tr("A"));
+
+    dischargeRateLabel = new QLabel(tr("Discharge rate:"));
+    dischargeRateSpinBox = new QSpinBox;
+    dischargeRateUnit = new QLabel(tr("A"));
+
+    storageDischargeVoltageLabel = new QLabel(tr("Storage discharge voltage:"));
+    storageDischargeVoltageSpinBox = new QSpinBox;
+    storageDischargeVoltageUnit = new QLabel(tr("V"));
+
+    acceptableCellImpedanceThresholdLabel = new QLabel(tr("Acceptable cell impedance threshold:"));
+    acceptableCellImpedanceThresholdSpinBox = new QSpinBox;
+    acceptableCellImpedanceThresholdUnit = new QLabel(tr("Ω"));
 
     QGridLayout *advancedExtensionLayout = new QGridLayout;
-    advancedExtensionLayout->addWidget(highVoltageCutoffLabel, 0, 0);
-    advancedExtensionLayout->addWidget(highVoltageCutoffSpinBox, 0, 1);
+    advancedExtensionLayout->addWidget(restPeriodLabel, 0, 0);
+    advancedExtensionLayout->addWidget(restPeriodSpinBox, 0, 1);
+    advancedExtensionLayout->addWidget(restPeriodUnit, 0, 2);
+    advancedExtensionLayout->addWidget(highVoltageCutoffLabel, 1, 0);
+    advancedExtensionLayout->addWidget(highVoltageCutoffSpinBox, 1, 1);
+    advancedExtensionLayout->addWidget(highVoltageCutoffUnit, 1, 2);
+    advancedExtensionLayout->addWidget(lowVoltageCutoffLabel, 2, 0);
+    advancedExtensionLayout->addWidget(lowVoltageCutoffSpinBox, 2, 1);
+    advancedExtensionLayout->addWidget(lowVoltageCutoffUnit, 2, 2);
+    advancedExtensionLayout->addWidget(chargeTemperatureCutoffLabel, 3, 0);
+    advancedExtensionLayout->addWidget(chargeTemperatureCutoffSpinBox, 3, 1);
+    advancedExtensionLayout->addWidget(chargeTemperatureCutoffUnit, 3, 2);
+    advancedExtensionLayout->addWidget(dischargeTemperatureCutoffLabel, 4, 0);
+    advancedExtensionLayout->addWidget(dischargeTemperatureCutoffSpinBox, 4, 1);
+    advancedExtensionLayout->addWidget(dischargeTemperatureCutoffUnit, 4, 2);
+    advancedExtensionLayout->addWidget(chargeCurrentSafetyCutoffLabel, 5, 0);
+    advancedExtensionLayout->addWidget(chargeCurrentSafetyCutoffSpinBox, 5, 1);
+    advancedExtensionLayout->addWidget(chargeCurrentSafetyCutoffUnit, 5, 2);
+    advancedExtensionLayout->addWidget(dischargeCurrentSafetyCutoffLabel, 6, 0);
+    advancedExtensionLayout->addWidget(dischargeCurrentSafetyCutoffSpinBox, 6, 1);
+    advancedExtensionLayout->addWidget(dischargeCurrentSafetyCutoffUnit, 6, 2);
+    advancedExtensionLayout->addWidget(chargeRateLabel, 7, 0);
+    advancedExtensionLayout->addWidget(chargeRateSpinBox, 7, 1);
+    advancedExtensionLayout->addWidget(chargeRateUnit, 7, 2);
+    advancedExtensionLayout->addWidget(dischargeRateLabel, 8, 0);
+    advancedExtensionLayout->addWidget(dischargeRateSpinBox, 8, 1);
+    advancedExtensionLayout->addWidget(dischargeRateUnit, 8, 2);
+    advancedExtensionLayout->addWidget(storageDischargeVoltageLabel, 9, 0);
+    advancedExtensionLayout->addWidget(storageDischargeVoltageSpinBox, 9, 1);
+    advancedExtensionLayout->addWidget(storageDischargeVoltageUnit, 9, 2);
+    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdLabel, 10, 0);
+    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdSpinBox, 10, 1);
+    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdUnit, 10, 2);
     advancedConfigExtensionWidget->setLayout(advancedExtensionLayout);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(basicConfigWidget);
     layout->addWidget(advancedConfigButton);
     layout->addWidget(advancedConfigExtensionWidget);
+    // Don't smash all the buttons and labels in this layout
+    layout->setSizeConstraint(QLayout::SetMinimumSize);
     setLayout(layout);
 
+    // Show/hide the advanced options when the Advanced button is toggled
     connect(advancedConfigButton, &QPushButton::toggled, advancedConfigExtensionWidget, &QWidget::setVisible);
 }
