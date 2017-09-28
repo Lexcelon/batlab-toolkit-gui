@@ -65,6 +65,8 @@ class ConfigPlaylistPage : public QWizardPage
 public:
     ConfigPlaylistPage(QWidget *parent = 0);
     void initializePage();
+    void enableOrDisableStorageDischargeField();
+    void updateDynamicFieldBounds();
 
 private:
     QLabel *numWarmupCyclesLabel;

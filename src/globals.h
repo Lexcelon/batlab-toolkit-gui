@@ -135,7 +135,7 @@ struct testParms
 // Unit: Volts
 #define STORAGE_DISCHARGE_VOLTAGE_DEFAULT       3.7
 #define STORAGE_DISCHARGE_VOLTAGE_MIN           2.0
-// #define STORAGE_DISCHARGE_VOLTAGE_MAX           HIGH_VOLTAGE_CUTOFF_MAX used instead of new value
+// #define STORAGE_DISCHARGE_VOLTAGE_MAX           HIGH_VOLTAGE_CUTOFF used instead of new value
 
 #define IRON_PHOSPHATE_STORAGE_DISCHARGE_VOLTAGE_DEFAULT    3.2
 
