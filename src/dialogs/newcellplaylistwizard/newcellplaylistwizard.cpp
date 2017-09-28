@@ -1,10 +1,10 @@
-#include <QtWidgets>
-
 #include "newcellplaylistwizard.h"
 
 void NewCellPlaylistWizard::accept()
 {
 
+
+    QDialog::accept();
 }
 
 NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)

@@ -224,7 +224,6 @@ void BatlabMainWindow::onNewProjectWizard() {
 
 void BatlabMainWindow::onNewCellPlaylistWizard() {
     NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
-    connect(wizard, SIGNAL(emitFinished(QString)), this, SLOT(onLoadTest(QString)));
     wizard->setWizardStyle(QWizard::ModernStyle);
     wizard->show();
 }
