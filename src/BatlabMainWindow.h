@@ -51,7 +51,6 @@ public slots:
 
     void onNewCellPlaylistWizard();
     void onNewProjectWizard();
-    void onAddTests();
     void onLoadTest(QString);
     void onLoadProject();
 
