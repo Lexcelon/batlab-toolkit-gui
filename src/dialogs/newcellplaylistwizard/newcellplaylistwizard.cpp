@@ -165,6 +165,24 @@ void ConfigPlaylistPage::initializePage()
 
 }
 
+// Only allow the storage discharge voltage to be set if a storage discharge phase is desired
+void ConfigPlaylistPage::enableOrDisableStorageDischargeField()
+{
+    if (storageDischargeCheckBox->isChecked()) {
+        storageDischargeVoltageSpinBox->setEnabled(true);
+    } else {
+        storageDischargeVoltageSpinBox->setEnabled(false);
+    }
+}
+
+// When certain values are updated, other fields need to have their limits adjusted to keep some values from being greater than others
+void ConfigPlaylistPage::updateDynamicFieldBounds()
+{
+    chargeRateSpinBox->setMaximum(chargeCurrentSafetyCutoffSpinBox->value());
+    dischargeRateSpinBox->setMaximum(dischargeCurrentSafetyCutoffSpinBox->value());
+    storageDischargeVoltageSpinBox->setMaximum(highVoltageCutoffSpinBox->value());
+}
+
 ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
 {
     setTitle(tr("Configure Playlist Settings"));
@@ -186,6 +204,7 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
 
     storageDischargeCheckBox = new QCheckBox(tr("Discharge to storage voltage after testing"));
     storageDischargeCheckBox->setChecked(STORAGE_DISCHARGE_DEFAULT);
+    connect(storageDischargeCheckBox, &QCheckBox::toggled, this, &ConfigPlaylistPage::enableOrDisableStorageDischargeField);
 
     QGridLayout *basicConfigLayout = new QGridLayout;
     basicConfigLayout->addWidget(numWarmupCyclesLabel, 0, 0);
@@ -218,6 +237,7 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     highVoltageCutoffSpinBox->setMinimum(HIGH_VOLTAGE_CUTOFF_MIN);
     highVoltageCutoffSpinBox->setMaximum(HIGH_VOLTAGE_CUTOFF_MAX);
     highVoltageCutoffSpinBox->setValue(HIGH_VOLTAGE_CUTOFF_DEFAULT);
+    connect(highVoltageCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ConfigPlaylistPage::updateDynamicFieldBounds);
 
     lowVoltageCutoffLabel = new QLabel(tr("Low voltage cutoff:"));
     lowVoltageCutoffSpinBox = new QDoubleSpinBox;
@@ -248,6 +268,7 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     chargeCurrentSafetyCutoffSpinBox->setMinimum(CHARGE_CURRENT_SAFETY_CUTOFF_MIN);
     chargeCurrentSafetyCutoffSpinBox->setMaximum(CHARGE_CURRENT_SAFETY_CUTOFF_MAX);
     chargeCurrentSafetyCutoffSpinBox->setValue(CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT);
+    connect(chargeCurrentSafetyCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ConfigPlaylistPage::updateDynamicFieldBounds);
 
     dischargeCurrentSafetyCutoffLabel = new QLabel(tr("Discharge current safety cutoff:"));
     dischargeCurrentSafetyCutoffSpinBox = new QDoubleSpinBox;
@@ -256,27 +277,38 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     dischargeCurrentSafetyCutoffSpinBox->setMinimum(DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN);
     dischargeCurrentSafetyCutoffSpinBox->setMaximum(DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX);
     dischargeCurrentSafetyCutoffSpinBox->setValue(DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT);
+    connect(dischargeCurrentSafetyCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ConfigPlaylistPage::updateDynamicFieldBounds);
 
     chargeRateLabel = new QLabel(tr("Charge rate:"));
     chargeRateSpinBox = new QDoubleSpinBox;
     chargeRateUnit = new QLabel(tr("A"));
     chargeRateSpinBox->setSingleStep(0.1);
+    chargeRateSpinBox->setMinimum(CHARGE_RATE_MIN);
+    chargeRateSpinBox->setMaximum(CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT); // Max is updated dynamically to not be greater than the charge current safety cutoff
+    chargeRateSpinBox->setValue(CHARGE_RATE_DEFAULT);
 
     dischargeRateLabel = new QLabel(tr("Discharge rate:"));
     dischargeRateSpinBox = new QDoubleSpinBox;
     dischargeRateUnit = new QLabel(tr("A"));
     dischargeRateSpinBox->setSingleStep(0.1);
+    dischargeRateSpinBox->setMinimum(DISCHARGE_RATE_MIN);
+    dischargeRateSpinBox->setMaximum(DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT); // Max is updated dynamically to not be greater than the discharge current safety cutoff
+    dischargeRateSpinBox->setValue(DISCHARGE_RATE_DEFAULT);
 
     // TODO grey out if storage discharge not selected
     storageDischargeVoltageLabel = new QLabel(tr("Storage discharge voltage:"));
     storageDischargeVoltageSpinBox = new QDoubleSpinBox;
     storageDischargeVoltageUnit = new QLabel(tr("V"));
     storageDischargeVoltageSpinBox->setSingleStep(0.1);
+    storageDischargeVoltageSpinBox->setRange(STORAGE_DISCHARGE_VOLTAGE_MIN, HIGH_VOLTAGE_CUTOFF_DEFAULT); // Max is updated dynamically to not be greater than the high voltage cutoff
+    storageDischargeVoltageSpinBox->setValue(STORAGE_DISCHARGE_VOLTAGE_DEFAULT);
 
     acceptableCellImpedanceThresholdLabel = new QLabel(tr("Acceptable cell impedance threshold:"));
     acceptableCellImpedanceThresholdSpinBox = new QDoubleSpinBox;
     acceptableCellImpedanceThresholdUnit = new QLabel(tr("Ω"));
     acceptableCellImpedanceThresholdSpinBox->setSingleStep(0.1);
+    acceptableCellImpedanceThresholdSpinBox->setRange(ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN, ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX);
+    acceptableCellImpedanceThresholdSpinBox->setValue(ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT);
 
     QGridLayout *advancedExtensionLayout = new QGridLayout;
     advancedExtensionLayout->addWidget(restPeriodLabel, 0, 0);
