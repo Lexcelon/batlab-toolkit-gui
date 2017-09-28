@@ -2,14 +2,9 @@
 #define NEWCELLPLAYLISTWIZARD_H
 
 #include <QWizard>
-#include "globals.h"
+#include <QtWidgets>
 
-class QLabel;
-class QLineEdit;
-class QGroupBox;
-class QRadioButton;
-class QSpinBox;
-class QCheckBox;
+#include "globals.h"
 
 class NewCellPlaylistWizard : public QWizard
 {
