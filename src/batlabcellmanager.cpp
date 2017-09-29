@@ -44,7 +44,7 @@ void batlabCellManager::test()
 
 //     }
 //    onProcessCellData();
-qDebug() << Q_FUNC_INFO;
+//qDebug() << Q_FUNC_INFO;
 }
 
 //void batlabCellManager::onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage)

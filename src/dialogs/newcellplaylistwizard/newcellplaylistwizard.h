@@ -14,6 +14,7 @@ public:
     NewCellPlaylistWizard(QWidget *parent = 0);
 
     void accept() override;
+    void savePlaylist();
 };
 
 class IntroPage : public QWizardPage
@@ -36,8 +37,6 @@ public:
     void updateExampleCellName();
 
 private:
-    QLabel *cellPlaylistNameLabel;
-    QLineEdit *cellPlaylistNameLineEdit;
     QGroupBox *selectChemistryBox;
     QRadioButton *lipoRadioButton;
     QRadioButton *ironPhosphateRadioButton;
@@ -51,6 +50,8 @@ private:
     QSpinBox *startingCellNumberSpinBox;
     QLabel *exampleCellNameLabel;
     QLabel *exampleCellName;
+    QLabel *cellPlaylistNameLabel;
+    QLineEdit *cellPlaylistNameLineEdit;
 };
 
 class ConfigPlaylistPage : public QWizardPage
@@ -120,6 +121,28 @@ private:
 
     QWidget *basicConfigWidget;
     QPushButton *advancedConfigButton;
+};
+
+class SavePlaylistPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    SavePlaylistPage(QWidget *parent = 0);
+
+private:
+    QPushButton *skipButton;
+};
+
+class FinishPlaylistPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    FinishPlaylistPage(QWidget *parent = 0);
+
+private:
+
 };
 
 #endif // NEWCELLPLAYLISTWIZARD_H
