@@ -12,11 +12,15 @@ NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
     addPage(new IntroPage);
     addPage(new BasicSetupPage);
     addPage(new ConfigPlaylistPage);
+    addPage(new SavePlaylistPage);
+    addPage(new FinishPlaylistPage);
 
     // TODO set this to good size once wizard implementation complete
     this->setMinimumSize(500, 600);
 
     setWindowTitle(tr("New Cell Playlist"));
+
+    connect(this, &QWizard::currentIdChanged, this, &NewCellPlaylistWizard::savePlaylist);
 }
 
 IntroPage::IntroPage(QWidget *parent) : QWizardPage(parent)
@@ -160,8 +164,6 @@ void ConfigPlaylistPage::initializePage()
             storageDischargeVoltageSpinBox->setValue(STORAGE_DISCHARGE_VOLTAGE_DEFAULT);
         }
     }
-
-
 }
 
 // Only allow the storage discharge voltage to be set if a storage discharge phase is desired
@@ -369,4 +371,33 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
 
     // Show/hide the advanced options when the Advanced button is toggled
     connect(advancedConfigButton, &QPushButton::toggled, advancedConfigExtensionWidget, &QWidget::setVisible);
+}
+
+SavePlaylistPage::SavePlaylistPage(QWidget *parent) : QWizardPage(parent)
+{
+    setTitle(tr("Save Playlist"));
+    setSubTitle(tr("Save your playlist to a file."));
+
+    skipButton = new QPushButton(tr("Skip >"));
+//    connect(skipButton, &QPushButton::toggled, this->wizard(), &NewCellPlaylistWizard::next);
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(skipButton);
+    setLayout(layout);
+
+    setButtonText(QWizard::NextButton, "Save >");
+}
+
+void NewCellPlaylistWizard::savePlaylist()
+{
+    if (currentId() == 4) {
+        qDebug() << "save";
+    }
+
+}
+
+FinishPlaylistPage::FinishPlaylistPage(QWidget *parent) : QWizardPage(parent)
+{
+    setTitle(tr("Finish New Playlist"));
+    setSubTitle(tr("The new playlist will be loaded and can be executed on your battery cells."));
 }

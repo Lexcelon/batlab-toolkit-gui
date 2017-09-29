@@ -24,7 +24,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     loadProject = new QPushButton(QString("Load Project File"));
     newProjectWizard = new QPushButton(QString("New Project Wizard"));
     report = new QPushButton(QString("Debug GUI"));
-    exit = new QPushButton(QString("Exit"));
 
     // Place the buttons in the button box in our gui
     ui->buttonBox->addButton(newProjectWizard,QDialogButtonBox::ActionRole);
@@ -32,7 +31,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     ui->buttonBox->addButton(connectToBatlabs,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(report,QDialogButtonBox::ActionRole);
-    ui->buttonBox->addButton(exit,QDialogButtonBox::ActionRole);
 
     // PLACEHOLDER TEXT WILL REMOVE
     ui->textBrowser->insertPlainText(QString(">> Welcome to Batlab!\n" ));
@@ -40,8 +38,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     ui->textBrowser->insertPlainText(QString(">> Don't forget to plug in your Batlab(s) and click Connect to Batlab!\n" ));
 
     // Making the buttons functional
-    connect(exit, &QPushButton::clicked,
-            this, &BatlabMainWindow::close);
     connect(test, &QPushButton::clicked,
             this, &BatlabMainWindow::onTest);
     connect(report, &QPushButton::clicked,
@@ -110,7 +106,6 @@ void BatlabMainWindow::onReport()
 
 BatlabMainWindow::~BatlabMainWindow()
 {
-    if (exit) delete exit;
     if (test) delete test;
     if (report) delete report;
     if (loadProject) delete loadProject;
