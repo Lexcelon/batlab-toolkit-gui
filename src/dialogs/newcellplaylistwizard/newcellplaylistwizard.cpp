@@ -2,17 +2,23 @@
 
 void NewCellPlaylistWizard::accept()
 {
-
-
     QDialog::accept();
 }
 
 NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
 {
+    skipped = false;
+
     addPage(new IntroPage);
     addPage(new BasicSetupPage);
     addPage(new ConfigPlaylistPage);
-    addPage(new SavePlaylistPage);
+
+    // Feels hackish, but I don't have access to internet and couldn't get child page to connect to parent wizard
+    // So, I am doing it in reverse
+    SavePlaylistPage *savePlaylistPage = new SavePlaylistPage;
+    addPage(savePlaylistPage);
+    connect(savePlaylistPage->skipButton, &QPushButton::clicked, this, &NewCellPlaylistWizard::skipToNextPage);
+
     addPage(new FinishPlaylistPage);
 
     // TODO set this to good size once wizard implementation complete
@@ -379,7 +385,8 @@ SavePlaylistPage::SavePlaylistPage(QWidget *parent) : QWizardPage(parent)
     setSubTitle(tr("Save your playlist to a file."));
 
     skipButton = new QPushButton(tr("Skip >"));
-//    connect(skipButton, &QPushButton::toggled, this->wizard(), &NewCellPlaylistWizard::next);
+    skipButton->setMaximumWidth(80);
+
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(skipButton);
@@ -390,10 +397,26 @@ SavePlaylistPage::SavePlaylistPage(QWidget *parent) : QWizardPage(parent)
 
 void NewCellPlaylistWizard::savePlaylist()
 {
+    // This is called every time the user hits next, so we only want this when on the correct page
     if (currentId() == 4) {
-        qDebug() << "save";
+        if (skipped == false) {
+            QString dir = QFileDialog::getExistingDirectory(this, tr("Choose a directory to save your project file."),
+                                                        "C:/",
+                                                        QFileDialog::ShowDirsOnly
+                                                        | QFileDialog::DontResolveSymlinks);
+
+            QString projectName = dir;
+            qDebug() << projectName;
+        }
+        skipped = false;
     }
 
+}
+
+void NewCellPlaylistWizard::skipToNextPage()
+{
+    skipped = true;
+    next();
 }
 
 FinishPlaylistPage::FinishPlaylistPage(QWidget *parent) : QWizardPage(parent)

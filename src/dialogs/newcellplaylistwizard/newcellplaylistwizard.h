@@ -15,6 +15,10 @@ public:
 
     void accept() override;
     void savePlaylist();
+    void skipToNextPage();
+
+private:
+    bool skipped;
 };
 
 class IntroPage : public QWizardPage
@@ -129,9 +133,10 @@ class SavePlaylistPage : public QWizardPage
 
 public:
     SavePlaylistPage(QWidget *parent = 0);
+    QPushButton *skipButton;
 
 private:
-    QPushButton *skipButton;
+
 };
 
 class FinishPlaylistPage : public QWizardPage
