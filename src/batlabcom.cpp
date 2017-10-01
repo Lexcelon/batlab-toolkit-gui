@@ -18,7 +18,8 @@ batlabCom::batlabCom(QObject *parent) : QObject(parent) {
         qDebug() << "Failure Opening Port";
     }
 
-     connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
+    connect(port,SIGNAL(errorOccurred(QSerialPort::SerialPortError)),this,SLOT(checkCommPortStatus()));
+    connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
 }
 
 
@@ -33,6 +34,7 @@ batlabCom::batlabCom(QString item, QObject *parent) : QObject(parent)
         qDebug() << "Failure Opening Port";
     }
 
+    connect(port,SIGNAL(errorOccurred(QSerialPort::SerialPortError)),this,SLOT(checkCommPortStatus()));
     connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
     qDebug() << "Read Serial Number";
     onReadReg(0x04,unitNamespace::SERIAL_NUM);
@@ -151,6 +153,15 @@ void batlabCom::onWriteReg(int batlabNamespace, int batlabRegister, int num)
 
     port->write(data,5);
     port->waitForBytesWritten(1000);
+}
+
+void batlabCom::checkCommPortStatus() {
+
+    // Value of 9 indicates that Batlab was disconnected.
+    if (port->QSerialPort::error() == 9) {
+        emit emitBatlabDisconnect(portName);
+    }
+
 }
 
 

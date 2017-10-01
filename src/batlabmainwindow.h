@@ -39,6 +39,7 @@ public:
 
 public slots:
     void onConnectToBatlabs(QStringList names);
+    void removeBatlabConnection(QString batlabUnitPortName);
     void onGetBatlabNames();
     void onTest();
     void onReport();
@@ -124,6 +125,12 @@ private slots:
     void aboutBatlabToolkit();
     void documentation();
     void contact();
+
+    void makeBatlabConnections(QStringList availCommPortNames);
+    void updateBatlabConnections();
+
+    QStringList getAvailCommPortNames();
+
 };
 
 #endif // BATLAB_H

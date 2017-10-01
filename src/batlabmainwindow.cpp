@@ -39,7 +39,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     connect(report, &QPushButton::clicked,
             this, &BatlabMainWindow::onReport);
     connect(connectToBatlabs, &QPushButton::clicked,
-            this, &BatlabMainWindow::onGetBatlabNames);
+            this, &BatlabMainWindow::updateBatlabConnections);
 
     connect(this, &BatlabMainWindow::emitUpdateText,
             this, &BatlabMainWindow::onUpdateText);
@@ -477,6 +477,75 @@ void BatlabMainWindow::onUpdateText(QString str)
     } else {
         ui->textBrowser->insertPlainText(str);
     }
+}
+
+// Returns QStringList of names of available comm ports.
+QStringList BatlabMainWindow::getAvailCommPortNames() {
+
+    QList<QSerialPortInfo> availCommPorts = QSerialPortInfo::availablePorts();
+    QStringList availCommPortNames;
+
+    for (int i = 0; i < availCommPorts.size(); ++i) {
+        availCommPortNames.append(availCommPorts[i].portName());
+    }
+
+    return availCommPortNames;
+
+}
+
+void BatlabMainWindow::makeBatlabConnections(QStringList availCommPortNames) {
+
+    // If the connected Batlab has a port name that matches any of the available port names, ignore it
+    // (it does not need to be re-connected). If no match is found, then make the connection.
+
+    for (int i = 0; i < availCommPortNames.size(); ++i) {
+
+        bool connectBatlab = true;
+        for (int j = 0; j < batlabComObjects.size(); ++j) {
+
+            if (batlabComObjects[j]->getName() == availCommPortNames[i]) {
+                connectBatlab = false;
+            }
+    }
+
+        if (connectBatlab) {
+
+            batlabComObjects.push_back(new batlabCom(availCommPortNames[i]));
+            connect(batlabComObjects[i], &batlabCom::emitBatlabDisconnect, this, &BatlabMainWindow::removeBatlabConnection);
+        }
+    }
+}
+
+void BatlabMainWindow::updateBatlabConnections() {
+
+    //Updates Batlab connections (if any need to be made).
+    makeBatlabConnections(getAvailCommPortNames());
+
+    return;
+}
+
+// Disconnecting a Batlab unit drives the Batlab Comm class to send its port name to this function
+// so that it may be removed from the list of connected Batlab units.
+void BatlabMainWindow::removeBatlabConnection(QString batlabUnitPortName) {
+
+    bool foundIndexToDelete = false;
+    int currentIndex = 0;
+
+    while (!foundIndexToDelete && (currentIndex < batlabComObjects.size())) {
+        if (batlabComObjects[currentIndex]->getName() != batlabUnitPortName) {
+                currentIndex++;
+            }
+
+        else {
+            foundIndexToDelete = true;
+        }
+    }
+
+    if (foundIndexToDelete) {
+        batlabComObjects.removeAt(currentIndex);
+    }
+
+    return;
 }
 
 void BatlabMainWindow::onConnectToBatlabs(QStringList names)
