@@ -28,6 +28,8 @@ signals:
     void emitReadCommand (int, int, int);
     void emitWriteCommand(int, int, int, int);
 
+    void emitBatlabDisconnect (QString);
+
 
 public slots:
     void onRead();
@@ -35,6 +37,8 @@ public slots:
     void onWriteReg(int, int, int);
     QString getName() { return portName; }
     int getSerialNumber() {return serialNumber; }
+
+    void checkCommPortStatus(); //Status for unit port that emits the disconnect signal. Called when port error is detected.
 
 private:
     QSerialPort * port;
