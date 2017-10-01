@@ -49,7 +49,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     connect(newProjectWizard,&QPushButton::clicked,
             this, &BatlabMainWindow::onNewProjectWizard);
     connect(connectToBatlabs, &QPushButton::clicked,
-            this, &BatlabMainWindow::onGetBatlabNames);
+            this, &BatlabMainWindow::updateBatlabConnections);
     connect(loadProject, &QPushButton::clicked,
             this, &BatlabMainWindow::onLoadProject);
     connect(this, &BatlabMainWindow::emitUpdateText,
@@ -418,40 +418,122 @@ void BatlabMainWindow::onUpdateText(QString str)
     }
 }
 
-void BatlabMainWindow::onConnectToBatlabs(QStringList names)
-{
-    qDebug() << names;
-    for (int i = 0; i < names.size(); ++i) {
+//void BatlabMainWindow::onConnectToBatlabs(QStringList names)
+//{
+//    qDebug() << names;
+//    for (int i = 0; i < names.size(); ++i) {
+//        bool connectBatlab = true;
+//        for (int j = 0; j < batlabComObjects.size(); ++j) {
+//            if (batlabComObjects[j]->getName() == names[i]) {
+//                connectBatlab = false;
+//            }
+//        }
+//        if (connectBatlab) {
+//            batlabComObjects.push_back(new batlabCom(names[i]));
+//            connect(batlabComObjects[i], &batlabCom::emitReadCommand,
+//                    this, &BatlabMainWindow::onReceiveReadCommand);
+//            connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
+//                    this, &BatlabMainWindow::onReceiveWriteCommand);
+
+//            connect(batlabComObjects[i], &batlabCom::emitReadResponse,
+//                    this, &BatlabMainWindow::onReceiveReadResponse);
+//            connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
+//                    this, &BatlabMainWindow::onReceiveWriteResponse);
+
+//            connect(batlabComObjects[i], &batlabCom::emitStream,
+//                    this, &BatlabMainWindow::onReceiveStream);
+//        }
+//    }
+//}
+
+//void BatlabMainWindow::onGetBatlabNames()
+//{
+//    QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
+//    QStringList names;
+//    for (int i = 0; i< list.size(); ++i) {
+//        names.append(list[i].portName());
+//    }
+//    onConnectToBatlabs(names);
+//}
+
+void BatlabMainWindow::updateBatlabConnections() {
+
+    // Updates Batlab connections (if any need to be made).
+    makeBatlabConnections(getAvailCommPortNames());
+
+    return;
+
+}
+
+QStringList BatlabMainWindow::getAvailCommPortNames() {
+
+    QList<QSerialPortInfo> availCommPorts = QSerialPortInfo::availablePorts();
+    QStringList availCommPortNames;
+
+    for (int i = 0; i < availCommPorts.size(); ++i) {
+        availCommPortNames.append(availCommPorts[i].portName());
+    }
+
+    return availCommPortNames;
+
+}
+
+void BatlabMainWindow::makeBatlabConnections(QStringList availCommPortNames) {
+
+    qDebug() << availCommPortNames;
+    // If the connected Batlab has a port name that matches any of the available port names, ignore it
+    // (it does not need to be re-connected). If no match is found, then make the connection.
+
+    for (int i = 0; i < availCommPortNames.size(); ++i) {
         bool connectBatlab = true;
         for (int j = 0; j < batlabComObjects.size(); ++j) {
-            if (batlabComObjects[j]->getName() == names[i]) {
+
+            if (batlabComObjects[j]->getName() == availCommPortNames[i]) {
                 connectBatlab = false;
             }
         }
+
         if (connectBatlab) {
-            batlabComObjects.push_back(new batlabCom(names[i]));
-            connect(batlabComObjects[i], &batlabCom::emitReadCommand,
-                    this, &BatlabMainWindow::onReceiveReadCommand);
-            connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
-                    this, &BatlabMainWindow::onReceiveWriteCommand);
-
-            connect(batlabComObjects[i], &batlabCom::emitReadResponse,
-                    this, &BatlabMainWindow::onReceiveReadResponse);
-            connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
-                    this, &BatlabMainWindow::onReceiveWriteResponse);
-
-            connect(batlabComObjects[i], &batlabCom::emitStream,
-                    this, &BatlabMainWindow::onReceiveStream);
+            batlabComObjects.push_back(new batlabCom(availCommPortNames[i]));
+            connect(batlabComObjects[i], &batlabCom::emitBatlabDisconnect, this, &BatlabMainWindow::removeBatlabConnection);
+            connect(batlabComObjects[i], &batlabCom::emitReadCommand, this, &BatlabMainWindow::onReceiveReadCommand);
+            connect(batlabComObjects[i], &batlabCom::emitWriteCommand, this, &BatlabMainWindow::onReceiveWriteCommand);
+            connect(batlabComObjects[i], &batlabCom::emitReadResponse, this, &BatlabMainWindow::onReceiveReadResponse);
+            connect(batlabComObjects[i], &batlabCom::emitWriteResponse, this, &BatlabMainWindow::onReceiveWriteResponse);
+            connect(batlabComObjects[i], &batlabCom::emitStream, this, &BatlabMainWindow::onReceiveStream);
         }
     }
 }
 
-void BatlabMainWindow::onGetBatlabNames()
-{
-    QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
-    QStringList names;
-    for (int i = 0; i< list.size(); ++i) {
-        names.append(list[i].portName());
+
+// Disconnecting a Batlab unit drives the Batlab unit class to send its port name to this function
+// so that it may be removed from the list of connected Batlab units.
+
+void BatlabMainWindow::removeBatlabConnection(QString batlabUnitPortName) {
+
+    //writeToShell("Disconnected Batlab: " + batlabUnitPortName + "\n");
+
+    bool foundIndexToDelete = false;
+    int currentIndex = 0;
+
+    while (!foundIndexToDelete && (currentIndex < batlabComObjects.size())) {
+
+        if (batlabComObjects[currentIndex]->getName() != batlabUnitPortName) {
+            currentIndex++;
+        }
+
+        else {
+            foundIndexToDelete = true;
+        }
     }
-    onConnectToBatlabs(names);
+
+    if (foundIndexToDelete) {
+        batlabComObjects.removeAt(currentIndex);
+    }
+
+    else {
+        //writeToShell("We Have Problems");
+    }
+
+    return;
 }

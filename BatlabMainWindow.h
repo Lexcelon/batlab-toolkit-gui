@@ -38,8 +38,8 @@ public:
     ~BatlabMainWindow();
 
 public slots:
-    void onConnectToBatlabs(QStringList names);
-    void onGetBatlabNames();
+    //void onConnectToBatlabs(QStringList names);
+    //void onGetBatlabNames();
     void onTest();
     void onReport();
 
@@ -62,6 +62,8 @@ public slots:
     void onFinishedTests(QString designator, int testNum);
 
     void onUpdateText(QString);
+
+    void removeBatlabConnection(QString batlabUnitPortName);
 
 signals:
     void emitUpdateText(QString);
@@ -96,6 +98,10 @@ private:
     batlabCellManager * cellManager = nullptr;
 
     QTableWidget * tableWidget = nullptr;
+
+    QStringList getAvailCommPortNames();
+    void makeBatlabConnections(QStringList availCommPortNames); //Helper function for making connections
+    void updateBatlabConnections(); //Driven by connectToBatlabs button
 
 };
 
