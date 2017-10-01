@@ -21,13 +21,9 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     // Create the buttons we use in the gui
     connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
     test = new QPushButton(QString("Test"));
-    loadProject = new QPushButton(QString("Load Project File"));
-    newProjectWizard = new QPushButton(QString("New Project Wizard"));
     report = new QPushButton(QString("Debug GUI"));
 
     // Place the buttons in the button box in our gui
-    ui->buttonBox->addButton(newProjectWizard,QDialogButtonBox::ActionRole);
-    ui->buttonBox->addButton(loadProject,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(connectToBatlabs,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(report,QDialogButtonBox::ActionRole);
@@ -42,14 +38,12 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
             this, &BatlabMainWindow::onTest);
     connect(report, &QPushButton::clicked,
             this, &BatlabMainWindow::onReport);
-    connect(newProjectWizard,&QPushButton::clicked,
-            this, &BatlabMainWindow::onNewProjectWizard);
     connect(connectToBatlabs, &QPushButton::clicked,
             this, &BatlabMainWindow::onGetBatlabNames);
-    connect(loadProject, &QPushButton::clicked,
-            this, &BatlabMainWindow::onLoadProject);
+
     connect(this, &BatlabMainWindow::emitUpdateText,
             this, &BatlabMainWindow::onUpdateText);
+
     connect(ui->testDataButton, &QPushButton::clicked,
             this, &BatlabMainWindow::onTestDataButton);
     connect(ui->processPackButton, &QPushButton::clicked,
@@ -60,7 +54,87 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     connect(ui->newCellPlaylistButton, &QPushButton::clicked,
             this, &BatlabMainWindow::onNewCellPlaylistWizard);
 
-    cellManager->test();
+    createActions();
+    createMenus();
+}
+
+void BatlabMainWindow::createActions()
+{
+    newCellPlaylistAct = new QAction(tr("&New Cell Playlist"), this);
+    newCellPlaylistAct->setShortcuts(QKeySequence::New);
+    newCellPlaylistAct->setStatusTip(tr("Create a new cell playlist"));
+    connect(newCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::newCellPlaylist);
+
+    openCellPlaylistAct = new QAction(tr("&Open Cell Playlist"), this);
+    openCellPlaylistAct->setShortcuts(QKeySequence::Open);
+    openCellPlaylistAct->setStatusTip(tr("Open an existing cell playlist"));
+    connect(openCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::openCellPlaylist);
+
+    exitBatlabToolkitAct = new QAction(tr("Exit"), this);
+    exitBatlabToolkitAct->setShortcuts(QKeySequence::Close);
+    exitBatlabToolkitAct->setStatusTip(tr("Close Batlab Toolkit"));
+    connect(exitBatlabToolkitAct, &QAction::triggered, this, &BatlabMainWindow::exitBatlabToolkit);
+
+    debugBatlabAct = new QAction(tr("Debug Batlab"), this);
+    debugBatlabAct->setStatusTip(tr("Debug a Batlab by reading and writing registers"));
+    connect(debugBatlabAct, &QAction::triggered, this, &BatlabMainWindow::debugBatlab);
+}
+
+void BatlabMainWindow::createMenus()
+{
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(newCellPlaylistAct);
+    fileMenu->addAction(openCellPlaylistAct);
+    fileMenu->addSeparator();
+    fileMenu->addAction(exitBatlabToolkitAct);
+
+    toolsMenu = menuBar()->addMenu(tr("&Tools"));
+    toolsMenu->addAction(debugBatlabAct);
+}
+
+void BatlabMainWindow::newCellPlaylist()
+{
+    onNewCellPlaylistWizard();
+}
+
+void BatlabMainWindow::openCellPlaylist()
+{
+    onLoadProject();
+}
+
+void BatlabMainWindow::exitBatlabToolkit()
+{
+    this->close();
+}
+
+void BatlabMainWindow::debugBatlab()
+{
+    onReport();
+}
+
+void BatlabMainWindow::checkForUpdates()
+{
+    // TODO
+}
+
+void BatlabMainWindow::checkForBatlabFirmwareUpdates()
+{
+    // TODO
+}
+
+void BatlabMainWindow::aboutBatlabToolkit()
+{
+    // TODO
+}
+
+void BatlabMainWindow::documentation()
+{
+    // TODO
+}
+
+void BatlabMainWindow::contact()
+{
+    // TODO
 }
 
 void BatlabMainWindow::onTest()
@@ -108,8 +182,6 @@ BatlabMainWindow::~BatlabMainWindow()
 {
     if (test) delete test;
     if (report) delete report;
-    if (loadProject) delete loadProject;
-    if (newProjectWizard) delete newProjectWizard;
     delete ui;
 }
 

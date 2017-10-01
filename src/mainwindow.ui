@@ -292,8 +292,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>407</width>
-                <height>296</height>
+                <width>385</width>
+                <height>294</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_7">
@@ -342,7 +342,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -352,7 +352,7 @@
   <customwidget>
    <class>HistogramWidget</class>
    <extends>QWidget</extends>
-   <header>HistogramWidget.h</header>
+   <header>histogramwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
