@@ -6,6 +6,8 @@
 
 #include "globals.h"
 
+QString cellName(QString designator, int numCells, int startingCellNum, int cellId);
+
 class NewCellPlaylistWizard : public QWizard
 {
     Q_OBJECT
@@ -19,6 +21,7 @@ public:
 
 private:
     bool skipped;
+    QJsonObject jsonFromNewPlaylistWizard();
 };
 
 class IntroPage : public QWizardPage

@@ -1,4 +1,4 @@
-#include "TestData.h"
+#include "testdata.h"
 
 TestData::TestData(QObject *parent) : QObject(parent)
 {

@@ -1,5 +1,5 @@
-#include "inputStringDialog.h"
-#include "ui_inputStringDialog.h"
+#include "inputstringdialog.h"
+#include "ui_inputstringdialog.h"
 
 inputStringDialog::inputStringDialog(QWidget *parent) :
     QDialog(parent),

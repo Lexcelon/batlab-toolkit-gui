@@ -1,4 +1,4 @@
-#include "HistogramWidget.h"
+#include "histogramwidget.h"
 
 #include <QBarSet>
 HistogramWidget::HistogramWidget(QWidget *parent) : QWidget(parent)

@@ -1,9 +1,9 @@
-#include "BatlabMainWindow.h"
-#include "ui_MainWindow.h"
+#include "batlabmainwindow.h"
+#include "ui_mainwindow.h"
 #include <QFileDialog>
-#include "inputStringDialog.h"
+#include "inputstringdialog.h"
 #include <QScrollBar>
-#include <CellModuleWidget.h>
+#include <cellmodulewidget.h>
 #include <QSpacerItem>
 
 BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
@@ -32,7 +32,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(report,QDialogButtonBox::ActionRole);
 
-    // PLACEHOLDER TEXT WILL REMOVE
+    // TODO PLACEHOLDER TEXT WILL REMOVE
     ui->textBrowser->insertPlainText(QString(">> Welcome to Batlab!\n" ));
     ui->textBrowser->insertPlainText(QString(">> Click New Project Wizard or Load Project File to begin.\n" ));
     ui->textBrowser->insertPlainText(QString(">> Don't forget to plug in your Batlab(s) and click Connect to Batlab!\n" ));
