@@ -69,33 +69,60 @@ public:
 private:
     QLabel *numWarmupCyclesLabel;
     QSpinBox *numWarmupCyclesSpinBox;
+
     QLabel *numMeasurementCyclesLabel;
     QSpinBox *numMeasurementCyclesSpinBox;
+
     QCheckBox *storageDischargeCheckBox;
-    QLabel *storageDischargeLabel;
+
+    QWidget *advancedConfigExtensionWidget;
+
     QLabel *restPeriodLabel;
-    QSpinBox *restPeriodSpinBox;
-    QWidget *advancedExtension;
+    QDoubleSpinBox *restPeriodSpinBox;
+    QLabel *restPeriodUnit;
+
     QLabel *highVoltageCutoffLabel;
-    QSpinBox *highVoltageCutoffSpinBox;
+    QDoubleSpinBox *highVoltageCutoffSpinBox;
+    QLabel *highVoltageCutoffUnit;
+
     QLabel *lowVoltageCutoffLabel;
-    QSpinBox *lowVoltageCutoffSpinBox;
+    QDoubleSpinBox *lowVoltageCutoffSpinBox;
+    QLabel *lowVoltageCutoffUnit;
+
     QLabel *chargeTemperatureCutoffLabel;
-    QSpinBox *chargeTemperatureCutoffSpinBox;
+    QDoubleSpinBox *chargeTemperatureCutoffSpinBox;
+    QLabel *chargeTemperatureCutoffUnit;
+
     QLabel *dischargeTemperatureCutoffLabel;
-    QSpinBox *dischargeTemperatureCutoffSpinBox;
+    QDoubleSpinBox *dischargeTemperatureCutoffSpinBox;
+    QLabel *dischargeTemperatureCutoffUnit;
+
     QLabel *chargeCurrentSafetyCutoffLabel;
-    QSpinBox *chargeCurrentSafetyCutoffSpinBox;
+    QDoubleSpinBox *chargeCurrentSafetyCutoffSpinBox;
+    QLabel *chargeCurrentSafetyCutoffUnit;
+
     QLabel *dischargeCurrentSafetyCutoffLabel;
-    QSpinBox *dischargeCurrentSafetyCurrentSpinBox;
+    QDoubleSpinBox *dischargeCurrentSafetyCutoffSpinBox;
+    QLabel *dischargeCurrentSafetyCutoffUnit;
+
     QLabel *chargeRateLabel;
-    QSpinBox *chargeRateSpinBox;
+    QDoubleSpinBox *chargeRateSpinBox;
+    QLabel *chargeRateUnit;
+
     QLabel *dischargeRateLabel;
-    QSpinBox *dischargeRateSpinBox;
+    QDoubleSpinBox *dischargeRateSpinBox;
+    QLabel *dischargeRateUnit;
+
     QLabel *storageDischargeVoltageLabel;
-    QSpinBox *storageDischargeVoltageSpinBox;
-    QLabel *acceptableImpedanceThresholdLabel;
-    QSpinBox *acceptableImpedanceThresholdSpinBox;
+    QDoubleSpinBox *storageDischargeVoltageSpinBox;
+    QLabel *storageDischargeVoltageUnit;
+
+    QLabel *acceptableCellImpedanceThresholdLabel;
+    QDoubleSpinBox *acceptableCellImpedanceThresholdSpinBox;
+    QLabel *acceptableCellImpedanceThresholdUnit;
+
+    QWidget *basicConfigWidget;
+    QPushButton *advancedConfigButton;
 };
 
 #endif // NEWCELLPLAYLISTWIZARD_H
