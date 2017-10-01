@@ -512,6 +512,19 @@ void BatlabMainWindow::makeBatlabConnections(QStringList availCommPortNames) {
 
             batlabComObjects.push_back(new batlabCom(availCommPortNames[i]));
             connect(batlabComObjects[i], &batlabCom::emitBatlabDisconnect, this, &BatlabMainWindow::removeBatlabConnection);
+
+            connect(batlabComObjects[i], &batlabCom::emitReadCommand,
+                    this, &BatlabMainWindow::onReceiveReadCommand);
+            connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
+                    this, &BatlabMainWindow::onReceiveWriteCommand);
+
+            connect(batlabComObjects[i], &batlabCom::emitReadResponse,
+                    this, &BatlabMainWindow::onReceiveReadResponse);
+            connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
+                    this, &BatlabMainWindow::onReceiveWriteResponse);
+
+            connect(batlabComObjects[i], &batlabCom::emitStream,
+                    this, &BatlabMainWindow::onReceiveStream);
         }
     }
 }
@@ -548,40 +561,40 @@ void BatlabMainWindow::removeBatlabConnection(QString batlabUnitPortName) {
     return;
 }
 
-void BatlabMainWindow::onConnectToBatlabs(QStringList names)
-{
-    qDebug() << names;
-    for (int i = 0; i < names.size(); ++i) {
-        bool connectBatlab = true;
-        for (int j = 0; j < batlabComObjects.size(); ++j) {
-            if (batlabComObjects[j]->getName() == names[i]) {
-                connectBatlab = false;
-            }
-        }
-        if (connectBatlab) {
-            batlabComObjects.push_back(new batlabCom(names[i]));
-            connect(batlabComObjects[i], &batlabCom::emitReadCommand,
-                    this, &BatlabMainWindow::onReceiveReadCommand);
-            connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
-                    this, &BatlabMainWindow::onReceiveWriteCommand);
+//void BatlabMainWindow::onConnectToBatlabs(QStringList names)
+//{
+//    qDebug() << names;
+//    for (int i = 0; i < names.size(); ++i) {
+//        bool connectBatlab = true;
+//        for (int j = 0; j < batlabComObjects.size(); ++j) {
+//            if (batlabComObjects[j]->getName() == names[i]) {
+//                connectBatlab = false;
+//            }
+//        }
+//        if (connectBatlab) {
+//            batlabComObjects.push_back(new batlabCom(names[i]));
+//            connect(batlabComObjects[i], &batlabCom::emitReadCommand,
+//                    this, &BatlabMainWindow::onReceiveReadCommand);
+//            connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
+//                    this, &BatlabMainWindow::onReceiveWriteCommand);
 
-            connect(batlabComObjects[i], &batlabCom::emitReadResponse,
-                    this, &BatlabMainWindow::onReceiveReadResponse);
-            connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
-                    this, &BatlabMainWindow::onReceiveWriteResponse);
+//            connect(batlabComObjects[i], &batlabCom::emitReadResponse,
+//                    this, &BatlabMainWindow::onReceiveReadResponse);
+//            connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
+//                    this, &BatlabMainWindow::onReceiveWriteResponse);
 
-            connect(batlabComObjects[i], &batlabCom::emitStream,
-                    this, &BatlabMainWindow::onReceiveStream);
-        }
-    }
-}
+//            connect(batlabComObjects[i], &batlabCom::emitStream,
+//                    this, &BatlabMainWindow::onReceiveStream);
+//        }
+//    }
+//}
 
-void BatlabMainWindow::onGetBatlabNames()
-{
-    QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
-    QStringList names;
-    for (int i = 0; i< list.size(); ++i) {
-        names.append(list[i].portName());
-    }
-    onConnectToBatlabs(names);
-}
+//void BatlabMainWindow::onGetBatlabNames()
+//{
+//    QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
+//    QStringList names;
+//    for (int i = 0; i< list.size(); ++i) {
+//        names.append(list[i].portName());
+//    }
+//    onConnectToBatlabs(names);
+//}

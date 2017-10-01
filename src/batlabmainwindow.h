@@ -38,9 +38,9 @@ public:
     ~BatlabMainWindow();
 
 public slots:
-    void onConnectToBatlabs(QStringList names);
+    //void onConnectToBatlabs(QStringList names);
     void removeBatlabConnection(QString batlabUnitPortName);
-    void onGetBatlabNames();
+    //void onGetBatlabNames();
     void onTest();
     void onReport();
 
