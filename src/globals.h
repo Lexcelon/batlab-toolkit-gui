@@ -14,6 +14,8 @@
 #include <QDateTime>
 #include <QDoubleSpinBox>
 
+#include "version.h"
+
 namespace BatlabLib
 {
     void bubblesort(QVector<float> data, QVector<int> &indices);
@@ -49,105 +51,131 @@ struct testParms
 
 // Builtin variable default values and bounds
 
+#define CELL_PLAYLIST_NAME_FIELDSTR                         "cellPlaylistName"
+#define LIPO_CHEMISTRY_FIELDSTR                             "lipoChemistry"
+#define IRON_PHOSPHATE_CHEMISTRY_FIELDSTR                   "ironPhosphateChemistry"
+#define OTHER_CHEMISTRY_FIELDSTR                            "otherChemistry"
+
 // Unit: Cells
-#define MINIMUM_NUM_CELLS                       1
-#define MAXIMUM_NUM_CELLS                       1000
-#define MINIMUM_STARTING_CELL_NUMBER            0
-#define MAXIMUM_STARTING_CELL_NUMBER            100000
+#define NUM_CELLS_FIELDSTR                                  "numCells"
+#define MINIMUM_NUM_CELLS                                   1
+#define MAXIMUM_NUM_CELLS                                   1000
+#define STARTING_CELL_NUMBER_FIELDSTR                       "startingCellNumber"
+#define MINIMUM_STARTING_CELL_NUMBER                        0
+#define MAXIMUM_STARTING_CELL_NUMBER                        100000
+#define CELL_DESIGNATOR_FIELDSTR                            "cellDesignator"
 
 // Unit: Volts
-#define HIGH_VOLTAGE_CUTOFF_DEFAULT             4.2
-#define HIGH_VOLTAGE_CUTOFF_MIN                 3.0
-#define HIGH_VOLTAGE_CUTOFF_MAX                 4.4
+#define HIGH_VOLTAGE_CUTOFF_FIELDSTR                        "highVoltageCutoff"
+#define HIGH_VOLTAGE_CUTOFF_DEFAULT                         4.2
+#define HIGH_VOLTAGE_CUTOFF_MIN                             3.0
+#define HIGH_VOLTAGE_CUTOFF_MAX                             4.4
 
-#define IRON_PHOSPHATE_HIGH_VOLTAGE_CUTOFF_DEFAULT  3.6
-#define IRON_PHOSPHATE_HIGH_VOLTAGE_CUTOFF_MAX      3.8
+#define IRON_PHOSPHATE_HIGH_VOLTAGE_CUTOFF_DEFAULT          3.6
+#define IRON_PHOSPHATE_HIGH_VOLTAGE_CUTOFF_MAX              3.8
 
 // Unit: Volts
-#define LOW_VOLTAGE_CUTOFF_DEFAULT              2.5
-#define LOW_VOLTAGE_CUTOFF_MIN                  2.0
-#define LOW_VOLTAGE_CUTOFF_MAX                  3.6
+#define LOW_VOLTAGE_CUTOFF_FIELDSTR                         "lowVoltageCutoff"
+#define LOW_VOLTAGE_CUTOFF_DEFAULT                          2.5
+#define LOW_VOLTAGE_CUTOFF_MIN                              2.0
+#define LOW_VOLTAGE_CUTOFF_MAX                              3.6
 
-#define IRON_PHOSPHATE_LOW_VOLTAGE_CUTOFF_DEFAULT   2.0
-
-// Unit: Celsius
-#define CHARGE_TEMP_CUTOFF_DEFAULT              45.0
-#define CHARGE_TEMP_CUTOFF_MIN                  25.0
-#define CHARGE_TEMP_CUTOFF_MAX                  80.0
+#define IRON_PHOSPHATE_LOW_VOLTAGE_CUTOFF_DEFAULT           2.0
 
 // Unit: Celsius
-#define DISCHARGE_TEMP_CUTOFF_DEFAULT           65.0
-#define DISCHARGE_TEMP_CUTOFF_MIN               25.0
-#define DISCHARGE_TEMP_CUTOFF_MAX               80.0
+#define CHARGE_TEMP_CUTOFF_FIELDSTR                         "chargeTemperatureCutoff"
+#define CHARGE_TEMP_CUTOFF_DEFAULT                          45.0
+#define CHARGE_TEMP_CUTOFF_MIN                              25.0
+#define CHARGE_TEMP_CUTOFF_MAX                              80.0
+
+// Unit: Celsius
+#define DISCHARGE_TEMP_CUTOFF_FIELDSTR                      "dischargeTemperatureCutoff"
+#define DISCHARGE_TEMP_CUTOFF_DEFAULT                       65.0
+#define DISCHARGE_TEMP_CUTOFF_MIN                           25.0
+#define DISCHARGE_TEMP_CUTOFF_MAX                           80.0
 
 // Unit: Amps
-#define CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT    4.096
-#define CHARGE_CURRENT_SAFETY_CUTOFF_MIN        0.25
-#define CHARGE_CURRENT_SAFETY_CUTOFF_MAX        4.096
+#define CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR               "chargeCurrentSafetyCutoff"
+#define CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT                4.096
+#define CHARGE_CURRENT_SAFETY_CUTOFF_MIN                    0.25
+#define CHARGE_CURRENT_SAFETY_CUTOFF_MAX                    4.096
 
 // Unit: Amps
-#define DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT 4.096
-#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN     0.25
-#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX     4.096
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR            "dischargeCurrentSafetyCutoff"
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT             4.096
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN                 0.25
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX                 4.096
 
 // Unit: Seconds
-#define IMPEDANCE_REPORTING_PERIOD_DEFAULT      300.0
-#define IMPEDANCE_REPORTING_PERIOD_MIN          10.0
-#define IMPEDANCE_REPORTING_PERIOD_MAX          3600.0
+#define IMPEDANCE_REPORTING_PERIOD_FIELDSTR                 "impedanceReportingPeriod"
+#define IMPEDANCE_REPORTING_PERIOD_DEFAULT                  300.0
+#define IMPEDANCE_REPORTING_PERIOD_MIN                      10.0
+#define IMPEDANCE_REPORTING_PERIOD_MAX                      3600.0
 
 // Unit: Seconds
-#define REPORTING_PERIOD_DEFAULT                1.0
-#define REPORTING_PERIOD_MIN                    0.5
-#define REPORTING_PERIOD_MAX                    3600.0
+#define REPORTING_PERIOD_FIELDSTR                           "reportingPeriod"
+#define REPORTING_PERIOD_DEFAULT                            1.0
+#define REPORTING_PERIOD_MIN                                0.5
+#define REPORTING_PERIOD_MAX                                3600.0
 
 // Unit: Hz
-#define SINE_WAVE_FREQUENCY_DEFAULT             39.0625
-#define SINE_WAVE_FREQUENCY_MIN                 39.0625
-#define SINE_WAVE_FREQUENCY_MAX                 1054.6875
+#define SINE_WAVE_FREQUENCY_FIELDSTR                        "sineWaveFrequency"
+#define SINE_WAVE_FREQUENCY_DEFAULT                         39.0625
+#define SINE_WAVE_FREQUENCY_MIN                             39.0625
+#define SINE_WAVE_FREQUENCY_MAX                             1054.6875
 
-#define SINE_WAVE_MAGNITUDE_DEFAULT             0
-#define SINE_WAVE_MAGNITUDE_MIN                 0
-#define SINE_WAVE_MAGNITUDE_MAX                 2
-
-// Unit: Cycles
-#define NUM_WARMUP_CYCLES_DEFAULT               0
-#define NUM_WARMUP_CYCLES_MIN                   0
-#define NUM_WARMUP_CYCLES_MAX                   100
+#define SINE_WAVE_MAGNITUDE_FIELDSTR                        "sineWaveMagnitude"
+#define SINE_WAVE_MAGNITUDE_DEFAULT                         0
+#define SINE_WAVE_MAGNITUDE_MIN                             0
+#define SINE_WAVE_MAGNITUDE_MAX                             2
 
 // Unit: Cycles
-#define NUM_MEASUREMENT_CYCLES_DEFAULT          1
-#define NUM_MEASUREMENT_CYCLES_MIN              0
-#define NUM_MEASUREMENT_CYCLES_MAX              10000
+#define NUM_WARMUP_CYCLES_FIELDSTR                          "numWarmupCycles"
+#define NUM_WARMUP_CYCLES_DEFAULT                           0
+#define NUM_WARMUP_CYCLES_MIN                               0
+#define NUM_WARMUP_CYCLES_MAX                               100
+
+// Unit: Cycles
+#define NUM_MEASUREMENT_CYCLES_FIELDSTR                     "numMeasurementCycles"
+#define NUM_MEASUREMENT_CYCLES_DEFAULT                      1
+#define NUM_MEASUREMENT_CYCLES_MIN                          0
+#define NUM_MEASUREMENT_CYCLES_MAX                          10000
 
 // Unit: Amps
-#define CHARGE_RATE_DEFAULT                     2.0
-#define CHARGE_RATE_MIN                         0.25
-// #define CHARGE_RATE_MAX                         CHARGE_CURRENT_SAFETY_CUTOFF used instead of new value
+#define CHARGE_RATE_FIELDSTR                                "chargeRate"
+#define CHARGE_RATE_DEFAULT                                 2.0
+#define CHARGE_RATE_MIN                                     0.25
+// #define CHARGE_RATE_MAX                                  CHARGE_CURRENT_SAFETY_CUTOFF used
 
 // Unit: Amps
-#define DISCHARGE_RATE_DEFAULT                  2.0
-#define DISCHARGE_RATE_MIN                      0.25
-// #define DISCHARGE_RATE_MAX                      DISCHARGE_CURRENT_SAFETY_CUTOFF used instead of new value
+#define DISCHARGE_RATE_FIELDSTR                             "dischargeRate"
+#define DISCHARGE_RATE_DEFAULT                              2.0
+#define DISCHARGE_RATE_MIN                                  0.25
+// #define DISCHARGE_RATE_MAX                               DISCHARGE_CURRENT_SAFETY_CUTOFF used
 
 // Unit: Boolean
-#define STORAGE_DISCHARGE_DEFAULT               true
+#define STORAGE_DISCHARGE_FIELDSTR                          "storageDischarge"
+#define STORAGE_DISCHARGE_DEFAULT                           true
 
 // Unit: Volts
-#define STORAGE_DISCHARGE_VOLTAGE_DEFAULT       3.7
-#define STORAGE_DISCHARGE_VOLTAGE_MIN           2.0
-// #define STORAGE_DISCHARGE_VOLTAGE_MAX           HIGH_VOLTAGE_CUTOFF used instead of new value
+#define STORAGE_DISCHARGE_VOLTAGE_FIELDSTR                  "storageDischargeVoltage"
+#define STORAGE_DISCHARGE_VOLTAGE_DEFAULT                   3.7
+#define STORAGE_DISCHARGE_VOLTAGE_MIN                       2.0
+// #define STORAGE_DISCHARGE_VOLTAGE_MAX                    HIGH_VOLTAGE_CUTOFF used
 
 #define IRON_PHOSPHATE_STORAGE_DISCHARGE_VOLTAGE_DEFAULT    3.2
 
 // Unit: Ohms
-#define ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT  0.2
-#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN      0.02
-#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX      200.0
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR             "acceptableImpedanceThreshold"
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT              0.2
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN                  0.02
+#define ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX                  200.0
 
 // Unit: Seconds
-#define REST_PERIOD_DEFAULT                     60.0
-#define REST_PERIOD_MIN                         0.0
-#define REST_PERIOD_MAX                         3600.0
+#define REST_PERIOD_FIELDSTR                                "restPeriod"
+#define REST_PERIOD_DEFAULT                                 60.0
+#define REST_PERIOD_MIN                                     0.0
+#define REST_PERIOD_MAX                                     3600.0
 
 //Status register codes
 #define STAT_VOLTAGE_LIMIT_CHG  0x0001

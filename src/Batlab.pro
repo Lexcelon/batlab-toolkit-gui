@@ -30,15 +30,15 @@ SOURCES += main.cpp\
     Wizard/wizardpagethree.cpp \
     batlabtestgroup.cpp \
     batlabtestplan.cpp \
-    inputStringDialog.cpp \
-    HistogramWidget.cpp \
-    HistogramObject.cpp \
-    TestData.cpp \
-    CellModuleWidget.cpp \
-    Wizard/newTestScheduleWizard.cpp \
-    BatlabMainWindow.cpp \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.cpp \
-    globals.cpp
+    globals.cpp \
+    Wizard/newtestschedulewizard.cpp \
+    batlabmainwindow.cpp \
+    cellmodulewidget.cpp \
+    histogramobject.cpp \
+    histogramwidget.cpp \
+    inputstringdialog.cpp \
+    testdata.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -54,15 +54,15 @@ HEADERS  += \
     Wizard/wizardpagethree.h \
     batlabtestgroup.h \
     batlabtestplan.h \
-    inputStringDialog.h \
-    HistogramWidget.h \
-    HistogramObject.h \
-    TestData.h \
-    CellModuleWidget.h \
-    Wizard/newTestScheduleWizard.h \
-    BatlabMainWindow.h \
-    GUIversion.h \
-    dialogs/newcellplaylistwizard/newcellplaylistwizard.h
+    dialogs/newcellplaylistwizard/newcellplaylistwizard.h \
+    version.h \
+    testdata.h \
+    histogramwidget.h \
+    inputstringdialog.h \
+    batlabmainwindow.h \
+    cellmodulewidget.h \
+    histogramobject.h \
+    Wizard/newtestschedulewizard.h
 
 FORMS    += \
     test.ui \
@@ -70,9 +70,9 @@ FORMS    += \
     Wizard/wizardpageone.ui \
     Wizard/wizardpagetwo.ui \
     Wizard/wizardpagethree.ui \
-    inputStringDialog.ui \
-    CellModuleWidget.ui \
-    MainWindow.ui
+    cellmodulewidget.ui \
+    inputstringdialog.ui \
+    mainwindow.ui
 
 DISTFILES += 1010.bmp
 

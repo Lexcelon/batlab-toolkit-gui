@@ -1,4 +1,4 @@
-#include "newTestScheduleWizard.h"
+#include "newtestschedulewizard.h"
 
 newTestScheduleWizard::newTestScheduleWizard(QObject *parent) : QObject(parent)
 {

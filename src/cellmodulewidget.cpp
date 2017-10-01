@@ -1,5 +1,5 @@
-#include "CellModuleWidget.h"
-#include "ui_CellModuleWidget.h"
+#include "cellmodulewidget.h"
+#include "ui_cellmodulewidget.h"
 #include <QGroupBox>
 #include <QDebug>
 #include <QString>

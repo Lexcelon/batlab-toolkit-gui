@@ -2,7 +2,7 @@
 #include <QObject>
 #include <QWidget>
 
-#include "BatlabMainWindow.h"
+#include "batlabmainwindow.h"
 
 int main(int argc, char *argv[])
 {

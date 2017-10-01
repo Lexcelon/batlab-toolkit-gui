@@ -1,4 +1,4 @@
-#include "HistogramObject.h"
+#include "histogramobject.h"
 #include <QVector>
 #include <QBarSet>
 #include <QDebug>

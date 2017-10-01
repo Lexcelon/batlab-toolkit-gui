@@ -18,12 +18,12 @@
 #include "test.h"
 #include "batlabcom.h"
 #include "batlabcellmanager.h"
-#include "GUIversion.h"
+#include "version.h"
 #include "wizardpageone.h"
 #include "wizardpagetwo.h"
-#include "newTestScheduleWizard.h"
+#include "newtestschedulewizard.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
-#include "TestData.h"
+#include "testdata.h"
 
 namespace Ui {
 class MainWindow;
