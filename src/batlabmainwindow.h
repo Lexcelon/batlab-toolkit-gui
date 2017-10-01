@@ -85,8 +85,6 @@ private:
     Ui::MainWindow *ui = nullptr;
     QPushButton *connectToBatlabs = nullptr;
     QPushButton *test = nullptr;
-    QPushButton *loadProject = nullptr;
-    QPushButton *newProjectWizard = nullptr;
     QPushButton *report = nullptr;
     QVector<batlabCom*> batlabComObjects;
 
@@ -95,6 +93,37 @@ private:
 
     QTableWidget * tableWidget = nullptr;
 
+    void createMenus();
+    void createActions();
+
+    QMenu *fileMenu;
+    QMenu *toolsMenu;
+    QMenu *helpMenu;
+
+    QAction *newCellPlaylistAct;
+    QAction *openCellPlaylistAct;
+    QAction *exitBatlabToolkitAct;
+
+    QAction *debugBatlabAct;
+    QAction *checkForUpdatesAct;
+    QAction *checkForBatlabFirmwareUpdatesAct;
+
+    QAction *aboutBatlabToolkitAct;
+    QAction *documentationAct;
+    QAction *contactAct;
+
+private slots:
+    void newCellPlaylist();
+    void openCellPlaylist();
+    void exitBatlabToolkit();
+
+    void debugBatlab();
+    void checkForUpdates();
+    void checkForBatlabFirmwareUpdates();
+
+    void aboutBatlabToolkit();
+    void documentation();
+    void contact();
 };
 
 #endif // BATLAB_H
