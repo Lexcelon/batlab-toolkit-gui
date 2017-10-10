@@ -1,5 +1,0 @@
-syntax: glob
-
-build/*
-build_linux/*
-build_windows/*
