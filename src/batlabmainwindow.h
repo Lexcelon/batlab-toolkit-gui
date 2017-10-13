@@ -42,7 +42,6 @@ public slots:
     void removeBatlabConnection(QString batlabUnitPortName);
     //void onGetBatlabNames();
     void onTest();
-    void onReport();
 
     void onReceiveWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
     void onReceiveReadCommand(int serialNumber, int nameSpace,int batlabRegister);
@@ -86,7 +85,6 @@ private:
     Ui::MainWindow *ui = nullptr;
     QPushButton *connectToBatlabs = nullptr;
     QPushButton *test = nullptr;
-    QPushButton *report = nullptr;
     QVector<batlabCom*> batlabComObjects;
 
     batlabtest *testObj = nullptr;

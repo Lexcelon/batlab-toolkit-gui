@@ -21,12 +21,10 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     // Create the buttons we use in the gui
     connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
     test = new QPushButton(QString("Test"));
-    report = new QPushButton(QString("Debug GUI"));
 
     // Place the buttons in the button box in our gui
     ui->buttonBox->addButton(connectToBatlabs,QDialogButtonBox::ActionRole);
     ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
-    ui->buttonBox->addButton(report,QDialogButtonBox::ActionRole);
 
     // TODO PLACEHOLDER TEXT WILL REMOVE
     ui->textBrowser->insertPlainText(QString(">> Welcome to Batlab!\n" ));
@@ -36,8 +34,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     // Making the buttons functional
     connect(test, &QPushButton::clicked,
             this, &BatlabMainWindow::onTest);
-    connect(report, &QPushButton::clicked,
-            this, &BatlabMainWindow::onReport);
     connect(connectToBatlabs, &QPushButton::clicked,
             this, &BatlabMainWindow::updateBatlabConnections);
 
@@ -109,7 +105,17 @@ void BatlabMainWindow::exitBatlabToolkitGUI()
 
 void BatlabMainWindow::debugBatlab()
 {
-    onReport();
+    // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
+    if (testObj == nullptr) {
+        testObj = new batlabtest(this, batlabComObjects);
+//           connect(testObj,SIGNAL(emitReadReg(int,int)),batlabComObjects.first(),SLOT(onReadReg(int,int)));
+//           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),batlabComObjects.first(),SLOT(onWriteReg(int,int,int)));
+//           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
+    }
+
+    //Can move window around
+    testObj->setModal(false);
+        testObj->show();
 }
 
 void BatlabMainWindow::checkForUpdates()
@@ -163,25 +169,9 @@ void BatlabMainWindow::onTest()
 
 }
 
-void BatlabMainWindow::onReport()
-{
-       // For testing communications with batlab - BRING THIS BACK EVENTUALLY
-       if (testObj == nullptr) {
-           testObj = new batlabtest(this, batlabComObjects);
-//           connect(testObj,SIGNAL(emitReadReg(int,int)),batlabComObjects.first(),SLOT(onReadReg(int,int)));
-//           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),batlabComObjects.first(),SLOT(onWriteReg(int,int,int)));
-//           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
-       }
-
-       //Can move window around
-       testObj->setModal(false);
-           testObj->show();
-}
-
 BatlabMainWindow::~BatlabMainWindow()
 {
     if (test) delete test;
-    if (report) delete report;
     delete ui;
 }
 
