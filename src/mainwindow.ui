@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Batlab Toolkit</string>
+   <string>Batlab Toolkit GUI</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -292,8 +292,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>385</width>
-                <height>294</height>
+                <width>407</width>
+                <height>296</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_7">
@@ -342,7 +342,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

@@ -70,10 +70,10 @@ void BatlabMainWindow::createActions()
     openCellPlaylistAct->setStatusTip(tr("Open an existing cell playlist"));
     connect(openCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::openCellPlaylist);
 
-    exitBatlabToolkitAct = new QAction(tr("Exit"), this);
-    exitBatlabToolkitAct->setShortcuts(QKeySequence::Close);
-    exitBatlabToolkitAct->setStatusTip(tr("Close Batlab Toolkit"));
-    connect(exitBatlabToolkitAct, &QAction::triggered, this, &BatlabMainWindow::exitBatlabToolkit);
+    exitBatlabToolkitGUIAct = new QAction(tr("Exit"), this);
+    exitBatlabToolkitGUIAct->setShortcuts(QKeySequence::Close);
+    exitBatlabToolkitGUIAct->setStatusTip(tr("Close Batlab Toolkit GUI"));
+    connect(exitBatlabToolkitGUIAct, &QAction::triggered, this, &BatlabMainWindow::exitBatlabToolkitGUI);
 
     debugBatlabAct = new QAction(tr("Debug Batlab"), this);
     debugBatlabAct->setStatusTip(tr("Debug a Batlab by reading and writing registers"));
@@ -86,7 +86,7 @@ void BatlabMainWindow::createMenus()
     fileMenu->addAction(newCellPlaylistAct);
     fileMenu->addAction(openCellPlaylistAct);
     fileMenu->addSeparator();
-    fileMenu->addAction(exitBatlabToolkitAct);
+    fileMenu->addAction(exitBatlabToolkitGUIAct);
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(debugBatlabAct);
@@ -102,7 +102,7 @@ void BatlabMainWindow::openCellPlaylist()
     onLoadProject();
 }
 
-void BatlabMainWindow::exitBatlabToolkit()
+void BatlabMainWindow::exitBatlabToolkitGUI()
 {
     this->close();
 }
@@ -122,7 +122,7 @@ void BatlabMainWindow::checkForBatlabFirmwareUpdates()
     // TODO
 }
 
-void BatlabMainWindow::aboutBatlabToolkit()
+void BatlabMainWindow::aboutBatlabToolkitGUI()
 {
     // TODO
 }

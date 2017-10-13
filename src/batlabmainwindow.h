@@ -103,26 +103,26 @@ private:
 
     QAction *newCellPlaylistAct;
     QAction *openCellPlaylistAct;
-    QAction *exitBatlabToolkitAct;
+    QAction *exitBatlabToolkitGUIAct;
 
     QAction *debugBatlabAct;
     QAction *checkForUpdatesAct;
     QAction *checkForBatlabFirmwareUpdatesAct;
 
-    QAction *aboutBatlabToolkitAct;
+    QAction *aboutBatlabToolkitGUIAct;
     QAction *documentationAct;
     QAction *contactAct;
 
 private slots:
     void newCellPlaylist();
     void openCellPlaylist();
-    void exitBatlabToolkit();
+    void exitBatlabToolkitGUI();
 
     void debugBatlab();
     void checkForUpdates();
     void checkForBatlabFirmwareUpdates();
 
-    void aboutBatlabToolkit();
+    void aboutBatlabToolkitGUI();
     void documentation();
     void contact();
 
