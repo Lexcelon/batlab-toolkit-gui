@@ -465,19 +465,24 @@ void NewCellPlaylistWizard::savePlaylist()
             QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
             QDir dir;
             if (dir.mkpath(appLocalDataPath)) {
-                QString defaultSavePath = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified() + ".blp";
-                QString saveDirName = QFileDialog::getSaveFileName(this, tr("Save cell playlist as:"), defaultSavePath, "Batlab Project Files (*.blp);;All Files (*)");
-                if (!saveDirName.endsWith(".blp")) {
-                    saveDirName.append(".blp");
+                QString defaultSaveFileName = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified() + ".blp.json";
+                QString saveFileName = QFileDialog::getSaveFileName(this, tr("Save cell playlist as:"), defaultSaveFileName, "Batlab Cell Playlist Files (*.blp.json);;All Files (*)");
+                if (!saveFileName.endsWith(".blp.json")) {
+                    saveFileName.append(".blp.json");
                 }
-                if (dir.mkpath(saveDirName)) {
-                    QJsonObject playlistJson = this->jsonFromNewPlaylistWizard();
 
-                } else {
-                    qDebug() << "Unable to create save directory."; // TODO make this an error
+                QFile saveFile(saveFileName);
+                if (!saveFile.open(QIODevice::WriteOnly)) {
+                    qWarning() << "Couldn't open save file for new cell playlist.";
+                    return;
                 }
+
+                QJsonObject playlistJsonObject = this->jsonFromNewPlaylistWizard();
+
+                QJsonDocument saveDoc(playlistJsonObject);
+                saveFile.write(saveDoc.toJson());
             } else {
-                qDebug() << "Unable to make app local data path."; // TODO make this an error
+                qWarning() << "Unable to find/make app local data directory.";
             }
         }
         skipped = false;
