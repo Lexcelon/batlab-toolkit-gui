@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+  <DisplayName>Batlab Toolkit GUI</DisplayName>
+  <Description>Install the Batlab Toolkit GUI application.</Description>
+  <Version>0.0.1</Version>
+  <ReleaseDate>2017-10-13</ReleaseDate>
+  <Licenses>
+    <License name="GNU General Public License" file="COPYING" />
+  </Licenses>
+  <Default>true</Default>
+</Package>

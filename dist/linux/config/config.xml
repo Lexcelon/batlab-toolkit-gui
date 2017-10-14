@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+  <Name>Batlab Toolkit GUI</Name>
+  <Version>0.0.1</Version>
+  <Title>Batlab Toolkit GUI Installer</Title>
+  <Publisher>Lexcelon LLC</Publisher>
+  <StartMenuDir>Super App</StartMenuDir>
+  <TargetDir>@ApplicationsDir@/lexcelon/batlab-toolkit-gui</TargetDir>
+</Installer>
