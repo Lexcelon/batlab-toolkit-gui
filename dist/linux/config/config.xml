@@ -6,4 +6,11 @@
   <Publisher>Lexcelon LLC</Publisher>
   <StartMenuDir>Super App</StartMenuDir>
   <TargetDir>@ApplicationsDir@/lexcelon/batlab-toolkit-gui</TargetDir>
+  <RemoteRepositories>
+    <Repository>
+      <Url>https://lexcelon.github.io/batlab-toolkit-gui/linux</Url>
+      <Enabled>1</Enabled>
+      <DisplayName>Updates Repository (GitHub)</DisplayName>
+    </Repository>
+  </RemoteRepositories>
 </Installer>
