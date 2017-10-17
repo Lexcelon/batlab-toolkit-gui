@@ -1,0 +1,19 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>com.lexcelon.application</Name>
+  <DisplayName>Batlab Toolkit GUI</DisplayName>
+  <Description>Install the Batlab Toolkit GUI application.</Description>
+  <Version>0.0.1</Version>
+  <ReleaseDate>2017-10-13</ReleaseDate>
+  <Default>true</Default>
+  <UpdateFile CompressedSize="14883667" OS="Any" UncompressedSize="54726375"/>
+  <DownloadableArchives>bin.7z,content.7z</DownloadableArchives>
+  <Licenses>
+   <License name="GNU General Public License" file="COPYING"/>
+  </Licenses>
+  <SHA1>8a61c1ea9976d2a588ad96091739613fa271fffa</SHA1>
+ </PackageUpdate>
+</Updates>
