@@ -8,11 +8,11 @@ if [ "${dirname%$tmp}" != "/" ]; then
     dirname=$PWD/$dirname
 fi
 
-LD_LIBRARY_PATH=$dirname/bin/lib
+LD_LIBRARY_PATH=$dirname/lib
 export LD_LIBRARY_PATH
 
 # Uncomment to debug plugin loading for Qt
 # QT_DEBUG_PLUGINS=1
 # export QT_DEBUG_PLUGINS
 
-"$dirname/bin/$appname" "$@"
+"$dirname/$appname" "$@"

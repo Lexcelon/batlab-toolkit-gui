@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+  <DisplayName>Batlab Toolkit GUI Core Lib</DisplayName>
+  <Description>Install the Batlab Toolkit GUI library dependencies.</Description>
+  <Version>0.0.1</Version>
+  <ReleaseDate>2017-10-17</ReleaseDate>
+  <UpdateText>This is a test pre-alpha version.</UpdateText>
+  <ForcedInstallation>true</ForcedInstallation>
+</Package>
