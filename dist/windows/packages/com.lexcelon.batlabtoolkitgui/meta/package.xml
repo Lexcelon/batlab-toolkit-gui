@@ -5,7 +5,6 @@
   <Version>0.0.1</Version>
   <ReleaseDate>2017-10-17</ReleaseDate>
   <UpdateText>This is a test pre-alpha version.</UpdateText>
-  <Name>com.lexcelon.batlabtoolkitgui.core</Name>
   <Licenses>
     <License name="GNU General Public License" file="COPYING" />
   </Licenses>

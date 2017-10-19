@@ -1,0 +1,31 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>com.lexcelon.batlabtoolkitgui</Name>
+  <DisplayName>Batlab Toolkit GUI</DisplayName>
+  <Description>Install the Batlab Toolkit GUI application.</Description>
+  <Version>0.0.1</Version>
+  <ReleaseDate>2017-10-17</ReleaseDate>
+  <UpdateText>This is a test pre-alpha version.</UpdateText>
+  <Script>installscript.js</Script>
+  <RequiresAdminRights>true</RequiresAdminRights>
+  <ForcedInstallation>true</ForcedInstallation>
+  <UpdateFile OS="Any" CompressedSize="143385" UncompressedSize="572863"/>
+  <DownloadableArchives>content.7z</DownloadableArchives>
+  <SHA1>0d10e6eb3202dd7888488a0a6b3963a67e418cb5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>com.lexcelon.batlabtoolkitgui.lib</Name>
+  <DisplayName>Batlab Toolkit GUI Core Lib</DisplayName>
+  <Description>Install the Batlab Toolkit GUI library dependencies.</Description>
+  <Version>0.0.1</Version>
+  <ReleaseDate>2017-10-17</ReleaseDate>
+  <UpdateText>This is a test pre-alpha version.</UpdateText>
+  <ForcedInstallation>true</ForcedInstallation>
+  <UpdateFile OS="Any" CompressedSize="14773666" UncompressedSize="54153544"/>
+  <DownloadableArchives>lib.7z,platforms.7z</DownloadableArchives>
+  <SHA1>6438305ce79ba04fdb6d37f573cef2665f776b09</SHA1>
+ </PackageUpdate>
+</Updates>
