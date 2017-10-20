@@ -6,6 +6,8 @@
   <Publisher>Lexcelon LLC</Publisher>
   <StartMenuDir>Lexcelon</StartMenuDir>
   <TargetDir>@ApplicationsDir@/Lexcelon/Batlab Toolkit GUI</TargetDir>
+  <RunProgram>@TargetDir@/Batlab.exe</RunProgram>
+  <RunProgramDescription>Run Batlab Toolkit GUI</RunProgramDescription>
   <RemoteRepositories>
     <Repository>
       <Url>https://lexcelon.github.io/batlab-toolkit-gui/windows</Url>

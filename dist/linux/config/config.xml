@@ -5,6 +5,8 @@
   <Title>Batlab Toolkit GUI Installer</Title>
   <Publisher>Lexcelon LLC</Publisher>
   <TargetDir>@ApplicationsDir@/lexcelon/batlab-toolkit-gui</TargetDir>
+  <RunProgram>@TargetDir@/Batlab-run</RunProgram>
+  <RunProgramDescription>Run Batlab Toolkit GUI</RunProgramDescription>
   <RemoteRepositories>
     <Repository>
       <Url>https://lexcelon.github.io/batlab-toolkit-gui/linux</Url>
