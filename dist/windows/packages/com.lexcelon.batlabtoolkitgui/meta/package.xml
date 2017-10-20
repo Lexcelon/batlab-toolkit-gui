@@ -9,4 +9,5 @@
     <License name="GNU General Public License" file="COPYING" />
   </Licenses>
   <ForcedInstallation>true</ForcedInstallation>
+  <Script>installscript.js</Script>
 </Package>

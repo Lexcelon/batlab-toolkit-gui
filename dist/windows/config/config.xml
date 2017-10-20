@@ -4,8 +4,8 @@
   <Version>0.1.0</Version>
   <Title>Batlab Toolkit GUI Installer</Title>
   <Publisher>Lexcelon LLC</Publisher>
-  <StartMenuDir>Super App</StartMenuDir>
-  <TargetDir>@ApplicationsDir@/lexcelon/batlab-toolkit-gui</TargetDir>
+  <StartMenuDir>Lexcelon</StartMenuDir>
+  <TargetDir>@ApplicationsDir@/Lexcelon/Batlab Toolkit GUI</TargetDir>
   <RemoteRepositories>
     <Repository>
       <Url>https://lexcelon.github.io/batlab-toolkit-gui/windows</Url>
