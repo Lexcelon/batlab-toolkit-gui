@@ -15,3 +15,6 @@ rm -rf ../docs/linux/*
 rm -rf ../docs/windows/*
 wine ~/Qt/QtIFW-3.0.1/windows/bin/repogen.exe -p windows/packages/ ../docs/windows/
 
+# Commit new repo to git
+git add -A :/
+git commit -am "add new release to repo"
