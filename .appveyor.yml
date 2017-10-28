@@ -4,9 +4,14 @@ image: Visual Studio 2017
 
 init:
   - set TAG_NAME=%APPVEYOR_REPO_TAG_NAME%
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))  
+    
 environment:
   QT: C:\Qt\5.9.1\mingw53_32
+  APPVEYOR_RDP_PASSWORD: something
 
 build_script:
   - call "build/appveyor/build_windows.cmd"
