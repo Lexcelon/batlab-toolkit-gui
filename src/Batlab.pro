@@ -18,7 +18,7 @@ CONFIG += debug_and_release
 @
 
 win32 {
-#    QT += winextras
+    QT += winextras
     LIBS += -lAdvapi32 -lOle32 -lShell32
     SOURCES += qtautoupdater/autoupdatergui/adminauthorization_win.cpp
 } else:mac {
