@@ -4,7 +4,7 @@
 #include <QtGui/QCloseEvent>
 #include "dialogmaster.h"
 #ifdef Q_OS_WIN
-#include "../winextras/qwintaskbarprogress.h"
+#include <QtWinExtras/QWinTaskbarProgress>
 #endif
 
 using namespace QtAutoUpdater;
