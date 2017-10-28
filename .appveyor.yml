@@ -16,14 +16,7 @@ environment:
 build_script:
   - call "build/appveyor/build_windows.cmd"
 
-platform:
-  - x86
-  - x64
-  
 configuration:
-  - Debug
-  - Release
-
-deploy:
-  provider: GitHub
+  - debug
+  - release
 

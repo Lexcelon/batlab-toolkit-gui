@@ -11,5 +11,4 @@ set PATH=C:\MinGW\bin\;%PATH%
 
 echo Building...
 qmake src
-mingw32-make
-
+mingw32-make %configuration%
