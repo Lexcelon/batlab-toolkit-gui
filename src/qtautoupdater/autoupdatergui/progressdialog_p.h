@@ -9,7 +9,7 @@
 #include <QtWidgets/QMessageBox>
 
 #ifdef Q_OS_WIN
-#include "../winextras/qwintaskbarbutton.h"
+#include <QtWinExtras/QWinTaskbarButton>
 #endif
 
 #include <functional>

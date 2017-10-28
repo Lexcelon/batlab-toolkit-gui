@@ -18,7 +18,7 @@ CONFIG += debug_and_release
 @
 
 win32 {
-    QT += winextras
+#    QT += winextras
     LIBS += -lAdvapi32 -lOle32 -lShell32
     SOURCES += qtautoupdater/autoupdatergui/adminauthorization_win.cpp
 } else:mac {
@@ -59,20 +59,7 @@ SOURCES += main.cpp\
     qtautoupdater/autoupdatergui/updatecontroller.cpp \
     qtautoupdater/autoupdatergui/updateinfodialog.cpp \
     settings.cpp \
-    qtautoupdater/autoupdatergui/dialogmaster.cpp \
-    qtautoupdater/winextras/qwinevent.cpp \
-    qtautoupdater/winextras/qwineventfilter.cpp \
-    qtautoupdater/winextras/qwinfunctions.cpp \
-    qtautoupdater/winextras/qwinfunctions_p.cpp \
-    qtautoupdater/winextras/qwinjumplist.cpp \
-    qtautoupdater/winextras/qwinjumplistcategory.cpp \
-    qtautoupdater/winextras/qwinjumplistitem.cpp \
-    qtautoupdater/winextras/qwinmime.cpp \
-    qtautoupdater/winextras/qwintaskbarbutton.cpp \
-    qtautoupdater/winextras/qwintaskbarprogress.cpp \
-    qtautoupdater/winextras/qwinthumbnailtoolbar.cpp \
-    qtautoupdater/winextras/qwinthumbnailtoolbutton.cpp \
-    qtautoupdater/winextras/windowsguidsdefs.cpp
+    qtautoupdater/autoupdatergui/dialogmaster.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -112,30 +99,7 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/updateinfodialog_p.h \
     settings.h \
     qtautoupdater/autoupdatergui/dialogmaster.h \
-    version.h \
-    qtautoupdater/winextras/qwinevent.h \
-    qtautoupdater/winextras/qwineventfilter_p.h \
-    qtautoupdater/winextras/qwinextrasglobal.h \
-    qtautoupdater/winextras/qwinfunctions.h \
-    qtautoupdater/winextras/qwinfunctions_p.h \
-    qtautoupdater/winextras/qwinjumplist.h \
-    qtautoupdater/winextras/qwinjumplistcategory.h \
-    qtautoupdater/winextras/qwinjumplistcategory_p.h \
-    qtautoupdater/winextras/qwinjumplistitem.h \
-    qtautoupdater/winextras/qwinjumplistitem_p.h \
-    qtautoupdater/winextras/qwinjumplist_p.h \
-    qtautoupdater/winextras/qwinmime.h \
-    qtautoupdater/winextras/qwintaskbarbutton.h \
-    qtautoupdater/winextras/qwintaskbarbutton_p.h \
-    qtautoupdater/winextras/qwintaskbarprogress.h \
-    qtautoupdater/winextras/qwinthumbnailtoolbar.h \
-    qtautoupdater/winextras/qwinthumbnailtoolbar_p.h \
-    qtautoupdater/winextras/qwinthumbnailtoolbutton.h \
-    qtautoupdater/winextras/qwinthumbnailtoolbutton_p.h \
-    qtautoupdater/winextras/windowsguidsdefs_p.h \
-    qtautoupdater/winextras/winpropkey_p.h \
-    qtautoupdater/winextras/winshobjidl_p.h \
-    qtautoupdater/winextras/qplatformnativeinterface.h
+    version.h
 
 FORMS    += \
     test.ui \
