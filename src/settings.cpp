@@ -48,7 +48,7 @@ settings::settings(QWidget *parent) :
 }
 
 void settings::saveSettings() {
-    batlabConfig * config = batlabSettings;
+//    batlabConfig * config = batlabSettings;
 //    emit emitSettings(name, config);
 }
 
