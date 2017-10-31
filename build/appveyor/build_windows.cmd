@@ -10,7 +10,7 @@ set PATH=C:\Qt\Tools\mingw530_32\bin\;%PATH%
 set PATH=C:\MinGW\bin\;%PATH%
 
 echo Setting program version...
-
+Perl.exe
 
 echo Building program...
 mkdir temp
