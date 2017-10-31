@@ -9,6 +9,11 @@ set PATH=C:\Qt\QtIFW-3.0.1\bin\;%PATH%
 set PATH=C:\Qt\Tools\mingw530_32\bin\;%PATH%
 set PATH=C:\MinGW\bin\;%PATH%
 
-echo Building...
-qmake src
+echo Building program...
+mkdir temp
+cd temp
+qmake ..\src
 mingw32-make %configuration%
+
+echo Building installers...
+binarycreator.exe -p ..\dist\windows\packages\ -c windows\config\config.xml -n Batlab-Toolkit-GUI-Installer.exe
