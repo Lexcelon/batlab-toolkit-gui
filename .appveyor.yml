@@ -17,7 +17,7 @@ build_script:
   - call "build/appveyor/build_windows.cmd"
 
 after_build:
-  - call "build/appveyor/after_build_windows.ps1"
+  - call "../build/appveyor/after_build_windows.ps1"
 
 deploy:
   - provider: GitHub
