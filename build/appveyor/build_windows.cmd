@@ -10,7 +10,7 @@ set PATH=C:\Qt\Tools\mingw530_32\bin\;%PATH%
 set PATH=C:\MinGW\bin\;%PATH%
 
 echo Setting program version...
-perl.exe -p -i.bak -e 's/0\.0\.0/%APPVEYOR_BUILD_VERSION%/g' src\version.h
+perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_BUILD_VERSION%/g" src\version.h
 type src\version.h
 
 echo Building program...
