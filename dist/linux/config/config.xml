@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
   <Name>Batlab Toolkit GUI</Name>
-  <Version>0.1.0</Version>
+  
+  <!-- Please leave the below variable as 0.0.0
+       For local dev builds, the version will just be 0.0.0
+       For official builds on the build server, this gets replaced with the build number
+  -->
+  <Version>0.0.0</Version>
+  
   <Title>Batlab Toolkit GUI Installer</Title>
   <Publisher>Lexcelon LLC</Publisher>
   <TargetDir>@ApplicationsDir@/lexcelon/batlab-toolkit-gui</TargetDir>
