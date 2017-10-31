@@ -15,8 +15,6 @@ perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_BUILD_VERSION%/g" src\version.h dist\
 echo Setting program date...
 perl.exe -p -i.bak -e "s/2000-01-01/%APPVEYOR_REPO_COMMIT_TIMESTAMP%/g" dist\linux\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
 
-type dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
-					
 echo Building program...
 mkdir temp
 cd temp
