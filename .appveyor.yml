@@ -21,7 +21,7 @@ after_build:
 
 deploy:
   - provider: GitHub
-    description: 'Batlab Toolkit GUI build release'
+    description: 'Auto-generated release from build system'
     auth_token:
       secure: PIqDLwiI4tC+6g/atJ7V2U3WvQGYJWjlKKMRUO3aHcopZT16Mq5RS9dwq1ker8dk
     artifact: /Batlab-Toolkit-GUI-Installer-.*\.exe/
@@ -42,3 +42,6 @@ deploy:
     set_public: true
     folder: repository/batlab-toolkit-gui/release/windows
     artifact: /.*\.xml/,/.*\.7z.*/
+    on:
+      branch: master
+      appveyor_repo_tag: true

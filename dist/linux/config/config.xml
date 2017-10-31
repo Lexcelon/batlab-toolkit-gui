@@ -15,9 +15,9 @@
   <RunProgramDescription>Run Batlab Toolkit GUI</RunProgramDescription>
   <RemoteRepositories>
     <Repository>
-      <Url>https://lexcelon.github.io/batlab-toolkit-gui/linux</Url>
+      <Url>https://s3.us-east-2.amazonaws.com/lexcelon-s3-1/repository/batlab-toolkit-gui/release/linux</Url>
       <Enabled>1</Enabled>
-      <DisplayName>Updates Repository (GitHub)</DisplayName>
+      <DisplayName>Updates Repository (S3)</DisplayName>
     </Repository>
   </RemoteRepositories>
 </Installer>
