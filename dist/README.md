@@ -12,3 +12,4 @@ wine ~/Qt/QtIFW-3.0.1/windows/bin/binarycreator.exe -p windows/packages/ -c wind
 2. Update the package.xml files.
 3. Run release.sh.
 4. `git push`
+
