@@ -18,7 +18,10 @@ mkdir temp
 cd temp
 qmake ..\src
 mingw32-make
+
+echo Copying program and libraries to package directories...
 echo f | xcopy /f /y release\Batlab.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\Batlab.exe
+windeployqt.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\Batlab.exe --dir ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui.lib\data\
 
 echo Building installer...
 binarycreator.exe -p ..\dist\windows\packages\ -c ..\dist\windows\config\config.xml -n Batlab-Toolkit-GUI-Installer-%APPVEYOR_BUILD_VERSION%.exe
