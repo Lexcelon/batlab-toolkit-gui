@@ -31,3 +31,14 @@ deploy:
     on:
       branch: master
       appveyor_repo_tag: true
+
+  - provider: S3
+    access_key_id:
+      secure: L/OOLwE4Mt68ZPfl6p7DwzuX7rTtsAgffmwHeKli23g=
+    secret_access_key:
+      secure: 9Mgpsu8aUORozTJHmP+xvH5RDo6Qw2S8WxyWlm30kEuW+Z9dtTUUTSLFVX0AU3MR
+    bucket: lexcelon-s3-1
+    region: us-east-2
+    set_public: true
+    folder: repository/batlab-toolkit-gui/release/windows
+    artifact: /.*\.xml/,/.*\.7z.*/
