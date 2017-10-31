@@ -2,6 +2,6 @@
 #define GUIVERSION_H
 
 #define BATLAB_TOOLKIT_GUI_VERSION_FIELDSTR "batlabToolkitGUIVersion"
-#define BATLAB_TOOLKIT_GUI_VERSION          "0.0.1"
+#define BATLAB_TOOLKIT_GUI_VERSION          "0.0.0"
 
 #endif // GUIVERSION_H
