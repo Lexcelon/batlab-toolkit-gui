@@ -26,4 +26,3 @@ echo Creating update repository...
 mkdir windows
 repogen.exe -p ..\dist\windows\packages\ windows\
 
-dir windows\
