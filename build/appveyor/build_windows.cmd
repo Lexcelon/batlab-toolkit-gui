@@ -10,7 +10,8 @@ set PATH=C:\Qt\Tools\mingw530_32\bin\;%PATH%
 set PATH=C:\MinGW\bin\;%PATH%
 
 echo Setting program version...
-Perl.exe
+perl.exe -p -i -e 's/0\.0\.0/%APPVEYOR_REPO_TAG_NAME%/g' src\version.h
+type src\version.h
 
 echo Building program...
 mkdir temp
