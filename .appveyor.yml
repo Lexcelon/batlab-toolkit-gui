@@ -9,13 +9,8 @@ on_finish:
   # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))  
     
 environment:
-  QT: C:\Qt\5.9.1\mingw53_32
   APPVEYOR_RDP_PASSWORD: Something23!
 
 build_script:
   - call "build/appveyor/build_windows.cmd"
-
-configuration:
-  - debug
-  - release
 
