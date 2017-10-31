@@ -17,5 +17,17 @@ build_script:
   - call "build/appveyor/build_windows.cmd"
 
 after_build:
-  - ps: Get-ChildItem Batlab-Toolkit-GUI-Installer-*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }; $root = Resolve-Path .\windows; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
+  - ps: build/appveyor/after_build_windows.ps1
 
+deploy:
+  - provider: GitHub
+    description: 'Batlab Toolkit GUI build release'
+    auth_token:
+      secure: PIqDLwiI4tC+6g/atJ7V2U3WvQGYJWjlKKMRUO3aHcopZT16Mq5RS9dwq1ker8dk
+    artifact: Batlab-Toolkit-GUI-Installer-*.exe
+    draft: true
+    prerelease: true
+    force_update: true
+    on:
+      branch: master
+      appveyor_repo_tag: true
