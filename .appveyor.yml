@@ -18,5 +18,5 @@ build_script:
 
 after_build:
   - ps: Get-ChildItem temp\Batlab-Toolkit-GUI-Installer-*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
-    ps: ps: $root = Resolve-Path temp\windows; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
+    ps: $root = Resolve-Path temp\windows; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
 
