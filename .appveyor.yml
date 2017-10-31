@@ -3,9 +3,11 @@ version: 0.1.{build}
 image: Visual Studio 2015
 
 init:
+  # Uncomment below to enable RDP on appveyor builds
   # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 on_finish:
+  # Uncomment below to block the build finish on RDP so that you have time to log in
   # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))  
     
 environment:
@@ -13,4 +15,8 @@ environment:
 
 build_script:
   - call "build/appveyor/build_windows.cmd"
+
+after_build:
+  - ps: Get-ChildItem temp\Batlab-Toolkit-GUI-Installer-*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+    ps: ps: $root = Resolve-Path temp\windows; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
 
