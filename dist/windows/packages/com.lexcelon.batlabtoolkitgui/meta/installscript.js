@@ -7,7 +7,7 @@ Component.prototype.createOperations = function()
 {
     component.createOperations();
 
-    component.addOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@UserStartMenuProgramsPath@/@StartMenuDir@/Batlab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico", "iconId=2", "description=Batlab Toolkit GUI");
+    component.addOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@StartMenuDir@/Batlab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico", "iconId=2", "description=Batlab Toolkit GUI");
     
     component.addOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@DesktopDir@/Batlab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico");
 }
