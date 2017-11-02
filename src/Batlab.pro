@@ -21,6 +21,7 @@ win32 {
     QT += winextras
     LIBS += -lAdvapi32 -lOle32 -lShell32
     SOURCES += qtautoupdater/autoupdatergui/adminauthorization_win.cpp
+    RC_ICONS += icons/desktop-favicon.ico
 } else:mac {
     LIBS += -framework Security
     SOURCES += qtautoupdater/autoupdatergui/adminauthorization_mac.cpp
