@@ -24,7 +24,7 @@ echo f | xcopy /f /y release\Batlab.exe ..\dist\windows\packages\com.lexcelon.ba
 windeployqt.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\Batlab.exe --dir ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui.lib\data
 
 echo Building installer...
-binarycreator.exe -p ..\dist\windows\packages\ -c ..\dist\windows\config\config.xml -n Batlab-Toolkit-GUI-Installer-%APPVEYOR_BUILD_VERSION%.exe
+binarycreator.exe -p ..\dist\windows\packages\ -c ..\dist\windows\config\config.xml -n Batlab-Toolkit-GUI-Installer-Windows.exe
 
 echo Creating update repository...
 mkdir windows

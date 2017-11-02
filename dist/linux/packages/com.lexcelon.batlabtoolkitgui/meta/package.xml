@@ -15,6 +15,7 @@
   -->
   <ReleaseDate>2000-01-01</ReleaseDate>  
 
+  <UpdateText>See https://github.com/Lexcelon/batlab-toolkit-gui/releases for release notes and development history.</UpdateText>
   <Licenses>
     <License name="GNU General Public License" file="COPYING" />
   </Licenses>

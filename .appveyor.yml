@@ -21,7 +21,7 @@ after_build:
 
 deploy:
   - provider: GitHub
-    description: 'Auto-generated release from build system'
+    description: 'Installers are auto-generated with each release. Once installed, you can update Batlab Toolkit GUI without downloading a new installer.'
     auth_token:
       secure: PIqDLwiI4tC+6g/atJ7V2U3WvQGYJWjlKKMRUO3aHcopZT16Mq5RS9dwq1ker8dk
     artifact: /Batlab-Toolkit-GUI-Installer-.*\.exe/
