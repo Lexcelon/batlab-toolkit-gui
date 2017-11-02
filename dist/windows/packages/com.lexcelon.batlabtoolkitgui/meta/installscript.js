@@ -7,8 +7,8 @@ Component.prototype.createOperations = function()
 {
     component.createOperations();
 
-    component.addOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@UserStartMenuProgramsPath@/@StartMenuDir@/Batlab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico");
-    component.addOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@DesktopDir@/Batbab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico");
+    component.addElevatedOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@UserStartMenuProgramsPath@/@StartMenuDir@/Batlab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico");
+    component.addElevatedOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@DesktopDir@/Batlab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico");
 }
 
 
