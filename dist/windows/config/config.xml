@@ -14,6 +14,7 @@
   <TargetDir>@ApplicationsDir@/Lexcelon/Batlab Toolkit GUI</TargetDir>
   <RunProgram>@TargetDir@/Batlab.exe</RunProgram>
   <RunProgramDescription>Run Batlab Toolkit GUI</RunProgramDescription>
+  <InstallerApplicationIcon>desktop-favicon</InstallerApplicationIcon>
   <RemoteRepositories>
     <Repository>
       <Url>https://s3.us-east-2.amazonaws.com/lexcelon-s3-1/repository/batlab-toolkit-gui/release/windows</Url>

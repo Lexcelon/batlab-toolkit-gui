@@ -1,15 +1,14 @@
 function Component()
 {
-    console.log("Component");
+
 }
 
 Component.prototype.createOperations = function()
 {
     component.createOperations();
-    console.log("prototype");
-    console.log("@StartMenuDir@");
-    console.log("@UserStartMenuProgramsPath@");
-    component.addOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@UserStartMenuProgramsPath@/@StartMenuDir@/Batlab.lnk", "workingDirectory=@TargetDir@");
+
+    component.addOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@UserStartMenuProgramsPath@/@StartMenuDir@/Batlab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico");
+    component.addOperation("CreateShortcut", "@TargetDir@/Batlab.exe", "@DesktopDir@/Batbab.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/desktop-favicon.ico");
 }
 
 
