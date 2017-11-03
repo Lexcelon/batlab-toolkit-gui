@@ -24,6 +24,8 @@
 #include "newtestschedulewizard.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
+#include "qtautoupdater/autoupdatergui/updatebutton.h"
+#include "qtautoupdater/autoupdatergui/updatecontroller.h"
 
 namespace Ui {
 class MainWindow;
@@ -110,6 +112,8 @@ private:
     QAction *aboutBatlabToolkitGUIAct;
     QAction *documentationAct;
     QAction *contactAct;
+
+    QtAutoUpdater::UpdateController *updaterController;
 
 private slots:
     void newCellPlaylist();

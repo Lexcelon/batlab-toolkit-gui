@@ -74,6 +74,12 @@ void BatlabMainWindow::createActions()
     debugBatlabAct = new QAction(tr("Debug Batlab"), this);
     debugBatlabAct->setStatusTip(tr("Debug a Batlab by reading and writing registers"));
     connect(debugBatlabAct, &QAction::triggered, this, &BatlabMainWindow::debugBatlab);
+
+    updaterController = new QtAutoUpdater::UpdateController("maintenancetool", this, qApp);
+    updaterController->setDetailedUpdateInfo(true);
+    checkForUpdatesAct = updaterController->createUpdateAction(this);
+    checkForUpdatesAct->setIconVisibleInMenu(true);
+
 }
 
 void BatlabMainWindow::createMenus()
@@ -86,6 +92,11 @@ void BatlabMainWindow::createMenus()
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(debugBatlabAct);
+
+    helpMenu = menuBar()->addMenu(tr("&Help"));
+    // TODO add about... item
+    helpMenu->addSeparator();
+    helpMenu->addAction(checkForUpdatesAct);
 }
 
 void BatlabMainWindow::newCellPlaylist()
