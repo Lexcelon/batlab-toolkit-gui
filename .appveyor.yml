@@ -25,7 +25,7 @@ deploy:
     auth_token:
       secure: PIqDLwiI4tC+6g/atJ7V2U3WvQGYJWjlKKMRUO3aHcopZT16Mq5RS9dwq1ker8dk
     artifact: /Batlab-Toolkit-GUI-Installer-.*\.exe/
-    draft: true
+    draft: false
     prerelease: true
     force_update: true
     on:
