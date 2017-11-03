@@ -25,6 +25,7 @@ win32 {
 } else:mac {
     LIBS += -framework Security
     SOURCES += qtautoupdater/autoupdatergui/adminauthorization_mac.cpp
+    ICON = icons/desktop-favicon.icns
 } else:unix {
     LIBS += -lutil
     SOURCES += qtautoupdater/autoupdatergui/adminauthorization_x11.cpp
