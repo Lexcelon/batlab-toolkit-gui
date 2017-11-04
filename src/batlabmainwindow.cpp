@@ -52,6 +52,8 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
 
     createActions();
     createMenus();
+    // Check for updates when the program opens and only display anything if updates are available
+    updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
 }
 
 void BatlabMainWindow::createActions()
