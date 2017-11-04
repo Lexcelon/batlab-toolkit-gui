@@ -106,12 +106,10 @@ private:
     QAction *exitBatlabToolkitGUIAct;
 
     QAction *debugBatlabAct;
-    QAction *checkForUpdatesAct;
     QAction *checkForBatlabFirmwareUpdatesAct;
 
     QAction *aboutBatlabToolkitGUIAct;
-    QAction *documentationAct;
-    QAction *contactAct;
+    QAction *checkForUpdatesAct;
 
     QtAutoUpdater::UpdateController *updaterController;
 
@@ -121,7 +119,6 @@ private slots:
     void exitBatlabToolkitGUI();
 
     void debugBatlab();
-    void checkForUpdates();
     void checkForBatlabFirmwareUpdates();
 
     void aboutBatlabToolkitGUI();

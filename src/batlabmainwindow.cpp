@@ -75,11 +75,14 @@ void BatlabMainWindow::createActions()
     debugBatlabAct->setStatusTip(tr("Debug a Batlab by reading and writing registers"));
     connect(debugBatlabAct, &QAction::triggered, this, &BatlabMainWindow::debugBatlab);
 
+    aboutBatlabToolkitGUIAct = new QAction(tr("About Batlab Toolkit GUI"), this);
+    aboutBatlabToolkitGUIAct->setStatusTip(tr("Information about the Batlab Toolkit GUI program"));
+    connect(aboutBatlabToolkitGUIAct, &QAction::triggered, this, &BatlabMainWindow::aboutBatlabToolkitGUI);
+
     updaterController = new QtAutoUpdater::UpdateController("maintenancetool", this, qApp);
     updaterController->setDetailedUpdateInfo(true);
     checkForUpdatesAct = updaterController->createUpdateAction(this);
     checkForUpdatesAct->setIconVisibleInMenu(true);
-
 }
 
 void BatlabMainWindow::createMenus()
@@ -94,7 +97,7 @@ void BatlabMainWindow::createMenus()
     toolsMenu->addAction(debugBatlabAct);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
-    // TODO add about... item
+    helpMenu->addAction(aboutBatlabToolkitGUIAct);
     helpMenu->addSeparator();
     helpMenu->addAction(checkForUpdatesAct);
 }
@@ -129,11 +132,6 @@ void BatlabMainWindow::debugBatlab()
         testObj->show();
 }
 
-void BatlabMainWindow::checkForUpdates()
-{
-    // TODO
-}
-
 void BatlabMainWindow::checkForBatlabFirmwareUpdates()
 {
     // TODO
@@ -141,7 +139,18 @@ void BatlabMainWindow::checkForBatlabFirmwareUpdates()
 
 void BatlabMainWindow::aboutBatlabToolkitGUI()
 {
-    // TODO
+    QString msgText = QString("<p>Batlab Toolkit GUI, Version %1"
+                              "<p>© Lexcelon, LLC %2"
+                              "<hr>"
+                              "<p>Batlab Toolkit GUI is provided under the GPL license."
+                              "<p>Source code is available on <a href=\"https://www.github.com/lexcelon/batlab-toolkit-gui\">GitHub</a>."
+                              "<p>Documentation is available on the <a href=\"https://www.lexcelon.com/resources/\">resources</a> page on our website."
+                              "<p>Please <a href=\"https://www.lexcelon.com\">visit our website</a>"
+                              " or <a href=\"mailto:support@lexcelon.com\">contact us</a> for more information."
+                              "<hr>"
+                              "<p>The Batlab is made possible through the support and participation of our backers and customers. Thank you!"
+                              ).arg(BATLAB_TOOLKIT_GUI_VERSION, QDate::currentDate().toString("yyyy"));
+    QMessageBox::information(this, tr("About Batlab Toolkit GUI"), msgText);
 }
 
 void BatlabMainWindow::documentation()
