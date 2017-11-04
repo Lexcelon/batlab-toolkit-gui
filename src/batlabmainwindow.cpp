@@ -155,16 +155,6 @@ void BatlabMainWindow::aboutBatlabToolkitGUI()
     QMessageBox::information(this, tr("About Batlab Toolkit GUI"), msgText);
 }
 
-void BatlabMainWindow::documentation()
-{
-    // TODO
-}
-
-void BatlabMainWindow::contact()
-{
-    // TODO
-}
-
 void BatlabMainWindow::onTest()
 {
 //    for (int i = 0; i < 200000; ++i) {

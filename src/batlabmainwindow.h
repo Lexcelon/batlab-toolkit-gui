@@ -122,8 +122,6 @@ private slots:
     void checkForBatlabFirmwareUpdates();
 
     void aboutBatlabToolkitGUI();
-    void documentation();
-    void contact();
 
     void makeBatlabConnections(QStringList availCommPortNames);
     void updateBatlabConnections();
