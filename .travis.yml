@@ -6,8 +6,11 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install -y qt59[QTPACKAGE]
+  - sudo apt-get install -y qt59-meta-full qt59-charts-no-lgpl
 
 script:
   - source /opt/qt59/bin/qt59-env.sh
-  - qmake
+  - mkdir temp
+  - cd temp
+  - qmake ../src
+  - make
