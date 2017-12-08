@@ -284,12 +284,6 @@ void BatlabMainWindow::onReceiveStream(int cell,int mode,int status,float temp, 
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::onNewProjectWizard() {
-    newTestScheduleWizard * a = new newTestScheduleWizard();
-    connect(a, SIGNAL(emitFinished(QString)), this, SLOT(onLoadTest(QString)));
-    a->onShow();
-}
-
 void BatlabMainWindow::onNewCellPlaylistWizard() {
     NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
     wizard->setWizardStyle(QWizard::ModernStyle);

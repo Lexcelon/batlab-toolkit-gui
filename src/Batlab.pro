@@ -11,8 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Batlab
 TEMPLATE = app
 
-INCLUDEPATH += ./Wizard
-
 @
 CONFIG += debug_and_release
 @
@@ -38,14 +36,10 @@ SOURCES += main.cpp\
     batlabcell.cpp \
     batlabsystemtest.cpp \
     testwindow.cpp \
-    Wizard/wizardpageone.cpp \
-    Wizard/wizardpagetwo.cpp \
-    Wizard/wizardpagethree.cpp \
     batlabtestgroup.cpp \
     batlabtestplan.cpp \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.cpp \
     globals.cpp \
-    Wizard/newtestschedulewizard.cpp \
     batlabmainwindow.cpp \
     cellmodulewidget.cpp \
     histogramobject.cpp \
@@ -60,7 +54,7 @@ SOURCES += main.cpp\
     qtautoupdater/autoupdatergui/updatecontroller.cpp \
     qtautoupdater/autoupdatergui/updateinfodialog.cpp \
     settings.cpp \
-    qtautoupdater/autoupdatergui/dialogmaster.cpp
+    qtautoupdater/autoupdatergui/dialogmaster.cpp \
 
 HEADERS  += \
     batlabconfig.h \
@@ -71,9 +65,6 @@ HEADERS  += \
     batlabcell.h \
     batlabsystemtest.h \
     testwindow.h \
-    Wizard/wizardpageone.h \
-    Wizard/wizardpagetwo.h \
-    Wizard/wizardpagethree.h \
     batlabtestgroup.h \
     batlabtestplan.h \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.h \
@@ -84,7 +75,6 @@ HEADERS  += \
     batlabmainwindow.h \
     cellmodulewidget.h \
     histogramobject.h \
-    Wizard/newtestschedulewizard.h \
     qtautoupdater/autoupdatercore/adminauthoriser.h \
     qtautoupdater/autoupdatercore/qtautoupdatercore_global.h \
     qtautoupdater/autoupdatercore/simplescheduler_p.h \
@@ -100,14 +90,11 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/updateinfodialog_p.h \
     settings.h \
     qtautoupdater/autoupdatergui/dialogmaster.h \
-    version.h
+    version.h \
 
 FORMS    += \
     test.ui \
     testwindow.ui \
-    Wizard/wizardpageone.ui \
-    Wizard/wizardpagetwo.ui \
-    Wizard/wizardpagethree.ui \
     cellmodulewidget.ui \
     inputstringdialog.ui \
     mainwindow.ui \

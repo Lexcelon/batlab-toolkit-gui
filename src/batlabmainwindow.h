@@ -19,9 +19,6 @@
 #include "batlabcom.h"
 #include "batlabcellmanager.h"
 #include "version.h"
-#include "wizardpageone.h"
-#include "wizardpagetwo.h"
-#include "newtestschedulewizard.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"
@@ -52,7 +49,6 @@ public slots:
     void onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage);
 
     void onNewCellPlaylistWizard();
-    void onNewProjectWizard();
     void onLoadTest(QString);
     void onLoadProject();
 
