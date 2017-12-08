@@ -1,0 +1,20 @@
+os: linux
+group: stable
+language: cpp
+
+sudo: required
+dist: trusty
+
+before_install:
+  - sudo apt-add-repository --yes ppa:beineri/opt-qt591-trusty
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get install -y qt59-meta-full qt59charts-no-lgpl
+
+script:
+  - source /opt/qt59/bin/qt59-env.sh
+  - mkdir temp
+  - cd temp
+  - qmake ../src
+  - make
