@@ -8,13 +8,11 @@
 BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    // Basic main window setup
     centralWidget = new QWidget();
     setCentralWidget(centralWidget);
     this->showMaximized();
     this->setWindowTitle(tr("Batlab Toolkit GUI"));
-
-    connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
-    test = new QPushButton(QString("Test"));
 
     cellPlaylistButton = new QPushButton(tr("Cell Playlist"));
     batlabsButton = new QPushButton(tr("Batlabs"));
@@ -67,6 +65,9 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     cellPlaylistNotLoadedWidget->setLayout(cellPlaylistNotLoadedLayout);
 
     cellPlaylistLoadedWidget = new QWidget;
+    cellPlaylistLoadedLayout = new QGridLayout;
+
+
 
     cellPlaylistStackedWidget = new QStackedWidget;
     cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);
@@ -112,10 +113,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
     centralWidget->setLayout(centralWidgetLayout);
-
-//    connect(test, &QPushButton::clicked,
-//            this, &BatlabMainWindow::onTest);
-//    connect(connectToBatlabs, &QPushButton::clicked, this, &BatlabMainWindow::updateBatlabConnections);
 
     connect(this, &BatlabMainWindow::emitUpdateText,
             this, &BatlabMainWindow::onUpdateText);
@@ -259,7 +256,7 @@ void BatlabMainWindow::onTest()
 
 BatlabMainWindow::~BatlabMainWindow()
 {
-    if (test) delete test;
+
 }
 
 void BatlabMainWindow::onReceiveWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)

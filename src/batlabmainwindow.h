@@ -37,7 +37,6 @@ public:
     ~BatlabMainWindow();
 
 public slots:
-    //void onConnectToBatlabs(QStringList names);
     void removeBatlabConnection(QString batlabUnitPortName);
     //void onGetBatlabNames();
     void onTest();
@@ -81,8 +80,6 @@ protected:
 
 private:
     Ui::MainWindow *ui = nullptr;
-    QPushButton *connectToBatlabs = nullptr;
-    QPushButton *test = nullptr;
     QVector<batlabCom*> batlabComObjects;
 
     batlabtest *testObj = nullptr;
