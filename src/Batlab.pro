@@ -103,7 +103,7 @@ FORMS    += \
     qtautoupdater/autoupdatergui/updateinfodialog.ui \
     settings.ui
 
-DISTFILES += 1010.bmp \
+DISTFILES += \
     qtautoupdater/autoupdatergui/translations/translations.pri \
     qtautoupdater/autoupdatergui/update-loader.gif \
     qtautoupdater/autoupdatergui/update.ico \
