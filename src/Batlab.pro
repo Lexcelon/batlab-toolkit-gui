@@ -98,7 +98,6 @@ FORMS    += \
     testwindow.ui \
     cellmodulewidget.ui \
     inputstringdialog.ui \
-    mainwindow.ui \
     qtautoupdater/autoupdatergui/progressdialog.ui \
     qtautoupdater/autoupdatergui/updatebutton.ui \
     qtautoupdater/autoupdatergui/updateinfodialog.ui \

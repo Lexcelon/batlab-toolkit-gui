@@ -5,8 +5,8 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QGraphicsView>
-#include <QTableWidget>
-#include <QTableWidgetItem>
+//#include <QTableWidget>
+//#include <QTableWidgetItem>
 #include <QWizard>
 #include <QWizardPage>
 #include <QLineEdit>
@@ -86,7 +86,7 @@ private:
     batlabtest *testObj = nullptr;
     batlabCellManager * cellManager = nullptr;
 
-    QTableWidget * tableWidget = nullptr;
+//    QTableWidget * tableWidget = nullptr;
 
     void createMenus();
     void createActions();
@@ -129,6 +129,8 @@ private:
     QFrame *resultsStackWidget;
 
     QGridLayout *liveViewLayout;
+
+    QTextBrowser *textBrowser;
 
 private slots:
     void newCellPlaylist();
