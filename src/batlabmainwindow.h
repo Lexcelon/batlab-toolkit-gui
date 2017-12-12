@@ -53,8 +53,6 @@ public slots:
     void onLoadProject();
 
     void onTestDataButton();
-    void onProcessPack();
-    void onPackBuilt(QVector<QStringList> list);
 
     void onFinishedTests(QString designator, int testNum);
 
@@ -108,6 +106,29 @@ private:
     QAction *checkForUpdatesAct;
 
     QtAutoUpdater::UpdateController *updaterController;
+
+    QDialogButtonBox *tabButtonBox;
+    QPushButton *cellPlaylistButton;
+    QPushButton *batlabsButton;
+    QPushButton *liveViewButton;
+    QPushButton *resultsButton;
+
+    QWidget *centralWidget;
+    QGridLayout *centralWidgetLayout;
+
+    QTabWidget *mainTabWidget;
+    QWidget *testCellsTab;
+    QGridLayout *testCellsLayout;
+    QWidget *configurePackTab;
+    QHBoxLayout *configurePackLayout;
+
+    QStackedWidget *stackedWidget;
+    QFrame *cellPlaylistStackWidget;
+    QFrame *batlabsStackWidget;
+    QFrame *liveViewStackWidget;
+    QFrame *resultsStackWidget;
+
+    QGridLayout *liveViewLayout;
 
 private slots:
     void newCellPlaylist();

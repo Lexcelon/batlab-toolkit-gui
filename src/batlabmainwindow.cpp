@@ -10,48 +10,107 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    // Setting up the gui with the same name in the forms directory
+    ///////////////////////////////////
+    // Todo remove
     ui->setupUi(this);
     this->showMaximized();
     tableWidget = ui->tableWidget;
+    ///////////////////////////////////
 
-    // Managing data from cells
-    cellManager = new batlabCellManager();
+    centralWidget = new QWidget();
+    setCentralWidget(centralWidget);
 
-    // Create the buttons we use in the gui
     connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
     test = new QPushButton(QString("Test"));
 
-    // Place the buttons in the button box in our gui
-    ui->buttonBox->addButton(connectToBatlabs,QDialogButtonBox::ActionRole);
-    ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
+    cellPlaylistButton = new QPushButton(tr("Cell Playlist"));
+    batlabsButton = new QPushButton(tr("Batlabs"));
+    liveViewButton = new QPushButton(tr("Live View"));
+    resultsButton = new QPushButton(tr("Results"));
+
+    tabButtonBox = new QDialogButtonBox;
+    tabButtonBox->setOrientation(Qt::Vertical);
+    tabButtonBox->addButton(cellPlaylistButton, QDialogButtonBox::ActionRole);
+    tabButtonBox->addButton(batlabsButton, QDialogButtonBox::ActionRole);
+    tabButtonBox->addButton(liveViewButton, QDialogButtonBox::ActionRole);
+    tabButtonBox->addButton(resultsButton, QDialogButtonBox::ActionRole);
+
+    stackedWidget = new QStackedWidget;
+
+    cellPlaylistStackWidget = new QFrame;
+    cellPlaylistStackWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    cellPlaylistStackWidget->setLineWidth(2);
+
+    batlabsStackWidget = new QFrame;
+    batlabsStackWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    batlabsStackWidget->setLineWidth(2);
+
+    liveViewStackWidget = new QFrame;
+    liveViewStackWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    liveViewStackWidget->setLineWidth(2);
+
+    resultsStackWidget = new QFrame;
+    resultsStackWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    resultsStackWidget->setLineWidth(2);
+
+//    cellPlaylistStackLayout = new QGridLayout;
+//    newCellPlaylistButton = new QPushButton(tr("New Cell Playlist"));
+//    connect(newCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::onNewCellPlaylistWizard);
+
+    liveViewLayout = new QGridLayout;
+    liveViewLayout->addWidget(ui->textBrowser, 0, 0, Qt::AlignTop);
+    liveViewStackWidget->setLayout(liveViewLayout);
+
+    stackedWidget->addWidget(cellPlaylistStackWidget);
+    stackedWidget->addWidget(batlabsStackWidget);
+    stackedWidget->addWidget(liveViewStackWidget);
+    stackedWidget->addWidget(resultsStackWidget);
+
+    connect(cellPlaylistButton, &QPushButton::clicked, this, [this]{ stackedWidget->setCurrentWidget(cellPlaylistStackWidget); });
+    connect(batlabsButton, &QPushButton::clicked, this, [this]{ stackedWidget->setCurrentWidget(batlabsStackWidget); });
+    connect(liveViewButton, &QPushButton::clicked, this, [this]{ this->stackedWidget->setCurrentWidget(liveViewStackWidget); });
+    connect(resultsButton, &QPushButton::clicked, this, [this]{ stackedWidget->setCurrentWidget(resultsStackWidget); });
+
+    testCellsLayout = new QGridLayout;
+    testCellsLayout->addWidget(tabButtonBox, 0, 0);
+    testCellsLayout->addWidget(stackedWidget, 0, 1);
+
+    testCellsTab = new QWidget;
+    testCellsTab->setLayout(testCellsLayout);
+
+    configurePackLayout = new QHBoxLayout;
+
+    configurePackTab = new QWidget;
+    configurePackTab->setLayout(configurePackLayout);
+
+    mainTabWidget = new QTabWidget;
+    mainTabWidget->addTab(testCellsTab, tr("Test Cells"));
+    mainTabWidget->addTab(configurePackTab, tr("Configure Pack"));
+
+    centralWidgetLayout = new QGridLayout;
+    centralWidgetLayout->addWidget(mainTabWidget);
+    centralWidget->setLayout(centralWidgetLayout);
+
+
 
     // TODO PLACEHOLDER TEXT WILL REMOVE
-    ui->textBrowser->insertPlainText(QString(">> Welcome to Batlab!\n" ));
-    ui->textBrowser->insertPlainText(QString(">> Click New Project Wizard or Load Project File to begin.\n" ));
-    ui->textBrowser->insertPlainText(QString(">> Don't forget to plug in your Batlab(s) and click Connect to Batlab!\n" ));
+    ui->textBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
 
-    // Making the buttons functional
-    connect(test, &QPushButton::clicked,
-            this, &BatlabMainWindow::onTest);
-    connect(connectToBatlabs, &QPushButton::clicked,
-            this, &BatlabMainWindow::updateBatlabConnections);
+//    connect(test, &QPushButton::clicked,
+//            this, &BatlabMainWindow::onTest);
+//    connect(connectToBatlabs, &QPushButton::clicked, this, &BatlabMainWindow::updateBatlabConnections);
 
     connect(this, &BatlabMainWindow::emitUpdateText,
             this, &BatlabMainWindow::onUpdateText);
 
-    connect(ui->testDataButton, &QPushButton::clicked,
-            this, &BatlabMainWindow::onTestDataButton);
-    connect(ui->processPackButton, &QPushButton::clicked,
-            this, &BatlabMainWindow::onProcessPack);
-    connect(cellManager, &batlabCellManager::emitPack,
-            this, &BatlabMainWindow::onPackBuilt);
-
-    connect(ui->newCellPlaylistButton, &QPushButton::clicked,
-            this, &BatlabMainWindow::onNewCellPlaylistWizard);
-
     createActions();
     createMenus();
+
+    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
+
+    // Managing data from cells
+    cellManager = new batlabCellManager;
+
     // Check for updates when the program opens and only display anything if updates are available
     updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
 }
@@ -405,28 +464,9 @@ void BatlabMainWindow::onTestDataButton()
     TestData *testData = new TestData;
     testData->readTestData(fileNames.first());
 
-    ui->voltageGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_VOLTAGE);
-    ui->currentGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_CURRENT);
-    ui->temperatureGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_TEMPERATURE);
-}
-
-void BatlabMainWindow::onProcessPack()
-{
-    int numberOfModules = ui->numberOfModulesSpinbox->value();
-
-    int numberOfCellsPerModule = ui->cellsPerModuleSpinbox->value();
-    if ((cellManager->getCellList().size() < (numberOfCellsPerModule * numberOfModules))) {
-        QMessageBox::critical(this, "Not enough cells.",
-                              QString("You do not have enough cells to make %1 modules with %2 cells per module.").arg(numberOfModules).arg(numberOfCellsPerModule), QMessageBox::Ok);
-        return;
-    } else {
-        cellManager->onSetNumberOfCellsPerModule(numberOfCellsPerModule);
-        cellManager->onSetNumberOfModules(numberOfModules);
-        cellManager->onSetVoltageCoefficient(ui->voltageCoefficientSpinbox->value());
-        cellManager->onSetCurrentCoefficient(ui->currentCoefficientSpinbox->value());
-        cellManager->onSetChargeCoefficient(ui->chargeCoefficientSpinbox->value());
-        cellManager->onProcessCellData();
-    }
+//    ui->voltageGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_VOLTAGE);
+//    ui->currentGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_CURRENT);
+//    ui->temperatureGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_TEMPERATURE);
 }
 
 void clearLayout(QLayout *layout) {
@@ -441,16 +481,6 @@ void clearLayout(QLayout *layout) {
         }
         delete item;
     }
-}
-
-void BatlabMainWindow::onPackBuilt(QVector<QStringList> list)
-{
-    clearLayout(ui->packLayout);
-    for (int i = 0; i < list.size(); ++i) {
-        ui->packLayout->addWidget(new CellModuleWidget(i, list[i]));
-        ui->packLayout->addSpacing(10);
-    }
-    ui->packLayout->addSpacerItem(new QSpacerItem(0 , 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void BatlabMainWindow::onFinishedTests(QString designator, int testNum)
