@@ -11,6 +11,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     // Basic main window setup
     centralWidget = new QWidget();
     setCentralWidget(centralWidget);
+    this->resize(800, 600);
     this->showMaximized();
     this->setWindowTitle(tr("Batlab Toolkit GUI"));
 
