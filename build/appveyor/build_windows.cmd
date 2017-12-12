@@ -1,7 +1,7 @@
 echo on
 
 echo Setting up environment...
-set PATH=C:\Qt\5.9.1\mingw53_32\bin\;%PATH%
+set PATH=C:\Qt\5.9\mingw53_32\bin\;%PATH%
 set PATH=C:\Qt\Tools\QtCreator\bin\;%PATH%
 set PATH=C:\Qt\QtIFW-3.0.1\bin\;%PATH%
 set PATH=C:\Qt\Tools\mingw530_32\bin\;%PATH%
