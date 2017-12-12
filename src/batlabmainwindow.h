@@ -49,6 +49,8 @@ public slots:
     void onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage);
 
     void onNewCellPlaylistWizard();
+    void onLoadCellPlaylist();
+
     void onLoadTest(QString);
     void onLoadProject();
 
@@ -118,17 +120,27 @@ private:
 
     QTabWidget *mainTabWidget;
     QWidget *testCellsTab;
-    QGridLayout *testCellsLayout;
+    QGridLayout *testCellsTabLayout;
     QWidget *configurePackTab;
-    QHBoxLayout *configurePackLayout;
+    QHBoxLayout *configurePackTabLayout;
 
-    QStackedWidget *stackedWidget;
-    QFrame *cellPlaylistStackWidget;
-    QFrame *batlabsStackWidget;
-    QFrame *liveViewStackWidget;
-    QFrame *resultsStackWidget;
+    QStackedWidget *mainStackedWidget;
+    QFrame *cellPlaylistTabWidget;
+    QFrame *batlabsTabWidget;
+    QFrame *liveViewTabWidget;
+    QFrame *resultsTabWidget;
 
-    QGridLayout *liveViewLayout;
+    QWidget *cellPlaylistNotLoadedWidget;
+    QWidget *cellPlaylistLoadedWidget;
+    QGridLayout *cellPlaylistNotLoadedLayout;
+    QGridLayout *cellPlaylistLoadedLayout;
+    QLabel *noCellPlaylistLoadedLabel;
+    QPushButton *newCellPlaylistButton;
+    QPushButton *openCellPlaylistButton;
+    QStackedWidget *cellPlaylistStackedWidget;
+
+    QGridLayout *cellPlaylistTabLayout;
+    QGridLayout *liveViewTabLayout;
 
     QTextBrowser *textBrowser;
 

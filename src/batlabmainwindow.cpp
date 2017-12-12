@@ -10,8 +10,8 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
 {
     centralWidget = new QWidget();
     setCentralWidget(centralWidget);
-
     this->showMaximized();
+    this->setWindowTitle(tr("Batlab Toolkit GUI"));
 
     connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
     test = new QPushButton(QString("Test"));
@@ -28,55 +28,82 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     tabButtonBox->addButton(liveViewButton, QDialogButtonBox::ActionRole);
     tabButtonBox->addButton(resultsButton, QDialogButtonBox::ActionRole);
 
-    stackedWidget = new QStackedWidget;
+    mainStackedWidget = new QStackedWidget;
 
-    cellPlaylistStackWidget = new QFrame;
-    cellPlaylistStackWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    cellPlaylistStackWidget->setLineWidth(2);
+    cellPlaylistTabWidget = new QFrame;
+    cellPlaylistTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    cellPlaylistTabWidget->setLineWidth(2);
 
-    batlabsStackWidget = new QFrame;
-    batlabsStackWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    batlabsStackWidget->setLineWidth(2);
+    batlabsTabWidget = new QFrame;
+    batlabsTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    batlabsTabWidget->setLineWidth(2);
 
-    liveViewStackWidget = new QFrame;
-    liveViewStackWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    liveViewStackWidget->setLineWidth(2);
+    liveViewTabWidget = new QFrame;
+    liveViewTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    liveViewTabWidget->setLineWidth(2);
 
-    resultsStackWidget = new QFrame;
-    resultsStackWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    resultsStackWidget->setLineWidth(2);
+    resultsTabWidget = new QFrame;
+    resultsTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    resultsTabWidget->setLineWidth(2);
 
-//    cellPlaylistStackLayout = new QGridLayout;
-//    newCellPlaylistButton = new QPushButton(tr("New Cell Playlist"));
-//    connect(newCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::onNewCellPlaylistWizard);
+    cellPlaylistNotLoadedWidget = new QWidget;
+    cellPlaylistNotLoadedLayout = new QGridLayout;
+
+    noCellPlaylistLoadedLabel = new QLabel(tr("No cell playlist is loaded. Create a new playlist or open an existing one."));
+    newCellPlaylistButton = new QPushButton(tr("New Cell Playlist"));
+    connect(newCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::onNewCellPlaylistWizard);
+    openCellPlaylistButton = new QPushButton(tr("Open Cell Playlist"));
+    connect(openCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::onLoadCellPlaylist);
+
+    cellPlaylistNotLoadedLayout->addWidget(noCellPlaylistLoadedLabel, 1, 1, 1, 3, Qt::AlignCenter);
+    cellPlaylistNotLoadedLayout->addWidget(newCellPlaylistButton, 3, 1, Qt::AlignCenter);
+    cellPlaylistNotLoadedLayout->addWidget(openCellPlaylistButton, 3, 3, Qt::AlignCenter);
+    cellPlaylistNotLoadedLayout->setColumnStretch(0, 16);
+    cellPlaylistNotLoadedLayout->setColumnStretch(2, 1);
+    cellPlaylistNotLoadedLayout->setColumnStretch(4, 16);
+    cellPlaylistNotLoadedLayout->setRowStretch(0, 6);
+    cellPlaylistNotLoadedLayout->setRowStretch(2, 1);
+    cellPlaylistNotLoadedLayout->setRowStretch(4, 16);
+    cellPlaylistNotLoadedWidget->setLayout(cellPlaylistNotLoadedLayout);
+
+    cellPlaylistLoadedWidget = new QWidget;
+
+    cellPlaylistStackedWidget = new QStackedWidget;
+    cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);
+    cellPlaylistStackedWidget->addWidget(cellPlaylistLoadedWidget);
+
+    cellPlaylistTabLayout = new QGridLayout;
+    cellPlaylistTabLayout->addWidget(cellPlaylistStackedWidget, 0, 0);
+    cellPlaylistTabWidget->setLayout(cellPlaylistTabLayout);
 
     textBrowser = new QTextBrowser;
+    textBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
 
-    liveViewLayout = new QGridLayout;
-    liveViewLayout->addWidget(textBrowser, 0, 0, Qt::AlignTop);
-    liveViewStackWidget->setLayout(liveViewLayout);
+    liveViewTabLayout = new QGridLayout;
+    liveViewTabLayout->addWidget(textBrowser, 0, 0, Qt::AlignTop);
+    liveViewTabWidget->setLayout(liveViewTabLayout);
 
-    stackedWidget->addWidget(cellPlaylistStackWidget);
-    stackedWidget->addWidget(batlabsStackWidget);
-    stackedWidget->addWidget(liveViewStackWidget);
-    stackedWidget->addWidget(resultsStackWidget);
+    mainStackedWidget->addWidget(cellPlaylistTabWidget);
+    mainStackedWidget->addWidget(batlabsTabWidget);
+    mainStackedWidget->addWidget(liveViewTabWidget);
+    mainStackedWidget->addWidget(resultsTabWidget);
 
-    connect(cellPlaylistButton, &QPushButton::clicked, this, [this]{ stackedWidget->setCurrentWidget(cellPlaylistStackWidget); });
-    connect(batlabsButton, &QPushButton::clicked, this, [this]{ stackedWidget->setCurrentWidget(batlabsStackWidget); });
-    connect(liveViewButton, &QPushButton::clicked, this, [this]{ this->stackedWidget->setCurrentWidget(liveViewStackWidget); });
-    connect(resultsButton, &QPushButton::clicked, this, [this]{ stackedWidget->setCurrentWidget(resultsStackWidget); });
+    connect(cellPlaylistButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget); });
+    connect(batlabsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(batlabsTabWidget); });
+    connect(liveViewButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(liveViewTabWidget); });
+    connect(resultsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(resultsTabWidget); });
 
-    testCellsLayout = new QGridLayout;
-    testCellsLayout->addWidget(tabButtonBox, 0, 0);
-    testCellsLayout->addWidget(stackedWidget, 0, 1);
+    testCellsTabLayout = new QGridLayout;
+    testCellsTabLayout->addWidget(tabButtonBox, 0, 0);
+    testCellsTabLayout->addWidget(mainStackedWidget, 0, 1);
 
     testCellsTab = new QWidget;
-    testCellsTab->setLayout(testCellsLayout);
+    testCellsTab->setLayout(testCellsTabLayout);
 
-    configurePackLayout = new QHBoxLayout;
+    configurePackTabLayout = new QHBoxLayout;
 
     configurePackTab = new QWidget;
-    configurePackTab->setLayout(configurePackLayout);
+    configurePackTab->setLayout(configurePackTabLayout);
 
     mainTabWidget = new QTabWidget;
     mainTabWidget->addTab(testCellsTab, tr("Test Cells"));
@@ -85,11 +112,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
     centralWidget->setLayout(centralWidgetLayout);
-
-
-
-    // TODO PLACEHOLDER TEXT WILL REMOVE
-    textBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
 
 //    connect(test, &QPushButton::clicked,
 //            this, &BatlabMainWindow::onTest);
@@ -342,6 +364,10 @@ void BatlabMainWindow::onNewCellPlaylistWizard() {
     NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
     wizard->setWizardStyle(QWizard::ModernStyle);
     wizard->show();
+}
+
+void BatlabMainWindow::onLoadCellPlaylist() {
+
 }
 
 void BatlabMainWindow::onLoadTest(QString fileName)
