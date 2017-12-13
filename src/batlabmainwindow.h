@@ -79,16 +79,17 @@ protected:
     }
 
 private:
-    Ui::MainWindow *ui = nullptr;
     QVector<batlabCom*> batlabComObjects;
 
     batlabtest *testObj = nullptr;
     batlabCellManager * cellManager = nullptr;
 
-//    QTableWidget * tableWidget = nullptr;
-
+    void initializeMainWindowUI();
     void createMenus();
     void createActions();
+
+    bool cellPlaylistLoaded;
+    bool testsInProgress;
 
     QMenu *fileMenu;
     QMenu *toolsMenu;

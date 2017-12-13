@@ -14,6 +14,30 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     this->showMaximized();
     this->setWindowTitle(tr("Batlab Toolkit GUI"));
 
+    // Set state for the main window logic
+    cellPlaylistLoaded = false;
+    testsInProgress = false;
+
+    // Setup the UI
+    initializeMainWindowUI();
+
+    connect(this, &BatlabMainWindow::emitUpdateText,
+            this, &BatlabMainWindow::onUpdateText);
+
+    createActions();
+    createMenus();
+
+    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
+
+    // Managing data from cells
+    cellManager = new batlabCellManager;
+
+    // Check for updates when the program opens and only display anything if updates are available
+    updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
+}
+
+void BatlabMainWindow::initializeMainWindowUI()
+{
     cellPlaylistButton = new QPushButton(tr("Cell Playlist"));
     batlabsButton = new QPushButton(tr("Batlabs"));
     liveViewButton = new QPushButton(tr("Live View"));
@@ -67,11 +91,14 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     cellPlaylistLoadedWidget = new QWidget;
     cellPlaylistLoadedLayout = new QGridLayout;
 
-
+    cellPlaylistLoadedLayout->addWidget(openCellPlaylistButton, 1, 0);
+    cellPlaylistLoadedLayout->addWidget(newCellPlaylistButton, 2, 0);
+    cellPlaylistLoadedWidget->setLayout(cellPlaylistLoadedLayout);
 
     cellPlaylistStackedWidget = new QStackedWidget;
     cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);
     cellPlaylistStackedWidget->addWidget(cellPlaylistLoadedWidget);
+    cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget); // TODO temporary for testing
 
     cellPlaylistTabLayout = new QGridLayout;
     cellPlaylistTabLayout->addWidget(cellPlaylistStackedWidget, 0, 0);
@@ -89,6 +116,8 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     mainStackedWidget->addWidget(liveViewTabWidget);
     mainStackedWidget->addWidget(resultsTabWidget);
 
+    // Some fun functor syntax to pass arguments to the signal https://stackoverflow.com/a/22411267
+    // You have to capture ''this'' and then access variables from there https://stackoverflow.com/questions/7895879/using-member-variable-in-lambda-capture-list-inside-a-member-function
     connect(cellPlaylistButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget); });
     connect(batlabsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(batlabsTabWidget); });
     connect(liveViewButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(liveViewTabWidget); });
@@ -113,20 +142,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
     centralWidget->setLayout(centralWidgetLayout);
-
-    connect(this, &BatlabMainWindow::emitUpdateText,
-            this, &BatlabMainWindow::onUpdateText);
-
-    createActions();
-    createMenus();
-
-    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
-
-    // Managing data from cells
-    cellManager = new batlabCellManager;
-
-    // Check for updates when the program opens and only display anything if updates are available
-    updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
 }
 
 void BatlabMainWindow::createActions()
