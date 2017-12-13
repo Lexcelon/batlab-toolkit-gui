@@ -34,7 +34,9 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     cellManager = new batlabCellManager;
 
     // Check for updates when the program opens and only display anything if updates are available
-    updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
+    // I have disabled this because it asks if maintenancetool.exe can make changes to your computer every time you open the program
+    // Will reconsider in future especially if I can make it not intrusive. For now user can run "Check for updates"
+    // updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
 }
 
 void BatlabMainWindow::initializeMainWindowUI()
@@ -143,22 +145,6 @@ void BatlabMainWindow::initializeMainWindowUI()
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
     centralWidget->setLayout(centralWidgetLayout);
-
-    connect(this, &BatlabMainWindow::emitUpdateText,
-            this, &BatlabMainWindow::onUpdateText);
-
-    createActions();
-    createMenus();
-
-    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
-
-    // Managing data from cells
-    cellManager = new batlabCellManager;
-
-    // Check for updates when the program opens and only display anything if updates are available
-    // I have disabled this because it asks if maintenancetool.exe can make changes to your computer every time you open the program
-    // Will reconsider in future especially if I can make it not intrusive. For now user can run "Check for updates"
-    // updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
 }
 
 void BatlabMainWindow::createActions()
