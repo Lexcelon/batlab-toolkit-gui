@@ -55,7 +55,7 @@ SOURCES += main.cpp\
     qtautoupdater/autoupdatergui/updatecontroller.cpp \
     qtautoupdater/autoupdatergui/updateinfodialog.cpp \
     settings.cpp \
-    qtautoupdater/autoupdatergui/dialogmaster.cpp \
+    qtautoupdater/autoupdatergui/dialogmaster.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -91,7 +91,7 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/updateinfodialog_p.h \
     settings.h \
     qtautoupdater/autoupdatergui/dialogmaster.h \
-    version.h \
+    version.h
 
 FORMS    += \
     test.ui \
