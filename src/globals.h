@@ -142,6 +142,12 @@ struct testParms
 #define NUM_MEASUREMENT_CYCLES_MAX                          10000
 
 // Unit: Amps
+#define PRECHARGE_RATE_FIELDSTR                             "prechargeRate"
+#define PRECHARGE_RATE_DEFAULT                              2.0
+#define PRECHARGE_RATE_MIN                                  0.25
+// #define PRECHARGE_RATE_MAX                               CHARGE_CURRENT_SAFETY_CUTOFF used
+
+// Unit: Amps
 #define CHARGE_RATE_FIELDSTR                                "chargeRate"
 #define CHARGE_RATE_DEFAULT                                 2.0
 #define CHARGE_RATE_MIN                                     0.25
@@ -176,6 +182,26 @@ struct testParms
 #define REST_PERIOD_DEFAULT                                 60.0
 #define REST_PERIOD_MIN                                     0.0
 #define REST_PERIOD_MAX                                     3600.0
+
+// Not yet implemented
+// Unit: Boolean
+#define ENABLE_TRICKLE_FIELDSTR                             "enableTrickle"
+#define ENABLE_TRICKLE_DEFAULT                              false
+
+// Not yet implemented
+// Unit: Boolean
+#define ENABLE_PULSE_FIELDSTR                               "enablePulse"
+#define ENABLE_PULSE_DEFAULT                                false
+
+// Unit: Boolean
+#define INDIVIDUAL_CELL_LOGS_FIELDSTR                       "individualCellLogs"
+#define INDIVIDUAL_CELL_LOGS_DEFAULT                        true
+
+// Unit: Boolean
+#define CELL_LOG_TIMESTAMPS_FIELDSTR                        "cellLogTimestamps"
+#define CELL_LOG_TIMESTAMPS_DEFAULT                         true
+
+#define PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR                  "playlistOutputDirectory"
 
 //Status register codes
 #define STAT_VOLTAGE_LIMIT_CHG  0x0001

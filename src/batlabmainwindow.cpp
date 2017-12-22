@@ -1,5 +1,4 @@
 #include "batlabmainwindow.h"
-#include "ui_mainwindow.h"
 #include <QFileDialog>
 #include "inputstringdialog.h"
 #include <QScrollBar>
@@ -7,53 +6,145 @@
 #include <QSpacerItem>
 
 BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
 {
-    // Setting up the gui with the same name in the forms directory
-    ui->setupUi(this);
+    // Basic main window setup
+    centralWidget = new QWidget();
+    setCentralWidget(centralWidget);
+    this->resize(800, 600);
     this->showMaximized();
-    tableWidget = ui->tableWidget;
+    this->setWindowTitle(tr("Batlab Toolkit GUI"));
 
-    // Managing data from cells
-    cellManager = new batlabCellManager();
+    // Set state for the main window logic
+    cellPlaylistLoaded = false;
+    testsInProgress = false;
 
-    // Create the buttons we use in the gui
-    connectToBatlabs = new QPushButton(QString("Connect to Batlab(s)"));
-    test = new QPushButton(QString("Test"));
-
-    // Place the buttons in the button box in our gui
-    ui->buttonBox->addButton(connectToBatlabs,QDialogButtonBox::ActionRole);
-    ui->buttonBox->addButton(test,QDialogButtonBox::ActionRole);
-
-    // TODO PLACEHOLDER TEXT WILL REMOVE
-    ui->textBrowser->insertPlainText(QString(">> Welcome to Batlab!\n" ));
-    ui->textBrowser->insertPlainText(QString(">> Click New Project Wizard or Load Project File to begin.\n" ));
-    ui->textBrowser->insertPlainText(QString(">> Don't forget to plug in your Batlab(s) and click Connect to Batlab!\n" ));
-
-    // Making the buttons functional
-    connect(test, &QPushButton::clicked,
-            this, &BatlabMainWindow::onTest);
-    connect(connectToBatlabs, &QPushButton::clicked,
-            this, &BatlabMainWindow::updateBatlabConnections);
+    // Setup the UI
+    initializeMainWindowUI();
 
     connect(this, &BatlabMainWindow::emitUpdateText,
             this, &BatlabMainWindow::onUpdateText);
 
-    connect(ui->testDataButton, &QPushButton::clicked,
-            this, &BatlabMainWindow::onTestDataButton);
-    connect(ui->processPackButton, &QPushButton::clicked,
-            this, &BatlabMainWindow::onProcessPack);
-    connect(cellManager, &batlabCellManager::emitPack,
-            this, &BatlabMainWindow::onPackBuilt);
-
-    connect(ui->newCellPlaylistButton, &QPushButton::clicked,
-            this, &BatlabMainWindow::onNewCellPlaylistWizard);
-
     createActions();
     createMenus();
+
+    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
+
+    // Managing data from cells
+    cellManager = new batlabCellManager;
+
     // Check for updates when the program opens and only display anything if updates are available
-    updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
+    // I have disabled this because it asks if maintenancetool.exe can make changes to your computer every time you open the program
+    // Will reconsider in future especially if I can make it not intrusive. For now user can run "Check for updates"
+    // updaterController->start(QtAutoUpdater::UpdateController::InfoLevel);
+}
+
+void BatlabMainWindow::initializeMainWindowUI()
+{
+    cellPlaylistButton = new QPushButton(tr("Cell Playlist"));
+    batlabsButton = new QPushButton(tr("Batlabs"));
+    liveViewButton = new QPushButton(tr("Live View"));
+    resultsButton = new QPushButton(tr("Results"));
+
+    tabButtonBox = new QDialogButtonBox;
+    tabButtonBox->setOrientation(Qt::Vertical);
+    tabButtonBox->addButton(cellPlaylistButton, QDialogButtonBox::ActionRole);
+    tabButtonBox->addButton(batlabsButton, QDialogButtonBox::ActionRole);
+    tabButtonBox->addButton(liveViewButton, QDialogButtonBox::ActionRole);
+    tabButtonBox->addButton(resultsButton, QDialogButtonBox::ActionRole);
+
+    mainStackedWidget = new QStackedWidget;
+
+    cellPlaylistTabWidget = new QFrame;
+    cellPlaylistTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    cellPlaylistTabWidget->setLineWidth(2);
+
+    batlabsTabWidget = new QFrame;
+    batlabsTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    batlabsTabWidget->setLineWidth(2);
+
+    liveViewTabWidget = new QFrame;
+    liveViewTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    liveViewTabWidget->setLineWidth(2);
+
+    resultsTabWidget = new QFrame;
+    resultsTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    resultsTabWidget->setLineWidth(2);
+
+    cellPlaylistNotLoadedWidget = new QWidget;
+    cellPlaylistNotLoadedLayout = new QGridLayout;
+
+    noCellPlaylistLoadedLabel = new QLabel(tr("No cell playlist is loaded. Create a new playlist or open an existing one."));
+    newCellPlaylistButton = new QPushButton(tr("New Cell Playlist"));
+    connect(newCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::onNewCellPlaylistWizard);
+    openCellPlaylistButton = new QPushButton(tr("Open Cell Playlist"));
+    connect(openCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::onLoadCellPlaylist);
+
+    cellPlaylistNotLoadedLayout->addWidget(noCellPlaylistLoadedLabel, 1, 1, 1, 3, Qt::AlignCenter);
+    cellPlaylistNotLoadedLayout->addWidget(newCellPlaylistButton, 3, 1, Qt::AlignCenter);
+    cellPlaylistNotLoadedLayout->addWidget(openCellPlaylistButton, 3, 3, Qt::AlignCenter);
+    cellPlaylistNotLoadedLayout->setColumnStretch(0, 16);
+    cellPlaylistNotLoadedLayout->setColumnStretch(2, 1);
+    cellPlaylistNotLoadedLayout->setColumnStretch(4, 16);
+    cellPlaylistNotLoadedLayout->setRowStretch(0, 6);
+    cellPlaylistNotLoadedLayout->setRowStretch(2, 1);
+    cellPlaylistNotLoadedLayout->setRowStretch(4, 16);
+    cellPlaylistNotLoadedWidget->setLayout(cellPlaylistNotLoadedLayout);
+
+    cellPlaylistLoadedWidget = new QWidget;
+    cellPlaylistLoadedLayout = new QGridLayout;
+
+    cellPlaylistLoadedLayout->addWidget(openCellPlaylistButton, 1, 0);
+    cellPlaylistLoadedLayout->addWidget(newCellPlaylistButton, 2, 0);
+    cellPlaylistLoadedWidget->setLayout(cellPlaylistLoadedLayout);
+
+    cellPlaylistStackedWidget = new QStackedWidget;
+    cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);
+    cellPlaylistStackedWidget->addWidget(cellPlaylistLoadedWidget);
+    cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget); // TODO temporary for testing
+
+    cellPlaylistTabLayout = new QGridLayout;
+    cellPlaylistTabLayout->addWidget(cellPlaylistStackedWidget, 0, 0);
+    cellPlaylistTabWidget->setLayout(cellPlaylistTabLayout);
+
+    textBrowser = new QTextBrowser;
+    textBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
+
+    liveViewTabLayout = new QGridLayout;
+    liveViewTabLayout->addWidget(textBrowser, 0, 0, Qt::AlignTop);
+    liveViewTabWidget->setLayout(liveViewTabLayout);
+
+    mainStackedWidget->addWidget(cellPlaylistTabWidget);
+    mainStackedWidget->addWidget(batlabsTabWidget);
+    mainStackedWidget->addWidget(liveViewTabWidget);
+    mainStackedWidget->addWidget(resultsTabWidget);
+
+    // Some fun functor syntax to pass arguments to the signal https://stackoverflow.com/a/22411267
+    // You have to capture ''this'' and then access variables from there https://stackoverflow.com/questions/7895879/using-member-variable-in-lambda-capture-list-inside-a-member-function
+    connect(cellPlaylistButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget); });
+    connect(batlabsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(batlabsTabWidget); });
+    connect(liveViewButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(liveViewTabWidget); });
+    connect(resultsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(resultsTabWidget); });
+
+    testCellsTabLayout = new QGridLayout;
+    testCellsTabLayout->addWidget(tabButtonBox, 0, 0);
+    testCellsTabLayout->addWidget(mainStackedWidget, 0, 1);
+
+    testCellsTab = new QWidget;
+    testCellsTab->setLayout(testCellsTabLayout);
+
+    configurePackTabLayout = new QHBoxLayout;
+
+    configurePackTab = new QWidget;
+    configurePackTab->setLayout(configurePackTabLayout);
+
+    mainTabWidget = new QTabWidget;
+    mainTabWidget->addTab(testCellsTab, tr("Test Cells"));
+    mainTabWidget->addTab(configurePackTab, tr("Configure Pack"));
+
+    centralWidgetLayout = new QGridLayout;
+    centralWidgetLayout->addWidget(mainTabWidget);
+    centralWidget->setLayout(centralWidgetLayout);
 }
 
 void BatlabMainWindow::createActions()
@@ -160,7 +251,7 @@ void BatlabMainWindow::onTest()
 //    for (int i = 0; i < 200000; ++i) {
 //        if (i%10 == 0) {
 
-//            QString str = QString("Register #%1 - \n").arg(ui->textBrowser->verticalScrollBar()->maximum());
+//            QString str = QString("Register #%1 - \n").arg(textBrowser->verticalScrollBar()->maximum());
 //            emit emitUpdateText(str);
 //            QApplication::processEvents();
 //        }
@@ -183,8 +274,7 @@ void BatlabMainWindow::onTest()
 
 BatlabMainWindow::~BatlabMainWindow()
 {
-    if (test) delete test;
-    delete ui;
+
 }
 
 void BatlabMainWindow::onReceiveWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
@@ -285,105 +375,103 @@ void BatlabMainWindow::onReceiveStream(int cell,int mode,int status,float temp, 
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::onNewProjectWizard() {
-    newTestScheduleWizard * a = new newTestScheduleWizard();
-    connect(a, SIGNAL(emitFinished(QString)), this, SLOT(onLoadTest(QString)));
-    a->onShow();
-}
-
 void BatlabMainWindow::onNewCellPlaylistWizard() {
     NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
     wizard->setWizardStyle(QWizard::ModernStyle);
     wizard->show();
 }
 
+void BatlabMainWindow::onLoadCellPlaylist() {
+
+}
+
 void BatlabMainWindow::onLoadTest(QString fileName)
 {
-    ui->tableWidget->clearContents();
-    while( ui->tableWidget->rowCount() > 0) {
-        ui->tableWidget->removeRow(0);
-    }
-    while( ui->tableWidget->columnCount() > 0) {
-        ui->tableWidget->removeColumn(0);
-    }
+//    ui->tableWidget->clearContents();
+//    while( ui->tableWidget->rowCount() > 0) {
+//        ui->tableWidget->removeRow(0);
+//    }
+//    while( ui->tableWidget->columnCount() > 0) {
+//        ui->tableWidget->removeColumn(0);
+//    }
 
-    cellManager->clean();
+//    cellManager->clean();
 
-    if (!fileName.endsWith(".blp",Qt::CaseInsensitive)) {
-        fileName = fileName + ".blp";
-    }
+//    if (!fileName.endsWith(".blp",Qt::CaseInsensitive)) {
+//        fileName = fileName + ".blp";
+//    }
 
-    cellManager->setProjectName(fileName.split(".").first());
+//    cellManager->setProjectName(fileName.split(".").first());
 
-    QFile f(fileName);
+//    QFile f(fileName);
 
-    QVector<QString> labels;
+//    QVector<QString> labels;
 
-    if (f.open(QFile::ReadOnly)){
+//    if (f.open(QFile::ReadOnly)){
 
-        if (!f.atEnd()) {
-           QByteArray str = f.readLine();
+//        if (!f.atEnd()) {
+//           QByteArray str = f.readLine();
 
-           qDebug() << str.split(',');
+//           qDebug() << str.split(',');
 
-           for (int i = 0; i < str.split(',').size(); ++i) {
-               labels.append(str.split(',').at(i));
-           }
-        }
+//           for (int i = 0; i < str.split(',').size(); ++i) {
+//               labels.append(str.split(',').at(i));
+//           }
+//        }
 
-        while (!f.atEnd()) {
-            testParms tempParms;
-            int index = 0;
+//        while (!f.atEnd()) {
+//            testParms tempParms;
+//            int index = 0;
 
-            QByteArray str = f.readLine();
-            QList<QByteArray> strList = str.split(',');
-            QString cellname = strList.at(index++);
-            int numCycles = QString(strList.at(index++)).toInt();
-//            tempParms.restTime = QString(strList.at(index++)).toInt();
-            tempParms.hightVoltageCutoff = QString(strList.at(index++)).toDouble();
-            tempParms.lowVoltageCutoff = QString(strList.at(index++)).toDouble();
-            tempParms.temperatureCutoffCharge = QString(strList.at(index++)).toDouble();
-            tempParms.temperatureCutoffDischarge = QString(strList.at(index++)).toDouble();
-//            tempParms.currentCutoffCharge = QString(strList.at(index++)).toDouble();
-//            tempParms.currentCutoffDischarge = QString(strList.at(index++)).toDouble();
-//            tempParms.reportingFrequency = QString(strList.at(index++)).toDouble();
-            tempParms.chargeCurrentSetpoint = QString(strList.at(index++)).toDouble();
-            tempParms.dischargeCurrentSetpoint = QString(strList.at(index++)).toDouble();
-//            double cap = QString(strList.at(index++)).toDouble();
+//            QByteArray str = f.readLine();
+//            QList<QByteArray> strList = str.split(',');
+//            QString cellname = strList.at(index++);
+//            int numCycles = QString(strList.at(index++)).toInt();
+////            tempParms.restTime = QString(strList.at(index++)).toInt();
+//            tempParms.hightVoltageCutoff = QString(strList.at(index++)).toDouble();
+//            tempParms.lowVoltageCutoff = QString(strList.at(index++)).toDouble();
+//            tempParms.temperatureCutoffCharge = QString(strList.at(index++)).toDouble();
+//            tempParms.temperatureCutoffDischarge = QString(strList.at(index++)).toDouble();
+////            tempParms.currentCutoffCharge = QString(strList.at(index++)).toDouble();
+////            tempParms.currentCutoffDischarge = QString(strList.at(index++)).toDouble();
+////            tempParms.reportingFrequency = QString(strList.at(index++)).toDouble();
+//            tempParms.chargeCurrentSetpoint = QString(strList.at(index++)).toDouble();
+//            tempParms.dischargeCurrentSetpoint = QString(strList.at(index++)).toDouble();
+////            double cap = QString(strList.at(index++)).toDouble();
 
-            int numberOfTests = numCycles * 2 + 1;
-            if (ui->tableWidget->columnCount() - 1 < numberOfTests) {
-                int colCount = ui->tableWidget->columnCount();
-                for (int i = 0; i < (numberOfTests - colCount + 1); ++i) {
-                    ui->tableWidget->insertColumn(ui->tableWidget->columnCount());
-                }
-            }
+//            int numberOfTests = numCycles * 2 + 1;
+//            if (ui->tableWidget->columnCount() - 1 < numberOfTests) {
+//                int colCount = ui->tableWidget->columnCount();
+//                for (int i = 0; i < (numberOfTests - colCount + 1); ++i) {
+//                    ui->tableWidget->insertColumn(ui->tableWidget->columnCount());
+//                }
+//            }
 
-            cellManager->onNewCell(cellname,tempParms,numCycles);
+//            cellManager->onNewCell(cellname,tempParms,numCycles);
 
-            QVector<int> *cellTests = cellManager->onGetCell(cellname)->getTests();
-            ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-            QTableWidgetItem * item = new QTableWidgetItem(cellname);
-            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,item);
-            for (int j = 0; j < cellTests->size(); j++) {
-                QString testString;
-                if (cellTests->at(j) == MODE_CHARGE) {
-                    testString = "CHARGE";
-                } else {
-                    testString = "DISCHARGE";
-                }
-                QTableWidgetItem * testItem = new QTableWidgetItem(testString);
-                testItem->setBackgroundColor(Qt::red);
-                ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,j+1,testItem);
-            }
+//            QVector<int> *cellTests = cellManager->onGetCell(cellname)->getTests();
+//            ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+//            QTableWidgetItem * item = new QTableWidgetItem(cellname);
+//            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,item);
+//            for (int j = 0; j < cellTests->size(); j++) {
+//                QString testString;
+//                if (cellTests->at(j) == MODE_CHARGE) {
+//                    testString = "CHARGE";
+//                } else {
+//                    testString = "DISCHARGE";
+//                }
+//                QTableWidgetItem * testItem = new QTableWidgetItem(testString);
+//                testItem->setBackgroundColor(Qt::red);
+//                ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,j+1,testItem);
+//            }
 
-        }
+//        }
 
-    }
-    for (int i = 0; i < cellManager->getCellList().size(); ++i) {
-        connect(cellManager->getCellList()[i], &batlabCell::updateUI,
-                this, &BatlabMainWindow::onFinishedTests);
-    }
+//    }
+//    for (int i = 0; i < cellManager->getCellList().size(); ++i) {
+//        connect(cellManager->getCellList()[i], &batlabCell::updateUI,
+//                this, &BatlabMainWindow::onFinishedTests);
+//    }
 }
 
 void BatlabMainWindow::onLoadProject()
@@ -411,28 +499,9 @@ void BatlabMainWindow::onTestDataButton()
     TestData *testData = new TestData;
     testData->readTestData(fileNames.first());
 
-    ui->voltageGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_VOLTAGE);
-    ui->currentGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_CURRENT);
-    ui->temperatureGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_TEMPERATURE);
-}
-
-void BatlabMainWindow::onProcessPack()
-{
-    int numberOfModules = ui->numberOfModulesSpinbox->value();
-
-    int numberOfCellsPerModule = ui->cellsPerModuleSpinbox->value();
-    if ((cellManager->getCellList().size() < (numberOfCellsPerModule * numberOfModules))) {
-        QMessageBox::critical(this, "Not enough cells.",
-                              QString("You do not have enough cells to make %1 modules with %2 cells per module.").arg(numberOfModules).arg(numberOfCellsPerModule), QMessageBox::Ok);
-        return;
-    } else {
-        cellManager->onSetNumberOfCellsPerModule(numberOfCellsPerModule);
-        cellManager->onSetNumberOfModules(numberOfModules);
-        cellManager->onSetVoltageCoefficient(ui->voltageCoefficientSpinbox->value());
-        cellManager->onSetCurrentCoefficient(ui->currentCoefficientSpinbox->value());
-        cellManager->onSetChargeCoefficient(ui->chargeCoefficientSpinbox->value());
-        cellManager->onProcessCellData();
-    }
+//    ui->voltageGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_VOLTAGE);
+//    ui->currentGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_CURRENT);
+//    ui->temperatureGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_TEMPERATURE);
 }
 
 void clearLayout(QLayout *layout) {
@@ -449,35 +518,25 @@ void clearLayout(QLayout *layout) {
     }
 }
 
-void BatlabMainWindow::onPackBuilt(QVector<QStringList> list)
-{
-    clearLayout(ui->packLayout);
-    for (int i = 0; i < list.size(); ++i) {
-        ui->packLayout->addWidget(new CellModuleWidget(i, list[i]));
-        ui->packLayout->addSpacing(10);
-    }
-    ui->packLayout->addSpacerItem(new QSpacerItem(0 , 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
-}
-
 void BatlabMainWindow::onFinishedTests(QString designator, int testNum)
 {
-    for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
-        if (designator == ui->tableWidget->item(i,0)->text()) {
-            ui->tableWidget->item(i,testNum+1)->setBackgroundColor(Qt::green);
-            break;
-        }
-    }
+//    for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
+//        if (designator == ui->tableWidget->item(i,0)->text()) {
+//            ui->tableWidget->item(i,testNum+1)->setBackgroundColor(Qt::green);
+//            break;
+//        }
+//    }
 }
 
 void BatlabMainWindow::onUpdateText(QString str)
 {
     static int i = 0;
     str = QString("%1: %2 ").arg(++i).arg(QDateTime::currentDateTime().toString()) + str;
-    if (ui->textBrowser->verticalScrollBar()->value() >= (ui->textBrowser->verticalScrollBar()->maximum()-10)) {
-        ui->textBrowser->insertPlainText(str);
-        ui->textBrowser->moveCursor(QTextCursor::End);
+    if (textBrowser->verticalScrollBar()->value() >= (textBrowser->verticalScrollBar()->maximum()-10)) {
+        textBrowser->insertPlainText(str);
+        textBrowser->moveCursor(QTextCursor::End);
     } else {
-        ui->textBrowser->insertPlainText(str);
+        textBrowser->insertPlainText(str);
     }
 }
 

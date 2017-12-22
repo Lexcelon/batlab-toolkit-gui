@@ -9,6 +9,6 @@
 #define BATLAB_TOOLKIT_GUI_VERSION          "0.0.0"
 
 #define BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR "batlabCellPlaylistFileVersion"
-#define BATBAL_CELL_PLAYLIST_FILE_VERSION          "0.0.1"
+#define BATLAB_CELL_PLAYLIST_FILE_VERSION          "0.0.1"
 
 #endif // VERSION_H

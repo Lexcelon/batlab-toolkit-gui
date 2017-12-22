@@ -5,8 +5,8 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QGraphicsView>
-#include <QTableWidget>
-#include <QTableWidgetItem>
+//#include <QTableWidget>
+//#include <QTableWidgetItem>
 #include <QWizard>
 #include <QWizardPage>
 #include <QLineEdit>
@@ -19,9 +19,6 @@
 #include "batlabcom.h"
 #include "batlabcellmanager.h"
 #include "version.h"
-#include "wizardpageone.h"
-#include "wizardpagetwo.h"
-#include "newtestschedulewizard.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"
@@ -40,7 +37,6 @@ public:
     ~BatlabMainWindow();
 
 public slots:
-    //void onConnectToBatlabs(QStringList names);
     void removeBatlabConnection(QString batlabUnitPortName);
     //void onGetBatlabNames();
     void onTest();
@@ -52,13 +48,12 @@ public slots:
     void onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage);
 
     void onNewCellPlaylistWizard();
-    void onNewProjectWizard();
+    void onLoadCellPlaylist();
+
     void onLoadTest(QString);
     void onLoadProject();
 
     void onTestDataButton();
-    void onProcessPack();
-    void onPackBuilt(QVector<QStringList> list);
 
     void onFinishedTests(QString designator, int testNum);
 
@@ -84,18 +79,17 @@ protected:
     }
 
 private:
-    Ui::MainWindow *ui = nullptr;
-    QPushButton *connectToBatlabs = nullptr;
-    QPushButton *test = nullptr;
     QVector<batlabCom*> batlabComObjects;
 
     batlabtest *testObj = nullptr;
     batlabCellManager * cellManager = nullptr;
 
-    QTableWidget * tableWidget = nullptr;
-
+    void initializeMainWindowUI();
     void createMenus();
     void createActions();
+
+    bool cellPlaylistLoaded;
+    bool testsInProgress;
 
     QMenu *fileMenu;
     QMenu *toolsMenu;
@@ -112,6 +106,41 @@ private:
     QAction *checkForUpdatesAct;
 
     QtAutoUpdater::UpdateController *updaterController;
+
+    QDialogButtonBox *tabButtonBox;
+    QPushButton *cellPlaylistButton;
+    QPushButton *batlabsButton;
+    QPushButton *liveViewButton;
+    QPushButton *resultsButton;
+
+    QWidget *centralWidget;
+    QGridLayout *centralWidgetLayout;
+
+    QTabWidget *mainTabWidget;
+    QWidget *testCellsTab;
+    QGridLayout *testCellsTabLayout;
+    QWidget *configurePackTab;
+    QHBoxLayout *configurePackTabLayout;
+
+    QStackedWidget *mainStackedWidget;
+    QFrame *cellPlaylistTabWidget;
+    QFrame *batlabsTabWidget;
+    QFrame *liveViewTabWidget;
+    QFrame *resultsTabWidget;
+
+    QWidget *cellPlaylistNotLoadedWidget;
+    QWidget *cellPlaylistLoadedWidget;
+    QGridLayout *cellPlaylistNotLoadedLayout;
+    QGridLayout *cellPlaylistLoadedLayout;
+    QLabel *noCellPlaylistLoadedLabel;
+    QPushButton *newCellPlaylistButton;
+    QPushButton *openCellPlaylistButton;
+    QStackedWidget *cellPlaylistStackedWidget;
+
+    QGridLayout *cellPlaylistTabLayout;
+    QGridLayout *liveViewTabLayout;
+
+    QTextBrowser *textBrowser;
 
 private slots:
     void newCellPlaylist();
