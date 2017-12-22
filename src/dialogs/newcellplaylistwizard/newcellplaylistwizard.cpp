@@ -458,11 +458,11 @@ SavePlaylistPage::SavePlaylistPage(QWidget *parent) : QWizardPage(parent)
 
     saveFilenameLineEdit = new QLineEdit();
     saveFilenameLineEdit->setReadOnly(true);
+    registerField(PLAYLIST_SAVE_FILENAME_FIELDSTR, saveFilenameLineEdit);
     saveFilenameBrowseButton = new QPushButton(tr("Browse..."));
     connect(saveFilenameBrowseButton, &QPushButton::clicked, this, &SavePlaylistPage::browseForSaveFilename);
 
     skipButton = new QPushButton(tr("Skip >"));
-//    skipButton->setMaximumWidth(80);
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(saveFilenameLineEdit, 0, 0);
@@ -521,6 +521,9 @@ QJsonObject NewCellPlaylistWizard::jsonFromNewPlaylistWizard()
 
     playlistJson[CELL_LOG_TIMESTAMPS_FIELDSTR] = CELL_LOG_TIMESTAMPS_DEFAULT;
 
+    playlistJson[PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR] = field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString().simplified();
+    playlistJson[PLAYLIST_SAVE_FILENAME_FIELDSTR] = field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified();
+
     QJsonArray cellNamesArray;
     int numCells = field(NUM_CELLS_FIELDSTR).toInt();
     int startingCellNumber = field(STARTING_CELL_NUMBER_FIELDSTR).toInt();
@@ -540,32 +543,21 @@ void NewCellPlaylistWizard::savePlaylist()
     if (currentId() == 5) {
         // We also don't want to do this if they got to the next page with the "Skip" button
         if (skipped == false) {
-            QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
-            QDir dir;
-            if (dir.mkpath(appLocalDataPath)) {
-                QString defaultSaveFileName = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified() + ".blp.json";
-                QString saveFileName = QFileDialog::getSaveFileName(this, tr("Save cell playlist as:"), defaultSaveFileName, "Batlab Cell Playlist Files (*.blp.json);;All Files (*)");
-                if (!saveFileName.endsWith(".blp.json")) {
-                    saveFileName.append(".blp.json");
-                }
+            QString saveFileName = field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified();
 
-                QFile saveFile(saveFileName);
-                if (!saveFile.open(QIODevice::WriteOnly)) {
-                    qWarning() << "Couldn't open save file for new cell playlist.";
-                    return;
-                }
-
-                QJsonObject playlistJsonObject = this->jsonFromNewPlaylistWizard();
-
-                QJsonDocument saveDoc(playlistJsonObject);
-                saveFile.write(saveDoc.toJson());
-            } else {
-                qWarning() << "Unable to find/make app local data directory.";
+            QFile saveFile(saveFileName);
+            if (!saveFile.open(QIODevice::WriteOnly)) {
+                qWarning() << "Couldn't open save file for new cell playlist.";
+                return;
             }
+
+            QJsonObject playlistJsonObject = this->jsonFromNewPlaylistWizard();
+
+            QJsonDocument saveDoc(playlistJsonObject);
+            saveFile.write(saveDoc.toJson());
         }
         skipped = false;
     }
-
 }
 
 void NewCellPlaylistWizard::skipToNextPage()

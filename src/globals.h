@@ -183,15 +183,13 @@ struct testParms
 #define REST_PERIOD_MIN                                     0.0
 #define REST_PERIOD_MAX                                     3600.0
 
-// Not yet implemented
 // Unit: Boolean
-#define ENABLE_TRICKLE_FIELDSTR                             "enableTrickle"
-#define ENABLE_TRICKLE_DEFAULT                              false
+//#define ENABLE_TRICKLE_FIELDSTR                             "enableTrickle"
+//#define ENABLE_TRICKLE_DEFAULT                              false
 
-// Not yet implemented
 // Unit: Boolean
-#define ENABLE_PULSE_FIELDSTR                               "enablePulse"
-#define ENABLE_PULSE_DEFAULT                                false
+//#define ENABLE_PULSE_FIELDSTR                               "enablePulse"
+//#define ENABLE_PULSE_DEFAULT                                false
 
 // Unit: Boolean
 #define INDIVIDUAL_CELL_LOGS_FIELDSTR                       "individualCellLogs"
@@ -202,6 +200,7 @@ struct testParms
 #define CELL_LOG_TIMESTAMPS_DEFAULT                         true
 
 #define PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR                  "playlistOutputDirectory"
+#define PLAYLIST_SAVE_FILENAME_FIELDSTR                     "playlistSaveFilename"
 
 //Status register codes
 #define STAT_VOLTAGE_LIMIT_CHG  0x0001
