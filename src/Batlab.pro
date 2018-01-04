@@ -40,7 +40,6 @@ SOURCES += main.cpp\
     batlabtestgroup.cpp \
     batlabtestplan.cpp \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.cpp \
-    globals.cpp \
     batlabmainwindow.cpp \
     cellmodulewidget.cpp \
     histogramobject.cpp \
@@ -55,13 +54,14 @@ SOURCES += main.cpp\
     qtautoupdater/autoupdatergui/updatecontroller.cpp \
     qtautoupdater/autoupdatergui/updateinfodialog.cpp \
     settings.cpp \
-    qtautoupdater/autoupdatergui/dialogmaster.cpp
+    qtautoupdater/autoupdatergui/dialogmaster.cpp \
+    batlabcore/batlabsettings.cpp \
+    batlabcore/globals.cpp
 
 HEADERS  += \
     batlabconfig.h \
     batlabcom.h \
     test.h \
-    globals.h \
     batlabcellmanager.h \
     batlabcell.h \
     batlabsystemtest.h \
@@ -69,7 +69,6 @@ HEADERS  += \
     batlabtestgroup.h \
     batlabtestplan.h \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.h \
-    version.h \
     testdata.h \
     histogramwidget.h \
     inputstringdialog.h \
@@ -91,7 +90,9 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/updateinfodialog_p.h \
     settings.h \
     qtautoupdater/autoupdatergui/dialogmaster.h \
-    version.h
+    batlabcore/batlabsettings.h \
+    batlabcore/version.h \
+    batlabcore/globals.h
 
 FORMS    += \
     test.ui \

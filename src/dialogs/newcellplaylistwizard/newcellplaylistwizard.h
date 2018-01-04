@@ -3,8 +3,8 @@
 
 #include <QWizard>
 #include <QtWidgets>
-
-#include "globals.h"
+#include "batlabcore/batlabsettings.h"
+#include "batlabcore/version.h"
 
 QString cellName(QString designator, int numCells, int startingCellNum, int cellId);
 

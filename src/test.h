@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include "batlabcom.h"
-#include "globals.h"
 
 namespace Ui {
 class test;

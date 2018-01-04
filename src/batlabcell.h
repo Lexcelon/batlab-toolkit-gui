@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QString>
-#include "globals.h"
+#include "batlabcore/globals.h"
 #include <QTime>
 
 

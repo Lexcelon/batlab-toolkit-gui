@@ -1,5 +1,5 @@
 #include "batlabcom.h"
-#include "globals.h"
+#include "batlabcore/globals.h"
 
 batlabCom::batlabCom(QObject *parent) : QObject(parent) {
     port = new QSerialPort();

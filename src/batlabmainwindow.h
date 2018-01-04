@@ -18,7 +18,7 @@
 #include "test.h"
 #include "batlabcom.h"
 #include "batlabcellmanager.h"
-#include "version.h"
+#include "batlabcore/version.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"

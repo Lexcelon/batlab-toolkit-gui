@@ -9,7 +9,7 @@
 #include <QComboBox>
 #include <QInputDialog>
 #include <qmath.h>
-#include "globals.h"
+#include "batlabcore/globals.h"
 
 class batlabCom : public QObject
 {
