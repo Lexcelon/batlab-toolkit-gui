@@ -3,22 +3,55 @@
 
 #include <QString>
 #include <QVector>
+#include <QFile>
 #include "globals.h"
 
 class BatlabSettings
 {
 public:
     BatlabSettings();
+
+    bool write(QFile *file);
+    bool load(QFile *file);
+    QString toString();
+    
+    bool setCellPlaylistName(QString str);
+    bool setBatlabCellPlaylistFileVersion(QString str);
+    bool setNumWarmupCycles(int num);
+    bool setNumMeasurementCycles(int num);
+    bool sethighVoltageCutoff(double num);
+    bool setLowVoltageCutoff(double num);
+    bool setStorageDischarge(bool val);
+    bool setStorageDischargeVoltage(double num);
+    bool setRestPeriod(int num);
+    bool setChargeTempCutoff(double num);
+    bool setDischargeTempCutoff(double num);
+    bool setChargeCurrentSafetyCutoff(double num);
+    bool setDischargeCurrentSafetyCutoff(double num);
+    bool setPrechargeRate(double num);
+    bool setChargeRate(double num);
+    bool setDischargeRate(double num);
+    bool setAcceptableImpedanceThreshold(double num);
+    bool setReportingPeriod(double num);
+    bool setImpedanceReportingPeriod(double num);
+    bool setSineWaveFrequency(double num);
+    bool setSineWaveMagnitude(int num);
+    bool setIndividualCellLogs(bool val);
+    bool setCellLogTimestamps(bool val);
+    bool setPlaylistOutputDirectory(QString str);
+    bool setPlaylistSaveFilename(QString str);
+    bool setCellNames(QVector<QString> names);
+    
 private:
     QString cellPlaylistName;
     QString batlabCellPlaylistFileVersion;
     int numWarmupCycles;
     int numMeasurementCycles;
+    double highVoltageCutoff;
+    double lowVoltageCutoff;
     bool storageDischarge;
     double storageDischargeVoltage;
     int restPeriod;
-    double highVoltageCutoff;
-    double lowVoltageCutoff;
     double chargeTempCutoff;
     double dischargeTempCutoff;
     double chargeCurrentSafetyCutoff;
