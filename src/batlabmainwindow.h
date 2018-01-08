@@ -50,12 +50,9 @@ public slots:
     void onNewCellPlaylistWizard();
     void onLoadCellPlaylist();
 
-    void onLoadTest(QString);
     void onLoadProject();
 
     void onTestDataButton();
-
-    void onFinishedTests(QString designator, int testNum);
 
     void onUpdateText(QString);
 

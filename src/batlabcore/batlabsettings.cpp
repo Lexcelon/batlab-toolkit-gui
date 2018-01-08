@@ -30,28 +30,114 @@ BatlabSettings::BatlabSettings()
     cellNames = QVector<QString>(0);
 }
 
-bool BatlabSettings::write(QFile *file)
+bool BatlabSettings::write(QString filename)
 {
-    if (!file->open(QIODevice::WriteOnly)) {
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly)) {
         qWarning() << "Couldn't open save file for new cell playlist.";
         return false;
     }
 
-//    QJsonObject playlistJsonObject = this->jsonFromNewPlaylistWizard();
+    QJsonObject playlistJson;
 
-//    QJsonDocument saveDoc(playlistJsonObject);
-//    file->write(saveDoc.toJson());
+    playlistJson[CELL_PLAYLIST_NAME_FIELDSTR] = cellPlaylistName;
+
+    playlistJson[BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR] = batlabCellPlaylistFileVersion;
+
+    playlistJson[NUM_WARMUP_CYCLES_FIELDSTR] = numWarmupCycles;
+    playlistJson[NUM_MEASUREMENT_CYCLES_FIELDSTR] = numMeasurementCycles;
+
+    playlistJson[STORAGE_DISCHARGE_FIELDSTR] = storageDischarge;
+    playlistJson[STORAGE_DISCHARGE_VOLTAGE_FIELDSTR] = storageDischargeVoltage;
+
+    playlistJson[REST_PERIOD_FIELDSTR] = restPeriod;
+
+    playlistJson[HIGH_VOLTAGE_CUTOFF_FIELDSTR] = highVoltageCutoff;
+    playlistJson[LOW_VOLTAGE_CUTOFF_FIELDSTR] = lowVoltageCutoff;
+
+    playlistJson[CHARGE_TEMP_CUTOFF_FIELDSTR] = chargeTempCutoff;
+    playlistJson[DISCHARGE_TEMP_CUTOFF_FIELDSTR] = dischargeTempCutoff;
+
+    playlistJson[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = chargeCurrentSafetyCutoff;
+    playlistJson[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = dischargeCurrentSafetyCutoff;
+
+    playlistJson[PRECHARGE_RATE_FIELDSTR] = prechargeRate;
+    playlistJson[CHARGE_RATE_FIELDSTR] = chargeRate;
+    playlistJson[DISCHARGE_RATE_FIELDSTR] = dischargeRate;
+
+    playlistJson[ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR] = acceptableImpedanceThreshold;
+
+    playlistJson[REPORTING_PERIOD_FIELDSTR] = reportingPeriod;
+    playlistJson[IMPEDANCE_REPORTING_PERIOD_FIELDSTR] = impedanceReportingPeriod;
+
+    playlistJson[SINE_WAVE_FREQUENCY_FIELDSTR] = sineWaveFrequency;
+    playlistJson[SINE_WAVE_MAGNITUDE_FIELDSTR] = sineWaveMagnitude;
+
+    playlistJson[INDIVIDUAL_CELL_LOGS_FIELDSTR] = individualCellLogs;
+    playlistJson[CELL_LOG_TIMESTAMPS_FIELDSTR] = cellLogTimestamps;
+
+    playlistJson[PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR] = playlistOutputDirectory;
+    playlistJson[PLAYLIST_SAVE_FILENAME_FIELDSTR] = playlistSaveFilename;
+
+    QJsonArray cellNamesArray;
+    for (int i = 0; i < cellNames.length(); i++) {
+        cellNamesArray.append(cellNames[i]);
+    }
+    playlistJson[CELL_NAMES_FIELDSTR] = cellNamesArray;
+
+    QJsonDocument saveDoc(playlistJson);
+    file.write(saveDoc.toJson());
+    file.close();
+
     return true;
 }
 
-bool BatlabSettings::load(QFile *file)
+bool BatlabSettings::load(QString filename)
 {
-    return true;
-}
+    QFile file(filename);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Couldn't open file to load cell playlist.";
+        return false;
+    }
 
-QString BatlabSettings::toString() // TODO?
-{
-    return "";
+    QString jsonString= file.readAll();
+    file.close();
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8());
+    QJsonObject jsonObject = jsonDoc.object();
+
+    const QVector<QString> requiredFields = { CELL_PLAYLIST_NAME_FIELDSTR };
+
+//    for(int i = 0; i < )
+
+//    if(!jsonObject.contains(CELL_PLAYLIST_NAME_FIELDSTR)) {
+//        qWarning << "Cell playlist file did not contain required field: " << CELL_PLAYLIST_NAME_FIELDSTR;
+//        return false;
+//    } else {
+//        setCellPlaylistName(jsonObject[CELL_PLAYLIST_NAME_FIELDSTR].toString());
+//    }
+
+//    if(!jsonObject.contains(BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR)) {
+//        qWarning << "Cell playlist file did not contain required field: " << BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR;
+//        return false;
+//    } else {
+//        setBatlabCellPlaylistFileVersion(jsonObject[BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR].toString());
+//    }
+
+//    if(!jsonObject.contains(NUM_WARMUP_CYCLES_FIELDSTR)) {
+//        qWarning << "Cell playlist file did not contain required field: " << NUM_WARMUP_CYCLES_FIELDSTR;
+//        return false;
+//    } else {
+//        setNumWarmupCycles(jsonObject[NUM_WARMUP_CYCLES_FIELDSTR].toInt());
+//    }
+
+    if(!jsonObject.contains(NUM_MEASUREMENT_CYCLES_FIELDSTR)) {
+        qWarning << "Cell playlist file did not contain required field: " << NUM_MEASUREMENT_CYCLES_FIELDSTR;
+        return false;
+    }
+    setNumMeasurementCycles(jsonObject[NUM_MEASUREMENT_CYCLES_FIELDSTR].toInt());
+
+
+    return true;
 }
 
 bool BatlabSettings::setCellPlaylistName(QString str)
@@ -114,7 +200,7 @@ bool BatlabSettings::setStorageDischarge(bool val)
 
 bool BatlabSettings::setStorageDischargeVoltage(double num)
 {
-    if(STORAGE_DISCHARGE_VOLTAGE_MIN <= num && num <= highVoltageCutoff) // Should set highVoltageCutoff first
+    if(STORAGE_DISCHARGE_VOLTAGE_MIN <= num && num <= highVoltageCutoff) // Should set highVoltageCutoff first if it is not the default
     {
         storageDischargeVoltage = num;
         return true;
@@ -174,7 +260,7 @@ bool BatlabSettings::setDischargeCurrentSafetyCutoff(double num)
 
 bool BatlabSettings::setPrechargeRate(double num)
 {
-    if(PRECHARGE_RATE_MIN <= num && num <= chargeCurrentSafetyCutoff) // Should set chargeCurrentSafetyCutoff first
+    if(PRECHARGE_RATE_MIN <= num && num <= chargeCurrentSafetyCutoff) // Should set chargeCurrentSafetyCutoff first if it is not the default
     {
         prechargeRate = num;
         return true;

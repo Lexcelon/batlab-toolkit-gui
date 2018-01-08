@@ -4,6 +4,9 @@
 #include <QString>
 #include <QVector>
 #include <QFile>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
 #include "globals.h"
 
 class BatlabSettings
@@ -11,9 +14,8 @@ class BatlabSettings
 public:
     BatlabSettings();
 
-    bool write(QFile *file);
-    bool load(QFile *file);
-    QString toString();
+    bool write(QString filename);
+    bool load(QString filename);
     
     bool setCellPlaylistName(QString str);
     bool setBatlabCellPlaylistFileVersion(QString str);
@@ -86,6 +88,7 @@ private:
 #define MINIMUM_STARTING_CELL_NUMBER                        0
 #define MAXIMUM_STARTING_CELL_NUMBER                        100000
 #define CELL_DESIGNATOR_FIELDSTR                            "cellDesignator"
+#define CELL_NAMES_FIELDSTR                                 "cellNames"
 
 // Unit: Volts
 #define HIGH_VOLTAGE_CUTOFF_FIELDSTR                        "highVoltageCutoff"
