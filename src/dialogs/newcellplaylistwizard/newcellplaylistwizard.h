@@ -22,6 +22,7 @@ public:
 private:
     bool skipped;
     QJsonObject jsonFromNewPlaylistWizard();
+    BatlabSettings *settings;
 };
 
 class IntroPage : public QWizardPage

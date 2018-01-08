@@ -16,6 +16,7 @@ void NewCellPlaylistWizard::accept()
 NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
 {
     skipped = false;
+    settings = new BatlabSettings;
     // The fields registered do not by default know what value and signal
     // to use with a QDoubleSpinBox, so we have to tell it how to handle those.
     // Why it does not have the same default behavior as QSpinBox I do not know.
@@ -543,18 +544,40 @@ void NewCellPlaylistWizard::savePlaylist()
     if (currentId() == 5) {
         // We also don't want to do this if they got to the next page with the "Skip" button
         if (skipped == false) {
-            QString saveFileName = field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified();
 
-            QFile saveFile(saveFileName);
-            if (!saveFile.open(QIODevice::WriteOnly)) {
-                qWarning() << "Couldn't open save file for new cell playlist.";
-                return;
+            settings->setCellPlaylistName(field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified());
+            settings->setNumWarmupCycles(field(NUM_WARMUP_CYCLES_FIELDSTR).toInt());
+            settings->setNumMeasurementCycles(field(NUM_MEASUREMENT_CYCLES_FIELDSTR).toInt());
+            settings->setHighVoltageCutoff(field(HIGH_VOLTAGE_CUTOFF_FIELDSTR).toDouble());
+            settings->setLowVoltageCutoff(field(LOW_VOLTAGE_CUTOFF_FIELDSTR).toDouble());
+            settings->setStorageDischarge(field(STORAGE_DISCHARGE_FIELDSTR).toBool());
+            settings->setStorageDischargeVoltage(field(STORAGE_DISCHARGE_VOLTAGE_FIELDSTR).toDouble());
+            settings->setRestPeriod(field(REST_PERIOD_FIELDSTR).toInt());
+            settings->setChargeTempCutoff(field(CHARGE_TEMP_CUTOFF_FIELDSTR).toDouble());
+            settings->setDischargeTempCutoff(field(DISCHARGE_TEMP_CUTOFF_FIELDSTR).toDouble());
+            settings->setChargeCurrentSafetyCutoff(field(CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble());
+            settings->setDischargeCurrentSafetyCutoff(field(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble());
+            settings->setPrechargeRate(field(PRECHARGE_RATE_FIELDSTR).toDouble());
+            settings->setChargeRate(field(CHARGE_RATE_FIELDSTR).toDouble());
+            settings->setDischargeRate(field(DISCHARGE_RATE_FIELDSTR).toDouble());
+            settings->setAcceptableImpedanceThreshold(field(ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR).toDouble());
+            settings->setPlaylistOutputDirectory(field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString());
+            settings->setPlaylistSaveFilename(field(PLAYLIST_SAVE_FILENAME_FIELDSTR));
+
+            QVector<QString> names;
+            int numCells = field(NUM_CELLS_FIELDSTR).toInt();
+            int startingCellNumber = field(STARTING_CELL_NUMBER_FIELDSTR).toInt();
+            QString designator = field(CELL_DESIGNATOR_FIELDSTR).toString();
+            for (int cellId = startingCellNumber; cellId < startingCellNumber + numCells; cellId++) {
+                QString cellStr = cellName(designator, numCells, startingCellNumber, cellId);
+                names.append(cellStr);
             }
+            settings->setCellNames(names);
 
-            QJsonObject playlistJsonObject = this->jsonFromNewPlaylistWizard();
+            QString saveFileName = field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified();
+            settings->write(saveFileName);
 
-            QJsonDocument saveDoc(playlistJsonObject);
-            saveFile.write(saveDoc.toJson());
+            qWarning() << "test string";
         }
         skipped = false;
     }
