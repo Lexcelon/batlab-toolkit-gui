@@ -480,64 +480,6 @@ void SavePlaylistPage::browseForSaveFilename()
     saveFilenameLineEdit->setText(saveFilename);
 }
 
-QJsonObject NewCellPlaylistWizard::jsonFromNewPlaylistWizard()
-{
-    QJsonObject playlistJson;
-
-    playlistJson[CELL_PLAYLIST_NAME_FIELDSTR] = field(CELL_PLAYLIST_NAME_FIELDSTR).toString();
-
-    playlistJson[BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR] = BATLAB_CELL_PLAYLIST_FILE_VERSION;
-
-    playlistJson[NUM_WARMUP_CYCLES_FIELDSTR] = field(NUM_WARMUP_CYCLES_FIELDSTR).toInt();
-
-    playlistJson[NUM_MEASUREMENT_CYCLES_FIELDSTR] = field(NUM_MEASUREMENT_CYCLES_FIELDSTR).toInt();
-
-    playlistJson[STORAGE_DISCHARGE_FIELDSTR] = field(STORAGE_DISCHARGE_FIELDSTR).toBool();
-    playlistJson[STORAGE_DISCHARGE_VOLTAGE_FIELDSTR] = field(STORAGE_DISCHARGE_VOLTAGE_FIELDSTR).toDouble();
-
-    playlistJson[REST_PERIOD_FIELDSTR] = field(REST_PERIOD_FIELDSTR).toInt();
-
-    playlistJson[HIGH_VOLTAGE_CUTOFF_FIELDSTR] = field(HIGH_VOLTAGE_CUTOFF_FIELDSTR).toDouble();
-    playlistJson[LOW_VOLTAGE_CUTOFF_FIELDSTR] = field(LOW_VOLTAGE_CUTOFF_FIELDSTR).toDouble();
-
-    playlistJson[CHARGE_TEMP_CUTOFF_FIELDSTR] = field(CHARGE_TEMP_CUTOFF_FIELDSTR).toDouble();
-    playlistJson[DISCHARGE_TEMP_CUTOFF_FIELDSTR] = field(DISCHARGE_TEMP_CUTOFF_FIELDSTR).toDouble();
-
-    playlistJson[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = field(CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble();
-    playlistJson[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = field(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble();
-
-    playlistJson[PRECHARGE_RATE_FIELDSTR] = field(PRECHARGE_RATE_FIELDSTR).toDouble();
-    playlistJson[CHARGE_RATE_FIELDSTR] = field(CHARGE_RATE_FIELDSTR).toDouble();
-    playlistJson[DISCHARGE_RATE_FIELDSTR] = field(DISCHARGE_RATE_FIELDSTR).toDouble();
-
-    playlistJson[ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR] = field(ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR).toDouble();
-
-    playlistJson[REPORTING_PERIOD_FIELDSTR] = REPORTING_PERIOD_DEFAULT;
-    playlistJson[IMPEDANCE_REPORTING_PERIOD_FIELDSTR] = IMPEDANCE_REPORTING_PERIOD_DEFAULT;
-
-    playlistJson[SINE_WAVE_FREQUENCY_FIELDSTR] = SINE_WAVE_FREQUENCY_DEFAULT;
-    playlistJson[SINE_WAVE_MAGNITUDE_FIELDSTR] = SINE_WAVE_MAGNITUDE_DEFAULT;
-
-    playlistJson[INDIVIDUAL_CELL_LOGS_FIELDSTR] = INDIVIDUAL_CELL_LOGS_DEFAULT;
-
-    playlistJson[CELL_LOG_TIMESTAMPS_FIELDSTR] = CELL_LOG_TIMESTAMPS_DEFAULT;
-
-    playlistJson[PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR] = field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString().simplified();
-    playlistJson[PLAYLIST_SAVE_FILENAME_FIELDSTR] = field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified();
-
-    QJsonArray cellNamesArray;
-    int numCells = field(NUM_CELLS_FIELDSTR).toInt();
-    int startingCellNumber = field(STARTING_CELL_NUMBER_FIELDSTR).toInt();
-    QString designator = field(CELL_DESIGNATOR_FIELDSTR).toString();
-    for (int cellId = startingCellNumber; cellId < startingCellNumber + numCells; cellId++) {
-        QString cellStr = cellName(designator, numCells, startingCellNumber, cellId);
-        cellNamesArray.append(cellStr);
-    }
-    playlistJson["cellNames"] = cellNamesArray;
-
-    return playlistJson;
-}
-
 void NewCellPlaylistWizard::savePlaylist()
 {
     // This is called every time the user hits next, so we only want this when on the correct page
@@ -562,7 +504,7 @@ void NewCellPlaylistWizard::savePlaylist()
             settings->setDischargeRate(field(DISCHARGE_RATE_FIELDSTR).toDouble());
             settings->setAcceptableImpedanceThreshold(field(ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR).toDouble());
             settings->setPlaylistOutputDirectory(field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString());
-            settings->setPlaylistSaveFilename(field(PLAYLIST_SAVE_FILENAME_FIELDSTR));
+            settings->setPlaylistSaveFilename(field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString());
 
             QVector<QString> names;
             int numCells = field(NUM_CELLS_FIELDSTR).toInt();
@@ -576,8 +518,6 @@ void NewCellPlaylistWizard::savePlaylist()
 
             QString saveFileName = field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified();
             settings->write(saveFileName);
-
-            qWarning() << "test string";
         }
         skipped = false;
     }

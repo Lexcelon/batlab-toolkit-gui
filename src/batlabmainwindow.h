@@ -5,8 +5,6 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QGraphicsView>
-//#include <QTableWidget>
-//#include <QTableWidgetItem>
 #include <QWizard>
 #include <QWizardPage>
 #include <QLineEdit>
@@ -62,7 +60,7 @@ protected:
     void closeEvent(QCloseEvent *event)
     {
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Exit Batlab", "Are you sure you want to quit?",
+        reply = QMessageBox::question(this, "Exit Batlab Toolkit GUI", "Are you sure you want to quit?",
                                       QMessageBox::Yes|QMessageBox::No);
 
         if (reply == QMessageBox::Yes) {

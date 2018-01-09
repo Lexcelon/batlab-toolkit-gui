@@ -21,7 +21,6 @@ public:
 
 private:
     bool skipped;
-    QJsonObject jsonFromNewPlaylistWizard();
     BatlabSettings *settings;
 };
 
