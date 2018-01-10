@@ -36,17 +36,16 @@ public:
 
 public slots:
     void removeBatlabConnection(QString batlabUnitPortName);
-    //void onGetBatlabNames();
     void onTest();
 
-    void onReceiveWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
-    void onReceiveReadCommand(int serialNumber, int nameSpace,int batlabRegister);
-    void onReceiveWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb);
-    void onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
-    void onReceiveStream(int cell, int mode, int status, float temp, float current, float voltage);
+    void updateTextWithWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
+    void updateTextWithReadCommand(int serialNumber, int nameSpace,int batlabRegister);
+    void updateTextWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void updateTextWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void updateTextWithReceivedStream(int cell, int mode, int status, float temp, float current, float voltage);
 
-    void onNewCellPlaylistWizard();
-    void onLoadCellPlaylist();
+    void showNewCellPlaylistWizard();
+    void loadCellPlaylist();
 
     void onLoadProject();
 
@@ -56,24 +55,10 @@ public slots:
 
 signals:
     void emitUpdateText(QString);
-protected:
-    void closeEvent(QCloseEvent *event)
-    {
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Exit Batlab Toolkit GUI", "Are you sure you want to quit?",
-                                      QMessageBox::Yes|QMessageBox::No);
-
-        if (reply == QMessageBox::Yes) {
-            for (int i = 0; i < batlabComObjects.size(); ++i) {
-                batlabComObjects[i]->setAllIdle();
-            }
-            event->accept();
-        } else {
-            event->ignore();
-        }
-    }
 
 private:
+    void closeEvent(QCloseEvent *event);
+
     QVector<batlabCom*> batlabComObjects;
 
     batlabtest *testObj = nullptr;

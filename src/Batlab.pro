@@ -56,7 +56,8 @@ SOURCES += main.cpp\
     settings.cpp \
     qtautoupdater/autoupdatergui/dialogmaster.cpp \
     batlabcore/batlabsettings.cpp \
-    batlabcore/globals.cpp
+    batlabcore/globals.cpp \
+    batlabcore/batlabmanager.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -92,7 +93,8 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/dialogmaster.h \
     batlabcore/batlabsettings.h \
     batlabcore/version.h \
-    batlabcore/globals.h
+    batlabcore/globals.h \
+    batlabcore/batlabmanager.h
 
 FORMS    += \
     test.ui \

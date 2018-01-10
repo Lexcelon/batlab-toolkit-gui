@@ -76,9 +76,9 @@ void BatlabMainWindow::initializeMainWindowUI()
 
     noCellPlaylistLoadedLabel = new QLabel(tr("No cell playlist is loaded. Create a new playlist or open an existing one."));
     newCellPlaylistButton = new QPushButton(tr("New Cell Playlist"));
-    connect(newCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::onNewCellPlaylistWizard);
+    connect(newCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::showNewCellPlaylistWizard);
     openCellPlaylistButton = new QPushButton(tr("Open Cell Playlist"));
-    connect(openCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::onLoadCellPlaylist);
+    connect(openCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::loadCellPlaylist);
 
     cellPlaylistNotLoadedLayout->addWidget(noCellPlaylistLoadedLabel, 1, 1, 1, 3, Qt::AlignCenter);
     cellPlaylistNotLoadedLayout->addWidget(newCellPlaylistButton, 3, 1, Qt::AlignCenter);
@@ -197,7 +197,7 @@ void BatlabMainWindow::createMenus()
 
 void BatlabMainWindow::newCellPlaylist()
 {
-    onNewCellPlaylistWizard();
+    showNewCellPlaylistWizard();
 }
 
 void BatlabMainWindow::openCellPlaylist()
@@ -277,7 +277,25 @@ BatlabMainWindow::~BatlabMainWindow()
 
 }
 
-void BatlabMainWindow::onReceiveWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
+void BatlabMainWindow::closeEvent(QCloseEvent *event)
+{
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Exit Batlab Toolkit GUI", "Are you sure you want to quit?",
+                                  QMessageBox::Yes|QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        // TODO update to set all batlabs idle using whatever new comm standard is developed
+        for (int i = 0; i < batlabComObjects.size(); ++i) {
+            batlabComObjects[i]->setAllIdle();
+        }
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
+
+void BatlabMainWindow::updateTextWithWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
 {
     QString str;
     str += QString("WRITE: Batlab #%1 - ").arg(serialNumber);
@@ -295,7 +313,7 @@ void BatlabMainWindow::onReceiveWriteCommand(int serialNumber, int nameSpace, in
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::onReceiveReadCommand(int serialNumber, int nameSpace, int batlabRegister)
+void BatlabMainWindow::updateTextWithReadCommand(int serialNumber, int nameSpace, int batlabRegister)
 {
     QString str;
     str += QString("READ: Batlab #%1 - ").arg(serialNumber);
@@ -313,7 +331,7 @@ void BatlabMainWindow::onReceiveReadCommand(int serialNumber, int nameSpace, int
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::onReceiveWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void BatlabMainWindow::updateTextWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     QString str = QString("WRITE RESPONSE: ");
     if (nameSpace >=0 && nameSpace < 4) {
@@ -333,7 +351,7 @@ qDebug() << str;
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::onReceiveReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void BatlabMainWindow::updateTextWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     QString str = QString("READ RESPONSE: ");
     if (nameSpace >=0 && nameSpace < 4) {
@@ -353,7 +371,7 @@ void BatlabMainWindow::onReceiveReadResponse(int nameSpace, int batlabRegister, 
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::onReceiveStream(int cell,int mode,int status,float temp, float current, float voltage)
+void BatlabMainWindow::updateTextWithReceivedStream(int cell,int mode,int status,float temp, float current, float voltage)
 {
     QString str = QString("STREAM PACKET: ");
 
@@ -375,13 +393,13 @@ void BatlabMainWindow::onReceiveStream(int cell,int mode,int status,float temp, 
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::onNewCellPlaylistWizard() {
+void BatlabMainWindow::showNewCellPlaylistWizard() {
     NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
     wizard->setWizardStyle(QWizard::ModernStyle);
     wizard->show();
 }
 
-void BatlabMainWindow::onLoadCellPlaylist() {
+void BatlabMainWindow::loadCellPlaylist() {
 
 }
 
@@ -476,17 +494,17 @@ void BatlabMainWindow::makeBatlabConnections(QStringList availCommPortNames) {
             connect(batlabComObjects[i], &batlabCom::emitBatlabDisconnect, this, &BatlabMainWindow::removeBatlabConnection);
 
             connect(batlabComObjects[i], &batlabCom::emitReadCommand,
-                    this, &BatlabMainWindow::onReceiveReadCommand);
+                    this, &BatlabMainWindow::updateTextWithReadCommand);
             connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
-                    this, &BatlabMainWindow::onReceiveWriteCommand);
+                    this, &BatlabMainWindow::updateTextWithWriteCommand);
 
             connect(batlabComObjects[i], &batlabCom::emitReadResponse,
-                    this, &BatlabMainWindow::onReceiveReadResponse);
+                    this, &BatlabMainWindow::updateTextWithReadResponse);
             connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
-                    this, &BatlabMainWindow::onReceiveWriteResponse);
+                    this, &BatlabMainWindow::updateTextWithWriteResponse);
 
             connect(batlabComObjects[i], &batlabCom::emitStream,
-                    this, &BatlabMainWindow::onReceiveStream);
+                    this, &BatlabMainWindow::updateTextWithReceivedStream);
         }
     }
 }
@@ -499,6 +517,7 @@ void BatlabMainWindow::updateBatlabConnections() {
     return;
 }
 
+// TODO move into batpool
 // Disconnecting a Batlab unit drives the Batlab Comm class to send its port name to this function
 // so that it may be removed from the list of connected Batlab units.
 void BatlabMainWindow::removeBatlabConnection(QString batlabUnitPortName) {
@@ -549,14 +568,4 @@ void BatlabMainWindow::removeBatlabConnection(QString batlabUnitPortName) {
 //                    this, &BatlabMainWindow::onReceiveStream);
 //        }
 //    }
-//}
-
-//void BatlabMainWindow::onGetBatlabNames()
-//{
-//    QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
-//    QStringList names;
-//    for (int i = 0; i< list.size(); ++i) {
-//        names.append(list[i].portName());
-//    }
-//    onConnectToBatlabs(names);
 //}
