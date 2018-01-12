@@ -16,14 +16,13 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     this->setWindowTitle(tr("Batlab Toolkit GUI"));
 
     // Set state for the main window logic
-    cellPlaylistLoaded = false;
-    testsInProgress = false;
+    batlabManager = new BatlabManager;
 
     // Setup the UI
     initializeMainWindowUI();
 
     connect(this, &BatlabMainWindow::emitUpdateText,
-            this, &BatlabMainWindow::onUpdateText);
+            this, &BatlabMainWindow::updateLiveViewTextBrowser);
 
     createActions();
     createMenus();
@@ -78,7 +77,7 @@ void BatlabMainWindow::initializeMainWindowUI()
     newCellPlaylistButton = new QPushButton(tr("New Cell Playlist"));
     connect(newCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::showNewCellPlaylistWizard);
     openCellPlaylistButton = new QPushButton(tr("Open Cell Playlist"));
-    connect(openCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::loadCellPlaylist);
+    connect(openCellPlaylistButton, &QPushButton::clicked, this, &BatlabMainWindow::openCellPlaylist);
 
     cellPlaylistNotLoadedLayout->addWidget(noCellPlaylistLoadedLabel, 1, 1, 1, 3, Qt::AlignCenter);
     cellPlaylistNotLoadedLayout->addWidget(newCellPlaylistButton, 3, 1, Qt::AlignCenter);
@@ -107,11 +106,11 @@ void BatlabMainWindow::initializeMainWindowUI()
     cellPlaylistTabLayout->addWidget(cellPlaylistStackedWidget, 0, 0);
     cellPlaylistTabWidget->setLayout(cellPlaylistTabLayout);
 
-    textBrowser = new QTextBrowser;
-    textBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
+    liveViewTextBrowser = new QTextBrowser;
+    liveViewTextBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
 
     liveViewTabLayout = new QGridLayout;
-    liveViewTabLayout->addWidget(textBrowser, 0, 0, Qt::AlignTop);
+    liveViewTabLayout->addWidget(liveViewTextBrowser, 0, 0, Qt::AlignTop);
     liveViewTabWidget->setLayout(liveViewTabLayout);
 
     mainStackedWidget->addWidget(cellPlaylistTabWidget);
@@ -172,9 +171,9 @@ void BatlabMainWindow::createActions()
     aboutBatlabToolkitGUIAct->setStatusTip(tr("Information about the Batlab Toolkit GUI program"));
     connect(aboutBatlabToolkitGUIAct, &QAction::triggered, this, &BatlabMainWindow::aboutBatlabToolkitGUI);
 
-    updaterController = new QtAutoUpdater::UpdateController("maintenancetool", this, qApp);
-    updaterController->setDetailedUpdateInfo(true);
-    checkForUpdatesAct = updaterController->createUpdateAction(this);
+    applicationUpdateController = new QtAutoUpdater::UpdateController("maintenancetool", this, qApp);
+    applicationUpdateController->setDetailedUpdateInfo(true);
+    checkForUpdatesAct = applicationUpdateController->createUpdateAction(this);
     checkForUpdatesAct->setIconVisibleInMenu(true);
 }
 
@@ -202,7 +201,9 @@ void BatlabMainWindow::newCellPlaylist()
 
 void BatlabMainWindow::openCellPlaylist()
 {
-    onLoadProject();
+    // First do the file thing
+    // Then actually load the settings into the GUI
+    loadPlaylistIntoGUI();
 }
 
 void BatlabMainWindow::exitBatlabToolkitGUI()
@@ -213,16 +214,16 @@ void BatlabMainWindow::exitBatlabToolkitGUI()
 void BatlabMainWindow::debugBatlab()
 {
     // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
-    if (testObj == nullptr) {
-        testObj = new batlabtest(this, batlabComObjects);
+    if (batlabDebugDialog == nullptr) {
+        batlabDebugDialog = new BatlabDebugDialog(this, batlabComObjects);
 //           connect(testObj,SIGNAL(emitReadReg(int,int)),batlabComObjects.first(),SLOT(onReadReg(int,int)));
 //           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),batlabComObjects.first(),SLOT(onWriteReg(int,int,int)));
 //           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
     }
 
     //Can move window around
-    testObj->setModal(false);
-        testObj->show();
+    batlabDebugDialog->setModal(false);
+        batlabDebugDialog->show();
 }
 
 void BatlabMainWindow::checkForBatlabFirmwareUpdates()
@@ -244,32 +245,6 @@ void BatlabMainWindow::aboutBatlabToolkitGUI()
                               "<p>The Batlab is made possible through the support and participation of our backers and customers. Thank you!"
                               ).arg(BATLAB_TOOLKIT_GUI_VERSION, QDate::currentDate().toString("yyyy"));
     QMessageBox::information(this, tr("About Batlab Toolkit GUI"), msgText);
-}
-
-void BatlabMainWindow::onTest()
-{
-//    for (int i = 0; i < 200000; ++i) {
-//        if (i%10 == 0) {
-
-//            QString str = QString("Register #%1 - \n").arg(textBrowser->verticalScrollBar()->maximum());
-//            emit emitUpdateText(str);
-//            QApplication::processEvents();
-//        }
-//    }
-    if (!cellManager->getTestsRunning()) {
-        if (batlabComObjects.size() > 0) {
-            cellManager->onCreateTestPlan(batlabComObjects);
-            cellManager->onStartTests();
-        } else {
-            QMessageBox::warning(this, "No Batlabs Connected", "Communications not established with any connected Batlabs!"
-                                                               " Verify that connections are in place and then select "
-                                                               "‘Connect to Batlab(s)’ option on the GUI Main Window.", QMessageBox::Ok);
-        }
-    } else {
-        QMessageBox::warning(this, "Tests are running!", "There are already tests running, please wait until tests are finished.", QMessageBox::Ok);
-    }
-
-
 }
 
 BatlabMainWindow::~BatlabMainWindow()
@@ -295,7 +270,7 @@ void BatlabMainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void BatlabMainWindow::updateTextWithWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
+void BatlabMainWindow::updateLiveViewWithWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
 {
     QString str;
     str += QString("WRITE: Batlab #%1 - ").arg(serialNumber);
@@ -313,7 +288,7 @@ void BatlabMainWindow::updateTextWithWriteCommand(int serialNumber, int nameSpac
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::updateTextWithReadCommand(int serialNumber, int nameSpace, int batlabRegister)
+void BatlabMainWindow::updateLiveViewWithReadCommand(int serialNumber, int nameSpace, int batlabRegister)
 {
     QString str;
     str += QString("READ: Batlab #%1 - ").arg(serialNumber);
@@ -331,7 +306,7 @@ void BatlabMainWindow::updateTextWithReadCommand(int serialNumber, int nameSpace
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::updateTextWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void BatlabMainWindow::updateLiveViewWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     QString str = QString("WRITE RESPONSE: ");
     if (nameSpace >=0 && nameSpace < 4) {
@@ -351,7 +326,7 @@ qDebug() << str;
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::updateTextWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void BatlabMainWindow::updateLiveViewWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     QString str = QString("READ RESPONSE: ");
     if (nameSpace >=0 && nameSpace < 4) {
@@ -371,7 +346,7 @@ void BatlabMainWindow::updateTextWithReadResponse(int nameSpace, int batlabRegis
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::updateTextWithReceivedStream(int cell,int mode,int status,float temp, float current, float voltage)
+void BatlabMainWindow::updateLiveViewWithReceivedStream(int cell,int mode,int status,float temp, float current, float voltage)
 {
     QString str = QString("STREAM PACKET: ");
 
@@ -399,38 +374,8 @@ void BatlabMainWindow::showNewCellPlaylistWizard() {
     wizard->show();
 }
 
-void BatlabMainWindow::loadCellPlaylist() {
+void BatlabMainWindow::loadPlaylistIntoGUI() {
 
-}
-
-void BatlabMainWindow::onLoadProject()
-{
-    QFileDialog dialog;
-    dialog.setDefaultSuffix(QString(".blp"));
-
-    QStringList fileNames;
-    if (dialog.exec())
-        fileNames = dialog.selectedFiles();
-
-//    if  (!fileNames.isEmpty())
-//        onLoadTest(fileNames.first());
-}
-
-void BatlabMainWindow::onTestDataButton()
-{
-    QFileDialog dialog;
-    dialog.setDefaultSuffix(QString(".bld"));
-
-    QStringList fileNames;
-    if (dialog.exec())
-        fileNames = dialog.selectedFiles();
-
-    TestData *testData = new TestData;
-    testData->readTestData(fileNames.first());
-
-//    ui->voltageGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_VOLTAGE);
-//    ui->currentGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_CURRENT);
-//    ui->temperatureGraph->onLineGraph(testData->getTestData().TIME,testData->getTestData().REG_TEMPERATURE);
 }
 
 void clearLayout(QLayout *layout) {
@@ -447,15 +392,15 @@ void clearLayout(QLayout *layout) {
     }
 }
 
-void BatlabMainWindow::onUpdateText(QString str)
+void BatlabMainWindow::updateLiveViewTextBrowser(QString str)
 {
     static int i = 0;
     str = QString("%1: %2 ").arg(++i).arg(QDateTime::currentDateTime().toString()) + str;
-    if (textBrowser->verticalScrollBar()->value() >= (textBrowser->verticalScrollBar()->maximum()-10)) {
-        textBrowser->insertPlainText(str);
-        textBrowser->moveCursor(QTextCursor::End);
+    if (liveViewTextBrowser->verticalScrollBar()->value() >= (liveViewTextBrowser->verticalScrollBar()->maximum()-10)) {
+        liveViewTextBrowser->insertPlainText(str);
+        liveViewTextBrowser->moveCursor(QTextCursor::End);
     } else {
-        textBrowser->insertPlainText(str);
+        liveViewTextBrowser->insertPlainText(str);
     }
 }
 
@@ -491,20 +436,20 @@ void BatlabMainWindow::makeBatlabConnections(QStringList availCommPortNames) {
         if (connectBatlab) {
 
             batlabComObjects.push_back(new batlabCom(availCommPortNames[i]));
-            connect(batlabComObjects[i], &batlabCom::emitBatlabDisconnect, this, &BatlabMainWindow::removeBatlabConnection);
+            connect(batlabComObjects[i], &batlabCom::emitBatlabDisconnect, this, &BatlabMainWindow::showBatlabRemoved);
 
             connect(batlabComObjects[i], &batlabCom::emitReadCommand,
-                    this, &BatlabMainWindow::updateTextWithReadCommand);
+                    this, &BatlabMainWindow::updateLiveViewWithReadCommand);
             connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
-                    this, &BatlabMainWindow::updateTextWithWriteCommand);
+                    this, &BatlabMainWindow::updateLiveViewWithWriteCommand);
 
             connect(batlabComObjects[i], &batlabCom::emitReadResponse,
-                    this, &BatlabMainWindow::updateTextWithReadResponse);
+                    this, &BatlabMainWindow::updateLiveViewWithReadResponse);
             connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
-                    this, &BatlabMainWindow::updateTextWithWriteResponse);
+                    this, &BatlabMainWindow::updateLiveViewWithWriteResponse);
 
             connect(batlabComObjects[i], &batlabCom::emitStream,
-                    this, &BatlabMainWindow::updateTextWithReceivedStream);
+                    this, &BatlabMainWindow::updateLiveViewWithReceivedStream);
         }
     }
 }
@@ -520,7 +465,7 @@ void BatlabMainWindow::updateBatlabConnections() {
 // TODO move into batpool
 // Disconnecting a Batlab unit drives the Batlab Comm class to send its port name to this function
 // so that it may be removed from the list of connected Batlab units.
-void BatlabMainWindow::removeBatlabConnection(QString batlabUnitPortName) {
+void BatlabMainWindow::showBatlabRemoved(QString batlabUnitPortName) {
 
     bool foundIndexToDelete = false;
     int currentIndex = 0;

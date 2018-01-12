@@ -1,5 +1,5 @@
-#ifndef BATLAB_H
-#define BATLAB_H
+#ifndef BATLAB_MAIN_WINDOW_H
+#define BATLAB_MAIN_WINDOW_H
 
 #include <QMainWindow>
 #include <QDialogButtonBox>
@@ -13,10 +13,11 @@
 
 #include "batlabconfig.h"
 #include "settings.h"
-#include "test.h"
+#include "dialogs/batlabdebugdialog/batlabdebugdialog.h"
 #include "batlabcom.h"
 #include "batlabcellmanager.h"
 #include "batlabcore/version.h"
+#include "batlabcore/batlabmanager.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"
@@ -35,23 +36,15 @@ public:
     ~BatlabMainWindow();
 
 public slots:
-    void removeBatlabConnection(QString batlabUnitPortName);
-    void onTest();
+    void showBatlabRemoved(QString batlabUnitPortName);
 
-    void updateTextWithWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
-    void updateTextWithReadCommand(int serialNumber, int nameSpace,int batlabRegister);
-    void updateTextWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb);
-    void updateTextWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
-    void updateTextWithReceivedStream(int cell, int mode, int status, float temp, float current, float voltage);
+    void updateLiveViewWithWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
+    void updateLiveViewWithReadCommand(int serialNumber, int nameSpace,int batlabRegister);
+    void updateLiveViewWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void updateLiveViewWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void updateLiveViewWithReceivedStream(int cell, int mode, int status, float temp, float current, float voltage);
 
-    void showNewCellPlaylistWizard();
-    void loadCellPlaylist();
-
-    void onLoadProject();
-
-    void onTestDataButton();
-
-    void onUpdateText(QString);
+    void updateLiveViewTextBrowser(QString);
 
 signals:
     void emitUpdateText(QString);
@@ -59,17 +52,16 @@ signals:
 private:
     void closeEvent(QCloseEvent *event);
 
+    BatlabManager *batlabManager;
+
     QVector<batlabCom*> batlabComObjects;
 
-    batlabtest *testObj = nullptr;
+    BatlabDebugDialog *batlabDebugDialog = nullptr;
     batlabCellManager * cellManager = nullptr;
 
     void initializeMainWindowUI();
     void createMenus();
     void createActions();
-
-    bool cellPlaylistLoaded;
-    bool testsInProgress;
 
     QMenu *fileMenu;
     QMenu *toolsMenu;
@@ -85,7 +77,7 @@ private:
     QAction *aboutBatlabToolkitGUIAct;
     QAction *checkForUpdatesAct;
 
-    QtAutoUpdater::UpdateController *updaterController;
+    QtAutoUpdater::UpdateController *applicationUpdateController;
 
     QDialogButtonBox *tabButtonBox;
     QPushButton *cellPlaylistButton;
@@ -120,7 +112,7 @@ private:
     QGridLayout *cellPlaylistTabLayout;
     QGridLayout *liveViewTabLayout;
 
-    QTextBrowser *textBrowser;
+    QTextBrowser *liveViewTextBrowser;
 
 private slots:
     void newCellPlaylist();
@@ -132,6 +124,9 @@ private slots:
 
     void aboutBatlabToolkitGUI();
 
+    void showNewCellPlaylistWizard();
+    void loadPlaylistIntoGUI();
+
     void makeBatlabConnections(QStringList availCommPortNames);
     void updateBatlabConnections();
 
@@ -139,4 +134,4 @@ private slots:
 
 };
 
-#endif // BATLAB_H
+#endif // BATLAB_MAIN_WINDOW_H

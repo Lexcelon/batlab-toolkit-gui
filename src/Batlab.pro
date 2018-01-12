@@ -32,13 +32,13 @@ win32 {
 SOURCES += main.cpp\
     batlabconfig.cpp \
     batlabcom.cpp \
-    test.cpp \
     batlabcellmanager.cpp \
     batlabcell.cpp \
     batlabsystemtest.cpp \
     testwindow.cpp \
     batlabtestgroup.cpp \
     batlabtestplan.cpp \
+    dialogs/batlabdebugdialog/batlabdebugdialog.cpp \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.cpp \
     batlabmainwindow.cpp \
     cellmodulewidget.cpp \
@@ -57,18 +57,19 @@ SOURCES += main.cpp\
     qtautoupdater/autoupdatergui/dialogmaster.cpp \
     batlabcore/batlabsettings.cpp \
     batlabcore/globals.cpp \
-    batlabcore/batlabmanager.cpp
+    batlabcore/batlabmanager.cpp \
+    batlabcore/batlab.cpp
 
 HEADERS  += \
     batlabconfig.h \
     batlabcom.h \
-    test.h \
     batlabcellmanager.h \
     batlabcell.h \
     batlabsystemtest.h \
     testwindow.h \
     batlabtestgroup.h \
     batlabtestplan.h \
+    dialogs/batlabdebugdialog/batlabdebugdialog.h \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.h \
     testdata.h \
     histogramwidget.h \
@@ -94,12 +95,13 @@ HEADERS  += \
     batlabcore/batlabsettings.h \
     batlabcore/version.h \
     batlabcore/globals.h \
-    batlabcore/batlabmanager.h
+    batlabcore/batlabmanager.h \
+    batlabcore/batlab.h
 
 FORMS    += \
-    test.ui \
     testwindow.ui \
     cellmodulewidget.ui \
+    dialogs/batlabdebugdialog/batlabdebugdialog.ui \
     inputstringdialog.ui \
     qtautoupdater/autoupdatergui/progressdialog.ui \
     qtautoupdater/autoupdatergui/updatebutton.ui \

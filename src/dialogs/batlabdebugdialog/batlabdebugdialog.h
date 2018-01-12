@@ -4,17 +4,19 @@
 #include <QDialog>
 #include "batlabcom.h"
 
+// TODO review this implementation
+
 namespace Ui {
-class test;
+class debugDialog;
 }
 
-class batlabtest : public QDialog
+class BatlabDebugDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit batlabtest(QWidget *parent = 0, QVector<batlabCom*> com = QVector<batlabCom*>());
-    ~batlabtest();
+    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabCom*> com = QVector<batlabCom*>());
+    ~BatlabDebugDialog();
 
 public slots:
     void onRegRead();
@@ -27,7 +29,7 @@ signals:
 //    void emitPrint(uchar,properties);
 
 private:
-    Ui::test *ui;
+    Ui::debugDialog *ui;
     QVector<batlabCom *> comObjects;
 
 };
