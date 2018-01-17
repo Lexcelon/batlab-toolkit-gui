@@ -14,7 +14,7 @@ class batlabTestPlan : public QObject
 public:
     batlabTestPlan();
     batlabTestPlan(int numBatlabs, QVector<batlabCell*> list);
-    batlabTestPlan(int numBatlabs,QVector<batlabCell*> list, QVector<batlabCom*> coms);
+    batlabTestPlan(int numBatlabs,QVector<batlabCell*> list, QVector<Batlab*> coms);
 
     ~batlabTestPlan();
 
@@ -37,7 +37,7 @@ private:
     int numberOfBatlabs = 0;
     QVector<batlabCell*> cellList;
     QVector<batlabTestGroup*> testGroupList;
-    QVector<batlabCom*> comList;
+    QVector<Batlab*> comList;
     QVector<QThread*> threads;
 };
 

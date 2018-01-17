@@ -12,12 +12,43 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
 
 void BatlabManager::updateConnectedBatlabs()
 {
-    QList<QSerialPortInfo> availCommPorts = QSerialPortInfo::availablePorts();
-    QStringList availCommPortNames;
+    // TODO make sure that things are actually Batlabs
+    QList<QSerialPortInfo> availableCommPorts = QSerialPortInfo::availablePorts();
+    QStringList availableCommPortNames;
 
-    for (int i = 0; i < availCommPorts.size(); i++) {
-        availCommPortNames.append(availCommPorts.at(i).portName());
+    // TODO BUG when Batlabs are removed sometimes they don't show up again when plugged in (on Linux)
+    for (int i = 0; i < availableCommPorts.size(); i++) {
+        availableCommPortNames.append(availableCommPorts.at(i).portName());
     }
 
-    qWarning() << QSerialPortInfo::availablePorts().size();
+    // Check if Batlabs have been added
+    for (int i = 0; i < availableCommPortNames.size(); i++) {
+        QString portName = availableCommPortNames[i];
+        if (!connectedBatlabsByPortName.contains(portName)) {
+            addNewBatlab(portName);
+        }
+    }
+
+    // Check if Batlabs have been removed
+    for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        if (!availableCommPortNames.contains(portName)) {
+            removeBatlab(portName);
+        }
+    }
+
+    qDebug() << availableCommPortNames;
+    qDebug() << connectedBatlabsByPortName.keys();
+}
+
+void BatlabManager::addNewBatlab(QString portName)
+{
+    Batlab *batlab = new Batlab(portName);
+    connectedBatlabsByPortName[portName] = batlab;
+}
+
+void BatlabManager::removeBatlab(QString portName)
+{
+    delete connectedBatlabsByPortName[portName];
+    connectedBatlabsByPortName.remove(portName);
 }

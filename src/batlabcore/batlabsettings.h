@@ -99,6 +99,7 @@ private:
     QVector<QString> cellNames;
 };
 
+// TODO review limits with Daniel
 // Builtin variable default values and bounds
 
 #define CELL_PLAYLIST_NAME_FIELDSTR                         "cellPlaylistName"

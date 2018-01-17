@@ -2,7 +2,7 @@
 #define TEST_H
 
 #include <QDialog>
-#include "batlabcom.h"
+#include "batlabcore/batlab.h"
 
 // TODO review this implementation
 
@@ -15,7 +15,7 @@ class BatlabDebugDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabCom*> com = QVector<batlabCom*>());
+    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<Batlab*> com = QVector<Batlab*>());
     ~BatlabDebugDialog();
 
 public slots:
@@ -30,7 +30,7 @@ signals:
 
 private:
     Ui::debugDialog *ui;
-    QVector<batlabCom *> comObjects;
+    QVector<Batlab *> comObjects;
 
 };
 

@@ -4,7 +4,7 @@
 #include <QObject>
 #include "batlabcore/globals.h"
 #include "batlabcell.h"
-#include "batlabcom.h"
+#include "batlabcore/batlab.h"
 
 class batlabTestGroup : public QObject
 {
@@ -25,7 +25,7 @@ public slots:
     bool onGetIsRunning() {return isRunning; }
     void updateParms(int index);
 
-    void connectCom(batlabCom * com);
+    void connectCom(Batlab * com);
     void disconnectCom();
 
     void receiveStream(int cell, int mode, int stat, float temp, float curr, float volt);
@@ -72,7 +72,7 @@ signals:
 
 private:
     QVector<batlabCell*> testGroup;
-    batlabCom *comObject = nullptr;
+    Batlab *comObject = nullptr;
     int serialNumber = -1;
     int batlabId = -1;
     bool isRunning = false;

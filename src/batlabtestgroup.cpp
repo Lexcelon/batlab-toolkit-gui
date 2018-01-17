@@ -85,7 +85,7 @@ void batlabTestGroup::onStartTests()
     }
 }
 
-void batlabTestGroup::connectCom(batlabCom * com)
+void batlabTestGroup::connectCom(Batlab * com)
 {
     comObject = com;
     serialNumber = com->getSerialNumber();

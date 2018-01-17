@@ -439,6 +439,7 @@ void PlaylistDirectoryPage::browseForPlaylistDirectory()
 {
     QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
     QString playlistDirectoryPathString = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
+    // TODO fix this so that if none is selected it leaves the path instead of setting it to ""
     playlistDirectoryPathString = QFileDialog::getExistingDirectory(this, tr("Choose playlist directory for output files:"), playlistDirectoryPathString);
     playlistDirectoryLineEdit->setText(playlistDirectoryPathString);
 }

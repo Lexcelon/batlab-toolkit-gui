@@ -13,7 +13,7 @@ batlabTestPlan::batlabTestPlan(int numBatlabs,QVector<batlabCell*> list): QObjec
 }
 
 
-batlabTestPlan::batlabTestPlan(int numBatlabs,QVector<batlabCell*> list, QVector<batlabCom*> coms): QObject()
+batlabTestPlan::batlabTestPlan(int numBatlabs,QVector<batlabCell*> list, QVector<Batlab*> coms): QObject()
 {
     comList = coms;
     numberOfBatlabs = numBatlabs;

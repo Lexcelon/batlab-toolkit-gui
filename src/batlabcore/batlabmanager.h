@@ -6,6 +6,7 @@
 #include <QString>
 #include <QTimer>
 #include <QDebug>
+#include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QList>
 #include <QStringList>
@@ -22,13 +23,15 @@ signals:
 
 public slots:
     void updateConnectedBatlabs();
+    void addNewBatlab(QString portName);
+    void removeBatlab(QString portName);
 
 private:
     bool cellPlaylistLoaded;
     bool testsInProgress;
 
-    QMap<int, Batlab> connectedBatlabsBySerialNumber;
-
+    QMap<int, Batlab*> connectedBatlabsBySerialNumber;
+    QMap<QString, Batlab*> connectedBatlabsByPortName;
 
 };
 

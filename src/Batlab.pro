@@ -8,7 +8,7 @@ QT *=  core serialport charts multimedia widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Batlab
+TARGET = BatlabToolkitGUI
 TEMPLATE = app
 
 @
@@ -31,7 +31,6 @@ win32 {
 
 SOURCES += main.cpp\
     batlabconfig.cpp \
-    batlabcom.cpp \
     batlabcellmanager.cpp \
     batlabcell.cpp \
     batlabsystemtest.cpp \
@@ -62,7 +61,6 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     batlabconfig.h \
-    batlabcom.h \
     batlabcellmanager.h \
     batlabcell.h \
     batlabsystemtest.h \

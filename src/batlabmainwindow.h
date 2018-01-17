@@ -14,7 +14,7 @@
 #include "batlabconfig.h"
 #include "settings.h"
 #include "dialogs/batlabdebugdialog/batlabdebugdialog.h"
-#include "batlabcom.h"
+#include "batlabcore/batlab.h"
 #include "batlabcellmanager.h"
 #include "batlabcore/version.h"
 #include "batlabcore/batlabmanager.h"
@@ -54,7 +54,7 @@ private:
 
     BatlabManager *batlabManager;
 
-    QVector<batlabCom*> batlabComObjects;
+    QVector<Batlab*> BatlabObjects;
 
     BatlabDebugDialog *batlabDebugDialog = nullptr;
     batlabCellManager * cellManager = nullptr;

@@ -1,7 +1,7 @@
 #include "batlabdebugdialog.h"
 #include "ui_batlabdebugdialog.h"
 
-BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabCom *> com) :
+BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<Batlab *> com) :
     QDialog(parent),
     ui(new Ui::debugDialog)
 {

@@ -29,6 +29,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
 
     statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
 
+    // TODO remove
     // Managing data from cells
     cellManager = new batlabCellManager;
 
@@ -215,9 +216,9 @@ void BatlabMainWindow::debugBatlab()
 {
     // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
     if (batlabDebugDialog == nullptr) {
-        batlabDebugDialog = new BatlabDebugDialog(this, batlabComObjects);
-//           connect(testObj,SIGNAL(emitReadReg(int,int)),batlabComObjects.first(),SLOT(onReadReg(int,int)));
-//           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),batlabComObjects.first(),SLOT(onWriteReg(int,int,int)));
+        batlabDebugDialog = new BatlabDebugDialog(this, BatlabObjects);
+//           connect(testObj,SIGNAL(emitReadReg(int,int)),BatlabObjects.first(),SLOT(onReadReg(int,int)));
+//           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),BatlabObjects.first(),SLOT(onWriteReg(int,int,int)));
 //           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
     }
 
@@ -261,8 +262,8 @@ void BatlabMainWindow::closeEvent(QCloseEvent *event)
 
     if (reply == QMessageBox::Yes) {
         // TODO update to set all batlabs idle using whatever new comm standard is developed
-        for (int i = 0; i < batlabComObjects.size(); ++i) {
-            batlabComObjects[i]->setAllIdle();
+        for (int i = 0; i < BatlabObjects.size(); ++i) {
+            BatlabObjects[i]->setAllIdle();
         }
         event->accept();
     } else {
@@ -350,9 +351,9 @@ void BatlabMainWindow::updateLiveViewWithReceivedStream(int cell,int mode,int st
 {
     QString str = QString("STREAM PACKET: ");
 
-    for (int i = 0; i < batlabComObjects.size(); ++i) {
-        if (sender() == batlabComObjects[i]) {
-            str += QString("Batlab #%1").arg(batlabComObjects[i]->getSerialNumber());
+    for (int i = 0; i < BatlabObjects.size(); ++i) {
+        if (sender() == BatlabObjects[i]) {
+            str += QString("Batlab #%1").arg(BatlabObjects[i]->getSerialNumber());
         }
     }
 
@@ -426,29 +427,29 @@ void BatlabMainWindow::makeBatlabConnections(QStringList availCommPortNames) {
     for (int i = 0; i < availCommPortNames.size(); ++i) {
 
         bool connectBatlab = true;
-        for (int j = 0; j < batlabComObjects.size(); ++j) {
+        for (int j = 0; j < BatlabObjects.size(); ++j) {
 
-            if (batlabComObjects[j]->getName() == availCommPortNames[i]) {
+            if (BatlabObjects[j]->getName() == availCommPortNames[i]) {
                 connectBatlab = false;
             }
     }
 
         if (connectBatlab) {
 
-            batlabComObjects.push_back(new batlabCom(availCommPortNames[i]));
-            connect(batlabComObjects[i], &batlabCom::emitBatlabDisconnect, this, &BatlabMainWindow::showBatlabRemoved);
+            BatlabObjects.push_back(new Batlab(availCommPortNames[i]));
+            connect(BatlabObjects[i], &Batlab::emitBatlabDisconnect, this, &BatlabMainWindow::showBatlabRemoved);
 
-            connect(batlabComObjects[i], &batlabCom::emitReadCommand,
+            connect(BatlabObjects[i], &Batlab::emitReadCommand,
                     this, &BatlabMainWindow::updateLiveViewWithReadCommand);
-            connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
+            connect(BatlabObjects[i], &Batlab::emitWriteCommand,
                     this, &BatlabMainWindow::updateLiveViewWithWriteCommand);
 
-            connect(batlabComObjects[i], &batlabCom::emitReadResponse,
+            connect(BatlabObjects[i], &Batlab::emitReadResponse,
                     this, &BatlabMainWindow::updateLiveViewWithReadResponse);
-            connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
+            connect(BatlabObjects[i], &Batlab::emitWriteResponse,
                     this, &BatlabMainWindow::updateLiveViewWithWriteResponse);
 
-            connect(batlabComObjects[i], &batlabCom::emitStream,
+            connect(BatlabObjects[i], &Batlab::emitStream,
                     this, &BatlabMainWindow::updateLiveViewWithReceivedStream);
         }
     }
@@ -470,8 +471,8 @@ void BatlabMainWindow::showBatlabRemoved(QString batlabUnitPortName) {
     bool foundIndexToDelete = false;
     int currentIndex = 0;
 
-    while (!foundIndexToDelete && (currentIndex < batlabComObjects.size())) {
-        if (batlabComObjects[currentIndex]->getName() != batlabUnitPortName) {
+    while (!foundIndexToDelete && (currentIndex < BatlabObjects.size())) {
+        if (BatlabObjects[currentIndex]->getName() != batlabUnitPortName) {
                 currentIndex++;
             }
 
@@ -481,7 +482,7 @@ void BatlabMainWindow::showBatlabRemoved(QString batlabUnitPortName) {
     }
 
     if (foundIndexToDelete) {
-        batlabComObjects.removeAt(currentIndex);
+        BatlabObjects.removeAt(currentIndex);
     }
 
     return;
@@ -492,24 +493,24 @@ void BatlabMainWindow::showBatlabRemoved(QString batlabUnitPortName) {
 //    qDebug() << names;
 //    for (int i = 0; i < names.size(); ++i) {
 //        bool connectBatlab = true;
-//        for (int j = 0; j < batlabComObjects.size(); ++j) {
-//            if (batlabComObjects[j]->getName() == names[i]) {
+//        for (int j = 0; j < BatlabObjects.size(); ++j) {
+//            if (BatlabObjects[j]->getName() == names[i]) {
 //                connectBatlab = false;
 //            }
 //        }
 //        if (connectBatlab) {
-//            batlabComObjects.push_back(new batlabCom(names[i]));
-//            connect(batlabComObjects[i], &batlabCom::emitReadCommand,
+//            BatlabObjects.push_back(new Batlab(names[i]));
+//            connect(BatlabObjects[i], &Batlab::emitReadCommand,
 //                    this, &BatlabMainWindow::onReceiveReadCommand);
-//            connect(batlabComObjects[i], &batlabCom::emitWriteCommand,
+//            connect(BatlabObjects[i], &Batlab::emitWriteCommand,
 //                    this, &BatlabMainWindow::onReceiveWriteCommand);
 
-//            connect(batlabComObjects[i], &batlabCom::emitReadResponse,
+//            connect(BatlabObjects[i], &Batlab::emitReadResponse,
 //                    this, &BatlabMainWindow::onReceiveReadResponse);
-//            connect(batlabComObjects[i], &batlabCom::emitWriteResponse,
+//            connect(BatlabObjects[i], &Batlab::emitWriteResponse,
 //                    this, &BatlabMainWindow::onReceiveWriteResponse);
 
-//            connect(batlabComObjects[i], &batlabCom::emitStream,
+//            connect(BatlabObjects[i], &Batlab::emitStream,
 //                    this, &BatlabMainWindow::onReceiveStream);
 //        }
 //    }
