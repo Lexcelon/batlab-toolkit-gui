@@ -2,7 +2,7 @@
 #define BATLABTESTPLAN_H
 
 #include <QObject>
-#include "batlabcore/globals.h"
+#include "batlabcore/batlablib.h"
 #include "batlabcell.h"
 #include "batlabtestgroup.h"
 #include <QMessageBox>

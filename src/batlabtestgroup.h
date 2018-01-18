@@ -2,7 +2,7 @@
 #define BATLABTESTGROUP_H
 
 #include <QObject>
-#include "batlabcore/globals.h"
+#include "batlabcore/batlablib.h"
 #include "batlabcell.h"
 #include "batlabcore/batlab.h"
 

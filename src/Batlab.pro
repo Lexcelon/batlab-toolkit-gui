@@ -92,9 +92,9 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/dialogmaster.h \
     batlabcore/batlabsettings.h \
     batlabcore/version.h \
-    batlabcore/globals.h \
     batlabcore/batlabmanager.h \
-    batlabcore/batlab.h
+    batlabcore/batlab.h \
+    batlabcore/batlablib.h
 
 FORMS    += \
     testwindow.ui \

@@ -1,4 +1,4 @@
-#include "globals.h"
+#include "batlablib.h"
 
 void BatlabLib::bubblesort(QVector<float> data, QVector<int> &indices)
 {

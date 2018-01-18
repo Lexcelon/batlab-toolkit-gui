@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QString>
 #include <QStringList>
-#include "batlabcore/globals.h"
+#include "batlabcore/batlablib.h"
 
 class TestData : public QObject
 {

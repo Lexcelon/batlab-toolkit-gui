@@ -31,12 +31,12 @@ BatlabDebugDialog::~BatlabDebugDialog()
 }
 
 void BatlabDebugDialog::onRegRead() {
-    comObjects[ui->comboBox->currentIndex()]->onReadReg(ui->unitNumber->value(),ui->cellNumber->value());
+    comObjects[ui->comboBox->currentIndex()]->initiateRegisterRead(ui->unitNumber->value(),ui->cellNumber->value());
 //    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value());
 }
 
 void BatlabDebugDialog::onRegWrite() {
-    comObjects[ui->comboBox->currentIndex()]->onWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
+    comObjects[ui->comboBox->currentIndex()]->initiateRegisterWrite(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
 //    emit emitWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
 }
 
