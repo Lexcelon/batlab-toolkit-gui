@@ -1,5 +1,5 @@
-#ifndef GLOBALS
-#define GLOBALS
+#ifndef BATLABLIB_H
+#define BATLABLIB_H
 
 #include <QMap>
 #include <QString>
@@ -98,8 +98,18 @@ struct testPacket {
     QVector<QPair<int,int>> CHARGE;
 };
 
+enum batlabNamespaces {
+    CHANNEL0 = 0x00,
+    CHANNEL1 = 0x01,
+    CHANNEL2 = 0x02,
+    CHANNEL3 = 0x03,
+    UNIT = 0x04,
+    BOOTLOADER = 0x05,
+    COMMS = 0xFF,
+};
+
 enum cellNamespace {
-    MODE,
+    MODE = 0x00,
     CELL_ERROR,
     STATUS,
     CURRENT_SETPOINT,
@@ -131,11 +141,11 @@ enum cellNamespace {
     VOLTAGE_CALIB_PP,
     CURR_CALIB_PP_OFF,
     VOLT_CALIB_PP_OFF,
-    LOCK
+    LOCK,
 };
 
 enum unitNamespace {
-    SERIAL_NUM,
+    SERIAL_NUM = 0x00,
     DEVICE_ID,
     FIRMWARE_VER,
     VCC,
@@ -145,30 +155,28 @@ enum unitNamespace {
     SINE_OFFSET,
     SINE_MAGDIV,
     LED_MESSAGE,
-    BOOTLOAD,
+    UNIT_BOOTLOAD,
     VOLT_CH_CALIB_OFF,
     VOLT_CH_CALIB_SCA,
     VOLT_DC_CALIB_OFF,
-    VOLT_DC_CALIB_SCA
+    VOLT_DC_CALIB_SCA,
 };
 
-namespace bootloader
+enum bootloaderNamespace
 {
-    enum {
-        BOOTLOAD,
-        ADDR,
-        DATA
-    };
-}
+    BOOTLOAD = 0x00,
+    ADDR,
+    DATA,
+};
 
 enum commsNamespace {
-    LED0,
+    LED0 = 0x00,
     LED1,
     LED2,
     LED3,
     EXTERNAL_PSU,
-    EXTERNAL_PSU_VOLTAGE
+    EXTERNAL_PSU_VOLTAGE,
 };
 
-#endif // GLOBALS
+#endif // BATLABLIB_H
 

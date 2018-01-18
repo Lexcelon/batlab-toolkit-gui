@@ -7,7 +7,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
-#include "globals.h"
+#include "batlablib.h"
 
 class BatlabSettings
 {

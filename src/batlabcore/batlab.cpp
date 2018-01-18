@@ -1,112 +1,80 @@
 #include "batlab.h"
 
-Batlab::Batlab(QObject *parent) : QObject(parent) {
-    port = new QSerialPort();
-    QList<QSerialPortInfo> list = QSerialPortInfo::availablePorts();
-    QStringList names;
-    for (int i = 0; i< list.size(); ++i) {
-        qDebug() << list[i].portName();
-        names.append(list[i].portName());
-    }
-    bool ok;
-    QString item = QInputDialog::getItem(nullptr,"Com Port Selection","Port Name: ",names,0,false,&ok);
-    port->setPortName(item);
-    port->setBaudRate(QSerialPort::Baud115200);
-    bool success = port->open(QSerialPort::ReadWrite);
-    if (!success) {
-        qDebug() << "Failure Opening Port";
-    }
-
-    connect(port,SIGNAL(errorOccurred(QSerialPort::SerialPortError)),this,SLOT(checkCommPortStatus()));
-    connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
-}
-
-
 Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 {
     port = new QSerialPort();
     portName = newPortName;
     port->setPortName(portName);
     port->setBaudRate(QSerialPort::Baud115200);
-    bool success = port->open(QSerialPort::ReadWrite);
-    if (!success) {
-        qDebug() << "Failure Opening Port";
-        qDebug() << port->errorString();
+
+    if (!port->open(QSerialPort::ReadWrite)) {
+        qWarning() << "Failure Opening Port: " << port->error() << port->errorString();
         return;
     }
 
-    connect(port,SIGNAL(errorOccurred(QSerialPort::SerialPortError)),this,SLOT(checkCommPortStatus()));
-    connect(port,SIGNAL(readyRead()),this,SLOT(onRead()));
+    connect(port, &QSerialPort::errorOccurred, this, &Batlab::checkSerialPortError);
+    connect(port, &QSerialPort::readyRead, this, &Batlab::processAvailableSerialPortData);
+
     qDebug() << "Read Serial Number";
-    onReadReg(0x04,unitNamespace::SERIAL_NUM);
-    onReadReg(0x00,cellNamespace::TEMP_CALIB_B);
-    onReadReg(0x01,cellNamespace::TEMP_CALIB_B);
-    onReadReg(0x02,cellNamespace::TEMP_CALIB_B);
-    onReadReg(0x03,cellNamespace::TEMP_CALIB_B);
-    onReadReg(0x00,cellNamespace::TEMP_CALIB_R);
-    onReadReg(0x01,cellNamespace::TEMP_CALIB_R);
-    onReadReg(0x02,cellNamespace::TEMP_CALIB_R);
-    onReadReg(0x03,cellNamespace::TEMP_CALIB_R);
+
+    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
+    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
+    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B);
+    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B);
+    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_B);
+    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_R);
+    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R);
+    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R);
+    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R);
 }
 
-void Batlab::onRead() {
-    qint64 len = port->bytesAvailable();
-    char * rec = new char[len];
-    int start = 0;
-    port->read(rec,len);
+void Batlab::processAvailableSerialPortData() {
+    qint64 dataLength = port->bytesAvailable();
+    char *data = new char[dataLength];
+    int startChar = 0;
+    port->read(data, dataLength);
 
-    while (len > 0)
-    if ((uchar)rec[start] == 0xAA) {
-        qDebug() << "RESPONSE PACKET";
-        qDebug() << "Namespace: " << (uchar)(rec[start+1]) << " Cell: " << (uchar)(rec[start+2]);
-        qDebug() << "Low Byte Fail: " << (int)(rec[start+3]) << " High Byte Fail: " << (int)(rec[start+4]);
+    while (dataLength > 0) {
+        if ((uchar)data[startChar] == 0xAA) {
+            qDebug() << "RESPONSE PACKET";
+            qDebug() << "Namespace: " << (uchar)(data[startChar+1]) << " Cell: " << (uchar)(data[startChar+2]);
+            qDebug() << "Low Byte Fail: " << (int)(data[startChar+3]) << " High Byte Fail: " << (int)(data[startChar+4]);
 
-        if (rec[start+2] & 0x80) {
-            emit emitWriteResponse(static_cast<int>((uchar)rec[start+1]), static_cast<int>((uchar)rec[start+2]) ^ 0x0080, static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
-        } else {
-            if (rec[start+2] == unitNamespace::SERIAL_NUM) {
-                serialNumber = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
-                qDebug() << "Serial  Number " << serialNumber;
+            if (data[startChar+2] & 0x80) {
+                emit emitWriteResponse(static_cast<int>((uchar)data[startChar+1]), static_cast<int>((uchar)data[startChar+2]) ^ 0x0080, static_cast<int>(data[startChar+3]), static_cast<int>(data[startChar+4]));
+            } else {
+                if (data[startChar+2] == unitNamespace::SERIAL_NUM) {
+                    serialNumber = 256*(uchar)data[startChar+4] + (uchar)data[startChar+3];
+                    qDebug() << "Serial  Number " << serialNumber;
+                }
+
+                if (data[startChar+2] == cellNamespace::TEMP_CALIB_B) {
+                    tempCalibB[(uchar)(data[startChar+1])] = 256*(uchar)data[startChar+4] + (uchar)data[startChar+3];
+                }
+
+                if (data[startChar+2] == cellNamespace::TEMP_CALIB_R) {
+                    tempCalibR[(uchar)(data[startChar+1])] = 256*(uchar)data[startChar+4] + (uchar)data[startChar+3];
+                }
+                emit emitReadResponse(static_cast<int>((uchar)data[startChar+1]), static_cast<int>((uchar)data[startChar+2]), static_cast<int>(data[startChar+3]), static_cast<int>(data[startChar+4]));
             }
 
-            if (rec[start+2] == cellNamespace::TEMP_CALIB_B) {
-                tempCalibB[(uchar)(rec[start+1])] = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
-            }
+            dataLength-=5;
+            startChar +=5;
+        } else if ((uchar)data[startChar] == 0xAF) {
 
-            if (rec[start+2] == cellNamespace::TEMP_CALIB_R) {
-                tempCalibR[(uchar)(rec[start+1])] = 256*(uchar)rec[start+4] + (uchar)rec[start+3];
+            int cell = static_cast<int>(data[startChar+1]);
+            if ((uchar)data[startChar+2] == 0x00) {
+                int mode, status, temp, current, voltage;
+                mode =      (uchar)data[startChar+3]  + 256*(uchar)data[startChar+4];
+                status =    (uchar)data[startChar+5]  + 256*(uchar)data[startChar+6];
+                temp =      (uchar)data[startChar+7]  + 256*(uchar)data[startChar+8];
+                current =   (uchar)data[startChar+9]  + 256*(uchar)data[startChar+10];
+                voltage =   (uchar)data[startChar+11] + 256*(uchar)data[startChar+12];
+                emit emitStream(cell,mode,status,BatlabLib::getTemp(temp,tempCalibB[cell],tempCalibR[cell]),BatlabLib::getCurrent(current),BatlabLib::getVoltage(voltage));
             }
-            emit emitReadResponse(static_cast<int>((uchar)rec[start+1]), static_cast<int>((uchar)rec[start+2]), static_cast<int>(rec[start+3]), static_cast<int>(rec[start+4]));
+            dataLength-=13;
+            startChar+=13;
         }
-
-        len-=5;
-        start +=5;
-    } else if ((uchar)rec[start] == 0xAF) {
-//        qDebug() << static_cast<int>(rec[start+1])
-//                << static_cast<int>(rec[start+2])
-//                << static_cast<int>(rec[start+3])
-//                << static_cast<int>(rec[start+4])
-//                << static_cast<int>(rec[start+5])
-//                << static_cast<int>(rec[start+6])
-//                << static_cast<int>(rec[start+7])
-//                << static_cast<int>(rec[start+8])
-//                << static_cast<int>(rec[start+9])
-//                << static_cast<int>(rec[start+10])
-//                << static_cast<int>(rec[start+11])
-//                << static_cast<int>(rec[start+12]);
-
-        int cell = static_cast<int>(rec[start+1]);
-        if ((uchar)rec[start+2] == 0x00) {
-            int mode, status, temp, current, voltage;
-            mode =      (uchar)rec[start+3]  + 256*(uchar)rec[start+4];
-            status =    (uchar)rec[start+5]  + 256*(uchar)rec[start+6];
-            temp =      (uchar)rec[start+7]  + 256*(uchar)rec[start+8];
-            current =   (uchar)rec[start+9]  + 256*(uchar)rec[start+10];
-            voltage =   (uchar)rec[start+11] + 256*(uchar)rec[start+12];
-            emit emitStream(cell,mode,status,BatlabLib::getTemp(temp,tempCalibB[cell],tempCalibR[cell]),BatlabLib::getCurrent(current),BatlabLib::getVoltage(voltage));
-        }
-        len-=13;
-        start+=13;
     }
 }
 
@@ -117,30 +85,30 @@ Batlab::~Batlab() {
 void Batlab::setAllIdle()
 {
     for (int i = 0; i < 4; ++i) {
-        onWriteReg(i, cellNamespace::MODE, MODE_IDLE);
+        initiateRegisterWrite(i, cellNamespace::MODE, MODE_IDLE);
     }
 }
 
-void Batlab::onReadReg(int batlabNamespace, int batlabRegister)
+void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
 {
-    emit emitReadCommand(serialNumber, batlabNamespace, batlabRegister);
+    emit registerReadInitiated(serialNumber, batlabNamespace, batlabRegister);
 
-    char * data = new char[5];
+    char *data = new char[5];
     data[0] = static_cast<uchar>(0xAA);
     data[1] = static_cast<uchar>(batlabNamespace);
     data[2] = static_cast<uchar>(batlabRegister);
     data[3] = static_cast<uchar>(0x00);
     data[4] = static_cast<uchar>(0x00);
 
-    port->write(data,5);
+    port->write(data, 5);
     port->waitForBytesWritten(1000);
 }
 
 
-void Batlab::onWriteReg(int batlabNamespace, int batlabRegister, int num)
+void Batlab::initiateRegisterWrite(int batlabNamespace, int batlabRegister, int num)
 {
-    emit emitWriteCommand(serialNumber, batlabNamespace, batlabRegister, num);
-    char * data = new char[5];
+    emit registerWriteInitiated(serialNumber, batlabNamespace, batlabRegister, num);
+    char *data = new char[5];
     uchar msb = ((uchar)((0xFF00 & num) >> 8));
     uchar lsb = ((uchar)(0x00FF & num));
     qDebug() << "WRITE MESSAGE";
@@ -152,15 +120,15 @@ void Batlab::onWriteReg(int batlabNamespace, int batlabRegister, int num)
     data[3] = lsb;
     data[4] = msb;
 
-    port->write(data,5);
+    port->write(data, 5);
     port->waitForBytesWritten(1000);
 }
 
-void Batlab::checkCommPortStatus() {
+void Batlab::checkSerialPortError() {
 
-    // Value of 9 indicates that Batlab was disconnected.
-    if (port->QSerialPort::error() == 9) {
-        emit emitBatlabDisconnect(portName);
+    // ResourceError indicates that the Batlab was disconnected
+    if (port->error() == QSerialPort::ResourceError) {
+        emit batlabDisconnected(portName);
     }
 
 }

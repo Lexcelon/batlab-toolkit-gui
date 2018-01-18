@@ -127,11 +127,6 @@ private slots:
     void showNewCellPlaylistWizard();
     void loadPlaylistIntoGUI();
 
-    void makeBatlabConnections(QStringList availCommPortNames);
-    void updateBatlabConnections();
-
-    QStringList getAvailCommPortNames();
-
 };
 
 #endif // BATLAB_MAIN_WINDOW_H

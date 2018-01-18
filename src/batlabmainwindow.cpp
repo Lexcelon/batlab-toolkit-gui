@@ -405,64 +405,6 @@ void BatlabMainWindow::updateLiveViewTextBrowser(QString str)
     }
 }
 
-// Returns QStringList of names of available comm ports.
-QStringList BatlabMainWindow::getAvailCommPortNames() {
-
-    QList<QSerialPortInfo> availCommPorts = QSerialPortInfo::availablePorts();
-    QStringList availCommPortNames;
-
-    for (int i = 0; i < availCommPorts.size(); ++i) {
-        availCommPortNames.append(availCommPorts[i].portName());
-    }
-
-    return availCommPortNames;
-
-}
-
-void BatlabMainWindow::makeBatlabConnections(QStringList availCommPortNames) {
-
-    // If the connected Batlab has a port name that matches any of the available port names, ignore it
-    // (it does not need to be re-connected). If no match is found, then make the connection.
-
-    for (int i = 0; i < availCommPortNames.size(); ++i) {
-
-        bool connectBatlab = true;
-        for (int j = 0; j < BatlabObjects.size(); ++j) {
-
-            if (BatlabObjects[j]->getName() == availCommPortNames[i]) {
-                connectBatlab = false;
-            }
-    }
-
-        if (connectBatlab) {
-
-            BatlabObjects.push_back(new Batlab(availCommPortNames[i]));
-            connect(BatlabObjects[i], &Batlab::emitBatlabDisconnect, this, &BatlabMainWindow::showBatlabRemoved);
-
-            connect(BatlabObjects[i], &Batlab::emitReadCommand,
-                    this, &BatlabMainWindow::updateLiveViewWithReadCommand);
-            connect(BatlabObjects[i], &Batlab::emitWriteCommand,
-                    this, &BatlabMainWindow::updateLiveViewWithWriteCommand);
-
-            connect(BatlabObjects[i], &Batlab::emitReadResponse,
-                    this, &BatlabMainWindow::updateLiveViewWithReadResponse);
-            connect(BatlabObjects[i], &Batlab::emitWriteResponse,
-                    this, &BatlabMainWindow::updateLiveViewWithWriteResponse);
-
-            connect(BatlabObjects[i], &Batlab::emitStream,
-                    this, &BatlabMainWindow::updateLiveViewWithReceivedStream);
-        }
-    }
-}
-
-void BatlabMainWindow::updateBatlabConnections() {
-
-    //Updates Batlab connections (if any need to be made).
-    makeBatlabConnections(getAvailCommPortNames());
-
-    return;
-}
-
 // TODO move into batpool
 // Disconnecting a Batlab unit drives the Batlab Comm class to send its port name to this function
 // so that it may be removed from the list of connected Batlab units.
@@ -487,31 +429,3 @@ void BatlabMainWindow::showBatlabRemoved(QString batlabUnitPortName) {
 
     return;
 }
-
-//void BatlabMainWindow::onConnectToBatlabs(QStringList names)
-//{
-//    qDebug() << names;
-//    for (int i = 0; i < names.size(); ++i) {
-//        bool connectBatlab = true;
-//        for (int j = 0; j < BatlabObjects.size(); ++j) {
-//            if (BatlabObjects[j]->getName() == names[i]) {
-//                connectBatlab = false;
-//            }
-//        }
-//        if (connectBatlab) {
-//            BatlabObjects.push_back(new Batlab(names[i]));
-//            connect(BatlabObjects[i], &Batlab::emitReadCommand,
-//                    this, &BatlabMainWindow::onReceiveReadCommand);
-//            connect(BatlabObjects[i], &Batlab::emitWriteCommand,
-//                    this, &BatlabMainWindow::onReceiveWriteCommand);
-
-//            connect(BatlabObjects[i], &Batlab::emitReadResponse,
-//                    this, &BatlabMainWindow::onReceiveReadResponse);
-//            connect(BatlabObjects[i], &Batlab::emitWriteResponse,
-//                    this, &BatlabMainWindow::onReceiveWriteResponse);
-
-//            connect(BatlabObjects[i], &Batlab::emitStream,
-//                    this, &BatlabMainWindow::onReceiveStream);
-//        }
-//    }
-//}
