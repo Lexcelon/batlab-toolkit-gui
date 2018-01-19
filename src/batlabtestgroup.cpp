@@ -93,7 +93,7 @@ void batlabTestGroup::connectCom(Batlab * com)
     connect(this,SIGNAL(emitReadReg(int,int)),com,SLOT(onReadReg(int,int)));
     connect(com,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
     connect(com,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int)));
-    connect(com,SIGNAL(emitStream(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
+    connect(com,SIGNAL(newStreamReceived(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
 
     for (int i = 0; i < testGroup.size(); i++) {
         connect(testGroup[i],SIGNAL(updateParameter(int,int,int)),com,SLOT(onWriteReg(int,int,int)));
@@ -106,7 +106,7 @@ void batlabTestGroup::disconnectCom()
     disconnect(this,SIGNAL(emitReadReg(int,int)),comObject,SLOT(onReadReg(int,int)));
     disconnect(comObject,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
     disconnect(comObject,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int,int)));
-    disconnect(comObject,SIGNAL(emitStream(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
+    disconnect(comObject,SIGNAL(newStreamReceived(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
 
     for (int i = 0; i < testGroup.size(); i++) {
         disconnect(testGroup[i],SIGNAL(updateParameter(int,int,int,int)),comObject,SLOT(onWriteReg(int,int,int,int)));

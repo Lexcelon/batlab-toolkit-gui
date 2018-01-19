@@ -3,8 +3,8 @@
 Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 {
     port = new QSerialPort();
-    portName = newPortName;
-    port->setPortName(portName);
+    info.portName = newPortName;
+    port->setPortName(info.portName);
     port->setBaudRate(QSerialPort::Baud115200);
 
     if (!port->open(QSerialPort::ReadWrite)) {
@@ -14,8 +14,6 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 
     connect(port, &QSerialPort::errorOccurred, this, &Batlab::checkSerialPortError);
     connect(port, &QSerialPort::readyRead, this, &Batlab::processAvailableSerialPortData);
-
-    qDebug() << "Read Serial Number";
 
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
     initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
@@ -44,8 +42,9 @@ void Batlab::processAvailableSerialPortData() {
                 emit emitWriteResponse(static_cast<int>((uchar)data[startChar+1]), static_cast<int>((uchar)data[startChar+2]) ^ 0x0080, static_cast<int>(data[startChar+3]), static_cast<int>(data[startChar+4]));
             } else {
                 if (data[startChar+2] == unitNamespace::SERIAL_NUM) {
-                    serialNumber = 256*(uchar)data[startChar+4] + (uchar)data[startChar+3];
-                    qDebug() << "Serial  Number " << serialNumber;
+                    info.serialNumber = 256*(uchar)data[startChar+4] + (uchar)data[startChar+3];
+                    emit infoUpdated();
+                    qDebug() << "Serial  Number " << info.serialNumber;
                 }
 
                 if (data[startChar+2] == cellNamespace::TEMP_CALIB_B) {
@@ -70,7 +69,7 @@ void Batlab::processAvailableSerialPortData() {
                 temp =      (uchar)data[startChar+7]  + 256*(uchar)data[startChar+8];
                 current =   (uchar)data[startChar+9]  + 256*(uchar)data[startChar+10];
                 voltage =   (uchar)data[startChar+11] + 256*(uchar)data[startChar+12];
-                emit emitStream(cell,mode,status,BatlabLib::getTemp(temp,tempCalibB[cell],tempCalibR[cell]),BatlabLib::getCurrent(current),BatlabLib::getVoltage(voltage));
+                emit newStreamReceived(cell,mode,status,BatlabLib::getTemp(temp,tempCalibB[cell],tempCalibR[cell]),BatlabLib::getCurrent(current),BatlabLib::getVoltage(voltage));
             }
             dataLength-=13;
             startChar+=13;
@@ -91,7 +90,7 @@ void Batlab::setAllIdle()
 
 void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
 {
-    emit registerReadInitiated(serialNumber, batlabNamespace, batlabRegister);
+    emit registerReadInitiated(info.serialNumber, batlabNamespace, batlabRegister);
 
     char *data = new char[5];
     data[0] = static_cast<uchar>(0xAA);
@@ -107,7 +106,7 @@ void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
 
 void Batlab::initiateRegisterWrite(int batlabNamespace, int batlabRegister, int num)
 {
-    emit registerWriteInitiated(serialNumber, batlabNamespace, batlabRegister, num);
+    emit registerWriteInitiated(info.serialNumber, batlabNamespace, batlabRegister, num);
     char *data = new char[5];
     uchar msb = ((uchar)((0xFF00 & num) >> 8));
     uchar lsb = ((uchar)(0x00FF & num));
@@ -128,9 +127,12 @@ void Batlab::checkSerialPortError() {
 
     // ResourceError indicates that the Batlab was disconnected
     if (port->error() == QSerialPort::ResourceError) {
-        emit batlabDisconnected(portName);
+        emit batlabDisconnected(info.portName);
     }
 
 }
 
-
+batlabInfo Batlab::getInfo()
+{
+    return info;
+}

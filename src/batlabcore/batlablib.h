@@ -98,6 +98,31 @@ struct testPacket {
     QVector<QPair<int,int>> CHARGE;
 };
 
+struct channelInfo {
+    QString cellName = "";
+
+    bool testInProgress = false;
+
+    bool preChargeComplete = false;
+
+    int numWarmupCycles = -1;
+    int numWarmupCyclesCompleted = -1;
+
+    int numMeasurementCycles = -1;
+    int numMeasurementCyclesCompleted = -1;
+
+    bool storageDischarge = false;
+    bool storageDischargeComplete = false;
+};
+
+struct batlabInfo {
+    bool externalPowerConnected = false;
+    int firmwareVersion = -1;
+    QString portName = "";
+    int serialNumber = -1;
+    channelInfo channels[4];
+};
+
 enum batlabNamespaces {
     CHANNEL0 = 0x00,
     CHANNEL1 = 0x01,

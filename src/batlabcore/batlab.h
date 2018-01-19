@@ -23,28 +23,28 @@ public:
 signals:
     void emitReadResponse(int,int,int,int);
     void emitWriteResponse(int,int,int,int);
-    void emitStream(int,int,int,float,float,float);
+    void newStreamReceived(int,int,int,float,float,float);
     void registerReadInitiated (int, int, int);
     void registerWriteInitiated(int, int, int, int);
 
     void batlabDisconnected(QString);
-
+    void infoUpdated();
 
 public slots:
     void processAvailableSerialPortData();
     void initiateRegisterRead(int, int);
     void initiateRegisterWrite(int, int, int);
-    QString getName() { return portName; }
-    int getSerialNumber() {return serialNumber; }
+    QString getName() { return info.portName; }
+    int getSerialNumber() {return info.serialNumber; }
+    batlabInfo getInfo();
 
     void checkSerialPortError(); //Status for unit port that emits the disconnect signal. Called when port error is detected.
 
 private:
-    QSerialPort *port;
-    QString portName;
-    QVector<uchar> data;
+    batlabInfo info;
 
-    int serialNumber = -1;
+    QSerialPort *port;
+    QVector<uchar> data;
 
     int tempCalibB[4];
     int tempCalibR[4];

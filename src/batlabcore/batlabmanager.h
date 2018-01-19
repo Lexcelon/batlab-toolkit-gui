@@ -20,11 +20,13 @@ public:
     explicit BatlabManager(QObject *parent = nullptr);
 
 signals:
+    void batlabInfoUpdated(QVector<batlabInfo>);
 
 public slots:
     void updateConnectedBatlabs();
     void addNewBatlab(QString portName);
     void removeBatlab(QString portName);
+    void processUpdatedBatlabInfo();
 
 private:
     bool cellPlaylistLoaded;

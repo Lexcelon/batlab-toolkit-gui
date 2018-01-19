@@ -36,19 +36,30 @@ void BatlabManager::updateConnectedBatlabs()
             removeBatlab(portName);
         }
     }
-
-    qDebug() << availableCommPortNames;
-    qDebug() << connectedBatlabsByPortName.keys();
 }
 
 void BatlabManager::addNewBatlab(QString portName)
 {
     Batlab *batlab = new Batlab(portName);
+    connect(batlab, &Batlab::infoUpdated, this, &BatlabManager::processUpdatedBatlabInfo);
     connectedBatlabsByPortName[portName] = batlab;
+    processUpdatedBatlabInfo();
 }
 
 void BatlabManager::removeBatlab(QString portName)
 {
     delete connectedBatlabsByPortName[portName];
     connectedBatlabsByPortName.remove(portName);
+    processUpdatedBatlabInfo();
+}
+
+void BatlabManager::processUpdatedBatlabInfo()
+{
+    QVector<batlabInfo> infos;
+    for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        infos.push_back(info);
+    }
+    emit batlabInfoUpdated(infos);
 }

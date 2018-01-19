@@ -15,8 +15,9 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     this->showMaximized();
     this->setWindowTitle(tr("Batlab Toolkit GUI"));
 
-    // Set state for the main window logic
+    // BatlabManager keeps track of connected Batlabs and handles state by itself. Only passes updates to BatlabMainWindow so that they can be drawn.
     batlabManager = new BatlabManager;
+    connect(batlabManager, &BatlabManager::batlabInfoUpdated, this, &BatlabMainWindow::redrawBatlabInfo);
 
     // Setup the UI
     initializeMainWindowUI();
@@ -62,6 +63,10 @@ void BatlabMainWindow::initializeMainWindowUI()
     batlabsTabWidget = new QFrame;
     batlabsTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     batlabsTabWidget->setLineWidth(2);
+    batlabsTabWidget->setAutoFillBackground(true);
+
+    batlabsTabLayout = new QVBoxLayout;
+    batlabsTabWidget->setLayout(batlabsTabLayout);
 
     liveViewTabWidget = new QFrame;
     liveViewTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -147,6 +152,35 @@ void BatlabMainWindow::initializeMainWindowUI()
     centralWidget->setLayout(centralWidgetLayout);
 }
 
+void clearLayout(QLayout *layout, bool deleteWidgets)
+{
+    while (QLayoutItem* item = layout->takeAt(0)) {
+        if (deleteWidgets) {
+            if (QWidget* widget = item->widget()) {
+                widget->deleteLater();
+            }
+        }
+        if (QLayout* childLayout = item->layout()) {
+            clearLayout(childLayout, deleteWidgets);
+        }
+        delete item;
+    }
+}
+
+void BatlabMainWindow::redrawBatlabInfo(QVector<batlabInfo> infos)
+{
+    // For each item in the existing layout
+    qDebug() << QString::number(batlabsTabLayout->count()) << QString::number(infos.size());
+    clearLayout(batlabsTabLayout, true);
+
+    for (int i = 0; i < infos.size(); i++) {
+        BatlabWidget *batlabWidget = new BatlabWidget(infos[i]);
+        batlabsTabLayout->addWidget(batlabWidget);
+    }
+
+    batlabsButton->setText("Batlabs (" + QString::number(infos.size()) + ")");
+}
+
 void BatlabMainWindow::createActions()
 {
     newCellPlaylistAct = new QAction(tr("&New Cell Playlist"), this);
@@ -214,17 +248,17 @@ void BatlabMainWindow::exitBatlabToolkitGUI()
 
 void BatlabMainWindow::debugBatlab()
 {
-    // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
-    if (batlabDebugDialog == nullptr) {
-        batlabDebugDialog = new BatlabDebugDialog(this, BatlabObjects);
-//           connect(testObj,SIGNAL(emitReadReg(int,int)),BatlabObjects.first(),SLOT(onReadReg(int,int)));
-//           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),BatlabObjects.first(),SLOT(onWriteReg(int,int,int)));
-//           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
-    }
+//    // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
+//    if (batlabDebugDialog == nullptr) {
+//        batlabDebugDialog = new BatlabDebugDialog(this, BatlabObjects);
+////           connect(testObj,SIGNAL(emitReadReg(int,int)),BatlabObjects.first(),SLOT(onReadReg(int,int)));
+////           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),BatlabObjects.first(),SLOT(onWriteReg(int,int,int)));
+////           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
+//    }
 
-    //Can move window around
-    batlabDebugDialog->setModal(false);
-        batlabDebugDialog->show();
+//    //Can move window around
+//    batlabDebugDialog->setModal(false);
+//        batlabDebugDialog->show();
 }
 
 void BatlabMainWindow::checkForBatlabFirmwareUpdates()
@@ -262,9 +296,9 @@ void BatlabMainWindow::closeEvent(QCloseEvent *event)
 
     if (reply == QMessageBox::Yes) {
         // TODO update to set all batlabs idle using whatever new comm standard is developed
-        for (int i = 0; i < BatlabObjects.size(); ++i) {
-            BatlabObjects[i]->setAllIdle();
-        }
+//        for (int i = 0; i < BatlabObjects.size(); ++i) {
+//            BatlabObjects[i]->setAllIdle();
+//        }
         event->accept();
     } else {
         event->ignore();
@@ -351,11 +385,11 @@ void BatlabMainWindow::updateLiveViewWithReceivedStream(int cell,int mode,int st
 {
     QString str = QString("STREAM PACKET: ");
 
-    for (int i = 0; i < BatlabObjects.size(); ++i) {
-        if (sender() == BatlabObjects[i]) {
-            str += QString("Batlab #%1").arg(BatlabObjects[i]->getSerialNumber());
-        }
-    }
+//    for (int i = 0; i < BatlabObjects.size(); ++i) {
+//        if (sender() == BatlabObjects[i]) {
+//            str += QString("Batlab #%1").arg(BatlabObjects[i]->getSerialNumber());
+//        }
+//    }
 
     str += QString("Cell #%1 - Mode: %2 - Status: %3 - Temp: %4 C - Current: %5 A - Voltage: %6 V \n")
             .arg(cell)
@@ -403,29 +437,4 @@ void BatlabMainWindow::updateLiveViewTextBrowser(QString str)
     } else {
         liveViewTextBrowser->insertPlainText(str);
     }
-}
-
-// TODO move into batpool
-// Disconnecting a Batlab unit drives the Batlab Comm class to send its port name to this function
-// so that it may be removed from the list of connected Batlab units.
-void BatlabMainWindow::showBatlabRemoved(QString batlabUnitPortName) {
-
-    bool foundIndexToDelete = false;
-    int currentIndex = 0;
-
-    while (!foundIndexToDelete && (currentIndex < BatlabObjects.size())) {
-        if (BatlabObjects[currentIndex]->getName() != batlabUnitPortName) {
-                currentIndex++;
-            }
-
-        else {
-            foundIndexToDelete = true;
-        }
-    }
-
-    if (foundIndexToDelete) {
-        BatlabObjects.removeAt(currentIndex);
-    }
-
-    return;
 }

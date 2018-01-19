@@ -18,6 +18,7 @@
 #include "batlabcellmanager.h"
 #include "batlabcore/version.h"
 #include "batlabcore/batlabmanager.h"
+#include "components/batlabwidget.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"
@@ -36,8 +37,6 @@ public:
     ~BatlabMainWindow();
 
 public slots:
-    void showBatlabRemoved(QString batlabUnitPortName);
-
     void updateLiveViewWithWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
     void updateLiveViewWithReadCommand(int serialNumber, int nameSpace,int batlabRegister);
     void updateLiveViewWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb);
@@ -46,6 +45,8 @@ public slots:
 
     void updateLiveViewTextBrowser(QString);
 
+    void redrawBatlabInfo(QVector<batlabInfo> infos);
+
 signals:
     void emitUpdateText(QString);
 
@@ -53,8 +54,6 @@ private:
     void closeEvent(QCloseEvent *event);
 
     BatlabManager *batlabManager;
-
-    QVector<Batlab*> BatlabObjects;
 
     BatlabDebugDialog *batlabDebugDialog = nullptr;
     batlabCellManager * cellManager = nullptr;
@@ -109,6 +108,7 @@ private:
     QPushButton *openCellPlaylistButton;
     QStackedWidget *cellPlaylistStackedWidget;
 
+    QVBoxLayout *batlabsTabLayout;
     QGridLayout *cellPlaylistTabLayout;
     QGridLayout *liveViewTabLayout;
 
