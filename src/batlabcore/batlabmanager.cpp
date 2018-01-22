@@ -7,7 +7,7 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
 
     QTimer *updateConnectedBatlabsTimer = new QTimer(this);
     connect(updateConnectedBatlabsTimer, &QTimer::timeout, this, &BatlabManager::updateConnectedBatlabs);
-    updateConnectedBatlabsTimer->start(1000);
+    updateConnectedBatlabsTimer->start(200);
 }
 
 void BatlabManager::updateConnectedBatlabs()

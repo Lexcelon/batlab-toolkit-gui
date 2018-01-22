@@ -12,7 +12,7 @@
   <Publisher>Lexcelon LLC</Publisher>
   <StartMenuDir>Lexcelon</StartMenuDir>
   <TargetDir>@ApplicationsDir@/Lexcelon/Batlab Toolkit GUI</TargetDir>
-  <RunProgram>@TargetDir@/Batlab.exe</RunProgram>
+  <RunProgram>@TargetDir@/BatlabToolkitGUI.exe</RunProgram>
   <RunProgramDescription>Run Batlab Toolkit GUI</RunProgramDescription>
   <InstallerApplicationIcon>desktop-favicon</InstallerApplicationIcon>
   <RemoteRepositories>

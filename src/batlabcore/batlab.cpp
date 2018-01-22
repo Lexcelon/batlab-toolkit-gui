@@ -16,6 +16,8 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     connect(port, &QSerialPort::readyRead, this, &Batlab::processAvailableSerialPortData);
 
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
+    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
+
     initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
     initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B);
     initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B);
@@ -33,25 +35,33 @@ void Batlab::processAvailableSerialPortData() {
     port->read(data, dataLength);
 
     while (dataLength > 0) {
+        // This is a response
         if ((uchar)data[startChar] == 0xAA) {
             qDebug() << "RESPONSE PACKET";
             qDebug() << "Namespace: " << (uchar)(data[startChar+1]) << " Cell: " << (uchar)(data[startChar+2]);
             qDebug() << "Low Byte Fail: " << (int)(data[startChar+3]) << " High Byte Fail: " << (int)(data[startChar+4]);
 
-            if (data[startChar+2] & 0x80) {
+            if (data[startChar+2] & 0x80) // Write response if the address sent was or'ed with 0x80
+            {
                 emit emitWriteResponse(static_cast<int>((uchar)data[startChar+1]), static_cast<int>((uchar)data[startChar+2]) ^ 0x0080, static_cast<int>(data[startChar+3]), static_cast<int>(data[startChar+4]));
-            } else {
-                if (data[startChar+2] == unitNamespace::SERIAL_NUM) {
-                    info.serialNumber = 256*(uchar)data[startChar+4] + (uchar)data[startChar+3];
-                    emit infoUpdated();
-                    qDebug() << "Serial  Number " << info.serialNumber;
+
+            }
+            else // Read response
+            {
+                // Check the namespace
+                uchar ns = data[startChar+1];
+                // Cell namespace
+                if (ns == batlabNamespaces::CHANNEL0 || ns == batlabNamespaces::CHANNEL1 || ns == batlabNamespaces::CHANNEL2 || ns == batlabNamespaces::CHANNEL3)
+                {
+
+                }
+                // Unit namespace
+                else if (ns == batlabNamespaces::UNIT)
+                {
+
                 }
 
-                if (data[startChar+2] == cellNamespace::TEMP_CALIB_B) {
-                    tempCalibB[(uchar)(data[startChar+1])] = 256*(uchar)data[startChar+4] + (uchar)data[startChar+3];
-                }
-
-                if (data[startChar+2] == cellNamespace::TEMP_CALIB_R) {
+                else if (data[startChar+2] == cellNamespace::TEMP_CALIB_R) {
                     tempCalibR[(uchar)(data[startChar+1])] = 256*(uchar)data[startChar+4] + (uchar)data[startChar+3];
                 }
                 emit emitReadResponse(static_cast<int>((uchar)data[startChar+1]), static_cast<int>((uchar)data[startChar+2]), static_cast<int>(data[startChar+3]), static_cast<int>(data[startChar+4]));

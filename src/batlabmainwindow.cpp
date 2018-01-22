@@ -152,6 +152,7 @@ void BatlabMainWindow::initializeMainWindowUI()
     centralWidget->setLayout(centralWidgetLayout);
 }
 
+// https://stackoverflow.com/questions/4272196/qt-remove-all-widgets-from-layout
 void clearLayout(QLayout *layout, bool deleteWidgets)
 {
     while (QLayoutItem* item = layout->takeAt(0)) {
@@ -169,8 +170,6 @@ void clearLayout(QLayout *layout, bool deleteWidgets)
 
 void BatlabMainWindow::redrawBatlabInfo(QVector<batlabInfo> infos)
 {
-    // For each item in the existing layout
-    qDebug() << QString::number(batlabsTabLayout->count()) << QString::number(infos.size());
     clearLayout(batlabsTabLayout, true);
 
     for (int i = 0; i < infos.size(); i++) {
