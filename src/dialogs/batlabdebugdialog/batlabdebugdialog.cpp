@@ -1,9 +1,9 @@
-#include "test.h"
-#include "ui_test.h"
+#include "batlabdebugdialog.h"
+#include "ui_batlabdebugdialog.h"
 
-batlabtest::batlabtest(QWidget *parent, QVector<batlabCom *> com) :
+BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<Batlab *> com) :
     QDialog(parent),
-    ui(new Ui::test)
+    ui(new Ui::debugDialog)
 {
     ui->setupUi(this);
     comObjects = com;
@@ -25,18 +25,18 @@ batlabtest::batlabtest(QWidget *parent, QVector<batlabCom *> com) :
     connect(ui->regWrite,SIGNAL(clicked()),this,SLOT(onRegWrite()));
 }
 
-batlabtest::~batlabtest()
+BatlabDebugDialog::~BatlabDebugDialog()
 {
     delete ui;
 }
 
-void batlabtest::onRegRead() {
-    comObjects[ui->comboBox->currentIndex()]->onReadReg(ui->unitNumber->value(),ui->cellNumber->value());
+void BatlabDebugDialog::onRegRead() {
+    comObjects[ui->comboBox->currentIndex()]->initiateRegisterRead(ui->unitNumber->value(),ui->cellNumber->value());
 //    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value());
 }
 
-void batlabtest::onRegWrite() {
-    comObjects[ui->comboBox->currentIndex()]->onWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
+void BatlabDebugDialog::onRegWrite() {
+    comObjects[ui->comboBox->currentIndex()]->initiateRegisterWrite(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
 //    emit emitWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
 }
 

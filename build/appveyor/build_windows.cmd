@@ -8,7 +8,7 @@ set PATH=C:\Qt\Tools\mingw530_32\bin\;%PATH%
 set PATH=C:\MinGW\bin\;%PATH%
 
 echo Setting program version...
-perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_BUILD_VERSION%/g" src\version.h dist\windows\config\config.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
+perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_BUILD_VERSION%/g" src\batlabcore\version.h dist\windows\config\config.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
 
 echo Setting program date...
 perl.exe -p -i.bak -e "s/2000-01-01/%APPVEYOR_REPO_COMMIT_TIMESTAMP%/g" dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
@@ -20,8 +20,8 @@ qmake ..\src
 mingw32-make
 
 echo Copying program and libraries to package directories...
-echo f | xcopy /f /y release\Batlab.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\Batlab.exe
-windeployqt.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\Batlab.exe --dir ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui.lib\data
+echo f | xcopy /f /y release\BatlabToolkitGUI.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\BatlabToolkitGUI.exe
+windeployqt.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\BatlabToolkitGUI.exe --dir ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui.lib\data
 
 echo Building installer...
 binarycreator.exe -p ..\dist\windows\packages\ -c ..\dist\windows\config\config.xml -n Batlab-Toolkit-GUI-Installer-Windows.exe

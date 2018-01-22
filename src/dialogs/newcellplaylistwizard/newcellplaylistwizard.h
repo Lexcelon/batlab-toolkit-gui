@@ -3,8 +3,8 @@
 
 #include <QWizard>
 #include <QtWidgets>
-
-#include "globals.h"
+#include "batlabcore/batlabsettings.h"
+#include "batlabcore/version.h"
 
 QString cellName(QString designator, int numCells, int startingCellNum, int cellId);
 
@@ -21,7 +21,7 @@ public:
 
 private:
     bool skipped;
-    QJsonObject jsonFromNewPlaylistWizard();
+    BatlabSettings *settings;
 };
 
 class IntroPage : public QWizardPage
@@ -110,6 +110,10 @@ private:
     QDoubleSpinBox *dischargeCurrentSafetyCutoffSpinBox;
     QLabel *dischargeCurrentSafetyCutoffUnit;
 
+    QLabel *prechargeRateLabel;
+    QDoubleSpinBox *prechargeRateSpinBox;
+    QLabel *prechargeRateUnit;
+
     QLabel *chargeRateLabel;
     QDoubleSpinBox *chargeRateSpinBox;
     QLabel *chargeRateUnit;
@@ -130,6 +134,21 @@ private:
     QPushButton *advancedConfigButton;
 };
 
+class PlaylistDirectoryPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    PlaylistDirectoryPage(QWidget *parent = 0);
+
+private:
+    QLineEdit *playlistDirectoryLineEdit;
+    QPushButton *playlistDirectoryBrowseButton;
+
+    void browseForPlaylistDirectory();
+    void initializePage();
+};
+
 class SavePlaylistPage : public QWizardPage
 {
     Q_OBJECT
@@ -139,6 +158,10 @@ public:
     QPushButton *skipButton;
 
 private:
+    QLineEdit *saveFilenameLineEdit;
+    QPushButton *saveFilenameBrowseButton;
+    void browseForSaveFilename();
+    void initializePage();
 
 };
 

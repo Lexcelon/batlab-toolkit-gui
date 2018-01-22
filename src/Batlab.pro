@@ -8,7 +8,7 @@ QT *=  core serialport charts multimedia widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Batlab
+TARGET = BatlabToolkitGUI
 TEMPLATE = app
 
 @
@@ -31,16 +31,14 @@ win32 {
 
 SOURCES += main.cpp\
     batlabconfig.cpp \
-    batlabcom.cpp \
-    test.cpp \
     batlabcellmanager.cpp \
     batlabcell.cpp \
     batlabsystemtest.cpp \
     testwindow.cpp \
     batlabtestgroup.cpp \
     batlabtestplan.cpp \
+    dialogs/batlabdebugdialog/batlabdebugdialog.cpp \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.cpp \
-    globals.cpp \
     batlabmainwindow.cpp \
     cellmodulewidget.cpp \
     histogramobject.cpp \
@@ -56,20 +54,22 @@ SOURCES += main.cpp\
     qtautoupdater/autoupdatergui/updateinfodialog.cpp \
     settings.cpp \
     qtautoupdater/autoupdatergui/dialogmaster.cpp \
+    batlabcore/batlabsettings.cpp \
+    batlabcore/globals.cpp \
+    batlabcore/batlabmanager.cpp \
+    batlabcore/batlab.cpp \
+    components/batlabwidget.cpp
 
 HEADERS  += \
     batlabconfig.h \
-    batlabcom.h \
-    test.h \
-    globals.h \
     batlabcellmanager.h \
     batlabcell.h \
     batlabsystemtest.h \
     testwindow.h \
     batlabtestgroup.h \
     batlabtestplan.h \
+    dialogs/batlabdebugdialog/batlabdebugdialog.h \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.h \
-    version.h \
     testdata.h \
     histogramwidget.h \
     inputstringdialog.h \
@@ -91,12 +91,17 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/updateinfodialog_p.h \
     settings.h \
     qtautoupdater/autoupdatergui/dialogmaster.h \
-    version.h \
+    batlabcore/batlabsettings.h \
+    batlabcore/version.h \
+    batlabcore/batlabmanager.h \
+    batlabcore/batlab.h \
+    batlabcore/batlablib.h \
+    components/batlabwidget.h
 
 FORMS    += \
-    test.ui \
     testwindow.ui \
     cellmodulewidget.ui \
+    dialogs/batlabdebugdialog/batlabdebugdialog.ui \
     inputstringdialog.ui \
     qtautoupdater/autoupdatergui/progressdialog.ui \
     qtautoupdater/autoupdatergui/updatebutton.ui \

@@ -2,20 +2,21 @@
 #define TEST_H
 
 #include <QDialog>
-#include "batlabcom.h"
-#include "globals.h"
+#include "batlabcore/batlab.h"
+
+// TODO review this implementation
 
 namespace Ui {
-class test;
+class debugDialog;
 }
 
-class batlabtest : public QDialog
+class BatlabDebugDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit batlabtest(QWidget *parent = 0, QVector<batlabCom*> com = QVector<batlabCom*>());
-    ~batlabtest();
+    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<Batlab*> com = QVector<Batlab*>());
+    ~BatlabDebugDialog();
 
 public slots:
     void onRegRead();
@@ -28,8 +29,8 @@ signals:
 //    void emitPrint(uchar,properties);
 
 private:
-    Ui::test *ui;
-    QVector<batlabCom *> comObjects;
+    Ui::debugDialog *ui;
+    QVector<Batlab *> comObjects;
 
 };
 

@@ -16,6 +16,7 @@ void NewCellPlaylistWizard::accept()
 NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
 {
     skipped = false;
+    settings = new BatlabSettings;
     // The fields registered do not by default know what value and signal
     // to use with a QDoubleSpinBox, so we have to tell it how to handle those.
     // Why it does not have the same default behavior as QSpinBox I do not know.
@@ -24,6 +25,7 @@ NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
     addPage(new IntroPage);
     addPage(new BasicSetupPage);
     addPage(new ConfigPlaylistPage);
+    addPage(new PlaylistDirectoryPage);
 
     // Feels hackish, but I don't have access to internet and couldn't get child page to connect to parent wizard
     // So, I am doing it in reverse
@@ -34,7 +36,7 @@ NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
     addPage(new FinishPlaylistPage);
 
     // TODO set this to good size once wizard implementation complete
-    this->setMinimumSize(500, 600);
+    this->setMinimumSize(500, 650);
 
     setWindowTitle(tr("New Cell Playlist"));
 
@@ -196,6 +198,7 @@ void ConfigPlaylistPage::enableOrDisableStorageDischargeField()
 // When certain values are updated, other fields need to have their limits adjusted to keep some values from being greater than others
 void ConfigPlaylistPage::updateDynamicFieldBounds()
 {
+    prechargeRateSpinBox->setMaximum(chargeCurrentSafetyCutoffSpinBox->value());
     chargeRateSpinBox->setMaximum(chargeCurrentSafetyCutoffSpinBox->value());
     dischargeRateSpinBox->setMaximum(dischargeCurrentSafetyCutoffSpinBox->value());
     storageDischargeVoltageSpinBox->setMaximum(highVoltageCutoffSpinBox->value());
@@ -307,6 +310,15 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     connect(dischargeCurrentSafetyCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ConfigPlaylistPage::updateDynamicFieldBounds);
     registerField(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR, dischargeCurrentSafetyCutoffSpinBox);
 
+    prechargeRateLabel = new QLabel(tr("Precharge rate:"));
+    prechargeRateSpinBox = new QDoubleSpinBox;
+    prechargeRateUnit = new QLabel(tr("A"));
+    prechargeRateSpinBox->setSingleStep(0.1);
+    prechargeRateSpinBox->setMinimum(PRECHARGE_RATE_MIN);
+    prechargeRateSpinBox->setMaximum(CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT); // Max is updated dynamically to not be greater than the charge current safety cutoff
+    prechargeRateSpinBox->setValue(PRECHARGE_RATE_DEFAULT);
+    registerField(PRECHARGE_RATE_FIELDSTR, prechargeRateSpinBox);
+
     chargeRateLabel = new QLabel(tr("Charge rate:"));
     chargeRateSpinBox = new QDoubleSpinBox;
     chargeRateUnit = new QLabel(tr("A"));
@@ -364,18 +376,21 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     advancedExtensionLayout->addWidget(dischargeCurrentSafetyCutoffLabel, 6, 0);
     advancedExtensionLayout->addWidget(dischargeCurrentSafetyCutoffSpinBox, 6, 1);
     advancedExtensionLayout->addWidget(dischargeCurrentSafetyCutoffUnit, 6, 2);
-    advancedExtensionLayout->addWidget(chargeRateLabel, 7, 0);
-    advancedExtensionLayout->addWidget(chargeRateSpinBox, 7, 1);
-    advancedExtensionLayout->addWidget(chargeRateUnit, 7, 2);
-    advancedExtensionLayout->addWidget(dischargeRateLabel, 8, 0);
-    advancedExtensionLayout->addWidget(dischargeRateSpinBox, 8, 1);
-    advancedExtensionLayout->addWidget(dischargeRateUnit, 8, 2);
-    advancedExtensionLayout->addWidget(storageDischargeVoltageLabel, 9, 0);
-    advancedExtensionLayout->addWidget(storageDischargeVoltageSpinBox, 9, 1);
-    advancedExtensionLayout->addWidget(storageDischargeVoltageUnit, 9, 2);
-    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdLabel, 10, 0);
-    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdSpinBox, 10, 1);
-    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdUnit, 10, 2);
+    advancedExtensionLayout->addWidget(prechargeRateLabel, 7, 0);
+    advancedExtensionLayout->addWidget(prechargeRateSpinBox, 7, 1);
+    advancedExtensionLayout->addWidget(prechargeRateUnit, 7, 2);
+    advancedExtensionLayout->addWidget(chargeRateLabel, 8, 0);
+    advancedExtensionLayout->addWidget(chargeRateSpinBox, 8, 1);
+    advancedExtensionLayout->addWidget(chargeRateUnit, 8, 2);
+    advancedExtensionLayout->addWidget(dischargeRateLabel, 9, 0);
+    advancedExtensionLayout->addWidget(dischargeRateSpinBox, 9, 1);
+    advancedExtensionLayout->addWidget(dischargeRateUnit, 9, 2);
+    advancedExtensionLayout->addWidget(storageDischargeVoltageLabel, 10, 0);
+    advancedExtensionLayout->addWidget(storageDischargeVoltageSpinBox, 10, 1);
+    advancedExtensionLayout->addWidget(storageDischargeVoltageUnit, 10, 2);
+    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdLabel, 11, 0);
+    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdSpinBox, 11, 1);
+    advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdUnit, 11, 2);
     advancedConfigExtensionWidget->setLayout(advancedExtensionLayout);
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -390,104 +405,123 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     connect(advancedConfigButton, &QPushButton::toggled, advancedConfigExtensionWidget, &QWidget::setVisible);
 }
 
+PlaylistDirectoryPage::PlaylistDirectoryPage(QWidget *parent) : QWizardPage(parent)
+{
+    setTitle(tr("Choose Playlist Directory"));
+    setSubTitle(tr("Choose the directory that will hold the output data files from your tests using this playlist."));
+
+    playlistDirectoryLineEdit = new QLineEdit();
+    playlistDirectoryLineEdit->setReadOnly(true);
+    registerField(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR, playlistDirectoryLineEdit);
+    playlistDirectoryBrowseButton = new QPushButton(tr("Browse..."));
+    connect(playlistDirectoryBrowseButton, &QPushButton::clicked, this, &PlaylistDirectoryPage::browseForPlaylistDirectory);
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addWidget(playlistDirectoryLineEdit);
+    layout->addWidget(playlistDirectoryBrowseButton);
+    setLayout(layout);
+}
+
+void PlaylistDirectoryPage::initializePage()
+{
+    QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
+    QString playlistDirectoryPathString = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
+
+    QDir dir;
+    if (!dir.mkpath(playlistDirectoryPathString)) {
+        qWarning() << "Unable to find/make default playlist directory.";
+    }
+
+    playlistDirectoryLineEdit->setText(playlistDirectoryPathString);
+}
+
+void PlaylistDirectoryPage::browseForPlaylistDirectory()
+{
+    QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
+    QString playlistDirectoryPathString = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
+    // TODO fix this so that if none is selected it leaves the path instead of setting it to ""
+    playlistDirectoryPathString = QFileDialog::getExistingDirectory(this, tr("Choose playlist directory for output files:"), playlistDirectoryPathString);
+    playlistDirectoryLineEdit->setText(playlistDirectoryPathString);
+}
+
+void SavePlaylistPage::initializePage()
+{
+    QString directoryPath = field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString().simplified();
+    QString defaultSaveFilename = directoryPath + "/settings.json";
+    saveFilenameLineEdit->setText(defaultSaveFilename);
+}
+
 SavePlaylistPage::SavePlaylistPage(QWidget *parent) : QWizardPage(parent)
 {
     setTitle(tr("Save Playlist"));
     setSubTitle(tr("Save your playlist to a file."));
 
-    skipButton = new QPushButton(tr("Skip >"));
-    skipButton->setMaximumWidth(80);
-
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(skipButton);
-    setLayout(layout);
-
     setButtonText(QWizard::NextButton, tr("Save >"));
+
+    saveFilenameLineEdit = new QLineEdit();
+    saveFilenameLineEdit->setReadOnly(true);
+    registerField(PLAYLIST_SAVE_FILENAME_FIELDSTR, saveFilenameLineEdit);
+    saveFilenameBrowseButton = new QPushButton(tr("Browse..."));
+    connect(saveFilenameBrowseButton, &QPushButton::clicked, this, &SavePlaylistPage::browseForSaveFilename);
+
+    skipButton = new QPushButton(tr("Skip >"));
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(saveFilenameLineEdit, 0, 0);
+    layout->addWidget(saveFilenameBrowseButton, 0, 1);
+    layout->addWidget(skipButton, 1, 1);
+    setLayout(layout);
 }
 
-QJsonObject NewCellPlaylistWizard::jsonFromNewPlaylistWizard()
+void SavePlaylistPage::browseForSaveFilename()
 {
-    QJsonObject playlistJson;
-
-    playlistJson[CELL_PLAYLIST_NAME_FIELDSTR] = field(CELL_PLAYLIST_NAME_FIELDSTR).toString();
-
-    playlistJson[BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR] = BATLAB_CELL_PLAYLIST_FILE_VERSION;
-
-    playlistJson[NUM_WARMUP_CYCLES_FIELDSTR] = field(NUM_WARMUP_CYCLES_FIELDSTR).toInt();
-
-    playlistJson[NUM_MEASUREMENT_CYCLES_FIELDSTR] = field(NUM_MEASUREMENT_CYCLES_FIELDSTR).toInt();
-
-    playlistJson[STORAGE_DISCHARGE_FIELDSTR] = field(STORAGE_DISCHARGE_FIELDSTR).toBool();
-    playlistJson[STORAGE_DISCHARGE_VOLTAGE_FIELDSTR] = field(STORAGE_DISCHARGE_VOLTAGE_FIELDSTR).toDouble();
-
-    playlistJson[REST_PERIOD_FIELDSTR] = field(REST_PERIOD_FIELDSTR).toInt();
-
-    playlistJson[HIGH_VOLTAGE_CUTOFF_FIELDSTR] = field(HIGH_VOLTAGE_CUTOFF_FIELDSTR).toDouble();
-    playlistJson[LOW_VOLTAGE_CUTOFF_FIELDSTR] = field(LOW_VOLTAGE_CUTOFF_FIELDSTR).toDouble();
-
-    playlistJson[CHARGE_TEMP_CUTOFF_FIELDSTR] = field(CHARGE_TEMP_CUTOFF_FIELDSTR).toDouble();
-    playlistJson[DISCHARGE_TEMP_CUTOFF_FIELDSTR] = field(DISCHARGE_TEMP_CUTOFF_FIELDSTR).toDouble();
-
-    playlistJson[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = field(CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble();
-    playlistJson[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = field(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble();
-
-    playlistJson[CHARGE_RATE_FIELDSTR] = field(CHARGE_RATE_FIELDSTR).toDouble();
-    playlistJson[DISCHARGE_RATE_FIELDSTR] = field(DISCHARGE_RATE_FIELDSTR).toDouble();
-
-    playlistJson[ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR] = field(ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR).toDouble();
-
-    playlistJson[REPORTING_PERIOD_FIELDSTR] = REPORTING_PERIOD_DEFAULT;
-    playlistJson[IMPEDANCE_REPORTING_PERIOD_FIELDSTR] = IMPEDANCE_REPORTING_PERIOD_DEFAULT;
-
-    playlistJson[SINE_WAVE_FREQUENCY_FIELDSTR] = SINE_WAVE_FREQUENCY_DEFAULT;
-    playlistJson[SINE_WAVE_MAGNITUDE_FIELDSTR] = SINE_WAVE_MAGNITUDE_DEFAULT;
-
-    QJsonArray cellNamesArray;
-    int numCells = field(NUM_CELLS_FIELDSTR).toInt();
-    int startingCellNumber = field(STARTING_CELL_NUMBER_FIELDSTR).toInt();
-    QString designator = field(CELL_DESIGNATOR_FIELDSTR).toString();
-    for (int cellId = startingCellNumber; cellId < startingCellNumber + numCells; cellId++) {
-        QString cellStr = cellName(designator, numCells, startingCellNumber, cellId);
-        cellNamesArray.append(cellStr);
-    }
-    playlistJson["cellNames"] = cellNamesArray;
-
-    return playlistJson;
+    QString directoryPath = field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString().simplified();
+    QString defaultSaveFilename = directoryPath + "/settings.json";
+    QString saveFilename = QFileDialog::getSaveFileName(this, tr("Save cell playlist as:"), defaultSaveFilename, "Batlab Cell Playlist Files (*.json);;All Files (*)");
+    saveFilenameLineEdit->setText(saveFilename);
 }
 
 void NewCellPlaylistWizard::savePlaylist()
 {
     // This is called every time the user hits next, so we only want this when on the correct page
-    if (currentId() == 4) {
+    if (currentId() == 5) {
         // We also don't want to do this if they got to the next page with the "Skip" button
         if (skipped == false) {
-            QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
-            QDir dir;
-            if (dir.mkpath(appLocalDataPath)) {
-                QString defaultSaveFileName = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified() + ".blp.json";
-                QString saveFileName = QFileDialog::getSaveFileName(this, tr("Save cell playlist as:"), defaultSaveFileName, "Batlab Cell Playlist Files (*.blp.json);;All Files (*)");
-                if (!saveFileName.endsWith(".blp.json")) {
-                    saveFileName.append(".blp.json");
-                }
 
-                QFile saveFile(saveFileName);
-                if (!saveFile.open(QIODevice::WriteOnly)) {
-                    qWarning() << "Couldn't open save file for new cell playlist.";
-                    return;
-                }
+            settings->setCellPlaylistName(field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified());
+            settings->setNumWarmupCycles(field(NUM_WARMUP_CYCLES_FIELDSTR).toInt());
+            settings->setNumMeasurementCycles(field(NUM_MEASUREMENT_CYCLES_FIELDSTR).toInt());
+            settings->setHighVoltageCutoff(field(HIGH_VOLTAGE_CUTOFF_FIELDSTR).toDouble());
+            settings->setLowVoltageCutoff(field(LOW_VOLTAGE_CUTOFF_FIELDSTR).toDouble());
+            settings->setStorageDischarge(field(STORAGE_DISCHARGE_FIELDSTR).toBool());
+            settings->setStorageDischargeVoltage(field(STORAGE_DISCHARGE_VOLTAGE_FIELDSTR).toDouble());
+            settings->setRestPeriod(field(REST_PERIOD_FIELDSTR).toInt());
+            settings->setChargeTempCutoff(field(CHARGE_TEMP_CUTOFF_FIELDSTR).toDouble());
+            settings->setDischargeTempCutoff(field(DISCHARGE_TEMP_CUTOFF_FIELDSTR).toDouble());
+            settings->setChargeCurrentSafetyCutoff(field(CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble());
+            settings->setDischargeCurrentSafetyCutoff(field(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble());
+            settings->setPrechargeRate(field(PRECHARGE_RATE_FIELDSTR).toDouble());
+            settings->setChargeRate(field(CHARGE_RATE_FIELDSTR).toDouble());
+            settings->setDischargeRate(field(DISCHARGE_RATE_FIELDSTR).toDouble());
+            settings->setAcceptableImpedanceThreshold(field(ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR).toDouble());
+            settings->setPlaylistOutputDirectory(field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString());
+            settings->setPlaylistSaveFilename(field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString());
 
-                QJsonObject playlistJsonObject = this->jsonFromNewPlaylistWizard();
-
-                QJsonDocument saveDoc(playlistJsonObject);
-                saveFile.write(saveDoc.toJson());
-            } else {
-                qWarning() << "Unable to find/make app local data directory.";
+            QVector<QString> names;
+            int numCells = field(NUM_CELLS_FIELDSTR).toInt();
+            int startingCellNumber = field(STARTING_CELL_NUMBER_FIELDSTR).toInt();
+            QString designator = field(CELL_DESIGNATOR_FIELDSTR).toString();
+            for (int cellId = startingCellNumber; cellId < startingCellNumber + numCells; cellId++) {
+                QString cellStr = cellName(designator, numCells, startingCellNumber, cellId);
+                names.append(cellStr);
             }
+            settings->setCellNames(names);
+
+            QString saveFileName = field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified();
+            settings->write(saveFileName);
         }
         skipped = false;
     }
-
 }
 
 void NewCellPlaylistWizard::skipToNextPage()

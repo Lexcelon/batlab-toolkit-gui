@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include "batlabcell.h"
-#include "batlabcom.h"
+#include "batlabcore/batlab.h"
 #include "batlabtestplan.h"
 #include <QDebug>
 
@@ -27,7 +27,7 @@ public slots:
     void onNewCell(QString id, testParms parms, int cycles);
 
     void onCreateTestPlan(int numBatlabs);
-    void onCreateTestPlan(QVector<batlabCom*> coms);
+    void onCreateTestPlan(QVector<Batlab*> coms);
 
     void onStartTests();
     void onAllTestsFinished();
@@ -68,7 +68,7 @@ private:
     void interpolateData();
     QVector<batlabCell*> cellList;
 
-    QVector<batlabCom*> comList;
+    QVector<Batlab*> comList;
 
     batlabTestPlan * testPlan = nullptr;
 

@@ -2,10 +2,10 @@
 #define TESTDATA_H
 
 #include <QObject>
-#include "globals.h"
 #include <QFile>
 #include <QString>
 #include <QStringList>
+#include "batlabcore/batlablib.h"
 
 class TestData : public QObject
 {

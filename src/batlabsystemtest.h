@@ -2,9 +2,7 @@
 #define BATLABSYSTEMTEST_H
 
 #include <QObject>
-#include "globals.h"
-
-
+#include "batlabcore/batlablib.h"
 
 class batlabSystemTest : public QObject
 {
