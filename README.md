@@ -18,33 +18,27 @@ When contributing to this repository, please first discuss the change you wish t
 
 ### Git branching model
 
-We follow the development model described `here <http://nvie.com/posts/a-successful-git-branching-model/>`_. Anything in the ``master`` branch is considered production. Most work happens in the ``develop`` branch or in a feature branch that is merged into ``develop`` before being merged into ``master``.
+We follow the development model described [here](http://nvie.com/posts/a-successful-git-branching-model/). Anything in the ``master`` branch is considered production. Most work happens in the ``develop`` branch or in a feature branch that is merged into ``develop`` before being merged into ``master``.
 
 ### Deployment
 
 Batlab Toolkit GUI is automatically deployed with each tagged commit to ``master``.
 
-To publish a new version, the workflow might look like this. First make your changes:
+To publish a new version, the workflow might look like this. First, make sure you are on the develop branch and then commit your changes:
 
-```
-$ git commit -am "some changes to the develop branch"
-```
+    $ git status     # Make sure you are on the develop branch
+    $ git commit -am "some changes to the develop branch"
 
-Then, update ``setup.py`` and ``docs/source/conf.py`` with the new version number (in this case we will use the example 0.100.56). Make a commit with these changes and push it to GitHub:
+Then push them to the remote repository to initiate a build:
 
-.. code-block:: bash
+    $ git push origin develop
 
-   $ git commit -am "rev version number to 0.100.56"
-      $ git push origin develop
+Then you must wait a couple of minutes to make sure the build passes. If the build fails, you will not be able to merge the commit into ``master``. Once the build passes, you can merge into master, create a tagged release and push. When merging, use ``--no-ff`` to preserve the commit and branching history:
 
-Then you must wait a couple of minutes to make sure the build passes on Travis. If the build fails, you will not be able to merge the commit into ``master``. Once the build passes, you can merge into master, create a tagged release and push. When merging, use ``--no-ff`` to preserve the commit and branching history:
+    $ git checkout master
+    $ git merge --no-ff develop
+    $ git tag 0.100.56
+    $ git push origin master
+    $ git push --tags
 
-.. code-block:: bash
-
-   $ git checkout master
-      $ git merge --no-ff develop
-         $ git tag v0.100.56
-	    $ git push origin master
-	       $ git push --tags
-
-Changes should automatically roll out to PyPi, and any documentation included in your code will automatically roll out to Read the Docs.
+When this is done, a few things will happen. A release will be created on GitHub. Appveyor/Travis will perform a build of the source code on their respective platforms. They will also build the installer for that platform and upload it to the GitHub release. They will then use the Qt Installer Framework tools to generate a repository with the built program binaries and upload it to Amazon S3. This way, when users check for updates, the program can read the contents of the S3 repository and determine if updates are available (and download them if so).
