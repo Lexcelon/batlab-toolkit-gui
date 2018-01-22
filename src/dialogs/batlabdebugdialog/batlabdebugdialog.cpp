@@ -5,7 +5,9 @@ BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<Batlab *> com) :
     QDialog(parent),
     ui(new Ui::debugDialog)
 {
+    // TODO automatically switch to live view when opening?
     ui->setupUi(this);
+
     comObjects = com;
 //    for (int i = 0; i < names.size(); ++i ) {
 //        ui->comboBox->addItem(names[vals(i)]);

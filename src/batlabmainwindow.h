@@ -108,9 +108,14 @@ private:
     QPushButton *openCellPlaylistButton;
     QStackedWidget *cellPlaylistStackedWidget;
 
+    QHBoxLayout *liveViewButtonLayout;
+    QPushButton *liveViewClearButton;
+    QPushButton *liveViewSaveButton;
+    bool printDebugMessages;
+
     QVBoxLayout *batlabsTabLayout;
     QGridLayout *cellPlaylistTabLayout;
-    QGridLayout *liveViewTabLayout;
+    QVBoxLayout *liveViewTabLayout;
 
     QTextBrowser *liveViewTextBrowser;
 
@@ -126,6 +131,8 @@ private slots:
 
     void showNewCellPlaylistWizard();
     void loadPlaylistIntoGUI();
+
+    void saveLiveView();
 
 };
 

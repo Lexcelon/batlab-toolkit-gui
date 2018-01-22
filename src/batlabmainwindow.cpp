@@ -112,11 +112,26 @@ void BatlabMainWindow::initializeMainWindowUI()
     cellPlaylistTabLayout->addWidget(cellPlaylistStackedWidget, 0, 0);
     cellPlaylistTabWidget->setLayout(cellPlaylistTabLayout);
 
+    liveViewTabLayout = new QVBoxLayout;
+
     liveViewTextBrowser = new QTextBrowser;
     liveViewTextBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
 
-    liveViewTabLayout = new QGridLayout;
-    liveViewTabLayout->addWidget(liveViewTextBrowser, 0, 0, Qt::AlignTop);
+    liveViewButtonLayout = new QHBoxLayout;
+    liveViewButtonLayout->setContentsMargins(0, 0, 0, 0);
+    liveViewButtonLayout->addStretch(10);
+
+    liveViewClearButton = new QPushButton(tr("Clear"));
+    liveViewButtonLayout->addWidget(liveViewClearButton);
+    connect(liveViewClearButton, &QPushButton::clicked, liveViewTextBrowser, &QTextBrowser::clear);
+    liveViewSaveButton = new QPushButton(tr("Save Output"));
+    liveViewButtonLayout->addWidget(liveViewSaveButton);
+    connect(liveViewSaveButton, &QPushButton::clicked, this, &BatlabMainWindow::saveLiveView);
+
+    printDebugMessages = true;
+
+    liveViewTabLayout->addWidget(liveViewTextBrowser);
+    liveViewTabLayout->addLayout(liveViewButtonLayout);
     liveViewTabWidget->setLayout(liveViewTabLayout);
 
     mainStackedWidget->addWidget(cellPlaylistTabWidget);
@@ -150,6 +165,37 @@ void BatlabMainWindow::initializeMainWindowUI()
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
     centralWidget->setLayout(centralWidgetLayout);
+}
+
+void BatlabMainWindow::saveLiveView()
+{
+    // TODO default path should be as is if no playlist loaded, should be in directory/named file for particular playlist if one loaded
+    QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
+
+    QString saveFileName = QFileDialog::getSaveFileName(this,
+                                                        tr("Save Log Output"),
+                                                        tr("%1/logfile.txt").arg(appLocalDataPath),
+                                                        tr("Text Files (*.txt);;All Files (*)"));
+
+    if (saveFileName.isEmpty())
+    {
+        return;
+    }
+
+   QFile file(saveFileName);
+   if (!file.open(QIODevice::WriteOnly))
+   {
+       QMessageBox::warning(this,
+                            tr("Error"),
+                            QString(tr("<nobr>File '%1'<br/>cannot be opened for writing.<br/><br/>"
+                                       "The log output could <b>not</b> be saved!</nobr>"))
+       .arg(saveFileName));
+       return;
+    }
+
+    QTextStream stream(&file);
+    stream << liveViewTextBrowser->toPlainText();
+    file.close();
 }
 
 // https://stackoverflow.com/questions/4272196/qt-remove-all-widgets-from-layout
@@ -247,17 +293,17 @@ void BatlabMainWindow::exitBatlabToolkitGUI()
 
 void BatlabMainWindow::debugBatlab()
 {
-//    // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
-//    if (batlabDebugDialog == nullptr) {
-//        batlabDebugDialog = new BatlabDebugDialog(this, BatlabObjects);
-////           connect(testObj,SIGNAL(emitReadReg(int,int)),BatlabObjects.first(),SLOT(onReadReg(int,int)));
-////           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),BatlabObjects.first(),SLOT(onWriteReg(int,int,int)));
-////           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
-//    }
+    // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
+    //    if (batlabDebugDialog == nullptr) {
+    //        batlabDebugDialog = new BatlabDebugDialog(this, BatlabObjects);
+    ////           connect(testObj,SIGNAL(emitReadReg(int,int)),BatlabObjects.first(),SLOT(onReadReg(int,int)));
+    ////           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),BatlabObjects.first(),SLOT(onWriteReg(int,int,int)));
+    ////           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
+    //    }
 
-//    //Can move window around
-//    batlabDebugDialog->setModal(false);
-//        batlabDebugDialog->show();
+    //    //Can move window around
+    //    batlabDebugDialog->setModal(false);
+    //        batlabDebugDialog->show();
 }
 
 void BatlabMainWindow::checkForBatlabFirmwareUpdates()

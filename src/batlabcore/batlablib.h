@@ -98,6 +98,8 @@ struct testPacket {
     QVector<QPair<int,int>> CHARGE;
 };
 
+
+// TODO move these default values into a function
 struct channelInfo {
     QString cellName = "";
 
@@ -115,6 +117,7 @@ struct channelInfo {
     bool storageDischargeComplete = false;
 };
 
+// TODO move these default values into a function
 struct batlabInfo {
     bool externalPowerConnected = false;
     int firmwareVersion = -1;
