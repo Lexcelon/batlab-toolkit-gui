@@ -91,8 +91,8 @@ void batlabTestGroup::connectCom(Batlab * com)
     serialNumber = com->getSerialNumber();
     connect(this,SIGNAL(emitWriteReg(int,int,int)),com,SLOT(onWriteReg(int,int,int)));
     connect(this,SIGNAL(emitReadReg(int,int)),com,SLOT(onReadReg(int,int)));
-    connect(com,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
-    connect(com,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int)));
+//    connect(com,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
+//    connect(com,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int)));
     connect(com,SIGNAL(newStreamReceived(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
 
     for (int i = 0; i < testGroup.size(); i++) {
@@ -104,8 +104,8 @@ void batlabTestGroup::disconnectCom()
 {
     disconnect(this,SIGNAL(emitWriteReg(int,int,int)),comObject,SLOT(onWriteReg(int,int,int)));
     disconnect(this,SIGNAL(emitReadReg(int,int)),comObject,SLOT(onReadReg(int,int)));
-    disconnect(comObject,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
-    disconnect(comObject,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int,int)));
+//    disconnect(comObject,SIGNAL(emitReadResponse(int,int,int,int)), this, SLOT(receiveReadResponse(int,int,int,int)));
+//    disconnect(comObject,SIGNAL(emitWriteResponse(int,int,int,int)), this, SLOT(receiveWriteResponse(int,int,int,int)));
     disconnect(comObject,SIGNAL(newStreamReceived(int,int,int,float,float,float)), this, SLOT(receiveStream(int,int,int,float,float,float)));
 
     for (int i = 0; i < testGroup.size(); i++) {
@@ -170,10 +170,10 @@ void batlabTestGroup::onTestFinished(int cell)
     count ^= (0x0001 << cell);
     emit emitWriteReg(cell, static_cast<int>(cellNamespace::REPORT_INTERVAL), BatlabLib::sendReportingFrequency(0.0f));
 
-    emit emitWriteReg(cell, cellNamespace::LOCK, 1);
+//    emit emitWriteReg(cell, cellNamespace::LOCK, 1);
     emit emitReadReg(cell, cellNamespace::CHARGEL);
     emit emitReadReg(cell, cellNamespace::CHARGEH);
-    emit emitWriteReg(cell, cellNamespace::LOCK, 0);
+//    emit emitWriteReg(cell, cellNamespace::LOCK, 0);
 
     emit emitWriteReg(cell, cellNamespace::MODE, MODE_STOPPED);
     if (count == 0x0000) {
@@ -353,10 +353,10 @@ void batlabTestGroup::onReadImpedance()
     // risk here if the connections are not queued up right. We will want to change this so that the signals are the same.
     for (int i = 0; i < testGroup.size(); ++i) {
         if (count & (0x0001 << i)) {
-            emit emitWriteReg(i,cellNamespace::LOCK, 1);
+//            emit emitWriteReg(i,cellNamespace::LOCK, 1);
             emit emitReadReg(i,cellNamespace::VOLTAGE_PP);
             emit emitReadReg(i,cellNamespace::CURRENT_PP);
-            emit emitWriteReg(i,cellNamespace::LOCK, 0);
+//            emit emitWriteReg(i,cellNamespace::LOCK, 0);
         }
     }
 
