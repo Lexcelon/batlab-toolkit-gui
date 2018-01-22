@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSerialPort>
 #include <QSerialPortInfo>
+#include <QTimer>
 #include <QVector>
 #include <QDebug>
 #include <QComboBox>
@@ -21,8 +22,6 @@ public:
     void setAllIdle();
 
 signals:
-    void emitReadResponse(int,int,int,int);
-    void emitWriteResponse(int,int,int,int);
     void newStreamReceived(int,int,int,float,float,float);
     void registerReadInitiated (int, int, int);
     void registerWriteInitiated(int, int, int, int);
@@ -34,11 +33,13 @@ public slots:
     void processAvailableSerialPortData();
     void initiateRegisterRead(int, int);
     void initiateRegisterWrite(int, int, int);
-    QString getName() { return info.portName; }
+    QString getPortName() { return info.portName; }
     int getSerialNumber() {return info.serialNumber; }
     batlabInfo getInfo();
 
-    void checkSerialPortError(); //Status for unit port that emits the disconnect signal. Called when port error is detected.
+    void checkSerialPortError();
+    void periodicCheck();
+    void debugResponsePacket(uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
 
 private:
     batlabInfo info;

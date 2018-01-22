@@ -98,6 +98,8 @@ struct testPacket {
     QVector<QPair<int,int>> CHARGE;
 };
 
+
+// TODO move these default values into a function
 struct channelInfo {
     QString cellName = "";
 
@@ -115,6 +117,7 @@ struct channelInfo {
     bool storageDischargeComplete = false;
 };
 
+// TODO move these default values into a function
 struct batlabInfo {
     bool externalPowerConnected = false;
     int firmwareVersion = -1;
@@ -166,7 +169,6 @@ enum cellNamespace {
     VOLTAGE_CALIB_PP,
     CURR_CALIB_PP_OFF,
     VOLT_CALIB_PP_OFF,
-    LOCK,
 };
 
 enum unitNamespace {
@@ -185,6 +187,7 @@ enum unitNamespace {
     VOLT_CH_CALIB_SCA,
     VOLT_DC_CALIB_OFF,
     VOLT_DC_CALIB_SCA,
+    LOCK,
 };
 
 enum bootloaderNamespace
