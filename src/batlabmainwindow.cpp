@@ -30,10 +30,6 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
 
     statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
 
-    // TODO remove
-    // Managing data from cells
-    cellManager = new batlabCellManager;
-
     // Check for updates when the program opens and only display anything if updates are available
     // I have disabled this because it asks if maintenancetool.exe can make changes to your computer every time you open the program
     // Will reconsider in future especially if I can make it not intrusive. For now user can run "Check for updates"
