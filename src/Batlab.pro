@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT *=  core serialport charts multimedia widgets testlib
+QT *=  core serialport charts multimedia widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
