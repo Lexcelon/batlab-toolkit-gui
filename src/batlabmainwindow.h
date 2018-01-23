@@ -21,8 +21,8 @@
 #include "components/batlabwidget.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
-#include "qtautoupdater/autoupdatergui/updatebutton.h"
-#include "qtautoupdater/autoupdatergui/updatecontroller.h"
+//#include "qtautoupdater/autoupdatergui/updatebutton.h"
+//#include "qtautoupdater/autoupdatergui/updatecontroller.h"
 
 namespace Ui {
 class MainWindow;
@@ -74,9 +74,9 @@ private:
     QAction *checkForBatlabFirmwareUpdatesAct;
 
     QAction *aboutBatlabToolkitGUIAct;
-    QAction *checkForUpdatesAct;
+//    QAction *checkForUpdatesAct;
 
-    QtAutoUpdater::UpdateController *applicationUpdateController;
+//    QtAutoUpdater::UpdateController *applicationUpdateController;
 
     QDialogButtonBox *tabButtonBox;
     QPushButton *cellPlaylistButton;

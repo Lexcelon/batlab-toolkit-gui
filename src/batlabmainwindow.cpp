@@ -251,10 +251,10 @@ void BatlabMainWindow::createActions()
     aboutBatlabToolkitGUIAct->setStatusTip(tr("Information about the Batlab Toolkit GUI program"));
     connect(aboutBatlabToolkitGUIAct, &QAction::triggered, this, &BatlabMainWindow::aboutBatlabToolkitGUI);
 
-    applicationUpdateController = new QtAutoUpdater::UpdateController("maintenancetool", this, qApp);
-    applicationUpdateController->setDetailedUpdateInfo(true);
-    checkForUpdatesAct = applicationUpdateController->createUpdateAction(this);
-    checkForUpdatesAct->setIconVisibleInMenu(true);
+//    applicationUpdateController = new QtAutoUpdater::UpdateController("maintenancetool", this, qApp);
+//    applicationUpdateController->setDetailedUpdateInfo(true);
+//    checkForUpdatesAct = applicationUpdateController->createUpdateAction(this);
+//    checkForUpdatesAct->setIconVisibleInMenu(true);
 }
 
 void BatlabMainWindow::createMenus()
@@ -271,7 +271,7 @@ void BatlabMainWindow::createMenus()
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutBatlabToolkitGUIAct);
     helpMenu->addSeparator();
-    helpMenu->addAction(checkForUpdatesAct);
+//    helpMenu->addAction(checkForUpdatesAct);
 }
 
 void BatlabMainWindow::newCellPlaylist()
