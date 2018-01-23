@@ -22,7 +22,7 @@ BatlabWidget::BatlabWidget(batlabInfo info, QWidget *parent) : QWidget(parent)
     externalPowerConnectedValueLabel = new QLabel(info.externalPowerConnected ? tr("Yes") : tr("No"));
 
     firmwareVersionLabel = new QLabel(tr("Firmware Version:"));
-    firmwareVersionValueLabel = new QLabel(QString::number(info.firmwareVersion));
+    firmwareVersionValueLabel = new QLabel(info.firmwareVersion == -1 ? "" : QString::number(info.firmwareVersion));
 
     batlabWidgetLayout->addWidget(serialNumberLabel, 0, 0);
     batlabWidgetLayout->addWidget(serialNumberValueLabel, 0, 1);
