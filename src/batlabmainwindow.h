@@ -47,6 +47,8 @@ public slots:
 
     void redrawBatlabInfo(QVector<batlabInfo> infos);
 
+    void togglePrintDebugMessages(bool value);
+
 signals:
     void emitUpdateText(QString);
 
@@ -109,6 +111,7 @@ private:
     QStackedWidget *cellPlaylistStackedWidget;
 
     QHBoxLayout *liveViewButtonLayout;
+    QCheckBox *liveViewPrintDebugCheckBox;
     QPushButton *liveViewClearButton;
     QPushButton *liveViewSaveButton;
     bool printDebugMessages;

@@ -115,8 +115,13 @@ void BatlabMainWindow::initializeMainWindowUI()
 
     liveViewButtonLayout = new QHBoxLayout;
     liveViewButtonLayout->setContentsMargins(0, 0, 0, 0);
-    liveViewButtonLayout->addStretch(10);
 
+    liveViewPrintDebugCheckBox = new QCheckBox(tr("Print Debug Messages"));
+    liveViewPrintDebugCheckBox->setChecked(false);
+    liveViewPrintDebugCheckBox->setLayoutDirection(Qt::RightToLeft);
+    liveViewButtonLayout->addWidget(liveViewPrintDebugCheckBox);
+    connect(liveViewPrintDebugCheckBox, &QCheckBox::toggled, this, &BatlabMainWindow::togglePrintDebugMessages);
+    liveViewButtonLayout->addStretch(10);
     liveViewClearButton = new QPushButton(tr("Clear"));
     liveViewButtonLayout->addWidget(liveViewClearButton);
     connect(liveViewClearButton, &QPushButton::clicked, liveViewTextBrowser, &QTextBrowser::clear);
@@ -161,6 +166,11 @@ void BatlabMainWindow::initializeMainWindowUI()
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
     centralWidget->setLayout(centralWidgetLayout);
+}
+
+void BatlabMainWindow::togglePrintDebugMessages(bool value)
+{
+    printDebugMessages = value;
 }
 
 void BatlabMainWindow::saveLiveView()
