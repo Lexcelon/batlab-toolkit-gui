@@ -16,9 +16,14 @@ void BatlabManager::updateConnectedBatlabs()
     QList<QSerialPortInfo> availableCommPorts = QSerialPortInfo::availablePorts();
     QStringList availableCommPortNames;
 
-    // TODO BUG when Batlabs are removed sometimes they don't show up again when plugged in (on Linux)
     for (int i = 0; i < availableCommPorts.size(); i++) {
-        availableCommPortNames.append(availableCommPorts.at(i).portName());
+        // On Windows availableports() returns those that are not active, meaning you have to check individually
+        // to see if they are active. Otherwise it never thinks you unplug a Batlab.
+        // https://stackoverflow.com/questions/24854597/qserialportinfo-returns-more-com-ports-than-i-have
+        // https://bugreports.qt.io/browse/QTBUG-39748
+        if (!availableCommPorts.at(i).description().isEmpty()) {
+            availableCommPortNames.append(availableCommPorts.at(i).portName());
+        }
     }
 
     // Check if Batlabs have been added
