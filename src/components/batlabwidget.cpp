@@ -5,7 +5,15 @@ BatlabWidget::BatlabWidget(batlabInfo info, QWidget *parent) : QWidget(parent)
     batlabWidgetLayout = new QGridLayout;
 
     serialNumberLabel = new QLabel(tr("Batlab Serial Number:"));
-    serialNumberValueLabel = new QLabel(QString::number(info.serialNumber));
+
+    if (info.serialNumber != -1 && info.deviceId != -1)
+    {
+        serialNumberValueLabel = new QLabel(QString::number((info.deviceId<<16) + info.serialNumber));
+    }
+    else
+    {
+        serialNumberValueLabel = new QLabel("");
+    }
 
     portNameLabel = new QLabel(tr("Serial Port Name:"));
     portNameValueLabel = new QLabel(info.portName);

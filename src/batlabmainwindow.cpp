@@ -210,6 +210,12 @@ void clearLayout(QLayout *layout, bool deleteWidgets)
     }
 }
 
+// On Linux, when a Batlab is unplugged, the event loop for the whole application seems to pause and the Batlab does not show up as unplugged.
+// This is lifted as soon as the keyboard or mouse do anything inside this window, so if you are moving the mouse while unplugging a Batlab there is no problem.
+// Minor and weird enough bug that I am giving up on it. Seems like a Qt thing.
+// http://www.qtforum.org/article/36406/events-not-called-unless-mouse-is-moving.html
+// https://forum.qt.io/topic/8630/events-not-called-unless-mouse-is-moving/2
+// https://bugreports.qt.io/browse/QTBUG-7728
 void BatlabMainWindow::redrawBatlabInfo(QVector<batlabInfo> infos)
 {
     clearLayout(batlabsTabLayout, true);

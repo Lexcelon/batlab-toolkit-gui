@@ -2,8 +2,25 @@
 
 Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 {
-    port = new QSerialPort();
+    info.externalPowerConnected = false;
+    info.firmwareVersion = -1;
     info.portName = newPortName;
+    info.serialNumber = -1;
+    info.deviceId = -1;
+    for (int i = 0; i < 4; i++)
+    {
+        info.channels[i].cellName = "";
+        info.channels[i].testInProgress = false;
+        info.channels[i].preChargeComplete = false;
+        info.channels[i].numWarmupCycles = -1;
+        info.channels[i].numWarmupCyclesCompleted = -1;
+        info.channels[i].numMeasurementCycles = -1;
+        info.channels[i].numMeasurementCyclesCompleted = -1;
+        info.channels[i].storageDischarge = false;
+        info.channels[i].storageDischargeComplete = false;
+    }
+
+    port = new QSerialPort();
     port->setPortName(info.portName);
     port->setBaudRate(QSerialPort::Baud115200);
 
@@ -16,6 +33,7 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     connect(port, &QSerialPort::readyRead, this, &Batlab::processAvailableSerialPortData);
 
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
+    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
     initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
 
@@ -38,6 +56,10 @@ void Batlab::periodicCheck()
     if (info.serialNumber == -1)
     {
         initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
+    }
+    if (info.deviceId == -1)
+    {
+        initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
     }
     if (info.firmwareVersion == -1)
     {
@@ -215,7 +237,12 @@ void Batlab::processAvailableSerialPortData() {
                     }
                     else if (packetAddress == unitNamespace::DEVICE_ID)
                     {
-
+                        int newDeviceId = 256*packetHighbyte + packetLowbyte;
+                        if (newDeviceId != info.deviceId)
+                        {
+                            info.deviceId = newDeviceId;
+                            emit infoUpdated();
+                        }
                     }
                     else if (packetAddress == unitNamespace::FIRMWARE_VER)
                     {

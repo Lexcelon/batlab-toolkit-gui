@@ -12,7 +12,6 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
 
 void BatlabManager::updateConnectedBatlabs()
 {
-    qDebug() << "updateConnectedBatlabs()";
     // TODO make sure that things are actually Batlabs
     QList<QSerialPortInfo> availableCommPorts = QSerialPortInfo::availablePorts();
     QStringList availableCommPortNames;

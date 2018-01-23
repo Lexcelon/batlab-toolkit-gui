@@ -98,31 +98,29 @@ struct testPacket {
     QVector<QPair<int,int>> CHARGE;
 };
 
-
-// TODO move these default values into a function
 struct channelInfo {
-    QString cellName = "";
+    QString cellName;
 
-    bool testInProgress = false;
+    bool testInProgress;
 
-    bool preChargeComplete = false;
+    bool preChargeComplete;
 
-    int numWarmupCycles = -1;
-    int numWarmupCyclesCompleted = -1;
+    int numWarmupCycles;
+    int numWarmupCyclesCompleted;
 
-    int numMeasurementCycles = -1;
-    int numMeasurementCyclesCompleted = -1;
+    int numMeasurementCycles;
+    int numMeasurementCyclesCompleted;
 
-    bool storageDischarge = false;
-    bool storageDischargeComplete = false;
+    bool storageDischarge;
+    bool storageDischargeComplete;
 };
 
-// TODO move these default values into a function
 struct batlabInfo {
-    bool externalPowerConnected = false;
-    int firmwareVersion = -1;
-    QString portName = "";
-    int serialNumber = -1;
+    bool externalPowerConnected;
+    qint16 firmwareVersion;
+    QString portName;
+    qint16 serialNumber;
+    qint16 deviceId;
     channelInfo channels[4];
 };
 
