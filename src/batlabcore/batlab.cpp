@@ -93,6 +93,8 @@ void Batlab::processAvailableSerialPortData() {
             uchar packetLowbyte = data[startChar+3];
             uchar packetHighbyte = data[startChar+4];
 
+            debugResponsePacket(packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+
             // Write response if the address sent was or'ed with 0x80
             if (packetAddress & 0x80)
             {

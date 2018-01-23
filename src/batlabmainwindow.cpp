@@ -15,6 +15,8 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     this->showMaximized();
     this->setWindowTitle(tr("Batlab Toolkit GUI"));
 
+    connect(BatlabLogger::instance(), &BatlabLogger::qtLogMessageReceived, this, &BatlabMainWindow::processQtLogMessage);
+
     // BatlabManager keeps track of connected Batlabs and handles state by itself. Only passes updates to BatlabMainWindow so that they can be drawn.
     batlabManager = new BatlabManager;
     connect(batlabManager, &BatlabManager::batlabInfoUpdated, this, &BatlabMainWindow::redrawBatlabInfo);
@@ -28,7 +30,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     createActions();
     createMenus();
 
-    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
+    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI!"));
 
     // Check for updates when the program opens and only display anything if updates are available
     // I have disabled this because it asks if maintenancetool.exe can make changes to your computer every time you open the program
@@ -111,13 +113,15 @@ void BatlabMainWindow::initializeMainWindowUI()
     liveViewTabLayout = new QVBoxLayout;
 
     liveViewTextBrowser = new QTextBrowser;
-    liveViewTextBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
+    updateLiveViewTextBrowser("Welcome to Batlab Toolkit GUI!");
 
     liveViewButtonLayout = new QHBoxLayout;
     liveViewButtonLayout->setContentsMargins(0, 0, 0, 0);
 
+    bool printDebugMessagesDefault = false;
+    printDebugMessages = printDebugMessagesDefault;
     liveViewPrintDebugCheckBox = new QCheckBox(tr("Print Debug Messages"));
-    liveViewPrintDebugCheckBox->setChecked(false);
+    liveViewPrintDebugCheckBox->setChecked(printDebugMessagesDefault);
     liveViewPrintDebugCheckBox->setLayoutDirection(Qt::RightToLeft);
     liveViewButtonLayout->addWidget(liveViewPrintDebugCheckBox);
     connect(liveViewPrintDebugCheckBox, &QCheckBox::toggled, this, &BatlabMainWindow::togglePrintDebugMessages);
@@ -128,8 +132,6 @@ void BatlabMainWindow::initializeMainWindowUI()
     liveViewSaveButton = new QPushButton(tr("Save Output"));
     liveViewButtonLayout->addWidget(liveViewSaveButton);
     connect(liveViewSaveButton, &QPushButton::clicked, this, &BatlabMainWindow::saveLiveView);
-
-    printDebugMessages = true;
 
     liveViewTabLayout->addWidget(liveViewTextBrowser);
     liveViewTabLayout->addLayout(liveViewButtonLayout);
@@ -486,12 +488,43 @@ void clearLayout(QLayout *layout) {
 
 void BatlabMainWindow::updateLiveViewTextBrowser(QString str)
 {
-    static int i = 0;
-    str = QString("%1: %2 ").arg(++i).arg(QDateTime::currentDateTime().toString()) + str;
+    str += "\n";
+    str = QString("%1   ").arg(QDateTime::currentDateTime().toString()) + str;
     if (liveViewTextBrowser->verticalScrollBar()->value() >= (liveViewTextBrowser->verticalScrollBar()->maximum()-10)) {
         liveViewTextBrowser->insertPlainText(str);
         liveViewTextBrowser->moveCursor(QTextCursor::End);
     } else {
         liveViewTextBrowser->insertPlainText(str);
     }
+}
+
+void BatlabMainWindow::processQtLogMessage(QtMsgType type, QString str)
+{
+    QString typeStr = "";
+    switch (type) {
+    case QtDebugMsg:
+        typeStr = "DEBUG";
+        break;
+    case QtInfoMsg:
+        typeStr = "INFO";
+        break;
+    case QtWarningMsg:
+        typeStr = "WARNING";
+        break;
+    case QtCriticalMsg:
+        typeStr = "CRITICAL";
+        break;
+    case QtFatalMsg:
+        typeStr = "FATAL";
+        break;
+    }
+    if (type != QtDebugMsg || printDebugMessages == true)
+    {
+        updateLiveViewTextBrowser(typeStr + ": " + str);
+    }
+}
+
+void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    BatlabLogger::instance()->handleQtMessage(type, context, msg);
 }
