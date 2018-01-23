@@ -148,15 +148,15 @@ private:
 
 // Unit: Amps
 #define CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR               "chargeCurrentSafetyCutoff"
-#define CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT                4.096
+#define CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT                4.095
 #define CHARGE_CURRENT_SAFETY_CUTOFF_MIN                    0.25
-#define CHARGE_CURRENT_SAFETY_CUTOFF_MAX                    4.096
+#define CHARGE_CURRENT_SAFETY_CUTOFF_MAX                    4.095
 
 // Unit: Amps
 #define DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR            "dischargeCurrentSafetyCutoff"
-#define DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT             4.096
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT             4.095
 #define DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN                 0.25
-#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX                 4.096
+#define DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX                 4.095
 
 // Unit: Seconds
 #define IMPEDANCE_REPORTING_PERIOD_FIELDSTR                 "impedanceReportingPeriod"

@@ -42,8 +42,8 @@ struct testParms
     float lowVoltageCutoff = 2.65f;
     float temperatureCutoffCharge = 45.0f;
     float temperatureCutoffDischarge = 0.0f;
-    float currentCutoffCharge = 4.096f;
-    float currentCutoffDischarge = 4.096f;
+    float currentCutoffCharge = 4.095f;
+    float currentCutoffDischarge = 4.095f;
     float reportingFrequency = 1.0f;
     float chargeCurrentSetpoint = 2.0f;
     float dischargeCurrentSetpoint = 2.0f;

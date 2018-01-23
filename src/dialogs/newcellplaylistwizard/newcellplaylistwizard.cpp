@@ -294,6 +294,7 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     chargeCurrentSafetyCutoffSpinBox = new QDoubleSpinBox;
     chargeCurrentSafetyCutoffUnit = new QLabel(tr("A"));
     chargeCurrentSafetyCutoffSpinBox->setSingleStep(0.1);
+    chargeCurrentSafetyCutoffSpinBox->setDecimals(3);
     chargeCurrentSafetyCutoffSpinBox->setMinimum(CHARGE_CURRENT_SAFETY_CUTOFF_MIN);
     chargeCurrentSafetyCutoffSpinBox->setMaximum(CHARGE_CURRENT_SAFETY_CUTOFF_MAX);
     chargeCurrentSafetyCutoffSpinBox->setValue(CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT);
@@ -304,6 +305,7 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     dischargeCurrentSafetyCutoffSpinBox = new QDoubleSpinBox;
     dischargeCurrentSafetyCutoffUnit = new QLabel(tr("A"));
     dischargeCurrentSafetyCutoffSpinBox->setSingleStep(0.1);
+    dischargeCurrentSafetyCutoffSpinBox->setDecimals(3);
     dischargeCurrentSafetyCutoffSpinBox->setMinimum(DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN);
     dischargeCurrentSafetyCutoffSpinBox->setMaximum(DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX);
     dischargeCurrentSafetyCutoffSpinBox->setValue(DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT);
@@ -314,6 +316,7 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     prechargeRateSpinBox = new QDoubleSpinBox;
     prechargeRateUnit = new QLabel(tr("A"));
     prechargeRateSpinBox->setSingleStep(0.1);
+    prechargeRateSpinBox->setDecimals(3);
     prechargeRateSpinBox->setMinimum(PRECHARGE_RATE_MIN);
     prechargeRateSpinBox->setMaximum(CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT); // Max is updated dynamically to not be greater than the charge current safety cutoff
     prechargeRateSpinBox->setValue(PRECHARGE_RATE_DEFAULT);
@@ -323,6 +326,7 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     chargeRateSpinBox = new QDoubleSpinBox;
     chargeRateUnit = new QLabel(tr("A"));
     chargeRateSpinBox->setSingleStep(0.1);
+    chargeRateSpinBox->setDecimals(3);
     chargeRateSpinBox->setMinimum(CHARGE_RATE_MIN);
     chargeRateSpinBox->setMaximum(CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT); // Max is updated dynamically to not be greater than the charge current safety cutoff
     chargeRateSpinBox->setValue(CHARGE_RATE_DEFAULT);
@@ -332,6 +336,7 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent)
     dischargeRateSpinBox = new QDoubleSpinBox;
     dischargeRateUnit = new QLabel(tr("A"));
     dischargeRateSpinBox->setSingleStep(0.1);
+    dischargeRateSpinBox->setDecimals(3);
     dischargeRateSpinBox->setMinimum(DISCHARGE_RATE_MIN);
     dischargeRateSpinBox->setMaximum(DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT); // Max is updated dynamically to not be greater than the discharge current safety cutoff
     dischargeRateSpinBox->setValue(DISCHARGE_RATE_DEFAULT);
