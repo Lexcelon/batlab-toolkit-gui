@@ -5,6 +5,8 @@
 #include <cellmodulewidget.h>
 #include <QSpacerItem>
 
+something = breakTheBuild;
+
 BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     QMainWindow(parent)
 {

@@ -23,6 +23,7 @@ mkdir temp
 cd temp
 qmake ..\src
 mingw32-make
+echo %errorlevel%
 
 echo Copying program and libraries to package directories...
 echo f | xcopy /f /y release\BatlabToolkitGUI.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\BatlabToolkitGUI.exe
