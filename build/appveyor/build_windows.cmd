@@ -24,7 +24,7 @@ cd temp
 qmake ..\src
 mingw32-make
 
-IF %errorlevel%!=0 (
+IF NOT %errorlevel% EQU 0 (
    exit 1
 )
 
