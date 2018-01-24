@@ -119,8 +119,9 @@ struct batlabInfo {
     bool externalPowerConnected;
     qint16 firmwareVersion;
     QString portName;
-    qint16 serialNumber;
-    qint16 deviceId;
+    qint16 serialNumberRegister;
+    qint16 deviceIdRegister;
+    qint32 serialNumberComplete;
     channelInfo channels[4];
 };
 

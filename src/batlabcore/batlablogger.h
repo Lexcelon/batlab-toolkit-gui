@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+// https://stackoverflow.com/questions/4335331/custom-and-default-message-handler-in-qt
+// https://doc.qt.io/qt-5/qtglobal.html#qInstallMessageHandler
 class BatlabLogger : public QObject
 {
     Q_OBJECT

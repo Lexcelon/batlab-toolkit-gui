@@ -1,30 +1,55 @@
 #include "batlabdebugdialog.h"
 #include "ui_batlabdebugdialog.h"
 
-BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<Batlab *> com) :
+BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabInfo> infos) :
     QDialog(parent),
     ui(new Ui::debugDialog)
 {
-    // TODO automatically switch to live view when opening?
     ui->setupUi(this);
 
-    comObjects = com;
-//    for (int i = 0; i < names.size(); ++i ) {
-//        ui->comboBox->addItem(names[vals(i)]);
-//    }
+    // TODO put limits on the spinboxes and use qint16 and qint8 instead of int
 
-//    for (int i = 0; i < writeNames.size(); ++i) {
-//        ui->regWriteBox->addItem(writeNames[writeVals(i)]);
-//    }
+    QLabel* registerReadNamespaceLabel = new QLabel(tr("Namespace:"));
+    registerReadNamespaceSpinbox = new HexSpinBox(true);
+    QLabel* registerReadAddressLabel = new QLabel(tr("Register Address:"));
+    registerReadAddressSpinbox = new HexSpinBox(true);
+    registerReadButton = new QPushButton(tr("Register Read"));
 
-//    for (int i = 0; i < cellProperties.size(); ++i) {
-//        ui->cellComboBox->addItem(cellProperties[properties(i)]);
-//    }
-    for (int i = 0; i < comObjects.size(); ++i) {
-        ui->comboBox->addItem(QString::number(com[i]->getSerialNumber()));
+    QGridLayout* registerReadLayout = new QGridLayout;
+    registerReadLayout->addWidget(registerReadNamespaceLabel, 0, 0);
+    registerReadLayout->addWidget(registerReadNamespaceSpinbox, 0, 1);
+    registerReadLayout->addWidget(registerReadAddressLabel, 0, 2);
+    registerReadLayout->addWidget(registerReadAddressSpinbox, 0, 3);
+    registerReadLayout->addWidget(registerReadButton, 1, 0, 1, 4);
+
+    ui->registerReadGroupBox->setLayout(registerReadLayout);
+
+    QLabel* registerWriteNamespaceLabel = new QLabel(tr("Namespace:"));
+    registerWriteNamespaceSpinbox = new HexSpinBox(true);
+    QLabel* registerWriteAddressLabel = new QLabel(tr("Register Address:"));
+    registerWriteAddressSpinbox = new HexSpinBox(true);
+    QLabel* registerWriteValueLabel = new QLabel(tr("Write Value:"));
+    registerWriteValueSpinbox = new HexSpinBox(true);
+    registerWriteButton = new QPushButton(tr("Register Write"));
+
+    QGridLayout* registerWriteLayout = new QGridLayout;
+    registerWriteLayout->addWidget(registerWriteNamespaceLabel, 0, 0);
+    registerWriteLayout->addWidget(registerWriteNamespaceSpinbox, 0, 1);
+    registerWriteLayout->addWidget(registerWriteAddressLabel, 0, 2);
+    registerWriteLayout->addWidget(registerWriteAddressSpinbox, 0, 3);
+    registerWriteLayout->addWidget(registerWriteValueLabel, 1, 0);
+    registerWriteLayout->addWidget(registerWriteValueSpinbox, 1, 1);
+    registerWriteLayout->addWidget(registerWriteButton, 2, 0, 1, 4);
+
+    ui->registerWriteGroupBox->setLayout(registerWriteLayout);
+
+    for (int i = 0; i < infos.size(); i++)
+    {
+        ui->selectBatlabComboBox->addItem(QString::number(infos.at(i).serialNumberComplete));
     }
-    connect(ui->regRead,SIGNAL(clicked()),this,SLOT(onRegRead()));
-    connect(ui->regWrite,SIGNAL(clicked()),this,SLOT(onRegWrite()));
+
+    connect(registerReadButton, &QPushButton::clicked, this, &BatlabDebugDialog::processRegisterReadClick);
+    connect(registerWriteButton, &QPushButton::clicked, this, &BatlabDebugDialog::processRegisterWriteClick);
 }
 
 BatlabDebugDialog::~BatlabDebugDialog()
@@ -32,16 +57,10 @@ BatlabDebugDialog::~BatlabDebugDialog()
     delete ui;
 }
 
-void BatlabDebugDialog::onRegRead() {
-    comObjects[ui->comboBox->currentIndex()]->initiateRegisterRead(ui->unitNumber->value(),ui->cellNumber->value());
-//    emit emitReadReg(ui->unitNumber->value(),ui->cellNumber->value());
+void BatlabDebugDialog::processRegisterReadClick() {
+    emit registerReadRequested(ui->selectBatlabComboBox->currentText().toInt(), registerReadNamespaceSpinbox->value(), registerReadAddressSpinbox->value());
 }
 
-void BatlabDebugDialog::onRegWrite() {
-    comObjects[ui->comboBox->currentIndex()]->initiateRegisterWrite(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
-//    emit emitWriteReg(ui->unitNumber_2->value(),ui->cellNumber_2->value(),ui->spinBox->value());
+void BatlabDebugDialog::processRegisterWriteClick() {
+    emit registerWriteRequested(ui->selectBatlabComboBox->currentText().toInt(), registerWriteNamespaceSpinbox->value(), registerWriteAddressSpinbox->value(), registerWriteValueSpinbox->value());
 }
-
-//void batlabtest::onPrintCell() {
-//    emit emitPrint((uchar)((ui->unitNumber_3->value()<<2) + ui->cellNumber_3->value()), properties(ui->cellComboBox->currentIndex()));
-//}

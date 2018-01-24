@@ -137,7 +137,10 @@ private slots:
     void loadPlaylistIntoGUI();
 
     void saveLiveView();
-    void processQtLogMessage(QtMsgType, QString);
+    void processQtLogMessage(QtMsgType type, QString str);
+
+    void processRegisterReadRequest(int serial, int ns, int address);
+    void processRegisterWriteRequest(int serial, int ns, int address, int value);
 
 };
 

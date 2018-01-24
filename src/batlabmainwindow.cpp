@@ -307,17 +307,19 @@ void BatlabMainWindow::exitBatlabToolkitGUI()
 
 void BatlabMainWindow::debugBatlab()
 {
-    // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
-    //    if (batlabDebugDialog == nullptr) {
-    //        batlabDebugDialog = new BatlabDebugDialog(this, BatlabObjects);
-    ////           connect(testObj,SIGNAL(emitReadReg(int,int)),BatlabObjects.first(),SLOT(onReadReg(int,int)));
-    ////           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),BatlabObjects.first(),SLOT(onWriteReg(int,int,int)));
-    ////           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
-    //    }
+    mainStackedWidget->setCurrentWidget(liveViewTabWidget);
+    liveViewPrintDebugCheckBox->setChecked(true);
+    togglePrintDebugMessages(true);
 
-    //    //Can move window around
-    //    batlabDebugDialog->setModal(false);
-    //        batlabDebugDialog->show();
+    if (batlabDebugDialog == nullptr) {
+        batlabDebugDialog = new BatlabDebugDialog(this, batlabManager->getBatlabInfos());
+        connect(batlabDebugDialog, &BatlabDebugDialog::registerReadRequested, this, &BatlabMainWindow::processRegisterReadRequest);
+        connect(batlabDebugDialog, &BatlabDebugDialog::registerWriteRequested, this, &BatlabMainWindow::processRegisterWriteRequest);
+    }
+
+    // Can move window around
+    batlabDebugDialog->setModal(false);
+    batlabDebugDialog->show();
 }
 
 void BatlabMainWindow::checkForBatlabFirmwareUpdates()
@@ -527,4 +529,14 @@ void BatlabMainWindow::processQtLogMessage(QtMsgType type, QString str)
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     BatlabLogger::instance()->handleQtMessage(type, context, msg);
+}
+
+void BatlabMainWindow::processRegisterReadRequest(int serial, int ns, int address)
+{
+    batlabManager->processRegisterReadRequest(serial, ns, address);
+}
+
+void BatlabMainWindow::processRegisterWriteRequest(int serial, int ns, int address, int value)
+{
+    batlabManager->processRegisterWriteRequest(serial, ns, address, value);
 }

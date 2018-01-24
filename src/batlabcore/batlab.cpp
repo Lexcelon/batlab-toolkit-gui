@@ -5,8 +5,9 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
     info.portName = newPortName;
-    info.serialNumber = -1;
-    info.deviceId = -1;
+    info.serialNumberRegister = -1;
+    info.deviceIdRegister = -1;
+    info.serialNumberComplete = -1;
     for (int i = 0; i < 4; i++)
     {
         info.channels[i].cellName = "";
@@ -53,11 +54,11 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 
 void Batlab::periodicCheck()
 {
-    if (info.serialNumber == -1)
+    if (info.serialNumberRegister == -1)
     {
         initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
     }
-    if (info.deviceId == -1)
+    if (info.deviceIdRegister == -1)
     {
         initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
     }
@@ -70,10 +71,10 @@ void Batlab::periodicCheck()
 
 void Batlab::debugResponsePacket(uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte)
 {
-    qDebug() << "Debug Response Packet";
-    qDebug() << "Start Byte: " << packetStartByte;
-    qDebug() << "Namespace: " << packetNamespace << " Address: " << packetAddress;
-    qDebug() << "Low Byte: " << packetLowByte << " High Byte: " << packetHighByte;
+    qDebug() << "Response Packet:" << "Batlab S/N:" << info.serialNumberComplete
+             << "Start Byte:"<< packetStartByte
+             << "Namespace:" << packetNamespace << " Address:" << packetAddress
+             << "Low Byte:" << packetLowByte << " High Byte:" << packetHighByte;
 }
 
 void Batlab::processAvailableSerialPortData() {
@@ -86,7 +87,6 @@ void Batlab::processAvailableSerialPortData() {
         // This is a response
         uchar packetStartByte = data[startChar];
         if (packetStartByte == 0xAA) {
-
 
             uchar packetNamespace = data[startChar+1];
             uchar packetAddress = data[startChar+2];
@@ -231,19 +231,27 @@ void Batlab::processAvailableSerialPortData() {
                     if (packetAddress == unitNamespace::SERIAL_NUM)
                     {
                         int newSerial = 256*packetHighbyte + packetLowbyte;
-                        if (newSerial != info.serialNumber)
+                        if (newSerial != info.serialNumberRegister)
                         {
-                            info.serialNumber = newSerial;
-                            emit infoUpdated();
+                            info.serialNumberRegister = newSerial;
+                            if (info.serialNumberRegister != -1 && info.deviceIdRegister != -1)
+                            {
+                                info.serialNumberComplete = (info.deviceIdRegister<<16) + info.serialNumberRegister;
+                                emit infoUpdated();
+                            }
                         }
                     }
                     else if (packetAddress == unitNamespace::DEVICE_ID)
                     {
                         int newDeviceId = 256*packetHighbyte + packetLowbyte;
-                        if (newDeviceId != info.deviceId)
+                        if (newDeviceId != info.deviceIdRegister)
                         {
-                            info.deviceId = newDeviceId;
-                            emit infoUpdated();
+                            info.deviceIdRegister = newDeviceId;
+                            if (info.serialNumberRegister != -1 && info.deviceIdRegister != -1)
+                            {
+                                info.serialNumberComplete = (info.deviceIdRegister<<16) + info.serialNumberRegister;
+                                emit infoUpdated();
+                            }
                         }
                     }
                     else if (packetAddress == unitNamespace::FIRMWARE_VER)
@@ -411,7 +419,7 @@ void Batlab::setAllIdle()
 
 void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
 {
-    emit registerReadInitiated(info.serialNumber, batlabNamespace, batlabRegister);
+    emit registerReadInitiated(info.serialNumberRegister, batlabNamespace, batlabRegister);
 
     char *data = new char[5];
     data[0] = static_cast<uchar>(0xAA);
@@ -427,13 +435,13 @@ void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
 
 void Batlab::initiateRegisterWrite(int batlabNamespace, int batlabRegister, int num)
 {
-    emit registerWriteInitiated(info.serialNumber, batlabNamespace, batlabRegister, num);
+    emit registerWriteInitiated(info.serialNumberRegister, batlabNamespace, batlabRegister, num);
+
     char *data = new char[5];
     uchar msb = ((uchar)((0xFF00 & num) >> 8));
     uchar lsb = ((uchar)(0x00FF & num));
-    qDebug() << "WRITE MESSAGE";
-    qDebug() << "NAMESPACE: " << batlabNamespace << " REGISTER: " << batlabRegister << " VALUE : " << ushort(num);
-    qDebug() << msb << lsb;
+//    qDebug() << "WRITE MESSAGE" << "NAMESPACE:" << batlabNamespace << " REGISTER:" << batlabRegister << " VALUE:" << ushort(num);
+//    qDebug() << msb << lsb;
     data[0] = static_cast<uchar>(0xAA);
     data[1] = static_cast<uchar>(batlabNamespace);
     data[2] = static_cast<uchar>(batlabRegister) | 0x80;

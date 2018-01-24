@@ -68,3 +68,41 @@ void BatlabManager::processUpdatedBatlabInfo()
     }
     emit batlabInfoUpdated(infos);
 }
+
+QVector<batlabInfo> BatlabManager::getBatlabInfos()
+{
+    QVector<batlabInfo> infos;
+    for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        infos.push_back(info);
+    }
+    return infos;
+}
+
+// TODO remove connectedBatlabsBySerialNumber?
+void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
+{
+    for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
+    {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        if (info.serialNumberComplete == serial)
+        {
+            connectedBatlabsByPortName[portName]->initiateRegisterRead(ns, address);
+        }
+    }
+}
+
+void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address, int value)
+{
+    for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
+    {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        if (info.serialNumberComplete == serial)
+        {
+            connectedBatlabsByPortName[portName]->initiateRegisterWrite(ns, address, value);
+        }
+    }
+}

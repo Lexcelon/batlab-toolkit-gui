@@ -98,7 +98,8 @@ HEADERS  += \
     batlabcore/batlab.h \
     batlabcore/batlablib.h \
     components/batlabwidget.h \
-    batlabcore/batlablogger.h
+    batlabcore/batlablogger.h \
+    components/hexspinbox.h
 
 FORMS    += \
     testwindow.ui \
