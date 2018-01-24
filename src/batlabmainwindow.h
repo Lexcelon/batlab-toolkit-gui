@@ -11,10 +11,6 @@
 #include <QSpinBox>
 #include <QCloseEvent>
 
-#include <stdio.h>
-#include <cstdio>
-#include <iostream>
-
 #include "batlabconfig.h"
 #include "settings.h"
 #include "dialogs/batlabdebugdialog/batlabdebugdialog.h"

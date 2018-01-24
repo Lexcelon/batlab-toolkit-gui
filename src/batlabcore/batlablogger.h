@@ -2,6 +2,9 @@
 #define BATLABLOGGER_H
 
 #include <QObject>
+#include <stdio.h>
+#include <cstdio>
+#include <iostream>
 
 // https://stackoverflow.com/questions/4335331/custom-and-default-message-handler-in-qt
 // https://doc.qt.io/qt-5/qtglobal.html#qInstallMessageHandler
