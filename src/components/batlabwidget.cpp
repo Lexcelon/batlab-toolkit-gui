@@ -5,7 +5,7 @@ BatlabWidget::BatlabWidget(batlabInfo info, QWidget *parent) : QWidget(parent)
     batlabWidgetLayout = new QGridLayout;
 
     serialNumberLabel = new QLabel(tr("Batlab Serial Number:"));
-    serialNumberValueLabel = new QLabel(QString::number(info.serialNumber));
+    serialNumberValueLabel = new QLabel(info.serialNumberComplete == -1 ? "" : QString::number(info.serialNumberComplete));
 
     portNameLabel = new QLabel(tr("Serial Port Name:"));
     portNameValueLabel = new QLabel(info.portName);
@@ -14,7 +14,7 @@ BatlabWidget::BatlabWidget(batlabInfo info, QWidget *parent) : QWidget(parent)
     externalPowerConnectedValueLabel = new QLabel(info.externalPowerConnected ? tr("Yes") : tr("No"));
 
     firmwareVersionLabel = new QLabel(tr("Firmware Version:"));
-    firmwareVersionValueLabel = new QLabel(QString::number(info.firmwareVersion));
+    firmwareVersionValueLabel = new QLabel(info.firmwareVersion == -1 ? "" : QString::number(info.firmwareVersion));
 
     batlabWidgetLayout->addWidget(serialNumberLabel, 0, 0);
     batlabWidgetLayout->addWidget(serialNumberValueLabel, 0, 1);

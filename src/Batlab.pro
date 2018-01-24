@@ -58,7 +58,8 @@ SOURCES += main.cpp\
     batlabcore/globals.cpp \
     batlabcore/batlabmanager.cpp \
     batlabcore/batlab.cpp \
-    components/batlabwidget.cpp
+    components/batlabwidget.cpp \
+    batlabcore/batlablogger.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -96,7 +97,9 @@ HEADERS  += \
     batlabcore/batlabmanager.h \
     batlabcore/batlab.h \
     batlabcore/batlablib.h \
-    components/batlabwidget.h
+    components/batlabwidget.h \
+    batlabcore/batlablogger.h \
+    components/hexspinbox.h
 
 FORMS    += \
     testwindow.ui \

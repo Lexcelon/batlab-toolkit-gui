@@ -16,9 +16,14 @@ void BatlabManager::updateConnectedBatlabs()
     QList<QSerialPortInfo> availableCommPorts = QSerialPortInfo::availablePorts();
     QStringList availableCommPortNames;
 
-    // TODO BUG when Batlabs are removed sometimes they don't show up again when plugged in (on Linux)
     for (int i = 0; i < availableCommPorts.size(); i++) {
-        availableCommPortNames.append(availableCommPorts.at(i).portName());
+        // On Windows availableports() returns those that are not active, meaning you have to check individually
+        // to see if they are active. Otherwise it never thinks you unplug a Batlab.
+        // https://stackoverflow.com/questions/24854597/qserialportinfo-returns-more-com-ports-than-i-have
+        // https://bugreports.qt.io/browse/QTBUG-39748
+        if (!availableCommPorts.at(i).description().isEmpty()) {
+            availableCommPortNames.append(availableCommPorts.at(i).portName());
+        }
     }
 
     // Check if Batlabs have been added
@@ -62,4 +67,42 @@ void BatlabManager::processUpdatedBatlabInfo()
         infos.push_back(info);
     }
     emit batlabInfoUpdated(infos);
+}
+
+QVector<batlabInfo> BatlabManager::getBatlabInfos()
+{
+    QVector<batlabInfo> infos;
+    for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        infos.push_back(info);
+    }
+    return infos;
+}
+
+// TODO remove connectedBatlabsBySerialNumber?
+void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
+{
+    for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
+    {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        if (info.serialNumberComplete == serial)
+        {
+            connectedBatlabsByPortName[portName]->initiateRegisterRead(ns, address);
+        }
+    }
+}
+
+void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address, int value)
+{
+    for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
+    {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        if (info.serialNumberComplete == serial)
+        {
+            connectedBatlabsByPortName[portName]->initiateRegisterWrite(ns, address, value);
+        }
+    }
 }

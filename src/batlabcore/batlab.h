@@ -34,7 +34,7 @@ public slots:
     void initiateRegisterRead(int, int);
     void initiateRegisterWrite(int, int, int);
     QString getPortName() { return info.portName; }
-    int getSerialNumber() {return info.serialNumber; }
+    int getSerialNumber() {return info.serialNumberRegister; }
     batlabInfo getInfo();
 
     void checkSerialPortError();

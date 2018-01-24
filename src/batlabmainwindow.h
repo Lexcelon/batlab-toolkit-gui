@@ -18,6 +18,7 @@
 #include "batlabcellmanager.h"
 #include "batlabcore/version.h"
 #include "batlabcore/batlabmanager.h"
+#include "batlabcore/batlablogger.h"
 #include "components/batlabwidget.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
@@ -46,6 +47,8 @@ public slots:
     void updateLiveViewTextBrowser(QString);
 
     void redrawBatlabInfo(QVector<batlabInfo> infos);
+
+    void togglePrintDebugMessages(bool value);
 
 signals:
     void emitUpdateText(QString);
@@ -109,6 +112,7 @@ private:
     QStackedWidget *cellPlaylistStackedWidget;
 
     QHBoxLayout *liveViewButtonLayout;
+    QCheckBox *liveViewPrintDebugCheckBox;
     QPushButton *liveViewClearButton;
     QPushButton *liveViewSaveButton;
     bool printDebugMessages;
@@ -133,7 +137,13 @@ private slots:
     void loadPlaylistIntoGUI();
 
     void saveLiveView();
+    void processQtLogMessage(QtMsgType type, QString str);
+
+    void processRegisterReadRequest(int serial, int ns, int address);
+    void processRegisterWriteRequest(int serial, int ns, int address, int value);
 
 };
+
+void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 #endif // BATLAB_MAIN_WINDOW_H

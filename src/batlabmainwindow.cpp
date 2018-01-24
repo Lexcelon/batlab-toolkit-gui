@@ -15,6 +15,8 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     this->showMaximized();
     this->setWindowTitle(tr("Batlab Toolkit GUI"));
 
+    connect(BatlabLogger::instance(), &BatlabLogger::qtLogMessageReceived, this, &BatlabMainWindow::processQtLogMessage);
+
     // BatlabManager keeps track of connected Batlabs and handles state by itself. Only passes updates to BatlabMainWindow so that they can be drawn.
     batlabManager = new BatlabManager;
     connect(batlabManager, &BatlabManager::batlabInfoUpdated, this, &BatlabMainWindow::redrawBatlabInfo);
@@ -28,11 +30,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     createActions();
     createMenus();
 
-    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI"));
-
-    // TODO remove
-    // Managing data from cells
-    cellManager = new batlabCellManager;
+    statusBar()->showMessage(tr("Welcome to Batlab Toolkit GUI!"));
 
     // Check for updates when the program opens and only display anything if updates are available
     // I have disabled this because it asks if maintenancetool.exe can make changes to your computer every time you open the program
@@ -115,20 +113,25 @@ void BatlabMainWindow::initializeMainWindowUI()
     liveViewTabLayout = new QVBoxLayout;
 
     liveViewTextBrowser = new QTextBrowser;
-    liveViewTextBrowser->insertPlainText(QString(">> Welcome to Batlab Toolkit GUI\n" ));
+    updateLiveViewTextBrowser("Welcome to Batlab Toolkit GUI!");
 
     liveViewButtonLayout = new QHBoxLayout;
     liveViewButtonLayout->setContentsMargins(0, 0, 0, 0);
-    liveViewButtonLayout->addStretch(10);
 
+    bool printDebugMessagesDefault = false;
+    printDebugMessages = printDebugMessagesDefault;
+    liveViewPrintDebugCheckBox = new QCheckBox(tr("Print Debug Messages"));
+    liveViewPrintDebugCheckBox->setChecked(printDebugMessagesDefault);
+    liveViewPrintDebugCheckBox->setLayoutDirection(Qt::RightToLeft);
+    liveViewButtonLayout->addWidget(liveViewPrintDebugCheckBox);
+    connect(liveViewPrintDebugCheckBox, &QCheckBox::toggled, this, &BatlabMainWindow::togglePrintDebugMessages);
+    liveViewButtonLayout->addStretch(10);
     liveViewClearButton = new QPushButton(tr("Clear"));
     liveViewButtonLayout->addWidget(liveViewClearButton);
     connect(liveViewClearButton, &QPushButton::clicked, liveViewTextBrowser, &QTextBrowser::clear);
     liveViewSaveButton = new QPushButton(tr("Save Output"));
     liveViewButtonLayout->addWidget(liveViewSaveButton);
     connect(liveViewSaveButton, &QPushButton::clicked, this, &BatlabMainWindow::saveLiveView);
-
-    printDebugMessages = true;
 
     liveViewTabLayout->addWidget(liveViewTextBrowser);
     liveViewTabLayout->addLayout(liveViewButtonLayout);
@@ -165,6 +168,11 @@ void BatlabMainWindow::initializeMainWindowUI()
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
     centralWidget->setLayout(centralWidgetLayout);
+}
+
+void BatlabMainWindow::togglePrintDebugMessages(bool value)
+{
+    printDebugMessages = value;
 }
 
 void BatlabMainWindow::saveLiveView()
@@ -214,6 +222,12 @@ void clearLayout(QLayout *layout, bool deleteWidgets)
     }
 }
 
+// On Linux, when a Batlab is unplugged, the event loop for the whole application seems to pause and the Batlab does not show up as unplugged.
+// This is lifted as soon as the keyboard or mouse do anything inside this window, so if you are moving the mouse while unplugging a Batlab there is no problem.
+// Minor and weird enough bug that I am giving up on it. Seems like a Qt thing.
+// http://www.qtforum.org/article/36406/events-not-called-unless-mouse-is-moving.html
+// https://forum.qt.io/topic/8630/events-not-called-unless-mouse-is-moving/2
+// https://bugreports.qt.io/browse/QTBUG-7728
 void BatlabMainWindow::redrawBatlabInfo(QVector<batlabInfo> infos)
 {
     clearLayout(batlabsTabLayout, true);
@@ -293,17 +307,19 @@ void BatlabMainWindow::exitBatlabToolkitGUI()
 
 void BatlabMainWindow::debugBatlab()
 {
-    // For testing communications with batlab - TODO BRING THIS BACK EVENTUALLY
-    //    if (batlabDebugDialog == nullptr) {
-    //        batlabDebugDialog = new BatlabDebugDialog(this, BatlabObjects);
-    ////           connect(testObj,SIGNAL(emitReadReg(int,int)),BatlabObjects.first(),SLOT(onReadReg(int,int)));
-    ////           connect(testObj,SIGNAL(emitWriteReg(int,int,int)),BatlabObjects.first(),SLOT(onWriteReg(int,int,int)));
-    ////           connect(testObj,SIGNAL(emitPrint(uchar,properties)),cellManager,SLOT(onPrintCell(uchar,properties)));
-    //    }
+    mainStackedWidget->setCurrentWidget(liveViewTabWidget);
+    liveViewPrintDebugCheckBox->setChecked(true);
+    togglePrintDebugMessages(true);
 
-    //    //Can move window around
-    //    batlabDebugDialog->setModal(false);
-    //        batlabDebugDialog->show();
+    if (batlabDebugDialog == nullptr) {
+        batlabDebugDialog = new BatlabDebugDialog(this, batlabManager->getBatlabInfos());
+        connect(batlabDebugDialog, &BatlabDebugDialog::registerReadRequested, this, &BatlabMainWindow::processRegisterReadRequest);
+        connect(batlabDebugDialog, &BatlabDebugDialog::registerWriteRequested, this, &BatlabMainWindow::processRegisterWriteRequest);
+    }
+
+    // Can move window around
+    batlabDebugDialog->setModal(false);
+    batlabDebugDialog->show();
 }
 
 void BatlabMainWindow::checkForBatlabFirmwareUpdates()
@@ -474,12 +490,53 @@ void clearLayout(QLayout *layout) {
 
 void BatlabMainWindow::updateLiveViewTextBrowser(QString str)
 {
-    static int i = 0;
-    str = QString("%1: %2 ").arg(++i).arg(QDateTime::currentDateTime().toString()) + str;
+    str += "\n";
+    str = QString("%1   ").arg(QDateTime::currentDateTime().toString()) + str;
     if (liveViewTextBrowser->verticalScrollBar()->value() >= (liveViewTextBrowser->verticalScrollBar()->maximum()-10)) {
         liveViewTextBrowser->insertPlainText(str);
         liveViewTextBrowser->moveCursor(QTextCursor::End);
     } else {
         liveViewTextBrowser->insertPlainText(str);
     }
+}
+
+void BatlabMainWindow::processQtLogMessage(QtMsgType type, QString str)
+{
+    QString typeStr = "";
+    switch (type) {
+    case QtDebugMsg:
+        typeStr = "DEBUG";
+        break;
+    case QtInfoMsg:
+        typeStr = "INFO";
+        break;
+    case QtWarningMsg:
+        typeStr = "WARNING";
+        break;
+    case QtCriticalMsg:
+        typeStr = "CRITICAL";
+        break;
+    case QtFatalMsg:
+        typeStr = "FATAL";
+        break;
+    }
+    if (type != QtDebugMsg || printDebugMessages == true)
+    {
+        updateLiveViewTextBrowser(typeStr + ": " + str);
+    }
+}
+
+void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    BatlabLogger::instance()->handleQtMessage(type, context, msg);
+}
+
+void BatlabMainWindow::processRegisterReadRequest(int serial, int ns, int address)
+{
+    batlabManager->processRegisterReadRequest(serial, ns, address);
+}
+
+void BatlabMainWindow::processRegisterWriteRequest(int serial, int ns, int address, int value)
+{
+    batlabManager->processRegisterWriteRequest(serial, ns, address, value);
 }

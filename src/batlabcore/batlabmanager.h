@@ -18,6 +18,7 @@ class BatlabManager : public QObject
     Q_OBJECT
 public:
     explicit BatlabManager(QObject *parent = nullptr);
+    QVector<batlabInfo> getBatlabInfos();
 
 signals:
     void batlabInfoUpdated(QVector<batlabInfo>);
@@ -27,6 +28,8 @@ public slots:
     void addNewBatlab(QString portName);
     void removeBatlab(QString portName);
     void processUpdatedBatlabInfo();
+    void processRegisterReadRequest(int serial, int ns, int address);
+    void processRegisterWriteRequest(int serial, int ns, int address, int value);
 
 private:
     bool cellPlaylistLoaded;

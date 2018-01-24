@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "batlabcore/batlab.h"
+#include "components/hexspinbox.h"
 
 // TODO review this implementation
 
@@ -15,22 +16,28 @@ class BatlabDebugDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<Batlab*> com = QVector<Batlab*>());
+    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabInfo> infos = QVector<batlabInfo>());
     ~BatlabDebugDialog();
 
 public slots:
-    void onRegRead();
-    void onRegWrite();
-//    void onPrintCell();
+    void processRegisterReadClick();
+    void processRegisterWriteClick();
 
 signals:
-    void emitReadReg(int,int);
-    void emitWriteReg(int,int,int);
-//    void emitPrint(uchar,properties);
+    void registerReadRequested(int, int, int);
+    void registerWriteRequested(int, int, int, int);
 
 private:
     Ui::debugDialog *ui;
-    QVector<Batlab *> comObjects;
+
+    HexSpinBox* registerReadNamespaceSpinbox;
+    HexSpinBox* registerReadAddressSpinbox;
+    QPushButton* registerReadButton;
+
+    HexSpinBox* registerWriteNamespaceSpinbox;
+    HexSpinBox* registerWriteAddressSpinbox;
+    HexSpinBox* registerWriteValueSpinbox;
+    QPushButton* registerWriteButton;
 
 };
 
