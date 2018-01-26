@@ -71,10 +71,11 @@ void Batlab::periodicCheck()
 
 void Batlab::debugResponsePacket(uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte)
 {
-    qDebug() << "Response Packet:" << "Batlab S/N:" << info.serialNumberComplete
-             << "Start Byte:"<< packetStartByte
-             << "Namespace:" << packetNamespace << " Address:" << packetAddress
-             << "Low Byte:" << packetLowByte << " High Byte:" << packetHighByte;
+    qDebug() << "Response Packet:" << "Batlab S/N:" << qPrintable(QString::number(info.serialNumberComplete).leftJustified(6, ' '))
+             << "Start Byte:"<< qPrintable("0x" + QString("%1").arg(packetStartByte, 0, 16).toUpper().rightJustified(2, '0'))
+             << "Namespace:" << qPrintable(BatlabLib::namespaceIntToString[packetNamespace].leftJustified(12, ' '))
+             << "Address:" << qPrintable("0x" + QString("%1").arg(packetAddress, 0, 16).toUpper().rightJustified(2, '0'))
+             << "Response:" << qPrintable("0x" + QString("%1").arg(256*packetHighByte + packetLowByte, 0, 16).toUpper().rightJustified(4, '0'));
 }
 
 void Batlab::processAvailableSerialPortData() {

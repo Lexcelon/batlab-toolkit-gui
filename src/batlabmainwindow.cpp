@@ -25,7 +25,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     initializeMainWindowUI();
 
     connect(this, &BatlabMainWindow::emitUpdateText,
-            this, &BatlabMainWindow::updateLiveViewTextBrowser);
+            this, &BatlabMainWindow::updatelogViewTextBrowser);
 
     createActions();
     createMenus();
@@ -42,14 +42,14 @@ void BatlabMainWindow::initializeMainWindowUI()
 {
     cellPlaylistButton = new QPushButton(tr("Cell Playlist"));
     batlabsButton = new QPushButton(tr("Batlabs"));
-    liveViewButton = new QPushButton(tr("Live View"));
+    logViewButton = new QPushButton(tr("Log"));
     resultsButton = new QPushButton(tr("Results"));
 
     tabButtonBox = new QDialogButtonBox;
     tabButtonBox->setOrientation(Qt::Vertical);
     tabButtonBox->addButton(cellPlaylistButton, QDialogButtonBox::ActionRole);
     tabButtonBox->addButton(batlabsButton, QDialogButtonBox::ActionRole);
-    tabButtonBox->addButton(liveViewButton, QDialogButtonBox::ActionRole);
+    tabButtonBox->addButton(logViewButton, QDialogButtonBox::ActionRole);
     tabButtonBox->addButton(resultsButton, QDialogButtonBox::ActionRole);
 
     mainStackedWidget = new QStackedWidget;
@@ -66,9 +66,9 @@ void BatlabMainWindow::initializeMainWindowUI()
     batlabsTabLayout = new QVBoxLayout;
     batlabsTabWidget->setLayout(batlabsTabLayout);
 
-    liveViewTabWidget = new QFrame;
-    liveViewTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    liveViewTabWidget->setLineWidth(2);
+    logViewTabWidget = new QFrame;
+    logViewTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    logViewTabWidget->setLineWidth(2);
 
     resultsTabWidget = new QFrame;
     resultsTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -110,43 +110,44 @@ void BatlabMainWindow::initializeMainWindowUI()
     cellPlaylistTabLayout->addWidget(cellPlaylistStackedWidget, 0, 0);
     cellPlaylistTabWidget->setLayout(cellPlaylistTabLayout);
 
-    liveViewTabLayout = new QVBoxLayout;
+    logViewTabLayout = new QVBoxLayout;
 
-    liveViewTextBrowser = new QTextBrowser;
-    updateLiveViewTextBrowser("Welcome to Batlab Toolkit GUI!");
+    logViewTextBrowser = new QTextBrowser;
+    logViewTextBrowser->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    updatelogViewTextBrowser("Welcome to Batlab Toolkit GUI!");
 
-    liveViewButtonLayout = new QHBoxLayout;
-    liveViewButtonLayout->setContentsMargins(0, 0, 0, 0);
+    logViewButtonLayout = new QHBoxLayout;
+    logViewButtonLayout->setContentsMargins(0, 0, 0, 0);
 
     bool printDebugMessagesDefault = false;
     printDebugMessages = printDebugMessagesDefault;
-    liveViewPrintDebugCheckBox = new QCheckBox(tr("Print Debug Messages"));
-    liveViewPrintDebugCheckBox->setChecked(printDebugMessagesDefault);
-    liveViewPrintDebugCheckBox->setLayoutDirection(Qt::RightToLeft);
-    liveViewButtonLayout->addWidget(liveViewPrintDebugCheckBox);
-    connect(liveViewPrintDebugCheckBox, &QCheckBox::toggled, this, &BatlabMainWindow::togglePrintDebugMessages);
-    liveViewButtonLayout->addStretch(10);
-    liveViewClearButton = new QPushButton(tr("Clear"));
-    liveViewButtonLayout->addWidget(liveViewClearButton);
-    connect(liveViewClearButton, &QPushButton::clicked, liveViewTextBrowser, &QTextBrowser::clear);
-    liveViewSaveButton = new QPushButton(tr("Save Output"));
-    liveViewButtonLayout->addWidget(liveViewSaveButton);
-    connect(liveViewSaveButton, &QPushButton::clicked, this, &BatlabMainWindow::saveLiveView);
+    logViewPrintDebugCheckBox = new QCheckBox(tr("Print Debug Messages"));
+    logViewPrintDebugCheckBox->setChecked(printDebugMessagesDefault);
+    logViewPrintDebugCheckBox->setLayoutDirection(Qt::RightToLeft);
+    logViewButtonLayout->addWidget(logViewPrintDebugCheckBox);
+    connect(logViewPrintDebugCheckBox, &QCheckBox::toggled, this, &BatlabMainWindow::togglePrintDebugMessages);
+    logViewButtonLayout->addStretch(10);
+    logViewClearButton = new QPushButton(tr("Clear"));
+    logViewButtonLayout->addWidget(logViewClearButton);
+    connect(logViewClearButton, &QPushButton::clicked, logViewTextBrowser, &QTextBrowser::clear);
+    logViewSaveButton = new QPushButton(tr("Save Output"));
+    logViewButtonLayout->addWidget(logViewSaveButton);
+    connect(logViewSaveButton, &QPushButton::clicked, this, &BatlabMainWindow::savelogView);
 
-    liveViewTabLayout->addWidget(liveViewTextBrowser);
-    liveViewTabLayout->addLayout(liveViewButtonLayout);
-    liveViewTabWidget->setLayout(liveViewTabLayout);
+    logViewTabLayout->addWidget(logViewTextBrowser);
+    logViewTabLayout->addLayout(logViewButtonLayout);
+    logViewTabWidget->setLayout(logViewTabLayout);
 
     mainStackedWidget->addWidget(cellPlaylistTabWidget);
     mainStackedWidget->addWidget(batlabsTabWidget);
-    mainStackedWidget->addWidget(liveViewTabWidget);
+    mainStackedWidget->addWidget(logViewTabWidget);
     mainStackedWidget->addWidget(resultsTabWidget);
 
     // Some fun functor syntax to pass arguments to the signal https://stackoverflow.com/a/22411267
     // You have to capture ''this'' and then access variables from there https://stackoverflow.com/questions/7895879/using-member-variable-in-lambda-capture-list-inside-a-member-function
     connect(cellPlaylistButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget); });
     connect(batlabsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(batlabsTabWidget); });
-    connect(liveViewButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(liveViewTabWidget); });
+    connect(logViewButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(logViewTabWidget); });
     connect(resultsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(resultsTabWidget); });
 
     testCellsTabLayout = new QGridLayout;
@@ -175,7 +176,7 @@ void BatlabMainWindow::togglePrintDebugMessages(bool value)
     printDebugMessages = value;
 }
 
-void BatlabMainWindow::saveLiveView()
+void BatlabMainWindow::savelogView()
 {
     // TODO default path should be as is if no playlist loaded, should be in directory/named file for particular playlist if one loaded
     QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
@@ -202,7 +203,7 @@ void BatlabMainWindow::saveLiveView()
     }
 
     QTextStream stream(&file);
-    stream << liveViewTextBrowser->toPlainText();
+    stream << logViewTextBrowser->toPlainText();
     file.close();
 }
 
@@ -307,8 +308,8 @@ void BatlabMainWindow::exitBatlabToolkitGUI()
 
 void BatlabMainWindow::debugBatlab()
 {
-    mainStackedWidget->setCurrentWidget(liveViewTabWidget);
-    liveViewPrintDebugCheckBox->setChecked(true);
+    mainStackedWidget->setCurrentWidget(logViewTabWidget);
+    logViewPrintDebugCheckBox->setChecked(true);
     togglePrintDebugMessages(true);
 
     if (batlabDebugDialog == nullptr) {
@@ -366,7 +367,7 @@ void BatlabMainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void BatlabMainWindow::updateLiveViewWithWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
+void BatlabMainWindow::updatelogViewWithWriteCommand(int serialNumber, int nameSpace, int batlabRegister, int value)
 {
     QString str;
     str += QString("WRITE: Batlab #%1 - ").arg(serialNumber);
@@ -384,7 +385,7 @@ void BatlabMainWindow::updateLiveViewWithWriteCommand(int serialNumber, int name
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::updateLiveViewWithReadCommand(int serialNumber, int nameSpace, int batlabRegister)
+void BatlabMainWindow::updatelogViewWithReadCommand(int serialNumber, int nameSpace, int batlabRegister)
 {
     QString str;
     str += QString("READ: Batlab #%1 - ").arg(serialNumber);
@@ -402,7 +403,7 @@ void BatlabMainWindow::updateLiveViewWithReadCommand(int serialNumber, int nameS
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::updateLiveViewWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void BatlabMainWindow::updatelogViewWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     QString str = QString("WRITE RESPONSE: ");
     if (nameSpace >=0 && nameSpace < 4) {
@@ -422,7 +423,7 @@ qDebug() << str;
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::updateLiveViewWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
+void BatlabMainWindow::updatelogViewWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb)
 {
     QString str = QString("READ RESPONSE: ");
     if (nameSpace >=0 && nameSpace < 4) {
@@ -442,7 +443,7 @@ void BatlabMainWindow::updateLiveViewWithReadResponse(int nameSpace, int batlabR
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::updateLiveViewWithReceivedStream(int cell,int mode,int status,float temp, float current, float voltage)
+void BatlabMainWindow::updatelogViewWithReceivedStream(int cell,int mode,int status,float temp, float current, float voltage)
 {
     QString str = QString("STREAM PACKET: ");
 
@@ -488,15 +489,15 @@ void clearLayout(QLayout *layout) {
     }
 }
 
-void BatlabMainWindow::updateLiveViewTextBrowser(QString str)
+void BatlabMainWindow::updatelogViewTextBrowser(QString str)
 {
     str += "\n";
     str = QString("%1   ").arg(QDateTime::currentDateTime().toString()) + str;
-    if (liveViewTextBrowser->verticalScrollBar()->value() >= (liveViewTextBrowser->verticalScrollBar()->maximum()-10)) {
-        liveViewTextBrowser->insertPlainText(str);
-        liveViewTextBrowser->moveCursor(QTextCursor::End);
+    if (logViewTextBrowser->verticalScrollBar()->value() >= (logViewTextBrowser->verticalScrollBar()->maximum()-10)) {
+        logViewTextBrowser->insertPlainText(str);
+        logViewTextBrowser->moveCursor(QTextCursor::End);
     } else {
-        liveViewTextBrowser->insertPlainText(str);
+        logViewTextBrowser->insertPlainText(str);
     }
 }
 
@@ -522,7 +523,7 @@ void BatlabMainWindow::processQtLogMessage(QtMsgType type, QString str)
     }
     if (type != QtDebugMsg || printDebugMessages == true)
     {
-        updateLiveViewTextBrowser(typeStr + ": " + str);
+        updatelogViewTextBrowser(typeStr + ": " + str);
     }
 }
 

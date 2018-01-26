@@ -38,13 +38,13 @@ public:
     ~BatlabMainWindow();
 
 public slots:
-    void updateLiveViewWithWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
-    void updateLiveViewWithReadCommand(int serialNumber, int nameSpace,int batlabRegister);
-    void updateLiveViewWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb);
-    void updateLiveViewWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
-    void updateLiveViewWithReceivedStream(int cell, int mode, int status, float temp, float current, float voltage);
+    void updatelogViewWithWriteCommand(int serialNumber, int nameSpace,int batlabRegister, int value);
+    void updatelogViewWithReadCommand(int serialNumber, int nameSpace,int batlabRegister);
+    void updatelogViewWithWriteResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void updatelogViewWithReadResponse(int nameSpace, int batlabRegister, int lsb, int msb);
+    void updatelogViewWithReceivedStream(int cell, int mode, int status, float temp, float current, float voltage);
 
-    void updateLiveViewTextBrowser(QString);
+    void updatelogViewTextBrowser(QString);
 
     void redrawBatlabInfo(QVector<batlabInfo> infos);
 
@@ -84,7 +84,7 @@ private:
     QDialogButtonBox *tabButtonBox;
     QPushButton *cellPlaylistButton;
     QPushButton *batlabsButton;
-    QPushButton *liveViewButton;
+    QPushButton *logViewButton;
     QPushButton *resultsButton;
 
     QWidget *centralWidget;
@@ -99,7 +99,7 @@ private:
     QStackedWidget *mainStackedWidget;
     QFrame *cellPlaylistTabWidget;
     QFrame *batlabsTabWidget;
-    QFrame *liveViewTabWidget;
+    QFrame *logViewTabWidget;
     QFrame *resultsTabWidget;
 
     QWidget *cellPlaylistNotLoadedWidget;
@@ -111,17 +111,17 @@ private:
     QPushButton *openCellPlaylistButton;
     QStackedWidget *cellPlaylistStackedWidget;
 
-    QHBoxLayout *liveViewButtonLayout;
-    QCheckBox *liveViewPrintDebugCheckBox;
-    QPushButton *liveViewClearButton;
-    QPushButton *liveViewSaveButton;
+    QHBoxLayout *logViewButtonLayout;
+    QCheckBox *logViewPrintDebugCheckBox;
+    QPushButton *logViewClearButton;
+    QPushButton *logViewSaveButton;
     bool printDebugMessages;
 
     QVBoxLayout *batlabsTabLayout;
     QGridLayout *cellPlaylistTabLayout;
-    QVBoxLayout *liveViewTabLayout;
+    QVBoxLayout *logViewTabLayout;
 
-    QTextBrowser *liveViewTextBrowser;
+    QTextBrowser *logViewTextBrowser;
 
 private slots:
     void newCellPlaylist();
@@ -136,7 +136,7 @@ private slots:
     void showNewCellPlaylistWizard();
     void loadPlaylistIntoGUI();
 
-    void saveLiveView();
+    void savelogView();
     void processQtLogMessage(QtMsgType type, QString str);
 
     void processRegisterReadRequest(int serial, int ns, int address);

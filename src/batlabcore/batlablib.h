@@ -16,6 +16,86 @@
 
 #include "version.h"
 
+enum batlabNamespaces {
+    CHANNEL0 = 0x00,
+    CHANNEL1 = 0x01,
+    CHANNEL2 = 0x02,
+    CHANNEL3 = 0x03,
+    UNIT = 0x04,
+    BOOTLOADER = 0x05,
+    COMMS = 0xFF,
+};
+
+enum cellNamespace {
+    MODE = 0x00,
+    CELL_ERROR,
+    STATUS,
+    CURRENT_SETPOINT,
+    REPORT_INTERVAL,
+
+    TEMPERATURE,
+    CURRENT,
+    VOLTAGE,
+    CHARGEL,
+    CHARGEH,
+
+    VOLTAGE_LIMIT_CHG,
+    VOLTAGE_LIMIT_DCHG,
+    CURRENT_LIMIT_CHG,
+    CURRENT_LIMIT_DCHG,
+    TEMP_LIMIT_CHG,
+    TEMP_LIMIT_DCHG,
+
+    DUTY,
+    COMPENSATION,
+    CURRENT_PP,
+    VOLTAGE_PP,
+
+    CURRENT_CALIB_OFF,
+    CURRENT_CALIB_SCA,
+    TEMP_CALIB_R,
+    TEMP_CALIB_B,
+    CURRENT_CALIB_PP,
+    VOLTAGE_CALIB_PP,
+    CURR_CALIB_PP_OFF,
+    VOLT_CALIB_PP_OFF,
+};
+
+enum unitNamespace {
+    SERIAL_NUM = 0x00,
+    DEVICE_ID,
+    FIRMWARE_VER,
+    VCC,
+    SINE_FREQ,
+    SYSTEM_TIMER,
+    SETTINGS,
+    SINE_OFFSET,
+    SINE_MAGDIV,
+    LED_MESSAGE,
+    UNIT_BOOTLOAD,
+    VOLT_CH_CALIB_OFF,
+    VOLT_CH_CALIB_SCA,
+    VOLT_DC_CALIB_OFF,
+    VOLT_DC_CALIB_SCA,
+    LOCK,
+};
+
+enum bootloaderNamespace
+{
+    BOOTLOAD = 0x00,
+    ADDR,
+    DATA,
+};
+
+enum commsNamespace {
+    LED0 = 0x00,
+    LED1,
+    LED2,
+    LED3,
+    EXTERNAL_PSU,
+    EXTERNAL_PSU_VOLTAGE,
+};
+
 namespace BatlabLib
 {
     void bubblesort(QVector<float> data, QVector<int> &indices);
@@ -33,6 +113,26 @@ namespace BatlabLib
     int sendCurrentSetpoint(float val);
     float getSineFrequency(int val);
     int sendSineFrequency(float val);
+
+    static QMap<QString, int> namespaceStringToInt {
+        {"Channel 0", batlabNamespaces::CHANNEL0},
+        {"Channel 1", batlabNamespaces::CHANNEL1},
+        {"Channel 2", batlabNamespaces::CHANNEL2},
+        {"Channel 3", batlabNamespaces::CHANNEL3},
+        {"Unit", batlabNamespaces::UNIT},
+        {"Bootloader", batlabNamespaces::BOOTLOADER},
+        {"Comms", batlabNamespaces::COMMS},
+    };
+
+    static QMap<int, QString> namespaceIntToString {
+        {batlabNamespaces::CHANNEL0, "Channel 0"},
+        {batlabNamespaces::CHANNEL1, "Channel 1"},
+        {batlabNamespaces::CHANNEL2, "Channel 2"},
+        {batlabNamespaces::CHANNEL3, "Channel 3"},
+        {batlabNamespaces::UNIT, "Unit"},
+        {batlabNamespaces::BOOTLOADER, "Bootloader"},
+        {batlabNamespaces::COMMS, "Comms"},
+    };
 }
 
 struct testParms
@@ -123,86 +223,6 @@ struct batlabInfo {
     qint16 deviceIdRegister;
     qint32 serialNumberComplete;
     channelInfo channels[4];
-};
-
-enum batlabNamespaces {
-    CHANNEL0 = 0x00,
-    CHANNEL1 = 0x01,
-    CHANNEL2 = 0x02,
-    CHANNEL3 = 0x03,
-    UNIT = 0x04,
-    BOOTLOADER = 0x05,
-    COMMS = 0xFF,
-};
-
-enum cellNamespace {
-    MODE = 0x00,
-    CELL_ERROR,
-    STATUS,
-    CURRENT_SETPOINT,
-    REPORT_INTERVAL,
-
-    TEMPERATURE,
-    CURRENT,
-    VOLTAGE,
-    CHARGEL,
-    CHARGEH,
-
-    VOLTAGE_LIMIT_CHG,
-    VOLTAGE_LIMIT_DCHG,
-    CURRENT_LIMIT_CHG,
-    CURRENT_LIMIT_DCHG,
-    TEMP_LIMIT_CHG,
-    TEMP_LIMIT_DCHG,
-
-    DUTY,
-    COMPENSATION,
-    CURRENT_PP,
-    VOLTAGE_PP,
-
-    CURRENT_CALIB_OFF,
-    CURRENT_CALIB_SCA,
-    TEMP_CALIB_R,
-    TEMP_CALIB_B,
-    CURRENT_CALIB_PP,
-    VOLTAGE_CALIB_PP,
-    CURR_CALIB_PP_OFF,
-    VOLT_CALIB_PP_OFF,
-};
-
-enum unitNamespace {
-    SERIAL_NUM = 0x00,
-    DEVICE_ID,
-    FIRMWARE_VER,
-    VCC,
-    SINE_FREQ,
-    SYSTEM_TIMER,
-    SETTINGS,
-    SINE_OFFSET,
-    SINE_MAGDIV,
-    LED_MESSAGE,
-    UNIT_BOOTLOAD,
-    VOLT_CH_CALIB_OFF,
-    VOLT_CH_CALIB_SCA,
-    VOLT_DC_CALIB_OFF,
-    VOLT_DC_CALIB_SCA,
-    LOCK,
-};
-
-enum bootloaderNamespace
-{
-    BOOTLOAD = 0x00,
-    ADDR,
-    DATA,
-};
-
-enum commsNamespace {
-    LED0 = 0x00,
-    LED1,
-    LED2,
-    LED3,
-    EXTERNAL_PSU,
-    EXTERNAL_PSU_VOLTAGE,
 };
 
 #endif // BATLABLIB_H
