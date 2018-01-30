@@ -2,6 +2,8 @@
 
 BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
 {
+    qRegisterMetaType<QVector<uchar>>("QVector<uchar>");
+
     cellPlaylistLoaded = false;
     testsInProgress = false;
 

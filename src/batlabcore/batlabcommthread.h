@@ -7,19 +7,28 @@
 #include <QSerialPort>
 #include <QThread>
 #include <QTime>
+#include <QDebug>
+#include <QQueue>
+
+#include "batlablib.h"
+
+struct batlabCommand {
+    int waitTimeout;
+    QVector<uchar> request;
+};
 
 class BatlabCommThread : public QThread
 {
     Q_OBJECT
 
 public:
-    explicit BatlabCommThread(QString portName, QObject *parent = nullptr);
+    explicit BatlabCommThread(QObject *parent = nullptr);
     ~BatlabCommThread();
 
-    void transaction(int waitTimeout, const QString &request);
+    void transaction(const QString &portName, int waitTimeout, const QVector<uchar> request);
 
 signals:
-    void response(const QString &s);
+    void response(const QVector<uchar> response);
     void error(const QString &s);
     void timeout(const QString &s);
 
@@ -27,8 +36,9 @@ private:
     void run() override;
 
     QString m_portName;
-    QString m_request;
-    int m_waitTimeout = 0;
+
+    QQueue<batlabCommand> m_commandQueue;
+
     QMutex m_mutex;
     QWaitCondition m_cond;
     bool m_quit = false;

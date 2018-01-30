@@ -11,6 +11,7 @@
 #include <QInputDialog>
 #include <qmath.h>
 #include "batlablib.h"
+#include "batlabcommthread.h"
 
 class Batlab : public QObject
 {
@@ -39,7 +40,12 @@ public slots:
 
     void checkSerialPortError();
     void periodicCheck();
-    void debugResponsePacket(uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
+
+private slots:
+    void transaction(int timeout, const QVector<uchar> request);
+    void processResponse(const QVector<uchar> response);
+    void processError(const QString &s);
+    void processTimeout(const QString &s);
 
 private:
     batlabInfo info;
@@ -49,6 +55,8 @@ private:
 
     int tempCalibB[4];
     int tempCalibR[4];
+
+    BatlabCommThread m_commThread;
 };
 
 #endif // BATLABCOM_H

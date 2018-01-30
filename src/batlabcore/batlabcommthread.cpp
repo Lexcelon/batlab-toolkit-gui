@@ -1,9 +1,8 @@
 #include "batlabcommthread.h"
 
-BatlabCommThread::BatlabCommThread(QString portName, QObject *parent) :
+BatlabCommThread::BatlabCommThread(QObject *parent) :
     QThread(parent)
 {
-    m_portName = portName;
 }
 
 BatlabCommThread::~BatlabCommThread()
@@ -15,11 +14,14 @@ BatlabCommThread::~BatlabCommThread()
     wait();
 }
 
-void BatlabCommThread::transaction(int waitTimeout, const QString &request)
+// TODO remove comment this is getting called correctly
+void BatlabCommThread::transaction(const QString &portName, int waitTimeout, const QVector<uchar> request)
 {
     const QMutexLocker locker(&m_mutex);
-    m_waitTimeout = waitTimeout;
-    m_request = request;
+    m_portName = portName;
+
+    m_commandQueue.enqueue({waitTimeout, request});
+
     if (!isRunning())
     {
         start();
@@ -35,6 +37,7 @@ void BatlabCommThread::run()
     bool currentPortNameChanged = false;
 
     m_mutex.lock();
+
     QString currentPortName;
     if (currentPortName != m_portName)
     {
@@ -42,9 +45,12 @@ void BatlabCommThread::run()
         currentPortNameChanged = true;
     }
 
-    int currentWaitTimeout = m_waitTimeout;
-    QString currentRequest = m_request;
+    batlabCommand currentCommand = m_commandQueue.dequeue();
+    int currentWaitTimeout = currentCommand.waitTimeout;
+    QVector<uchar> currentRequest = currentCommand.request;
+
     m_mutex.unlock();
+
     QSerialPort serial;
 
     if (currentPortName.isEmpty())
@@ -69,9 +75,9 @@ void BatlabCommThread::run()
         }
 
         // Send request
-        const QByteArray requestData = currentRequest.toUtf8();
-        serial.write(requestData);
-        if (serial.waitForBytesWritten(m_waitTimeout))
+        BatlabLib::debugCommandPacket(999, currentRequest);
+        serial.write(reinterpret_cast<char*>(currentRequest.data()), 5);
+        if (serial.waitForBytesWritten(currentWaitTimeout))
         {
             // Get response
             if (serial.waitForReadyRead(currentWaitTimeout))
@@ -82,7 +88,13 @@ void BatlabCommThread::run()
                     responseData += serial.readAll();
                 }
 
-                const QString response = QString::fromUtf8(responseData);
+                const QVector<uchar> response {
+                    static_cast<uchar>(responseData[0]),
+                    static_cast<uchar>(responseData[1]),
+                    static_cast<uchar>(responseData[2]),
+                    static_cast<uchar>(responseData[3]),
+                    static_cast<uchar>(responseData[4]),
+                };
                 emit this->response(response);
             }
             else
@@ -97,8 +109,14 @@ void BatlabCommThread::run()
                          .arg(QTime::currentTime().toString()));
 
         }
+
         m_mutex.lock();
-        m_cond.wait(&m_mutex);
+
+        if (m_commandQueue.size() == 0)
+        {
+            m_cond.wait(&m_mutex);
+        }
+
         if (currentPortName != m_portName)
         {
             currentPortName = m_portName;
@@ -108,8 +126,11 @@ void BatlabCommThread::run()
         {
             currentPortNameChanged = false;
         }
-        currentWaitTimeout = m_waitTimeout;
-        currentRequest = m_request;
+
+        currentCommand = m_commandQueue.dequeue();
+        currentWaitTimeout = currentCommand.waitTimeout;
+        currentRequest = currentCommand.request;
+
         m_mutex.unlock();
     }
 }

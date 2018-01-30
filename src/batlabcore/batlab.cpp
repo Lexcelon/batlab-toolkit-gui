@@ -21,17 +21,17 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
         info.channels[i].storageDischargeComplete = false;
     }
 
-    port = new QSerialPort();
-    port->setPortName(info.portName);
-    port->setBaudRate(QSerialPort::Baud115200);
+//    port = new QSerialPort();
+//    port->setPortName(info.portName);
+//    port->setBaudRate(QSerialPort::Baud115200);
 
-    if (!port->open(QSerialPort::ReadWrite)) {
-        qWarning() << "Failure Opening Port: " << port->error() << port->errorString();
-        return;
-    }
+//    if (!port->open(QSerialPort::ReadWrite)) {
+//        qWarning() << "Failure Opening Port: " << port->error() << port->errorString();
+//        return;
+//    }
 
-    connect(port, &QSerialPort::errorOccurred, this, &Batlab::checkSerialPortError);
-    connect(port, &QSerialPort::readyRead, this, &Batlab::processAvailableSerialPortData);
+//    connect(port, &QSerialPort::errorOccurred, this, &Batlab::checkSerialPortError);
+//    connect(port, &QSerialPort::readyRead, this, &Batlab::processAvailableSerialPortData);
 
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
@@ -50,6 +50,10 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     QTimer *batlabPeriodicCheckTimer = new QTimer(this);
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
     batlabPeriodicCheckTimer->start(5000);
+
+    connect(&m_commThread, &BatlabCommThread::response, this, &Batlab::processResponse);
+    connect(&m_commThread, &BatlabCommThread::error, this, &Batlab::processError);
+    connect(&m_commThread, &BatlabCommThread::timeout, this, &Batlab::processTimeout);
 }
 
 void Batlab::periodicCheck()
@@ -69,15 +73,6 @@ void Batlab::periodicCheck()
     initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
 }
 
-void Batlab::debugResponsePacket(uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte)
-{
-    qDebug() << "Response Packet:" << "Batlab S/N:" << qPrintable(QString::number(info.serialNumberComplete).leftJustified(6, ' '))
-             << "Start Byte:"<< qPrintable("0x" + QString("%1").arg(packetStartByte, 0, 16).toUpper().rightJustified(2, '0'))
-             << "Namespace:" << qPrintable(BatlabLib::namespaceIntToString[packetNamespace].leftJustified(12, ' '))
-             << "Address:" << qPrintable("0x" + QString("%1").arg(packetAddress, 0, 16).toUpper().rightJustified(2, '0'))
-             << "Response:" << qPrintable("0x" + QString("%1").arg(256*packetHighByte + packetLowByte, 0, 16).toUpper().rightJustified(4, '0'));
-}
-
 void Batlab::processAvailableSerialPortData() {
     qint64 dataLength = port->bytesAvailable();
     char *data = new char[dataLength];
@@ -93,8 +88,6 @@ void Batlab::processAvailableSerialPortData() {
             uchar packetAddress = data[startChar+2];
             uchar packetLowbyte = data[startChar+3];
             uchar packetHighbyte = data[startChar+4];
-
-            debugResponsePacket(packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
 
             // Write response if the address sent was or'ed with 0x80
             if (packetAddress & 0x80)
@@ -223,7 +216,7 @@ void Batlab::processAvailableSerialPortData() {
                     else
                     {
                         qWarning() << "Unknown address in response in CELL namespace.";
-                        debugResponsePacket(packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+                        BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
                     }
                 }
                 // Unit namespace
@@ -319,7 +312,7 @@ void Batlab::processAvailableSerialPortData() {
                     else
                     {
                         qWarning() << "Unknown address in response in UNIT namespace.";
-                        debugResponsePacket(packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+                        BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
                     }
                 }
                 else if (packetNamespace == batlabNamespaces::BOOTLOADER)
@@ -339,7 +332,7 @@ void Batlab::processAvailableSerialPortData() {
                     else
                     {
                         qWarning() << "Unknown address in response in BOOTLOADER namespace.";
-                        debugResponsePacket(packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+                        BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
                     }
                 }
                 else if (packetNamespace == batlabNamespaces::COMMS)
@@ -376,13 +369,13 @@ void Batlab::processAvailableSerialPortData() {
                     else
                     {
                         qWarning() << "Unknown address in response in COMMS namespace.";
-                        debugResponsePacket(packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+                        BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
                     }
                 }
                 else
                 {
                     qWarning() << "Unknown namespace in response packet.";
-                    debugResponsePacket(packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+                    BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
                 }
 
             }
@@ -422,15 +415,17 @@ void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
 {
     emit registerReadInitiated(info.serialNumberRegister, batlabNamespace, batlabRegister);
 
-    char *data = new char[5];
+    QVector<uchar> data(5);
     data[0] = static_cast<uchar>(0xAA);
     data[1] = static_cast<uchar>(batlabNamespace);
     data[2] = static_cast<uchar>(batlabRegister);
     data[3] = static_cast<uchar>(0x00);
     data[4] = static_cast<uchar>(0x00);
 
-    port->write(data, 5);
-    port->waitForBytesWritten(1000);
+    this->transaction(1000, data);
+
+//    port->write(data, 5);
+//    port->waitForBytesWritten(1000);
 }
 
 
@@ -465,4 +460,24 @@ void Batlab::checkSerialPortError() {
 batlabInfo Batlab::getInfo()
 {
     return info;
+}
+
+void Batlab::transaction(int timeout, const QVector<uchar> request)
+{
+    m_commThread.transaction(info.portName, timeout, request);
+}
+
+void Batlab::processResponse(const QVector<uchar> response)
+{
+    BatlabLib::debugResponsePacket(info.serialNumberComplete, response);
+}
+
+void Batlab::processError(const QString &s)
+{
+    qWarning() << s;
+}
+
+void Batlab::processTimeout(const QString &s)
+{
+    qWarning() << "Timeout" << s;
 }

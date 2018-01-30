@@ -55,12 +55,12 @@ SOURCES += main.cpp\
     settings.cpp \
     qtautoupdater/autoupdatergui/dialogmaster.cpp \
     batlabcore/batlabsettings.cpp \
-    batlabcore/globals.cpp \
     batlabcore/batlabmanager.cpp \
     batlabcore/batlab.cpp \
     components/batlabwidget.cpp \
     batlabcore/batlablogger.cpp \
-    batlabcore/batlabcommthread.cpp
+    batlabcore/batlabcommthread.cpp \
+    batlabcore/batlablib.cpp
 
 HEADERS  += \
     batlabconfig.h \

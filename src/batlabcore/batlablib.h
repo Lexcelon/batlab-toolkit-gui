@@ -114,6 +114,11 @@ namespace BatlabLib
     float getSineFrequency(int val);
     int sendSineFrequency(float val);
 
+    void debugResponsePacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
+    void debugCommandPacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
+    void debugResponsePacket(int serialnumber, QVector<uchar> data);
+    void debugCommandPacket(int serialnumber, QVector<uchar> data);
+
     static QMap<QString, int> namespaceStringToInt {
         {"Channel 0", batlabNamespaces::CHANNEL0},
         {"Channel 1", batlabNamespaces::CHANNEL1},
