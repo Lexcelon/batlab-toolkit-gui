@@ -19,6 +19,9 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
         info.channels[i].numMeasurementCyclesCompleted = -1;
         info.channels[i].storageDischarge = false;
         info.channels[i].storageDischargeComplete = false;
+
+        tempCalibB[i] = -1;
+        tempCalibR[i] = -1;
     }
 
 //    port = new QSerialPort();
@@ -35,7 +38,6 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
-    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
 
     initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
@@ -46,6 +48,8 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R);
     initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R);
     initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R);
+
+    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
 
     QTimer *batlabPeriodicCheckTimer = new QTimer(this);
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
@@ -70,9 +74,22 @@ void Batlab::periodicCheck()
     {
         initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
     }
+    for (int i = 0; i < 4; i++)
+    {
+        if (tempCalibB[i] == -1)
+        {
+            initiateRegisterRead(i, cellNamespace::TEMP_CALIB_B);
+        }
+        if (tempCalibR[i] == -1)
+        {
+            initiateRegisterRead(i, cellNamespace::TEMP_CALIB_R);
+        }
+    }
+
     initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
 }
 
+// TODO maybe not remove but need a function for when unexpected data (usually stream) arrives
 void Batlab::processAvailableSerialPortData() {
     qint64 dataLength = port->bytesAvailable();
     char *data = new char[dataLength];
@@ -464,12 +481,308 @@ batlabInfo Batlab::getInfo()
 
 void Batlab::transaction(int timeout, const QVector<uchar> request)
 {
-    m_commThread.transaction(info.portName, timeout, request);
+    m_commThread.transaction(info.serialNumberComplete, info.portName, timeout, request);
 }
 
 void Batlab::processResponse(const QVector<uchar> response)
 {
     BatlabLib::debugResponsePacket(info.serialNumberComplete, response);
+
+    uchar packetStartByte = response[0];
+    uchar packetNamespace = response[1];
+    uchar packetAddress = response[2];
+    uchar packetLowbyte = response[3];
+    uchar packetHighbyte = response[4];
+
+    // Write response if the address sent was or'ed with 0x80
+    if (packetAddress & 0x80)
+    {
+
+    }
+    // Read response
+    else
+    {
+        // Cell namespace
+        if (packetNamespace == batlabNamespaces::CHANNEL0 || packetNamespace == batlabNamespaces::CHANNEL1
+                || packetNamespace == batlabNamespaces::CHANNEL2 || packetNamespace == batlabNamespaces::CHANNEL3)
+        {
+            if (packetAddress == cellNamespace::MODE)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CELL_ERROR)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::STATUS)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CURRENT_SETPOINT)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::REPORT_INTERVAL)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::TEMPERATURE)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CURRENT)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::VOLTAGE)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CHARGEL)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CHARGEH)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::VOLTAGE_LIMIT_CHG)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::VOLTAGE_LIMIT_DCHG)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CURRENT_LIMIT_CHG)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CURRENT_LIMIT_DCHG)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::TEMP_LIMIT_CHG)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::TEMP_LIMIT_DCHG)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::DUTY)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::COMPENSATION)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CURRENT_PP)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::VOLTAGE_PP)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CURRENT_CALIB_OFF)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CURRENT_CALIB_SCA)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::TEMP_CALIB_R)
+            {
+                tempCalibR[packetNamespace] = 256*packetHighbyte + packetLowbyte;
+            }
+            else if (packetAddress == cellNamespace::TEMP_CALIB_B)
+            {
+                tempCalibB[packetNamespace] = 256*packetHighbyte + packetLowbyte;
+            }
+            else if (packetAddress == cellNamespace::CURRENT_CALIB_PP)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::VOLTAGE_CALIB_PP)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::CURR_CALIB_PP_OFF)
+            {
+
+            }
+            else if (packetAddress == cellNamespace::VOLT_CALIB_PP_OFF)
+            {
+
+            }
+            else
+            {
+                qWarning() << "Unknown address in response in CELL namespace.";
+                BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+            }
+        }
+        // Unit namespace
+        else if (packetNamespace == batlabNamespaces::UNIT)
+        {
+            if (packetAddress == unitNamespace::SERIAL_NUM)
+            {
+                int newSerial = 256*packetHighbyte + packetLowbyte;
+                if (newSerial != info.serialNumberRegister)
+                {
+                    info.serialNumberRegister = newSerial;
+                    if (info.serialNumberRegister != -1 && info.deviceIdRegister != -1)
+                    {
+                        info.serialNumberComplete = (info.deviceIdRegister<<16) + info.serialNumberRegister;
+                        emit infoUpdated();
+                    }
+                }
+            }
+            else if (packetAddress == unitNamespace::DEVICE_ID)
+            {
+                int newDeviceId = 256*packetHighbyte + packetLowbyte;
+                if (newDeviceId != info.deviceIdRegister)
+                {
+                    info.deviceIdRegister = newDeviceId;
+                    if (info.serialNumberRegister != -1 && info.deviceIdRegister != -1)
+                    {
+                        info.serialNumberComplete = (info.deviceIdRegister<<16) + info.serialNumberRegister;
+                        emit infoUpdated();
+                    }
+                }
+            }
+            else if (packetAddress == unitNamespace::FIRMWARE_VER)
+            {
+                int newFirmwareVersion = 256*packetHighbyte + packetLowbyte;
+                if (newFirmwareVersion != info.firmwareVersion)
+                {
+                    info.firmwareVersion = newFirmwareVersion;
+                    emit infoUpdated();
+                }
+            }
+            else if (packetAddress == unitNamespace::VCC)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::SINE_FREQ)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::SYSTEM_TIMER)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::SETTINGS)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::SINE_OFFSET)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::SINE_MAGDIV)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::LED_MESSAGE)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::UNIT_BOOTLOAD)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::VOLT_CH_CALIB_OFF)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::VOLT_CH_CALIB_SCA)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::VOLT_DC_CALIB_OFF)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::VOLT_DC_CALIB_SCA)
+            {
+
+            }
+            else if (packetAddress == unitNamespace::LOCK)
+            {
+
+            }
+            else
+            {
+                qWarning() << "Unknown address in response in UNIT namespace.";
+                BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+            }
+        }
+        else if (packetNamespace == batlabNamespaces::BOOTLOADER)
+        {
+            if (packetAddress == bootloaderNamespace::BOOTLOAD)
+            {
+
+            }
+            else if (packetAddress == bootloaderNamespace::ADDR)
+            {
+
+            }
+            else if (packetAddress == bootloaderNamespace::DATA)
+            {
+
+            }
+            else
+            {
+                qWarning() << "Unknown address in response in BOOTLOADER namespace.";
+                BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+            }
+        }
+        else if (packetNamespace == batlabNamespaces::COMMS)
+        {
+            if (packetAddress == commsNamespace::LED0)
+            {
+
+            }
+            else if (packetAddress == commsNamespace::LED1)
+            {
+
+            }
+            else if (packetAddress == commsNamespace::LED2)
+            {
+
+            }
+            else if (packetAddress == commsNamespace::LED3)
+            {
+
+            }
+            else if (packetAddress == commsNamespace::EXTERNAL_PSU)
+            {
+                bool newExtPSU = 256*packetHighbyte + packetLowbyte;
+                if (newExtPSU != info.externalPowerConnected)
+                {
+                    info.externalPowerConnected = newExtPSU;
+                    emit infoUpdated();
+                }
+            }
+            else if (packetAddress == commsNamespace::EXTERNAL_PSU_VOLTAGE)
+            {
+
+            }
+            else
+            {
+                qWarning() << "Unknown address in response in COMMS namespace.";
+                BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+            }
+        }
+        else
+        {
+            qWarning() << "Unknown namespace in response packet.";
+            BatlabLib::debugResponsePacket(info.serialNumberComplete, packetStartByte, packetNamespace, packetAddress, packetLowbyte, packetHighbyte);
+        }
+    }
 }
 
 void Batlab::processError(const QString &s)
@@ -479,5 +792,5 @@ void Batlab::processError(const QString &s)
 
 void Batlab::processTimeout(const QString &s)
 {
-    qWarning() << "Timeout" << s;
+    qWarning() << s;
 }

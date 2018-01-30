@@ -25,7 +25,7 @@ public:
     explicit BatlabCommThread(QObject *parent = nullptr);
     ~BatlabCommThread();
 
-    void transaction(const QString &portName, int waitTimeout, const QVector<uchar> request);
+    void transaction(const int serialnumber, const QString &portName, int waitTimeout, const QVector<uchar> request);
 
 signals:
     void response(const QVector<uchar> response);
@@ -36,6 +36,7 @@ private:
     void run() override;
 
     QString m_portName;
+    int m_serialnumber;
 
     QQueue<batlabCommand> m_commandQueue;
 

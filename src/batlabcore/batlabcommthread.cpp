@@ -14,12 +14,14 @@ BatlabCommThread::~BatlabCommThread()
     wait();
 }
 
-// TODO remove comment this is getting called correctly
-void BatlabCommThread::transaction(const QString &portName, int waitTimeout, const QVector<uchar> request)
+void BatlabCommThread::transaction(const int serialnumber, const QString &portName, int waitTimeout, const QVector<uchar> request)
 {
     const QMutexLocker locker(&m_mutex);
     m_portName = portName;
+    m_serialnumber = serialnumber;
 
+    // Add this command to this Batlab's queue.
+    // Without the queue, this command wouldn't get sent if the thread were in the process of waiting for a response from another command.
     m_commandQueue.enqueue({waitTimeout, request});
 
     if (!isRunning())
@@ -44,6 +46,7 @@ void BatlabCommThread::run()
         currentPortName = m_portName;
         currentPortNameChanged = true;
     }
+    int currentSerialNumber = m_serialnumber;
 
     batlabCommand currentCommand = m_commandQueue.dequeue();
     int currentWaitTimeout = currentCommand.waitTimeout;
@@ -74,44 +77,73 @@ void BatlabCommThread::run()
             }
         }
 
-        // Send request
-        BatlabLib::debugCommandPacket(999, currentRequest);
+        // Send command
+        BatlabLib::debugCommandPacket(currentSerialNumber, currentRequest);
         serial.write(reinterpret_cast<char*>(currentRequest.data()), 5);
         if (serial.waitForBytesWritten(currentWaitTimeout))
         {
             // Get response
             if (serial.waitForReadyRead(currentWaitTimeout))
             {
-                QByteArray responseData = serial.readAll();
+                QByteArray responseDataBytes = serial.readAll();
                 while (serial.waitForReadyRead(10))
                 {
-                    responseData += serial.readAll();
+                    responseDataBytes += serial.readAll();
                 }
 
-                const QVector<uchar> response {
-                    static_cast<uchar>(responseData[0]),
-                    static_cast<uchar>(responseData[1]),
-                    static_cast<uchar>(responseData[2]),
-                    static_cast<uchar>(responseData[3]),
-                    static_cast<uchar>(responseData[4]),
-                };
-                emit this->response(response);
+                QVector<uchar> responseData;
+                for (int i = 0; i < responseDataBytes.size(); i++)
+                {
+                    responseData.append(static_cast<uchar>(responseDataBytes[i]));
+                }
+
+                while (responseData.size() > 0)
+                {
+                    if (responseData[0] == 0xAA && responseData.size() >= 5)
+                    {
+                        if (responseData[1] != currentRequest[1] || responseData[2] != currentRequest[2])
+                        {
+                            qWarning() << "Received complete but unexpected command response from Batlab.";
+                        }
+
+                        QVector<uchar> response(5);
+                        for (int i = 0; i < response.size(); i++)
+                        {
+                            response[i] = responseData[i];
+                        }
+                        responseData.remove(0, 5);
+
+                        emit this->response(response);
+                    }
+                    else if (responseData[0] == 0xAF && responseData.size() >= 13)
+                    {
+                        // TODO handle stream
+                    }
+                    else
+                    {
+                        // Discard bytes until we get to a valid packet start byte
+                        qWarning() << "Discarding unknown Batlab response data";
+                        responseData.remove(0, 1);
+                        continue;
+                    }
+                }
             }
             else
             {
-                emit timeout(tr("Wait read response timeout %1.")
+                emit timeout(tr("Timeout waiting for response from Batlab %1.")
                              .arg(QTime::currentTime().toString()));
             }
         }
         else
         {
-            emit timeout(tr("Wait write request timeout %1.")
+            emit timeout(tr("Timeout writing command to serial port %1.")
                          .arg(QTime::currentTime().toString()));
 
         }
 
         m_mutex.lock();
 
+        // Continue sending commands and waiting for responses until we've worked through the queued commands.
         if (m_commandQueue.size() == 0)
         {
             m_cond.wait(&m_mutex);
@@ -126,7 +158,9 @@ void BatlabCommThread::run()
         {
             currentPortNameChanged = false;
         }
+        currentSerialNumber = m_serialnumber;
 
+        // Grab the next command and onward we go.
         currentCommand = m_commandQueue.dequeue();
         currentWaitTimeout = currentCommand.waitTimeout;
         currentRequest = currentCommand.request;
