@@ -23,7 +23,10 @@ void BatlabManager::updateConnectedBatlabs()
         // to see if they are active. Otherwise it never thinks you unplug a Batlab.
         // https://stackoverflow.com/questions/24854597/qserialportinfo-returns-more-com-ports-than-i-have
         // https://bugreports.qt.io/browse/QTBUG-39748
-        if (!availableCommPorts.at(i).description().isEmpty()) {
+        if (!availableCommPorts.at(i).description().isEmpty()
+                && availableCommPorts.at(i).vendorIdentifier() == 0x04D8
+                && availableCommPorts.at(i).productIdentifier() == 0x000A)
+        {
             availableCommPortNames.append(availableCommPorts.at(i).portName());
         }
     }
