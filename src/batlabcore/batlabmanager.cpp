@@ -68,8 +68,12 @@ void BatlabManager::processUpdatedBatlabInfo()
     QVector<batlabInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
-        infos.push_back(info);
+        // Only show information for devices that have received valid responses (i.e. are Batlabs)
+        if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
+        {
+            batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            infos.push_back(info);
+        }
     }
     emit batlabInfoUpdated(infos);
 }
@@ -79,13 +83,16 @@ QVector<batlabInfo> BatlabManager::getBatlabInfos()
     QVector<batlabInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
-        infos.push_back(info);
+        // Only return information for devices that have received valid responses (i.e. are Batlabs)
+        if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
+        {
+            batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            infos.push_back(info);
+        }
     }
     return infos;
 }
 
-// TODO remove connectedBatlabsBySerialNumber?
 void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
 {
     for (int i = 0; i < connectedBatlabsByPortName.size(); i++)

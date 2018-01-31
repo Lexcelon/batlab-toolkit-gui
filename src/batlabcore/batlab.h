@@ -40,6 +40,7 @@ public slots:
 
     void checkSerialPortError();
     void periodicCheck();
+    bool hasReceivedValidResponse();
 
 private slots:
     void transaction(int timeout, const QVector<uchar> request);
@@ -50,13 +51,12 @@ private slots:
 private:
     batlabInfo info;
 
-    QSerialPort *port;
-    QVector<uchar> data;
-
     int tempCalibB[4];
     int tempCalibR[4];
 
     BatlabCommThread m_commThread;
+
+    bool m_hasReceivedValidResponse;
 };
 
 #endif // BATLABCOM_H

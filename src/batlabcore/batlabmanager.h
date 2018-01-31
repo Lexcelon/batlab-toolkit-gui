@@ -35,7 +35,7 @@ private:
     bool cellPlaylistLoaded;
     bool testsInProgress;
 
-    QMap<int, Batlab*> connectedBatlabsBySerialNumber;
+    QMap<QString, Batlab*> candidateBatlabsByPortName;
     QMap<QString, Batlab*> connectedBatlabsByPortName;
 
 };

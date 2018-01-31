@@ -161,9 +161,12 @@ void BatlabCommThread::run()
         currentSerialNumber = m_serialnumber;
 
         // Grab the next command and onward we go.
-        currentCommand = m_commandQueue.dequeue();
-        currentWaitTimeout = currentCommand.waitTimeout;
-        currentRequest = currentCommand.request;
+        if (!m_commandQueue.isEmpty())
+        {
+            currentCommand = m_commandQueue.dequeue();
+            currentWaitTimeout = currentCommand.waitTimeout;
+            currentRequest = currentCommand.request;
+        }
 
         m_mutex.unlock();
     }
