@@ -4,6 +4,7 @@ BatlabLogger* BatlabLogger::m_pInstance = NULL;
 
 BatlabLogger* BatlabLogger::instance()
 {
+    qRegisterMetaType<QtMsgType>("QtMsgType");
     if (!m_pInstance)
     {
         m_pInstance = new BatlabLogger;

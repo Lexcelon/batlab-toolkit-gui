@@ -55,11 +55,12 @@ SOURCES += main.cpp\
     settings.cpp \
     qtautoupdater/autoupdatergui/dialogmaster.cpp \
     batlabcore/batlabsettings.cpp \
-    batlabcore/globals.cpp \
     batlabcore/batlabmanager.cpp \
     batlabcore/batlab.cpp \
     components/batlabwidget.cpp \
-    batlabcore/batlablogger.cpp
+    batlabcore/batlablogger.cpp \
+    batlabcore/batlabcommthread.cpp \
+    batlabcore/batlablib.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -99,7 +100,8 @@ HEADERS  += \
     batlabcore/batlablib.h \
     components/batlabwidget.h \
     batlabcore/batlablogger.h \
-    components/hexspinbox.h
+    components/hexspinbox.h \
+    batlabcore/batlabcommthread.h
 
 FORMS    += \
     testwindow.ui \

@@ -24,6 +24,17 @@ cd temp
 qmake ..\src
 mingw32-make
 
+rem Based on this:
+rem https://www.appveyor.com/docs/build-configuration/#script-blocks-in-build-configuration
+rem I would not think the below is necessary. But in any case
+rem sometimes the mingw32-make command would fail and the build would
+rem then succeed. On tagged builds on master this would silently upload
+rem blank updates to users. The below fixes it so that the build actually
+rem terminates.
+IF NOT %errorlevel% EQU 0 (
+   exit 1
+)
+
 echo Copying program and libraries to package directories...
 echo f | xcopy /f /y release\BatlabToolkitGUI.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\BatlabToolkitGUI.exe
 windeployqt.exe ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui\data\BatlabToolkitGUI.exe --dir ..\dist\windows\packages\com.lexcelon.batlabtoolkitgui.lib\data

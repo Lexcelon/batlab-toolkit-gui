@@ -1,5 +1,33 @@
 #include "batlablib.h"
 
+void BatlabLib::debugResponsePacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte)
+{
+    qDebug() << "Response Packet:" << "Batlab S/N:" << qPrintable(QString::number(serialnumber).leftJustified(6, ' '))
+             << "Start Byte:"<< qPrintable("0x" + QString("%1").arg(packetStartByte, 0, 16).toUpper().rightJustified(2, '0'))
+             << "Namespace:" << qPrintable(BatlabLib::namespaceIntToString[packetNamespace].leftJustified(12, ' '))
+             << "Address:" << qPrintable("0x" + QString("%1").arg(packetAddress, 0, 16).toUpper().rightJustified(2, '0'))
+             << "Value:" << qPrintable("0x" + QString("%1").arg(256*packetHighByte + packetLowByte, 0, 16).toUpper().rightJustified(4, '0'));
+}
+
+void BatlabLib::debugResponsePacket(int serialnumber, QVector<uchar> data)
+{
+    debugResponsePacket(serialnumber, data[0], data[1], data[2], data[3], data[4]);
+}
+
+void BatlabLib::debugCommandPacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte)
+{
+    qDebug() << "Command Packet: " << "Batlab S/N:" << qPrintable(QString::number(serialnumber).leftJustified(6, ' '))
+             << "Start Byte:"<< qPrintable("0x" + QString("%1").arg(packetStartByte, 0, 16).toUpper().rightJustified(2, '0'))
+             << "Namespace:" << qPrintable(BatlabLib::namespaceIntToString[packetNamespace].leftJustified(12, ' '))
+             << "Address:" << qPrintable("0x" + QString("%1").arg(packetAddress, 0, 16).toUpper().rightJustified(2, '0'))
+             << "Value:" << qPrintable("0x" + QString("%1").arg(256*packetHighByte + packetLowByte, 0, 16).toUpper().rightJustified(4, '0'));
+}
+
+void BatlabLib::debugCommandPacket(int serialnumber, QVector<uchar> data)
+{
+    debugCommandPacket(serialnumber, data[0], data[1], data[2], data[3], data[4]);
+}
+
 void BatlabLib::bubblesort(QVector<float> data, QVector<int> &indices)
 {
     for (int i = 0; i < data.size() - 1; ++i) {

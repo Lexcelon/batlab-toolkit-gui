@@ -7,12 +7,14 @@ BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabInfo> infos)
 {
     ui->setupUi(this);
 
-    // TODO put limits on the spinboxes and use qint16 and qint8 instead of int
+    // TODO and use qint16 and qint8 instead of int
 
     QLabel* registerReadNamespaceLabel = new QLabel(tr("Namespace:"));
     registerReadNamespaceSpinbox = new HexSpinBox(true);
+    registerReadNamespaceSpinbox->setMaximum(0xFF);
     QLabel* registerReadAddressLabel = new QLabel(tr("Register Address:"));
     registerReadAddressSpinbox = new HexSpinBox(true);
+    registerReadAddressSpinbox->setMaximum(0x80);
     registerReadButton = new QPushButton(tr("Register Read"));
 
     QGridLayout* registerReadLayout = new QGridLayout;
@@ -26,10 +28,13 @@ BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabInfo> infos)
 
     QLabel* registerWriteNamespaceLabel = new QLabel(tr("Namespace:"));
     registerWriteNamespaceSpinbox = new HexSpinBox(true);
+    registerWriteNamespaceSpinbox->setMaximum(0xFF);
     QLabel* registerWriteAddressLabel = new QLabel(tr("Register Address:"));
     registerWriteAddressSpinbox = new HexSpinBox(true);
+    registerWriteAddressSpinbox->setMaximum(0x80);
     QLabel* registerWriteValueLabel = new QLabel(tr("Write Value:"));
     registerWriteValueSpinbox = new HexSpinBox(true);
+    registerWriteValueSpinbox->setMaximum(0xFF);
     registerWriteButton = new QPushButton(tr("Register Write"));
 
     QGridLayout* registerWriteLayout = new QGridLayout;

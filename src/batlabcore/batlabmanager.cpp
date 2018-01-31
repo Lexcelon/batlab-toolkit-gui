@@ -2,6 +2,8 @@
 
 BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
 {
+    qRegisterMetaType<QVector<uchar>>("QVector<uchar>");
+
     cellPlaylistLoaded = false;
     testsInProgress = false;
 
@@ -21,7 +23,10 @@ void BatlabManager::updateConnectedBatlabs()
         // to see if they are active. Otherwise it never thinks you unplug a Batlab.
         // https://stackoverflow.com/questions/24854597/qserialportinfo-returns-more-com-ports-than-i-have
         // https://bugreports.qt.io/browse/QTBUG-39748
-        if (!availableCommPorts.at(i).description().isEmpty()) {
+        if (!availableCommPorts.at(i).description().isEmpty()
+                && availableCommPorts.at(i).vendorIdentifier() == 0x04D8
+                && availableCommPorts.at(i).productIdentifier() == 0x000A)
+        {
             availableCommPortNames.append(availableCommPorts.at(i).portName());
         }
     }
@@ -63,8 +68,12 @@ void BatlabManager::processUpdatedBatlabInfo()
     QVector<batlabInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
-        infos.push_back(info);
+        // Only show information for devices that have received valid responses (i.e. are Batlabs)
+        if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
+        {
+            batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            infos.push_back(info);
+        }
     }
     emit batlabInfoUpdated(infos);
 }
@@ -74,13 +83,16 @@ QVector<batlabInfo> BatlabManager::getBatlabInfos()
     QVector<batlabInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
-        infos.push_back(info);
+        // Only return information for devices that have received valid responses (i.e. are Batlabs)
+        if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
+        {
+            batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            infos.push_back(info);
+        }
     }
     return infos;
 }
 
-// TODO remove connectedBatlabsBySerialNumber?
 void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
 {
     for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
