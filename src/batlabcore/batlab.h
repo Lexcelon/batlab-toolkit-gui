@@ -43,10 +43,10 @@ public slots:
     bool hasReceivedValidResponse();
 
 private slots:
-    void transaction(int timeout, const QVector<uchar> request);
-    void processResponse(const QVector<uchar> response);
-    void processError(const QString &s);
-    void processTimeout(const QString &s);
+    void serialTransaction(int timeout, const QVector<uchar> request);
+    void processSerialResponse(const QVector<uchar> response);
+    void processSerialError(const QString &s);
+    void processSerialTimeout(const QString &s);
 
 private:
     batlabDisplayInfo info;
