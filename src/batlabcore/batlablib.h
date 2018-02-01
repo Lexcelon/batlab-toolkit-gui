@@ -220,7 +220,7 @@ struct channelInfo {
     bool storageDischargeComplete;
 };
 
-struct batlabInfo {
+struct batlabDisplayInfo {
     bool externalPowerConnected;
     qint16 firmwareVersion;
     QString portName;

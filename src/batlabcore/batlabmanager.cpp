@@ -65,28 +65,28 @@ void BatlabManager::removeBatlab(QString portName)
 
 void BatlabManager::processUpdatedBatlabInfo()
 {
-    QVector<batlabInfo> infos;
+    QVector<batlabDisplayInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
         // Only show information for devices that have received valid responses (i.e. are Batlabs)
         if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
         {
-            batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
             infos.push_back(info);
         }
     }
     emit batlabInfoUpdated(infos);
 }
 
-QVector<batlabInfo> BatlabManager::getBatlabInfos()
+QVector<batlabDisplayInfo> BatlabManager::getBatlabInfos()
 {
-    QVector<batlabInfo> infos;
+    QVector<batlabDisplayInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
         // Only return information for devices that have received valid responses (i.e. are Batlabs)
         if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
         {
-            batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
             infos.push_back(info);
         }
     }
@@ -98,7 +98,7 @@ void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
     for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
     {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
         if (info.serialNumberComplete == serial)
         {
             connectedBatlabsByPortName[portName]->initiateRegisterRead(ns, address);
@@ -111,7 +111,7 @@ void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address,
     for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
     {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
         if (info.serialNumberComplete == serial)
         {
             connectedBatlabsByPortName[portName]->initiateRegisterWrite(ns, address, value);

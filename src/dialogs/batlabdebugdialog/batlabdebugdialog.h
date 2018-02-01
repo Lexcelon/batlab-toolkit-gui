@@ -16,7 +16,7 @@ class BatlabDebugDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabInfo> infos = QVector<batlabInfo>());
+    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabDisplayInfo> infos = QVector<batlabDisplayInfo>());
     ~BatlabDebugDialog();
 
 public slots:

@@ -18,10 +18,10 @@ class BatlabManager : public QObject
     Q_OBJECT
 public:
     explicit BatlabManager(QObject *parent = nullptr);
-    QVector<batlabInfo> getBatlabInfos();
+    QVector<batlabDisplayInfo> getBatlabInfos();
 
 signals:
-    void batlabInfoUpdated(QVector<batlabInfo>);
+    void batlabInfoUpdated(QVector<batlabDisplayInfo>);
 
 public slots:
     void updateConnectedBatlabs();

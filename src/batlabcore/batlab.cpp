@@ -26,18 +26,6 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 
     m_hasReceivedValidResponse = false;
 
-//    port = new QSerialPort();
-//    port->setPortName(info.portName);
-//    port->setBaudRate(QSerialPort::Baud115200);
-
-//    if (!port->open(QSerialPort::ReadWrite)) {
-//        qWarning() << "Failure Opening Port: " << port->error() << port->errorString();
-//        return;
-//    }
-
-//    connect(port, &QSerialPort::errorOccurred, this, &Batlab::checkSerialPortError);
-//    connect(port, &QSerialPort::readyRead, this, &Batlab::processAvailableSerialPortData);
-
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
@@ -474,7 +462,7 @@ void Batlab::checkSerialPortError() {
 
 }
 
-batlabInfo Batlab::getInfo()
+batlabDisplayInfo Batlab::getInfo()
 {
     return info;
 }

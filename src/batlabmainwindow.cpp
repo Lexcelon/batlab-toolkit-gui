@@ -229,7 +229,7 @@ void clearLayout(QLayout *layout, bool deleteWidgets)
 // http://www.qtforum.org/article/36406/events-not-called-unless-mouse-is-moving.html
 // https://forum.qt.io/topic/8630/events-not-called-unless-mouse-is-moving/2
 // https://bugreports.qt.io/browse/QTBUG-7728
-void BatlabMainWindow::redrawBatlabInfo(QVector<batlabInfo> infos)
+void BatlabMainWindow::redrawBatlabInfo(QVector<batlabDisplayInfo> infos)
 {
     clearLayout(batlabsTabLayout, true);
 
