@@ -10,6 +10,21 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
     QTimer *updateConnectedBatlabsTimer = new QTimer(this);
     connect(updateConnectedBatlabsTimer, &QTimer::timeout, this, &BatlabManager::updateConnectedBatlabs);
     updateConnectedBatlabsTimer->start(200);
+
+    QTimer::singleShot(200, this, &BatlabManager::requestAvailableFirmwareVersions);
+
+}
+
+void BatlabManager::requestAvailableFirmwareVersions()
+{
+    networkAccessManager = new QNetworkAccessManager;
+    networkReply = networkAccessManager->get(QNetworkRequest(QUrl("https://api.github.com/repos/Lexcelon/batlab-firmware-measure/releases")));
+    connect(networkReply, &QNetworkReply::finished, this, &BatlabManager::processAvailableFirmwareVersions);
+}
+
+void BatlabManager::processAvailableFirmwareVersions()
+{
+    qDebug() << networkReply->readAll();
 }
 
 void BatlabManager::updateConnectedBatlabs()
