@@ -46,7 +46,7 @@ public slots:
 
     void updatelogViewTextBrowser(QString);
 
-    void redrawBatlabInfo(QVector<batlabInfo> infos);
+    void redrawBatlabInfo(QVector<batlabDisplayInfo> infos);
 
     void togglePrintDebugMessages(bool value);
 
@@ -141,6 +141,7 @@ private slots:
 
     void processRegisterReadRequest(int serial, int ns, int address);
     void processRegisterWriteRequest(int serial, int ns, int address, int value);
+    void processFirmwareFlashRequest(int serial, QString firmwareVersion);
 
 };
 

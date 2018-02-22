@@ -229,7 +229,7 @@ void clearLayout(QLayout *layout, bool deleteWidgets)
 // http://www.qtforum.org/article/36406/events-not-called-unless-mouse-is-moving.html
 // https://forum.qt.io/topic/8630/events-not-called-unless-mouse-is-moving/2
 // https://bugreports.qt.io/browse/QTBUG-7728
-void BatlabMainWindow::redrawBatlabInfo(QVector<batlabInfo> infos)
+void BatlabMainWindow::redrawBatlabInfo(QVector<batlabDisplayInfo> infos)
 {
     clearLayout(batlabsTabLayout, true);
 
@@ -312,10 +312,16 @@ void BatlabMainWindow::debugBatlab()
     logViewPrintDebugCheckBox->setChecked(true);
     togglePrintDebugMessages(true);
 
-    if (batlabDebugDialog == nullptr) {
-        batlabDebugDialog = new BatlabDebugDialog(this, batlabManager->getBatlabInfos());
+    if (batlabDebugDialog == nullptr)
+    {
+        batlabDebugDialog = new BatlabDebugDialog(this, batlabManager->getBatlabInfos(), batlabManager->getFirmwareVersions());
         connect(batlabDebugDialog, &BatlabDebugDialog::registerReadRequested, this, &BatlabMainWindow::processRegisterReadRequest);
         connect(batlabDebugDialog, &BatlabDebugDialog::registerWriteRequested, this, &BatlabMainWindow::processRegisterWriteRequest);
+        connect(batlabDebugDialog, &BatlabDebugDialog::firmwareFlashRequested, this, &BatlabMainWindow::processFirmwareFlashRequest);
+    }
+    else
+    {
+        batlabDebugDialog->updateInfo(batlabManager->getBatlabInfos(), batlabManager->getFirmwareVersions());
     }
 
     // Can move window around
@@ -540,4 +546,9 @@ void BatlabMainWindow::processRegisterReadRequest(int serial, int ns, int addres
 void BatlabMainWindow::processRegisterWriteRequest(int serial, int ns, int address, int value)
 {
     batlabManager->processRegisterWriteRequest(serial, ns, address, value);
+}
+
+void BatlabMainWindow::processFirmwareFlashRequest(int serial, QString firmwareVersion)
+{
+    batlabManager->processFirmwareFlashRequest(serial, firmwareVersion);
 }

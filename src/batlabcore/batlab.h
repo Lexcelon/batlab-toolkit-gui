@@ -34,22 +34,24 @@ public slots:
     void processAvailableSerialPortData();
     void initiateRegisterRead(int, int);
     void initiateRegisterWrite(int, int, int);
+    void initiateFirmwareFlash(QString firmwareFilePath);
+
     QString getPortName() { return info.portName; }
     int getSerialNumber() {return info.serialNumberRegister; }
-    batlabInfo getInfo();
+    batlabDisplayInfo getInfo();
 
     void checkSerialPortError();
     void periodicCheck();
     bool hasReceivedValidResponse();
 
 private slots:
-    void transaction(int timeout, const QVector<uchar> request);
-    void processResponse(const QVector<uchar> response);
-    void processError(const QString &s);
-    void processTimeout(const QString &s);
+    void serialTransaction(int timeout, const QVector<uchar> request);
+    void processSerialResponse(const QVector<uchar> response);
+    void processSerialError(const QString &s);
+    void processSerialTimeout(const QString &s);
 
 private:
-    batlabInfo info;
+    batlabDisplayInfo info;
 
     int tempCalibB[4];
     int tempCalibR[4];

@@ -1,6 +1,6 @@
 #include "batlabwidget.h"
 
-BatlabWidget::BatlabWidget(batlabInfo info, QWidget *parent) : QWidget(parent)
+BatlabWidget::BatlabWidget(batlabDisplayInfo info, QWidget *parent) : QWidget(parent)
 {
     batlabWidgetLayout = new QGridLayout;
 

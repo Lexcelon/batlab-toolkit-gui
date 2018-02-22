@@ -1,7 +1,7 @@
 #include "batlabdebugdialog.h"
 #include "ui_batlabdebugdialog.h"
 
-BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabInfo> infos) :
+BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabDisplayInfo> infos, QVector<QString> firmwareVersions):
     QDialog(parent),
     ui(new Ui::debugDialog)
 {
@@ -48,13 +48,37 @@ BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabInfo> infos)
 
     ui->registerWriteGroupBox->setLayout(registerWriteLayout);
 
+    QLabel* flashFirmwareLabel = new QLabel(tr("Firmware Version:"));
+    flashFirmwareComboBox = new QComboBox;
+    flashFirmwareButton = new QPushButton(tr("Download and flash firmware to Batlab"));
+
+    QGridLayout* flashFirmwareLayout = new QGridLayout;
+    flashFirmwareLayout->addWidget(flashFirmwareLabel, 0, 0);
+    flashFirmwareLayout->addWidget(flashFirmwareComboBox, 0, 1);
+    flashFirmwareLayout->addWidget(flashFirmwareButton, 1, 0, 1, 2);
+
+    ui->flashFirmwareGroupBox->setLayout(flashFirmwareLayout);
+
+    updateInfo(infos, firmwareVersions);
+
+    connect(registerReadButton, &QPushButton::clicked, this, &BatlabDebugDialog::processRegisterReadClick);
+    connect(registerWriteButton, &QPushButton::clicked, this, &BatlabDebugDialog::processRegisterWriteClick);
+    connect(flashFirmwareButton, &QPushButton::clicked, this, &BatlabDebugDialog::processFirmwareFlashClick);
+}
+
+void BatlabDebugDialog::updateInfo(QVector<batlabDisplayInfo> infos, QVector<QString> firmwareVersions)
+{
+    ui->selectBatlabComboBox->clear();
     for (int i = 0; i < infos.size(); i++)
     {
         ui->selectBatlabComboBox->addItem(QString::number(infos.at(i).serialNumberComplete));
     }
 
-    connect(registerReadButton, &QPushButton::clicked, this, &BatlabDebugDialog::processRegisterReadClick);
-    connect(registerWriteButton, &QPushButton::clicked, this, &BatlabDebugDialog::processRegisterWriteClick);
+    flashFirmwareComboBox->clear();
+    for (int i = 0; i < firmwareVersions.size(); i++)
+    {
+        flashFirmwareComboBox->addItem(firmwareVersions[i]);
+    }
 }
 
 BatlabDebugDialog::~BatlabDebugDialog()
@@ -68,4 +92,9 @@ void BatlabDebugDialog::processRegisterReadClick() {
 
 void BatlabDebugDialog::processRegisterWriteClick() {
     emit registerWriteRequested(ui->selectBatlabComboBox->currentText().toInt(), registerWriteNamespaceSpinbox->value(), registerWriteAddressSpinbox->value(), registerWriteValueSpinbox->value());
+}
+
+void BatlabDebugDialog::processFirmwareFlashClick()
+{
+    emit firmwareFlashRequested(ui->selectBatlabComboBox->currentText().toInt(), flashFirmwareComboBox->currentText());
 }
