@@ -789,3 +789,8 @@ bool Batlab::hasReceivedValidResponse()
 {
     return m_hasReceivedValidResponse;
 }
+
+void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
+{
+
+}

@@ -18,13 +18,18 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
 void BatlabManager::requestAvailableFirmwareVersions()
 {
     networkAccessManager = new QNetworkAccessManager;
-    networkReply = networkAccessManager->get(QNetworkRequest(QUrl("https://api.github.com/repos/Lexcelon/batlab-firmware-measure/releases")));
-    connect(networkReply, &QNetworkReply::finished, this, &BatlabManager::processAvailableFirmwareVersions);
+    firmwareVersionsReply = networkAccessManager->get(QNetworkRequest(QUrl("https://api.github.com/repos/Lexcelon/batlab-firmware-measure/releases")));
+    connect(firmwareVersionsReply, &QNetworkReply::finished, this, &BatlabManager::processAvailableFirmwareVersions);
 }
 
 void BatlabManager::processAvailableFirmwareVersions()
 {
-    qDebug() << networkReply->readAll();
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(firmwareVersionsReply->readAll());
+    QJsonArray jsonArray = jsonDoc.array();
+    for (int i = 0; i < jsonArray.size(); i++)
+    {
+        availableFirmwareVersions.append(jsonArray[i].toObject()["tag_name"].toString());
+    }
 }
 
 void BatlabManager::updateConnectedBatlabs()
@@ -108,6 +113,11 @@ QVector<batlabDisplayInfo> BatlabManager::getBatlabInfos()
     return infos;
 }
 
+QVector<QString> BatlabManager::getFirmwareVersions()
+{
+    return availableFirmwareVersions;
+}
+
 void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
 {
     for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
@@ -130,6 +140,21 @@ void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address,
         if (info.serialNumberComplete == serial)
         {
             connectedBatlabsByPortName[portName]->initiateRegisterWrite(ns, address, value);
+        }
+    }
+}
+
+void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVersion)
+{
+    QString firmwareFilePath = "";
+
+    for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
+    {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        if (info.serialNumberComplete == serial)
+        {
+            connectedBatlabsByPortName[portName]->initiateFirmwareFlash(firmwareFilePath);
         }
     }
 }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>374</width>
-    <height>453</height>
+    <height>534</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,6 +54,13 @@
     <widget class="QGroupBox" name="registerWriteGroupBox">
      <property name="title">
       <string>Register Write</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="flashFirmwareGroupBox">
+     <property name="title">
+      <string>Flash Firmware</string>
      </property>
     </widget>
    </item>

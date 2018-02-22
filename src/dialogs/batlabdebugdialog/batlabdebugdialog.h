@@ -2,6 +2,8 @@
 #define TEST_H
 
 #include <QDialog>
+#include <QComboBox>
+
 #include "batlabcore/batlab.h"
 #include "components/hexspinbox.h"
 
@@ -16,16 +18,20 @@ class BatlabDebugDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabDisplayInfo> infos = QVector<batlabDisplayInfo>());
+    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabDisplayInfo> infos = QVector<batlabDisplayInfo>(), QVector<QString> firmwareVersions = QVector<QString>());
     ~BatlabDebugDialog();
 
 public slots:
     void processRegisterReadClick();
     void processRegisterWriteClick();
+    void processFirmwareFlashClick();
+
+    void updateInfo(QVector<batlabDisplayInfo> infos, QVector<QString> firmwareVersions);
 
 signals:
-    void registerReadRequested(int, int, int);
-    void registerWriteRequested(int, int, int, int);
+    void registerReadRequested(int serialNumber, int name_space, int address);
+    void registerWriteRequested(int serialNumber, int name_space, int address, int value);
+    void firmwareFlashRequested(int serialNumber, QString firmwareVersion);
 
 private:
     Ui::debugDialog *ui;
@@ -38,6 +44,9 @@ private:
     HexSpinBox* registerWriteAddressSpinbox;
     HexSpinBox* registerWriteValueSpinbox;
     QPushButton* registerWriteButton;
+
+    QComboBox* flashFirmwareComboBox;
+    QPushButton* flashFirmwareButton;
 
 };
 

@@ -14,6 +14,9 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QSslSocket>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include "batlab.h"
 
@@ -24,6 +27,7 @@ class BatlabManager : public QObject
 public:
     explicit BatlabManager(QObject *parent = nullptr);
     QVector<batlabDisplayInfo> getBatlabInfos();
+    QVector<QString> getFirmwareVersions();
 
 signals:
     void batlabInfoUpdated(QVector<batlabDisplayInfo>);
@@ -35,6 +39,7 @@ public slots:
     void processUpdatedBatlabInfo();
     void processRegisterReadRequest(int serial, int ns, int address);
     void processRegisterWriteRequest(int serial, int ns, int address, int value);
+    void processFirmwareFlashRequest(int serial, QString firmwareVersion);
 
     void requestAvailableFirmwareVersions();
     void processAvailableFirmwareVersions();
@@ -46,10 +51,10 @@ private:
     QMap<QString, Batlab*> candidateBatlabsByPortName;
     QMap<QString, Batlab*> connectedBatlabsByPortName;
 
-    QVector<int> availableFirmwareVersions;
+    QVector<QString> availableFirmwareVersions;
 
     QNetworkAccessManager* networkAccessManager;
-    QNetworkReply* networkReply;
+    QNetworkReply* firmwareVersionsReply;
 };
 
 #endif // BATLABMANAGER_H
