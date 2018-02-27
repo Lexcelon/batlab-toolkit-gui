@@ -4,19 +4,23 @@
 #include <QWidget>
 #include <QLabel>
 #include "batlabcore/batlablib.h"
+#include "cellteststatuswidget.h"
 
-class BatlabWidget : public QWidget
+class BatlabWidget : public QFrame
 {
     Q_OBJECT
 public:
-    explicit BatlabWidget(batlabInfo info, QWidget *parent = nullptr);
+    explicit BatlabWidget(batlabInfo info, QFrame *parent = nullptr);
 
 signals:
 
 public slots:
+    void updateFirmware();
 
 private:
-    QGridLayout *batlabWidgetLayout;
+
+    QHBoxLayout *batlabLayout;
+    QGridLayout *batlabInfoLayout;
 
     QLabel *serialNumberLabel;
     QLabel *serialNumberValueLabel;
@@ -29,6 +33,12 @@ private:
 
     QLabel *firmwareVersionLabel;
     QLabel *firmwareVersionValueLabel;
+
+    QPushButton *firmwareVersionUpdateButton;
+
+    QGridLayout *batlabCellInfoLayout;
+
+    CellTestStatusWidget* CellTestStatusWidgetList[4];
 
 };
 

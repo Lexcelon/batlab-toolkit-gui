@@ -13,12 +13,16 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
         info.channels[i].cellName = "";
         info.channels[i].testInProgress = false;
         info.channels[i].preChargeComplete = false;
+        info.channels[i].preChargeError = false;
         info.channels[i].numWarmupCycles = -1;
         info.channels[i].numWarmupCyclesCompleted = -1;
+        info.channels[i].warmupCyclesError = false;
         info.channels[i].numMeasurementCycles = -1;
         info.channels[i].numMeasurementCyclesCompleted = -1;
+        info.channels[i].measurementCyclesError = false;
         info.channels[i].storageDischarge = false;
         info.channels[i].storageDischargeComplete = false;
+        info.channels[i].storageDischargeError = false;
 
         tempCalibB[i] = -1;
         tempCalibR[i] = -1;
