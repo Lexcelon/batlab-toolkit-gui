@@ -209,15 +209,19 @@ struct channelDisplayInfo {
     bool testInProgress;
 
     bool preChargeComplete;
+    bool preChargeError;
 
     int numWarmupCycles;
     int numWarmupCyclesCompleted;
+    bool warmupCyclesError;
 
     int numMeasurementCycles;
     int numMeasurementCyclesCompleted;
+    bool measurementCyclesError;
 
     bool storageDischarge;
     bool storageDischargeComplete;
+    bool storageDischargeError;
 };
 
 struct batlabDisplayInfo {

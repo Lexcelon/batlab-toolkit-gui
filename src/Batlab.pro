@@ -60,7 +60,8 @@ SOURCES += main.cpp\
     components/batlabwidget.cpp \
     batlabcore/batlablogger.cpp \
     batlabcore/batlabcommthread.cpp \
-    batlabcore/batlablib.cpp
+    batlabcore/batlablib.cpp \
+    components/cellteststatuswidget.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -101,7 +102,8 @@ HEADERS  += \
     components/batlabwidget.h \
     batlabcore/batlablogger.h \
     components/hexspinbox.h \
-    batlabcore/batlabcommthread.h
+    batlabcore/batlabcommthread.h \
+    components/cellteststatuswidget.h
 
 FORMS    += \
     testwindow.ui \
