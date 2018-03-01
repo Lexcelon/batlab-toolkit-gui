@@ -30,18 +30,6 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 
     m_hasReceivedValidResponse = false;
 
-//    port = new QSerialPort();
-//    port->setPortName(info.portName);
-//    port->setBaudRate(QSerialPort::Baud115200);
-
-//    if (!port->open(QSerialPort::ReadWrite)) {
-//        qWarning() << "Failure Opening Port: " << port->error() << port->errorString();
-//        return;
-//    }
-
-//    connect(port, &QSerialPort::errorOccurred, this, &Batlab::checkSerialPortError);
-//    connect(port, &QSerialPort::readyRead, this, &Batlab::processAvailableSerialPortData);
-
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
@@ -61,9 +49,9 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
     batlabPeriodicCheckTimer->start(5000);
 
-    connect(&m_commThread, &BatlabCommThread::response, this, &Batlab::processResponse);
-    connect(&m_commThread, &BatlabCommThread::error, this, &Batlab::processError);
-    connect(&m_commThread, &BatlabCommThread::timeout, this, &Batlab::processTimeout);
+    connect(&m_commThread, &BatlabCommThread::response, this, &Batlab::processSerialResponse);
+    connect(&m_commThread, &BatlabCommThread::error, this, &Batlab::processSerialError);
+    connect(&m_commThread, &BatlabCommThread::timeout, this, &Batlab::processSerialTimeout);
 }
 
 void Batlab::periodicCheck()
@@ -446,7 +434,7 @@ void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
     data[3] = static_cast<uchar>(0x00);
     data[4] = static_cast<uchar>(0x00);
 
-    this->transaction(1000, data);
+    this->serialTransaction(1000, data);
 }
 
 
@@ -465,7 +453,7 @@ void Batlab::initiateRegisterWrite(int batlabNamespace, int batlabRegister, int 
     data[3] = lsb;
     data[4] = msb;
 
-    this->transaction(1000, data);
+    this->serialTransaction(1000, data);
 }
 
 // TODO do this in the comm thread
@@ -478,17 +466,17 @@ void Batlab::checkSerialPortError() {
 
 }
 
-batlabInfo Batlab::getInfo()
+batlabDisplayInfo Batlab::getInfo()
 {
     return info;
 }
 
-void Batlab::transaction(int timeout, const QVector<uchar> request)
+void Batlab::serialTransaction(int timeout, const QVector<uchar> request)
 {
     m_commThread.transaction(info.serialNumberComplete, info.portName, timeout, request);
 }
 
-void Batlab::processResponse(const QVector<uchar> response)
+void Batlab::processSerialResponse(const QVector<uchar> response)
 {
     BatlabLib::debugResponsePacket(info.serialNumberComplete, response);
 
@@ -791,12 +779,12 @@ void Batlab::processResponse(const QVector<uchar> response)
     }
 }
 
-void Batlab::processError(const QString &s)
+void Batlab::processSerialError(const QString &s)
 {
     qWarning() << s;
 }
 
-void Batlab::processTimeout(const QString &s)
+void Batlab::processSerialTimeout(const QString &s)
 {
     qWarning() << s;
 }
@@ -804,4 +792,9 @@ void Batlab::processTimeout(const QString &s)
 bool Batlab::hasReceivedValidResponse()
 {
     return m_hasReceivedValidResponse;
+}
+
+void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
+{
+
 }

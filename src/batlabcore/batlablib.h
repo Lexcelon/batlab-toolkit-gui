@@ -203,7 +203,7 @@ struct testPacket {
     QVector<QPair<int,int>> CHARGE;
 };
 
-struct channelInfo {
+struct channelDisplayInfo {
     QString cellName;
 
     bool testInProgress;
@@ -224,14 +224,14 @@ struct channelInfo {
     bool storageDischargeError;
 };
 
-struct batlabInfo {
+struct batlabDisplayInfo {
     bool externalPowerConnected;
     qint16 firmwareVersion;
     QString portName;
     qint16 serialNumberRegister;
     qint16 deviceIdRegister;
     qint32 serialNumberComplete;
-    channelInfo channels[4];
+    channelDisplayInfo channels[4];
 };
 
 #endif // BATLABLIB_H

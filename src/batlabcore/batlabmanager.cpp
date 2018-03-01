@@ -10,6 +10,26 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
     QTimer *updateConnectedBatlabsTimer = new QTimer(this);
     connect(updateConnectedBatlabsTimer, &QTimer::timeout, this, &BatlabManager::updateConnectedBatlabs);
     updateConnectedBatlabsTimer->start(200);
+
+    QTimer::singleShot(200, this, &BatlabManager::requestAvailableFirmwareVersions);
+
+}
+
+void BatlabManager::requestAvailableFirmwareVersions()
+{
+    networkAccessManager = new QNetworkAccessManager;
+    firmwareVersionsReply = networkAccessManager->get(QNetworkRequest(QUrl("https://api.github.com/repos/Lexcelon/batlab-firmware-measure/releases")));
+    connect(firmwareVersionsReply, &QNetworkReply::finished, this, &BatlabManager::processAvailableFirmwareVersions);
+}
+
+void BatlabManager::processAvailableFirmwareVersions()
+{
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(firmwareVersionsReply->readAll());
+    QJsonArray jsonArray = jsonDoc.array();
+    for (int i = 0; i < jsonArray.size(); i++)
+    {
+        availableFirmwareVersions.append(jsonArray[i].toObject()["tag_name"].toString());
+    }
 }
 
 void BatlabManager::updateConnectedBatlabs()
@@ -65,32 +85,37 @@ void BatlabManager::removeBatlab(QString portName)
 
 void BatlabManager::processUpdatedBatlabInfo()
 {
-    QVector<batlabInfo> infos;
+    QVector<batlabDisplayInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
         // Only show information for devices that have received valid responses (i.e. are Batlabs)
         if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
         {
-            batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
             infos.push_back(info);
         }
     }
     emit batlabInfoUpdated(infos);
 }
 
-QVector<batlabInfo> BatlabManager::getBatlabInfos()
+QVector<batlabDisplayInfo> BatlabManager::getBatlabInfos()
 {
-    QVector<batlabInfo> infos;
+    QVector<batlabDisplayInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
         // Only return information for devices that have received valid responses (i.e. are Batlabs)
         if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
         {
-            batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
             infos.push_back(info);
         }
     }
     return infos;
+}
+
+QVector<QString> BatlabManager::getFirmwareVersions()
+{
+    return availableFirmwareVersions;
 }
 
 void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
@@ -98,7 +123,7 @@ void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
     for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
     {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
         if (info.serialNumberComplete == serial)
         {
             connectedBatlabsByPortName[portName]->initiateRegisterRead(ns, address);
@@ -111,10 +136,25 @@ void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address,
     for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
     {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
         if (info.serialNumberComplete == serial)
         {
             connectedBatlabsByPortName[portName]->initiateRegisterWrite(ns, address, value);
+        }
+    }
+}
+
+void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVersion)
+{
+    QString firmwareFilePath = "";
+
+    for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
+    {
+        QString portName = connectedBatlabsByPortName.keys()[i];
+        batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        if (info.serialNumberComplete == serial)
+        {
+            connectedBatlabsByPortName[portName]->initiateFirmwareFlash(firmwareFilePath);
         }
     }
 }
