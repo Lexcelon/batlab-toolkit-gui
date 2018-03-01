@@ -9,8 +9,8 @@ class CellTestStatusWidget : public QFrame
 {
     Q_OBJECT
 public:
-    explicit CellTestStatusWidget(channelInfo info, QFrame *parent = nullptr);
-    void updatePhaseColors(channelInfo info);
+    explicit CellTestStatusWidget(channelDisplayInfo info, QFrame *parent = nullptr);
+    void updatePhaseColors(channelDisplayInfo info);
 
 signals:
 
