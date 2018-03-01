@@ -7,25 +7,17 @@ CellTestStatusWidget::CellTestStatusWidget(channelInfo info, QFrame *parent) : Q
     statusBarLayout->setSpacing(0);
 
     // Create the Warmup Label Text
-    char warmupLabelText[100];
-    strcpy(warmupLabelText, "Warmup (");
-    strcat(warmupLabelText, std::to_string(info.numWarmupCyclesCompleted).c_str());
-    strcat(warmupLabelText, " of ");
-    strcat(warmupLabelText, std::to_string(info.numWarmupCycles).c_str());
-    strcat(warmupLabelText, ")");
+    QString warmupLabelText = tr("Warmup (") + QString::number(info.numWarmupCyclesCompleted)
+            + " of " + QString::number(info.numWarmupCycles) + ")";
 
     // Create the Measurement Label Text
-    char measurementLabelText[100];
-    strcpy(measurementLabelText, "Measurement (");
-    strcat(measurementLabelText, std::to_string(info.numMeasurementCyclesCompleted).c_str());
-    strcat(measurementLabelText, " of ");
-    strcat(measurementLabelText, std::to_string(info.numMeasurementCycles).c_str());
-    strcat(measurementLabelText, ")");
+    QString measurementLabelText = tr("Measurement (") + QString::number(info.numMeasurementCyclesCompleted)
+            + " of " + QString::number(info.numMeasurementCycles) + ")";
 
     // Create the Test Phases Labels
     prechargeLabel = new QLabel(tr("Precharge"));
-    warmupLabel = new QLabel(tr(warmupLabelText));
-    measurementLabel = new QLabel(tr(measurementLabelText));
+    warmupLabel = new QLabel(warmupLabelText);
+    measurementLabel = new QLabel(measurementLabelText);
     storageLabel = new QLabel(tr("Storage Discharge"));
 
     prechargeLabel->setAlignment(Qt::AlignCenter);

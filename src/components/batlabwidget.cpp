@@ -24,11 +24,6 @@ BatlabWidget::BatlabWidget(batlabInfo info, QFrame *parent) : QFrame(parent)
     firmwareVersionUpdateButton = new QPushButton(tr("Update Firmware"));
     connect(firmwareVersionUpdateButton, &QAbstractButton::released, this, &BatlabWidget::updateFirmware);
 
-    // TODO: Update the current firmware version
-    if (info.firmwareVersion == 4.0) {
-        firmwareVersionUpdateButton->setEnabled(false);
-    }
-
     batlabInfoLayout->addWidget(serialNumberLabel, 0, 0);
     batlabInfoLayout->addWidget(serialNumberValueLabel, 0, 1);
     batlabInfoLayout->addWidget(portNameLabel, 1, 0);
@@ -37,7 +32,11 @@ BatlabWidget::BatlabWidget(batlabInfo info, QFrame *parent) : QFrame(parent)
     batlabInfoLayout->addWidget(externalPowerConnectedValueLabel, 2, 1);
     batlabInfoLayout->addWidget(firmwareVersionLabel, 3, 0);
     batlabInfoLayout->addWidget(firmwareVersionValueLabel, 3, 1);
-    batlabInfoLayout->addWidget(firmwareVersionUpdateButton, 4, 1);
+
+    // TODO: Update the current firmware version
+    if (info.firmwareVersion < 4.0 /* CURRENT_FIRMWARE */) {
+        batlabInfoLayout->addWidget(firmwareVersionUpdateButton, 4, 1);
+    }
 
     batlabInfoWidget->setLayout(batlabInfoLayout);
     batlabInfoWidget->setFixedWidth(275);
