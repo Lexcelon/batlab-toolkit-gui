@@ -41,8 +41,11 @@ public slots:
     void processRegisterWriteRequest(int serial, int ns, int address, int value);
     void processFirmwareFlashRequest(int serial, QString firmwareVersion);
 
+    void initializeNetworkAccessManager();
     void requestAvailableFirmwareVersions();
     void processAvailableFirmwareVersions();
+
+    QString getPortNameFromSerial(int serial);
 
 private:
     bool cellPlaylistLoaded;
