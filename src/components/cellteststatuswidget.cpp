@@ -1,6 +1,6 @@
 #include "cellteststatuswidget.h"
 
-CellTestStatusWidget::CellTestStatusWidget(channelInfo info, QFrame *parent) : QFrame(parent)
+CellTestStatusWidget::CellTestStatusWidget(channelDisplayInfo info, QFrame *parent) : QFrame(parent)
 {
 
     statusBarLayout = new QHBoxLayout;
@@ -52,7 +52,7 @@ CellTestStatusWidget::CellTestStatusWidget(channelInfo info, QFrame *parent) : Q
     this->setStyleSheet("QFrame CellTestStatusWidget { border: 2px solid black; border-radius:5px; padding:-10px; }");
 }
 
-void CellTestStatusWidget::updatePhaseColors(channelInfo info) {
+void CellTestStatusWidget::updatePhaseColors(channelDisplayInfo info) {
 
     const QString VALID_TEST_PHASE_COLOR = "QLabel { background-color : White; }";
     const QString SKIPPED_TEST_PHASE_COLOR = "QLabel { text-decoration: line-through;}";
