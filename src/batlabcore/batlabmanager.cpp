@@ -36,7 +36,7 @@ void BatlabManager::processAvailableFirmwareVersions()
     QJsonArray jsonArray = jsonDoc.array();
     for (int i = 0; i < jsonArray.size(); i++)
     {
-        availableFirmwareVersions.append(jsonArray[i].toObject()["tag_name"].toString());
+        availableFirmwareVersions[jsonArray[i].toObject()["tag_name"].toString()] = jsonArray[i].toObject()["assets"].toArray()[0].toObject()["browser_download_url"].toString();
     }
 }
 
@@ -123,7 +123,7 @@ QVector<batlabDisplayInfo> BatlabManager::getBatlabInfos()
 
 QVector<QString> BatlabManager::getFirmwareVersions()
 {
-    return availableFirmwareVersions;
+    return availableFirmwareVersions.keys().toVector();
 }
 
 void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
@@ -142,14 +142,18 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
 {
     if (networkAccessManager != nullptr)
     {
-        firmwareVersionsReply = networkAccessManager->get(QNetworkRequest(QUrl("https://api.github.com/repos/Lexcelon/batlab-firmware-measure/releases")));
-        connect(firmwareVersionsReply, &QNetworkReply::finished, this, &BatlabManager::processAvailableFirmwareVersions);
+        batlabsWaitingForFirmwareFiles[serial] = firmwareVersion;
+        firmwareDownloadReply = networkAccessManager->get(QNetworkRequest(QUrl(availableFirmwareVersions[firmwareVersion])));
+        connect(firmwareDownloadReply, &QNetworkReply::finished, this, &BatlabManager::requestFirmwareFlash);
     }
-    
-    QString firmwareFilePath = "";
+}
 
-    QString portName = getPortNameFromSerial(serial);
-    if (!portName.isEmpty()) { connectedBatlabsByPortName[portName]->initiateFirmwareFlash(firmwareFilePath); }
+void BatlabManager::requestFirmwareFlash()
+{
+    qDebug() << firmwareDownloadReply->url();
+
+//    QString portName = getPortNameFromSerial(serial);
+//    if (!portName.isEmpty()) { connectedBatlabsByPortName[portName]->initiateFirmwareFlash(firmwareFilePath); }
 }
 
 QString BatlabManager::getPortNameFromSerial(int serial)
