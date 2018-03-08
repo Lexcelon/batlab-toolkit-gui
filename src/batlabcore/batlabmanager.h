@@ -17,6 +17,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QFileInfo>
+#include <QStandardPaths>
+#include <QDir>
 
 #include "batlab.h"
 
@@ -55,12 +58,12 @@ private:
     QMap<QString, Batlab*> candidateBatlabsByPortName;
     QMap<QString, Batlab*> connectedBatlabsByPortName;
 
-    QMap<QString, QString> availableFirmwareVersions;
-    QMap<int, QString> batlabsWaitingForFirmwareFiles;
+    QMap<QString, QString> availableFirmwareVersionToUrl;
+    QMap<int, QString> batlabSerialToFirmwareVersionWaiting;
+    QMap<QString, QNetworkReply*> pendingFirmwareDownloads;
 
     QNetworkAccessManager* networkAccessManager;
     QNetworkReply* firmwareVersionsReply;
-    QNetworkReply* firmwareDownloadReply;
 };
 
 #endif // BATLABMANAGER_H

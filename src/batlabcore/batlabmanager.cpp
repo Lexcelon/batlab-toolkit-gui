@@ -36,7 +36,7 @@ void BatlabManager::processAvailableFirmwareVersions()
     QJsonArray jsonArray = jsonDoc.array();
     for (int i = 0; i < jsonArray.size(); i++)
     {
-        availableFirmwareVersions[jsonArray[i].toObject()["tag_name"].toString()] = jsonArray[i].toObject()["assets"].toArray()[0].toObject()["browser_download_url"].toString();
+        availableFirmwareVersionToUrl[jsonArray[i].toObject()["tag_name"].toString()] = jsonArray[i].toObject()["assets"].toArray()[0].toObject()["browser_download_url"].toString();
     }
 }
 
@@ -123,7 +123,7 @@ QVector<batlabDisplayInfo> BatlabManager::getBatlabInfos()
 
 QVector<QString> BatlabManager::getFirmwareVersions()
 {
-    return availableFirmwareVersions.keys().toVector();
+    return availableFirmwareVersionToUrl.keys().toVector();
 }
 
 void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
@@ -140,16 +140,58 @@ void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address,
 
 void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVersion)
 {
-    if (networkAccessManager != nullptr)
+    if (networkAccessManager == nullptr)
     {
-        batlabsWaitingForFirmwareFiles[serial] = firmwareVersion;
-        firmwareDownloadReply = networkAccessManager->get(QNetworkRequest(QUrl(availableFirmwareVersions[firmwareVersion])));
-        connect(firmwareDownloadReply, &QNetworkReply::finished, this, &BatlabManager::requestFirmwareFlash);
+        qWarning() << "Cannot request firmware download, network access manager has not been initialized.";
+        return;
     }
+
+    if (testsInProgress)
+    {
+        // TODO grey out firmware flash button when tests are in progress
+        qWarning() << "Cannot flash firmware while tests are in progress.";
+        return;
+    }
+
+    if (batlabSerialToFirmwareVersionWaiting.keys().contains(serial))
+    {
+        qWarning() << "Batlab " << QString::number(serial) << " already has pending firmware update.";
+    }
+
+    batlabSerialToFirmwareVersionWaiting[serial] = firmwareVersion;
+
+    QString firmwareFileUrl = availableFirmwareVersionToUrl[firmwareVersion];
+    QString firmwareFilename = QFileInfo(firmwareFileUrl).fileName();
+
+    QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
+    QString firmwareDirPath = appLocalDataPath + "/firmware-bin-files/";
+
+    QDir dir;
+    if (!dir.mkpath(firmwareDirPath)) {
+        qWarning() << "Unable to find/make firmware download path.";
+    }
+
+    QString firmwareFilePath = firmwareDirPath + firmwareFilename;
+    qDebug() << firmwareFilePath;
+
+    // Get filename from version
+    // Check if file already exists and is correct size
+        // If so, flash
+    // Check if URL already in map
+        // If yes, do nothing
+        // If no, create network reply and add to map
+            // connect timeout, error to function that removes it and throws warning
+            // connect finished to function that processes waiting batlab list and kicks off flashing
+
+    QNetworkReply* firmwareDownloadReply = networkAccessManager->get(QNetworkRequest(QUrl(availableFirmwareVersionToUrl[firmwareVersion])));
+
+    connect(firmwareDownloadReply, &QNetworkReply::finished, this, &BatlabManager::requestFirmwareFlash);
 }
 
 void BatlabManager::requestFirmwareFlash()
 {
+    // Double check file is existent and correct size
+    QNetworkReply* firmwareDownloadReply = qobject_cast<QNetworkReply*>(QObject::sender());
     qDebug() << firmwareDownloadReply->url();
 
 //    QString portName = getPortNameFromSerial(serial);
