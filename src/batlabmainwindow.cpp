@@ -74,6 +74,9 @@ void BatlabMainWindow::initializeMainWindowUI()
     resultsTabWidget->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     resultsTabWidget->setLineWidth(2);
 
+    resultsTabLayout = new QVBoxLayout;
+    resultsTabWidget->setLayout(resultsTabLayout);
+
     cellPlaylistNotLoadedWidget = new QWidget;
     cellPlaylistNotLoadedLayout = new QGridLayout;
 
@@ -241,6 +244,14 @@ void BatlabMainWindow::redrawBatlabInfo(QVector<batlabDisplayInfo> infos)
     batlabsButton->setText("Batlabs (" + QString::number(infos.size()) + ")");
 }
 
+void BatlabMainWindow::redrawResultsInfo(QVector<cellResultsDisplayInfo> infos)
+{
+    clearLayout(resultsTabLayout, true);
+
+    ResultsWidget *resultsWidget = new ResultsWidget(infos);
+    resultsTabLayout->addWidget(resultsWidget);
+}
+
 void BatlabMainWindow::createActions()
 {
     newCellPlaylistAct = new QAction(tr("&New Cell Playlist"), this);
@@ -292,6 +303,8 @@ void BatlabMainWindow::createMenus()
 void BatlabMainWindow::newCellPlaylist()
 {
     showNewCellPlaylistWizard();
+
+    // TODO: Show Playlist Results in the GUI?
 }
 
 void BatlabMainWindow::openCellPlaylist()
@@ -299,6 +312,8 @@ void BatlabMainWindow::openCellPlaylist()
     // First do the file thing
     // Then actually load the settings into the GUI
     loadPlaylistIntoGUI();
+
+
 }
 
 void BatlabMainWindow::exitBatlabToolkitGUI()
@@ -479,6 +494,49 @@ void BatlabMainWindow::showNewCellPlaylistWizard() {
 
 void BatlabMainWindow::loadPlaylistIntoGUI() {
 
+    QVector<cellResultsDisplayInfo> cellResultsDisplayInfoVector;
+
+    // ****** Dummy Data *******
+    cellResultsDisplayInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
+    newCellResult1.cellName = "CELL_1";
+    newCellResult1.testInProgress = true;
+    newCellResult1.testCompleted = false;
+    cellResultsDisplayInfoVector.push_back(newCellResult1);
+
+    cellResultsDisplayInfo newCellResult2 = BatlabLib::createInitializedcellResultsDisplayInfo();
+    newCellResult2.cellName = "CELL_2";
+    newCellResult2.testInProgress = false;
+    newCellResult2.testCompleted = false;
+    cellResultsDisplayInfoVector.push_back(newCellResult2);
+
+    cellResultsDisplayInfo newCellResult3 = BatlabLib::createInitializedcellResultsDisplayInfo();
+    newCellResult3.cellName = "CELL_3";
+    newCellResult3.testInProgress = false;
+    newCellResult3.testCompleted = true;
+    newCellResult3.chargeCapacity = 9.27;
+    newCellResult3.energyCapacity = 0.23;
+    newCellResult3.avgImpedance = 7.23;
+    newCellResult3.deltaTemperature = 19.23;
+    newCellResult3.avgCurrent = 8.00;
+    newCellResult3.avgVoltage = 4.21;
+    newCellResult3.runtime = 50.22;
+    cellResultsDisplayInfoVector.push_back(newCellResult3);
+
+    cellResultsDisplayInfo newCellResult4 = BatlabLib::createInitializedcellResultsDisplayInfo();
+    newCellResult4.cellName = "CELL_4";
+    newCellResult4.testInProgress = true;
+    newCellResult4.testCompleted = true;
+    newCellResult4.chargeCapacity = 6.43;
+    newCellResult4.energyCapacity = 1.20;
+    newCellResult4.avgImpedance = 9.22;
+    newCellResult4.deltaTemperature = 5.92;
+    newCellResult4.avgCurrent = 339.23;
+    newCellResult4.avgVoltage = 82.40;
+    newCellResult4.runtime = 100.21;
+    cellResultsDisplayInfoVector.push_back(newCellResult4);
+    // ****** End Dummy Data *******
+
+    redrawResultsInfo(cellResultsDisplayInfoVector);
 }
 
 void clearLayout(QLayout *layout) {

@@ -183,3 +183,19 @@ int BatlabLib::sendSineFrequency(float val)
 
     return T;
 }
+
+cellResultsDisplayInfo BatlabLib::createInitializedcellResultsDisplayInfo() {
+    cellResultsDisplayInfo newCellResult;
+    newCellResult.cellName = "";
+    newCellResult.testInProgress = false;
+    newCellResult.testCompleted = false;
+    newCellResult.chargeCapacity = -1;
+    newCellResult.energyCapacity = -1;
+    newCellResult.avgImpedance = -1;
+    newCellResult.deltaTemperature = -1;
+    newCellResult.avgCurrent = -1;
+    newCellResult.avgVoltage = -1;
+    newCellResult.runtime = -1;
+
+    return newCellResult;
+}
