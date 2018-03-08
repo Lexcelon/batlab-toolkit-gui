@@ -234,5 +234,20 @@ struct batlabDisplayInfo {
     channelDisplayInfo channels[4];
 };
 
+struct cellResultsDisplayInfo {
+    QString cellName;
+
+    bool testInProgress;
+    bool testCompleted;
+
+    float chargeCapacity;
+    float energyCapacity;
+    float avgImpedance;
+    float deltaTemperature;
+    float avgCurrent;
+    float avgVoltage;
+    float runtime;
+};
+
 #endif // BATLABLIB_H
 

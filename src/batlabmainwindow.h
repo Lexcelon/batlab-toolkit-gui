@@ -20,6 +20,7 @@
 #include "batlabcore/batlabmanager.h"
 #include "batlabcore/batlablogger.h"
 #include "components/batlabwidget.h"
+#include "components/resultswidget.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "testdata.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"
@@ -47,6 +48,7 @@ public slots:
     void updatelogViewTextBrowser(QString);
 
     void redrawBatlabInfo(QVector<batlabDisplayInfo> infos);
+    void redrawResultsInfo(QVector<cellResultsDisplayInfo> infos);
 
     void togglePrintDebugMessages(bool value);
 
@@ -118,6 +120,7 @@ private:
     bool printDebugMessages;
 
     QVBoxLayout *batlabsTabLayout;
+    QVBoxLayout *resultsTabLayout;
     QGridLayout *cellPlaylistTabLayout;
     QVBoxLayout *logViewTabLayout;
 
