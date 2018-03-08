@@ -96,6 +96,65 @@ enum commsNamespace {
     EXTERNAL_PSU_VOLTAGE,
 };
 
+struct testPacket {
+    QDateTime time;
+    QVector<int> TIME;
+    QVector<int> REG_MODE;
+    QVector<int> REG_STATUS;
+    QVector<float> REG_TEMPERATURE;
+    QVector<float> REG_CURRENT;
+    QVector<float> REG_VOLTAGE;
+    QVector<QPair<float,QPair<int,float>>> VOLTAGE_PP;
+    QVector<QPair<float,QPair<int,float>>> CURRENT_PP;
+    QVector<QPair<int,int>> CHARGE;
+};
+
+struct channelDisplayInfo {
+    QString cellName;
+
+    bool testInProgress;
+
+    bool preChargeComplete;
+    bool preChargeError;
+
+    int numWarmupCycles;
+    int numWarmupCyclesCompleted;
+    bool warmupCyclesError;
+
+    int numMeasurementCycles;
+    int numMeasurementCyclesCompleted;
+    bool measurementCyclesError;
+
+    bool storageDischarge;
+    bool storageDischargeComplete;
+    bool storageDischargeError;
+};
+
+struct batlabDisplayInfo {
+    bool externalPowerConnected;
+    qint16 firmwareVersion;
+    QString portName;
+    qint16 serialNumberRegister;
+    qint16 deviceIdRegister;
+    qint32 serialNumberComplete;
+    channelDisplayInfo channels[4];
+};
+
+struct cellResultsDisplayInfo {
+    QString cellName;
+
+    bool testInProgress;
+    bool testCompleted;
+
+    float chargeCapacity;
+    float energyCapacity;
+    float avgImpedance;
+    float deltaTemperature;
+    float avgCurrent;
+    float avgVoltage;
+    float runtime;
+};
+
 namespace BatlabLib
 {
     void bubblesort(QVector<float> data, QVector<int> &indices);
@@ -113,6 +172,7 @@ namespace BatlabLib
     int sendCurrentSetpoint(float val);
     float getSineFrequency(int val);
     int sendSineFrequency(float val);
+    cellResultsDisplayInfo createInitializedcellResultsDisplayInfo();
 
     void debugResponsePacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
     void debugCommandPacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
@@ -189,65 +249,6 @@ struct testParms
 #define MODE_DISCHARGE         0x0004
 #define MODE_IMPEDANCE         0x0005
 #define MODE_STOPPED           0x0006
-
-struct testPacket {
-    QDateTime time;
-    QVector<int> TIME;
-    QVector<int> REG_MODE;
-    QVector<int> REG_STATUS;
-    QVector<float> REG_TEMPERATURE;
-    QVector<float> REG_CURRENT;
-    QVector<float> REG_VOLTAGE;
-    QVector<QPair<float,QPair<int,float>>> VOLTAGE_PP;
-    QVector<QPair<float,QPair<int,float>>> CURRENT_PP;
-    QVector<QPair<int,int>> CHARGE;
-};
-
-struct channelDisplayInfo {
-    QString cellName;
-
-    bool testInProgress;
-
-    bool preChargeComplete;
-    bool preChargeError;
-
-    int numWarmupCycles;
-    int numWarmupCyclesCompleted;
-    bool warmupCyclesError;
-
-    int numMeasurementCycles;
-    int numMeasurementCyclesCompleted;
-    bool measurementCyclesError;
-
-    bool storageDischarge;
-    bool storageDischargeComplete;
-    bool storageDischargeError;
-};
-
-struct batlabDisplayInfo {
-    bool externalPowerConnected;
-    qint16 firmwareVersion;
-    QString portName;
-    qint16 serialNumberRegister;
-    qint16 deviceIdRegister;
-    qint32 serialNumberComplete;
-    channelDisplayInfo channels[4];
-};
-
-struct cellResultsDisplayInfo {
-    QString cellName;
-
-    bool testInProgress;
-    bool testCompleted;
-
-    float chargeCapacity;
-    float energyCapacity;
-    float avgImpedance;
-    float deltaTemperature;
-    float avgCurrent;
-    float avgVoltage;
-    float runtime;
-};
 
 #endif // BATLABLIB_H
 

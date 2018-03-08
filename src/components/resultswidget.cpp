@@ -13,24 +13,25 @@ ResultsWidget::ResultsWidget(QVector<cellResultsDisplayInfo> infos, QFrame *pare
 
     // Create Blank Labels to Replace Other Buttons
     QLabel *blankLabel = new QLabel("");
-    resultsButtonLayout->addWidget(blankLabel, 0, 0);
-    resultsButtonLayout->addWidget(blankLabel, 0, 1);
+    for (int i = 0; i < 6; i++) {
+        resultsButtonLayout->addWidget(blankLabel, 0, i);
+    }
 
     // Create Reset Cell Data Button
-    resetCellDataButton = new QPushButton(tr("Reset Cell Data for Selected Cells"));
-    resultsButtonLayout->addWidget(resetCellDataButton, 0, 0);
+    resetCellDataButton = new QPushButton(tr("Reset Selected Cell Data"));
+    resultsButtonLayout->addWidget(resetCellDataButton, 0, 4);
     resetCellDataButton->hide();
     connect(resetCellDataButton, &QPushButton::released, this, &ResultsWidget::resetCellData);
 
     // Create Select All Button
     selectAllButton = new QPushButton(tr("Select All"));
-    resultsButtonLayout->addWidget(selectAllButton, 0, 1);
+    resultsButtonLayout->addWidget(selectAllButton, 0, 5);
     selectAllButton->hide();
     connect(selectAllButton, &QPushButton::released, this, &ResultsWidget::selectAllRows);
 
     // Create Select Cells Button
     selectCellsButton = new QPushButton(tr("Select Cells"));
-    resultsButtonLayout->addWidget(selectCellsButton, 0, 2);
+    resultsButtonLayout->addWidget(selectCellsButton, 0, 6);
     connect(selectCellsButton, &QPushButton::released, this, &ResultsWidget::showSelectCells);
 
     // Create the Table Widget

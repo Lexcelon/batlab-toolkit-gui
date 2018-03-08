@@ -492,42 +492,24 @@ void BatlabMainWindow::showNewCellPlaylistWizard() {
     wizard->show();
 }
 
-cellResultsDisplayInfo createInitializedcellResultsDisplayInfo() {
-    cellResultsDisplayInfo newCellResult;
-    newCellResult.cellName = "";
-    newCellResult.testInProgress = false;
-    newCellResult.testCompleted = false;
-    newCellResult.chargeCapacity = -1;
-    newCellResult.energyCapacity = -1;
-    newCellResult.avgImpedance = -1;
-    newCellResult.deltaTemperature = -1;
-    newCellResult.avgCurrent = -1;
-    newCellResult.avgVoltage = -1;
-    newCellResult.runtime = -1;
-
-    return newCellResult;
-}
-
 void BatlabMainWindow::loadPlaylistIntoGUI() {
 
     QVector<cellResultsDisplayInfo> cellResultsDisplayInfoVector;
 
-    // **The cellResultsDisplayInfo Struct Values Must Be Initialized to -1
-
     // ****** Dummy Data *******
-    cellResultsDisplayInfo newCellResult1 = createInitializedcellResultsDisplayInfo();
+    cellResultsDisplayInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult1.cellName = "CELL_1";
     newCellResult1.testInProgress = true;
     newCellResult1.testCompleted = false;
     cellResultsDisplayInfoVector.push_back(newCellResult1);
 
-    cellResultsDisplayInfo newCellResult2 = createInitializedcellResultsDisplayInfo();
+    cellResultsDisplayInfo newCellResult2 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult2.cellName = "CELL_2";
     newCellResult2.testInProgress = false;
     newCellResult2.testCompleted = false;
     cellResultsDisplayInfoVector.push_back(newCellResult2);
 
-    cellResultsDisplayInfo newCellResult3 = createInitializedcellResultsDisplayInfo();
+    cellResultsDisplayInfo newCellResult3 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult3.cellName = "CELL_3";
     newCellResult3.testInProgress = false;
     newCellResult3.testCompleted = true;
@@ -540,7 +522,7 @@ void BatlabMainWindow::loadPlaylistIntoGUI() {
     newCellResult3.runtime = 50.22;
     cellResultsDisplayInfoVector.push_back(newCellResult3);
 
-    cellResultsDisplayInfo newCellResult4 = createInitializedcellResultsDisplayInfo();
+    cellResultsDisplayInfo newCellResult4 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult4.cellName = "CELL_4";
     newCellResult4.testInProgress = true;
     newCellResult4.testCompleted = true;
