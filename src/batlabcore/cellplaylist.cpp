@@ -1,6 +1,6 @@
-#include "batlabsettings.h"
+#include "cellplaylist.h"
 
-BatlabSettings::BatlabSettings()
+CellPlaylist::CellPlaylist()
 {
     cellPlaylistName = "";
     batlabCellPlaylistFileVersion = BATLAB_CELL_PLAYLIST_FILE_VERSION;
@@ -30,7 +30,7 @@ BatlabSettings::BatlabSettings()
     cellNames = QVector<QString>(0);
 }
 
-bool BatlabSettings::write(QString filename)
+bool CellPlaylist::write(QString filename)
 {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
@@ -92,7 +92,7 @@ bool BatlabSettings::write(QString filename)
     return true;
 }
 
-bool BatlabSettings::load(QString filename)
+bool CellPlaylist::load(QString filename)
 {
     QFile file(filename);
     if(!file.open(QIODevice::ReadOnly)) {
@@ -155,27 +155,27 @@ bool BatlabSettings::load(QString filename)
     return true;
 }
 
-bool BatlabSettings::setCellPlaylistName(QString str)
+bool CellPlaylist::setCellPlaylistName(QString str)
 {
     cellPlaylistName = str;
     return true;
 }
 
-QString BatlabSettings::getCellPlaylistName() {
+QString CellPlaylist::getCellPlaylistName() {
     return cellPlaylistName;
 }
 
-bool BatlabSettings::setBatlabCellPlaylistFileVersion(QString str)
+bool CellPlaylist::setBatlabCellPlaylistFileVersion(QString str)
 {
     batlabCellPlaylistFileVersion = str;
     return true;
 }
 
-QString BatlabSettings::getBatlabCellPlaylistFileVersion() {
+QString CellPlaylist::getBatlabCellPlaylistFileVersion() {
     return batlabCellPlaylistFileVersion;
 }
 
-bool BatlabSettings::setNumWarmupCycles(int num)
+bool CellPlaylist::setNumWarmupCycles(int num)
 {
     if(NUM_WARMUP_CYCLES_MIN <= num && num <= NUM_WARMUP_CYCLES_MAX)
     {
@@ -185,11 +185,11 @@ bool BatlabSettings::setNumWarmupCycles(int num)
     else { return false; }
 }
 
-int BatlabSettings::getNumWarmupCycles() {
+int CellPlaylist::getNumWarmupCycles() {
     return numWarmupCycles;
 }
 
-bool BatlabSettings::setNumMeasurementCycles(int num)
+bool CellPlaylist::setNumMeasurementCycles(int num)
 {
     if(NUM_MEASUREMENT_CYCLES_MIN <= num && num <= NUM_MEASUREMENT_CYCLES_MAX)
     {
@@ -199,11 +199,11 @@ bool BatlabSettings::setNumMeasurementCycles(int num)
     else { return false; }
 }
 
-int BatlabSettings::getNumMeasurementCycles() {
+int CellPlaylist::getNumMeasurementCycles() {
     return numMeasurementCycles;
 }
 
-bool BatlabSettings::setHighVoltageCutoff(double num)
+bool CellPlaylist::setHighVoltageCutoff(double num)
 {
     if(HIGH_VOLTAGE_CUTOFF_MIN <= num && num <= HIGH_VOLTAGE_CUTOFF_MAX)
     {
@@ -213,11 +213,11 @@ bool BatlabSettings::setHighVoltageCutoff(double num)
     else { return false; }
 }
 
-double BatlabSettings::getHighVoltageCutoff() {
+double CellPlaylist::getHighVoltageCutoff() {
     return highVoltageCutoff;
 }
 
-bool BatlabSettings::setLowVoltageCutoff(double num)
+bool CellPlaylist::setLowVoltageCutoff(double num)
 {
     if(LOW_VOLTAGE_CUTOFF_MIN <= num && num <= LOW_VOLTAGE_CUTOFF_MAX)
     {
@@ -227,21 +227,21 @@ bool BatlabSettings::setLowVoltageCutoff(double num)
     else { return false; }
 }
 
-double BatlabSettings::getLowVoltageCutoff() {
+double CellPlaylist::getLowVoltageCutoff() {
     return lowVoltageCutoff;
 }
 
-bool BatlabSettings::setStorageDischarge(bool val)
+bool CellPlaylist::setStorageDischarge(bool val)
 {
     storageDischarge = val;
     return true;
 }
 
-bool BatlabSettings::getStorageDischarge() {
+bool CellPlaylist::getStorageDischarge() {
     return storageDischarge;
 }
 
-bool BatlabSettings::setStorageDischargeVoltage(double num)
+bool CellPlaylist::setStorageDischargeVoltage(double num)
 {
     if(STORAGE_DISCHARGE_VOLTAGE_MIN <= num && num <= highVoltageCutoff) // Should set highVoltageCutoff first if it is not the default
     {
@@ -251,11 +251,11 @@ bool BatlabSettings::setStorageDischargeVoltage(double num)
     else { return false; }
 }
 
-double BatlabSettings::getStorageDischargeVoltage() {
+double CellPlaylist::getStorageDischargeVoltage() {
     return storageDischargeVoltage;
 }
 
-bool BatlabSettings::setRestPeriod(int num)
+bool CellPlaylist::setRestPeriod(int num)
 {
     if(REST_PERIOD_MIN <= num && num <= REST_PERIOD_MAX)
     {
@@ -265,11 +265,11 @@ bool BatlabSettings::setRestPeriod(int num)
     else { return false; }
 }
 
-int BatlabSettings::getRestPeriod() {
+int CellPlaylist::getRestPeriod() {
     return restPeriod;
 }
 
-bool BatlabSettings::setChargeTempCutoff(double num)
+bool CellPlaylist::setChargeTempCutoff(double num)
 {
     if(CHARGE_TEMP_CUTOFF_MIN <= num && num <= CHARGE_TEMP_CUTOFF_MAX)
     {
@@ -279,11 +279,11 @@ bool BatlabSettings::setChargeTempCutoff(double num)
     else { return false; }
 }
 
-double BatlabSettings::getChargeTempCutoff() {
+double CellPlaylist::getChargeTempCutoff() {
     return chargeTempCutoff;
 }
 
-bool BatlabSettings::setDischargeTempCutoff(double num)
+bool CellPlaylist::setDischargeTempCutoff(double num)
 {
     if(DISCHARGE_TEMP_CUTOFF_MIN <= num && num <= DISCHARGE_TEMP_CUTOFF_MAX)
     {
@@ -293,11 +293,11 @@ bool BatlabSettings::setDischargeTempCutoff(double num)
     else { return false; }
 }
 
-double BatlabSettings::getDischargeTempCutoff() {
+double CellPlaylist::getDischargeTempCutoff() {
     return dischargeTempCutoff;
 }
 
-bool BatlabSettings::setChargeCurrentSafetyCutoff(double num)
+bool CellPlaylist::setChargeCurrentSafetyCutoff(double num)
 {
     if(CHARGE_CURRENT_SAFETY_CUTOFF_MIN <= num && num <= CHARGE_CURRENT_SAFETY_CUTOFF_MAX)
     {
@@ -307,11 +307,11 @@ bool BatlabSettings::setChargeCurrentSafetyCutoff(double num)
     else { return false; }
 }
 
-double BatlabSettings::getChargeCurrentSafetyCutoff() {
+double CellPlaylist::getChargeCurrentSafetyCutoff() {
     return chargeCurrentSafetyCutoff;
 }
 
-bool BatlabSettings::setDischargeCurrentSafetyCutoff(double num)
+bool CellPlaylist::setDischargeCurrentSafetyCutoff(double num)
 {
     if(DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN <= num && num <= DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX)
     {
@@ -321,11 +321,11 @@ bool BatlabSettings::setDischargeCurrentSafetyCutoff(double num)
     else { return false; }
 }
 
-double BatlabSettings::getDischargeCurrentSafetyCutoff() {
+double CellPlaylist::getDischargeCurrentSafetyCutoff() {
     return dischargeCurrentSafetyCutoff;
 }
 
-bool BatlabSettings::setPrechargeRate(double num)
+bool CellPlaylist::setPrechargeRate(double num)
 {
     if(PRECHARGE_RATE_MIN <= num && num <= chargeCurrentSafetyCutoff) // Should set chargeCurrentSafetyCutoff first if it is not the default
     {
@@ -335,11 +335,11 @@ bool BatlabSettings::setPrechargeRate(double num)
     else { return false; }
 }
 
-double BatlabSettings::getPrechargeRate() {
+double CellPlaylist::getPrechargeRate() {
     return prechargeRate;
 }
 
-bool BatlabSettings::setChargeRate(double num)
+bool CellPlaylist::setChargeRate(double num)
 {
     if(CHARGE_RATE_MIN <= num && num <= chargeCurrentSafetyCutoff) // Should set chargeCurrentSafetyCutoff first if it is not the default
     {
@@ -349,11 +349,11 @@ bool BatlabSettings::setChargeRate(double num)
     else { return false; }
 }
 
-double BatlabSettings::getChargeRate() {
+double CellPlaylist::getChargeRate() {
     return chargeRate;
 }
 
-bool BatlabSettings::setDischargeRate(double num)
+bool CellPlaylist::setDischargeRate(double num)
 {
     if(DISCHARGE_RATE_MIN <= num && num <= dischargeCurrentSafetyCutoff) // Should set dischargeCurrentSafetyCutoff first if it is not the default
     {
@@ -363,11 +363,11 @@ bool BatlabSettings::setDischargeRate(double num)
     else { return false; }
 }
 
-double BatlabSettings::getDischargeRate() {
+double CellPlaylist::getDischargeRate() {
     return dischargeRate;
 }
 
-bool BatlabSettings::setAcceptableImpedanceThreshold(double num)
+bool CellPlaylist::setAcceptableImpedanceThreshold(double num)
 {
     if(ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN <= num && num <= ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX)
     {
@@ -377,11 +377,11 @@ bool BatlabSettings::setAcceptableImpedanceThreshold(double num)
     else { return false; }
 }
 
-double BatlabSettings::getAcceptableImpedanceThreshold() {
+double CellPlaylist::getAcceptableImpedanceThreshold() {
     return acceptableImpedanceThreshold;
 }
 
-bool BatlabSettings::setReportingPeriod(double num)
+bool CellPlaylist::setReportingPeriod(double num)
 {
     if(REPORTING_PERIOD_MIN <= num && num <= REPORTING_PERIOD_MAX)
     {
@@ -391,11 +391,11 @@ bool BatlabSettings::setReportingPeriod(double num)
     else { return false; }
 }
 
-double BatlabSettings::getReportingPeriod() {
+double CellPlaylist::getReportingPeriod() {
     return reportingPeriod;
 }
 
-bool BatlabSettings::setImpedanceReportingPeriod(double num)
+bool CellPlaylist::setImpedanceReportingPeriod(double num)
 {
     if(IMPEDANCE_REPORTING_PERIOD_MIN <= num && num <= IMPEDANCE_REPORTING_PERIOD_MAX)
     {
@@ -405,11 +405,11 @@ bool BatlabSettings::setImpedanceReportingPeriod(double num)
     else { return false; }
 }
 
-double BatlabSettings::getImpedanceReportingPeriod() {
+double CellPlaylist::getImpedanceReportingPeriod() {
     return impedanceReportingPeriod;
 }
 
-bool BatlabSettings::setSineWaveFrequency(double num)
+bool CellPlaylist::setSineWaveFrequency(double num)
 {
     if(SINE_WAVE_FREQUENCY_MIN <= num && num <= SINE_WAVE_FREQUENCY_MAX)
     {
@@ -419,11 +419,11 @@ bool BatlabSettings::setSineWaveFrequency(double num)
     else { return false; }
 }
 
-double BatlabSettings::getSineWaveFrequency() {
+double CellPlaylist::getSineWaveFrequency() {
     return sineWaveFrequency;
 }
 
-bool BatlabSettings::setSineWaveMagnitude(int num)
+bool CellPlaylist::setSineWaveMagnitude(int num)
 {
     if(SINE_WAVE_MAGNITUDE_MIN <= num && num <= SINE_WAVE_MAGNITUDE_MAX)
     {
@@ -433,56 +433,56 @@ bool BatlabSettings::setSineWaveMagnitude(int num)
     else { return false; }
 }
 
-int BatlabSettings::getSineWaveMagnitude() {
+int CellPlaylist::getSineWaveMagnitude() {
     return sineWaveMagnitude;
 }
 
-bool BatlabSettings::setIndividualCellLogs(bool val)
+bool CellPlaylist::setIndividualCellLogs(bool val)
 {
     individualCellLogs = val;
     return true;
 }
 
-bool BatlabSettings::getIndividualCellLogs() {
+bool CellPlaylist::getIndividualCellLogs() {
     return individualCellLogs;
 }
 
-bool BatlabSettings::setCellLogTimestamps(bool val)
+bool CellPlaylist::setCellLogTimestamps(bool val)
 {
     cellLogTimestamps = val;
     return true;
 }
 
-bool BatlabSettings::getCellLogTimestamps() {
+bool CellPlaylist::getCellLogTimestamps() {
     return cellLogTimestamps;
 }
 
-bool BatlabSettings::setPlaylistOutputDirectory(QString str)
+bool CellPlaylist::setPlaylistOutputDirectory(QString str)
 {
     playlistOutputDirectory = str;
     return true;
 }
 
-QString BatlabSettings::getPlaylistOutputDirectory() {
+QString CellPlaylist::getPlaylistOutputDirectory() {
     return playlistOutputDirectory;
 }
 
-bool BatlabSettings::setPlaylistSaveFilename(QString str)
+bool CellPlaylist::setPlaylistSaveFilename(QString str)
 {
     playlistSaveFilename = str;
     return true;
 }
 
-QString BatlabSettings::getPlaylistSaveFilename() {
+QString CellPlaylist::getPlaylistSaveFilename() {
     return playlistSaveFilename;
 }
 
-bool BatlabSettings::setCellNames(QVector<QString> names)
+bool CellPlaylist::setCellNames(QVector<QString> names)
 {
     cellNames = names;
     return true;
 }
 
-QVector<QString> BatlabSettings::getCellNames() {
+QVector<QString> CellPlaylist::getCellNames() {
     return cellNames;
 }

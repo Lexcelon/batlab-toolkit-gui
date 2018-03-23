@@ -1,5 +1,5 @@
-#ifndef BATLABSETTINGS_H
-#define BATLABSETTINGS_H
+#ifndef CELLPLAYLIST_H
+#define CELLPLAYLIST_H
 
 #include <QString>
 #include <QVector>
@@ -9,10 +9,10 @@
 #include <QJsonDocument>
 #include "batlablib.h"
 
-class BatlabSettings
+class CellPlaylist
 {
 public:
-    BatlabSettings();
+    CellPlaylist();
 
     bool write(QString filename);
     bool load(QString filename);
@@ -254,4 +254,4 @@ private:
 #define PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR                  "playlistOutputDirectory"
 #define PLAYLIST_SAVE_FILENAME_FIELDSTR                     "playlistSaveFilename"
 
-#endif // BATLABSETTINGS_H
+#endif // CELLPLAYLIST_H
