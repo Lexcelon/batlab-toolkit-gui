@@ -42,6 +42,7 @@ bool CellPlaylist::write(QString filename)
     }
 
     QJsonObject playlistJson;
+    QJsonObject batlabSettingsJson;
 
     playlistJson[CELL_PLAYLIST_NAME_FIELDSTR] = cellPlaylistName;
 
@@ -55,32 +56,34 @@ bool CellPlaylist::write(QString filename)
 
     playlistJson[REST_PERIOD_FIELDSTR] = restPeriod;
 
-    playlistJson[HIGH_VOLTAGE_CUTOFF_FIELDSTR] = playlistBatlabSettings.highVoltageCutoff;
-    playlistJson[LOW_VOLTAGE_CUTOFF_FIELDSTR] = playlistBatlabSettings.lowVoltageCutoff;
+    batlabSettingsJson[HIGH_VOLTAGE_CUTOFF_FIELDSTR] = playlistBatlabSettings.highVoltageCutoff;
+    batlabSettingsJson[LOW_VOLTAGE_CUTOFF_FIELDSTR] = playlistBatlabSettings.lowVoltageCutoff;
 
-    playlistJson[CHARGE_TEMP_CUTOFF_FIELDSTR] = playlistBatlabSettings.chargeTempCutoff;
-    playlistJson[DISCHARGE_TEMP_CUTOFF_FIELDSTR] = playlistBatlabSettings.dischargeTempCutoff;
+    batlabSettingsJson[CHARGE_TEMP_CUTOFF_FIELDSTR] = playlistBatlabSettings.chargeTempCutoff;
+    batlabSettingsJson[DISCHARGE_TEMP_CUTOFF_FIELDSTR] = playlistBatlabSettings.dischargeTempCutoff;
 
-    playlistJson[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = playlistBatlabSettings.chargeCurrentSafetyCutoff;
-    playlistJson[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = playlistBatlabSettings.dischargeCurrentSafetyCutoff;
+    batlabSettingsJson[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = playlistBatlabSettings.chargeCurrentSafetyCutoff;
+    batlabSettingsJson[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = playlistBatlabSettings.dischargeCurrentSafetyCutoff;
 
-    playlistJson[PRECHARGE_RATE_FIELDSTR] = playlistBatlabSettings.prechargeRate;
-    playlistJson[CHARGE_RATE_FIELDSTR] = playlistBatlabSettings.chargeRate;
-    playlistJson[DISCHARGE_RATE_FIELDSTR] = playlistBatlabSettings.dischargeRate;
+    batlabSettingsJson[PRECHARGE_RATE_FIELDSTR] = playlistBatlabSettings.prechargeRate;
+    batlabSettingsJson[CHARGE_RATE_FIELDSTR] = playlistBatlabSettings.chargeRate;
+    batlabSettingsJson[DISCHARGE_RATE_FIELDSTR] = playlistBatlabSettings.dischargeRate;
 
     playlistJson[ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR] = acceptableImpedanceThreshold;
 
     playlistJson[REPORTING_PERIOD_FIELDSTR] = reportingPeriod;
     playlistJson[IMPEDANCE_REPORTING_PERIOD_FIELDSTR] = impedanceReportingPeriod;
 
-    playlistJson[SINE_WAVE_FREQUENCY_FIELDSTR] = playlistBatlabSettings.sineWaveFrequency;
-    playlistJson[SINE_WAVE_MAGNITUDE_FIELDSTR] = playlistBatlabSettings.sineWaveMagnitude;
+    batlabSettingsJson[SINE_WAVE_FREQUENCY_FIELDSTR] = playlistBatlabSettings.sineWaveFrequency;
+    batlabSettingsJson[SINE_WAVE_MAGNITUDE_FIELDSTR] = playlistBatlabSettings.sineWaveMagnitude;
 
     playlistJson[INDIVIDUAL_CELL_LOGS_FIELDSTR] = individualCellLogs;
     playlistJson[CELL_LOG_TIMESTAMPS_FIELDSTR] = cellLogTimestamps;
 
     playlistJson[PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR] = playlistOutputDirectory;
     playlistJson[PLAYLIST_SAVE_FILENAME_FIELDSTR] = playlistSaveFilename;
+
+    playlistJson[BATLAB_SETTINGS_FIELDSTR] = batlabSettingsJson;
 
     QJsonArray cellNamesArray;
     for (int i = 0; i < cellNames.length(); i++) {
@@ -112,7 +115,10 @@ bool CellPlaylist::load(QString filename)
         CELL_PLAYLIST_NAME_FIELDSTR,
         BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR,
         CELL_NAMES_FIELDSTR,
+        BATLAB_SETTINGS_FIELDSTR
     };
+
+    QJsonObject batlabSettingsJsonObject = jsonObject[BATLAB_SETTINGS_FIELDSTR].toObject();
 
     for(int i = 0; i < requiredFields.length(); i++) {
         if(!jsonObject.contains(requiredFields[i])) {
@@ -126,23 +132,23 @@ bool CellPlaylist::load(QString filename)
 
     if(jsonObject.contains(NUM_WARMUP_CYCLES_FIELDSTR)) { setNumWarmupCycles(jsonObject[NUM_WARMUP_CYCLES_FIELDSTR].toInt()); }
     if(jsonObject.contains(NUM_MEASUREMENT_CYCLES_FIELDSTR)) { setNumMeasurementCycles(jsonObject[NUM_MEASUREMENT_CYCLES_FIELDSTR].toInt()); }
-    if(jsonObject.contains(HIGH_VOLTAGE_CUTOFF_FIELDSTR)) { setHighVoltageCutoff(jsonObject[HIGH_VOLTAGE_CUTOFF_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(LOW_VOLTAGE_CUTOFF_FIELDSTR)) { setLowVoltageCutoff(jsonObject[LOW_VOLTAGE_CUTOFF_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(HIGH_VOLTAGE_CUTOFF_FIELDSTR)) { setHighVoltageCutoff(batlabSettingsJsonObject[HIGH_VOLTAGE_CUTOFF_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(LOW_VOLTAGE_CUTOFF_FIELDSTR)) { setLowVoltageCutoff(batlabSettingsJsonObject[LOW_VOLTAGE_CUTOFF_FIELDSTR].toDouble()); }
     if(jsonObject.contains(STORAGE_DISCHARGE_FIELDSTR)) { setStorageDischarge(jsonObject[STORAGE_DISCHARGE_FIELDSTR].toBool()); }
     if(jsonObject.contains(STORAGE_DISCHARGE_VOLTAGE_FIELDSTR)) { setStorageDischargeVoltage(jsonObject[STORAGE_DISCHARGE_VOLTAGE_FIELDSTR].toDouble()); }
     if(jsonObject.contains(REST_PERIOD_FIELDSTR)) { setRestPeriod(jsonObject[REST_PERIOD_FIELDSTR].toInt()); }
-    if(jsonObject.contains(CHARGE_TEMP_CUTOFF_FIELDSTR)) { setChargeTempCutoff(jsonObject[CHARGE_TEMP_CUTOFF_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(DISCHARGE_TEMP_CUTOFF_FIELDSTR)) { setDischargeTempCutoff(jsonObject[DISCHARGE_TEMP_CUTOFF_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR)) { setChargeCurrentSafetyCutoff(jsonObject[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR)) { setDischargeCurrentSafetyCutoff(jsonObject[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(PRECHARGE_RATE_FIELDSTR)) { setPrechargeRate(jsonObject[PRECHARGE_RATE_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(CHARGE_RATE_FIELDSTR)) { setChargeRate(jsonObject[CHARGE_RATE_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(DISCHARGE_RATE_FIELDSTR)) { setDischargeRate(jsonObject[DISCHARGE_RATE_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(CHARGE_TEMP_CUTOFF_FIELDSTR)) { setChargeTempCutoff(batlabSettingsJsonObject[CHARGE_TEMP_CUTOFF_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(DISCHARGE_TEMP_CUTOFF_FIELDSTR)) { setDischargeTempCutoff(batlabSettingsJsonObject[DISCHARGE_TEMP_CUTOFF_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR)) { setChargeCurrentSafetyCutoff(batlabSettingsJsonObject[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR)) { setDischargeCurrentSafetyCutoff(batlabSettingsJsonObject[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(PRECHARGE_RATE_FIELDSTR)) { setPrechargeRate(batlabSettingsJsonObject[PRECHARGE_RATE_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(CHARGE_RATE_FIELDSTR)) { setChargeRate(batlabSettingsJsonObject[CHARGE_RATE_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(DISCHARGE_RATE_FIELDSTR)) { setDischargeRate(batlabSettingsJsonObject[DISCHARGE_RATE_FIELDSTR].toDouble()); }
     if(jsonObject.contains(ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR)) { setAcceptableImpedanceThreshold(jsonObject[ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR].toDouble()); }
     if(jsonObject.contains(REPORTING_PERIOD_FIELDSTR)) { setReportingPeriod(jsonObject[REPORTING_PERIOD_FIELDSTR].toDouble()); }
     if(jsonObject.contains(IMPEDANCE_REPORTING_PERIOD_FIELDSTR)) { setImpedanceReportingPeriod(jsonObject[IMPEDANCE_REPORTING_PERIOD_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(SINE_WAVE_FREQUENCY_FIELDSTR)) { setSineWaveFrequency(jsonObject[SINE_WAVE_FREQUENCY_FIELDSTR].toDouble()); }
-    if(jsonObject.contains(SINE_WAVE_MAGNITUDE_FIELDSTR)) { setSineWaveMagnitude(jsonObject[SINE_WAVE_MAGNITUDE_FIELDSTR].toInt()); }
+    if(batlabSettingsJsonObject.contains(SINE_WAVE_FREQUENCY_FIELDSTR)) { setSineWaveFrequency(batlabSettingsJsonObject[SINE_WAVE_FREQUENCY_FIELDSTR].toDouble()); }
+    if(batlabSettingsJsonObject.contains(SINE_WAVE_MAGNITUDE_FIELDSTR)) { setSineWaveMagnitude(batlabSettingsJsonObject[SINE_WAVE_MAGNITUDE_FIELDSTR].toInt()); }
     if(jsonObject.contains(INDIVIDUAL_CELL_LOGS_FIELDSTR)) { setIndividualCellLogs(jsonObject[INDIVIDUAL_CELL_LOGS_FIELDSTR].toBool()); }
     if(jsonObject.contains(CELL_LOG_TIMESTAMPS_FIELDSTR)) { setCellLogTimestamps(jsonObject[CELL_LOG_TIMESTAMPS_FIELDSTR].toBool()); }
     if(jsonObject.contains(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR)) { setPlaylistOutputDirectory(jsonObject[PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR].toString()); }

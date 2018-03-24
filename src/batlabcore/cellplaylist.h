@@ -244,4 +244,6 @@ private:
 #define PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR                  "playlistOutputDirectory"
 #define PLAYLIST_SAVE_FILENAME_FIELDSTR                     "playlistSaveFilename"
 
+#define BATLAB_SETTINGS_FIELDSTR                            "batlabSettings"
+
 #endif // CELLPLAYLIST_H
