@@ -6,29 +6,32 @@ CellPlaylist::CellPlaylist()
     batlabCellPlaylistFileVersion = BATLAB_CELL_PLAYLIST_FILE_VERSION;
     numWarmupCycles = NUM_WARMUP_CYCLES_DEFAULT;
     numMeasurementCycles = NUM_MEASUREMENT_CYCLES_DEFAULT;
-    highVoltageCutoff = HIGH_VOLTAGE_CUTOFF_DEFAULT;
-    lowVoltageCutoff = LOW_VOLTAGE_CUTOFF_DEFAULT;
     storageDischarge = STORAGE_DISCHARGE_DEFAULT;
     storageDischargeVoltage = STORAGE_DISCHARGE_VOLTAGE_DEFAULT;
     restPeriod = REST_PERIOD_DEFAULT;
-    chargeTempCutoff = CHARGE_TEMP_CUTOFF_DEFAULT;
-    dischargeTempCutoff = DISCHARGE_TEMP_CUTOFF_DEFAULT;
-    chargeCurrentSafetyCutoff = CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT;
-    dischargeCurrentSafetyCutoff = DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT;
-    prechargeRate = PRECHARGE_RATE_DEFAULT;
-    chargeRate = CHARGE_RATE_DEFAULT;
-    dischargeRate = DISCHARGE_RATE_DEFAULT;
     acceptableImpedanceThreshold = ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT;
     reportingPeriod = REPORTING_PERIOD_DEFAULT;
     impedanceReportingPeriod = IMPEDANCE_REPORTING_PERIOD_DEFAULT;
-    sineWaveFrequency = SINE_WAVE_FREQUENCY_DEFAULT;
-    sineWaveMagnitude = SINE_WAVE_MAGNITUDE_DEFAULT;
     individualCellLogs = INDIVIDUAL_CELL_LOGS_DEFAULT;
     cellLogTimestamps = CELL_LOG_TIMESTAMPS_DEFAULT;
     playlistOutputDirectory = "";
     playlistSaveFilename = "";
     cellNames = QVector<QString>(0);
+
+    playlistBatlabSettings.highVoltageCutoff = HIGH_VOLTAGE_CUTOFF_DEFAULT;
+    playlistBatlabSettings.lowVoltageCutoff = LOW_VOLTAGE_CUTOFF_DEFAULT;
+    playlistBatlabSettings.chargeTempCutoff = CHARGE_TEMP_CUTOFF_DEFAULT;
+    playlistBatlabSettings.dischargeTempCutoff = DISCHARGE_TEMP_CUTOFF_DEFAULT;
+    playlistBatlabSettings.chargeCurrentSafetyCutoff = CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT;
+    playlistBatlabSettings.dischargeCurrentSafetyCutoff = DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT;
+    playlistBatlabSettings.prechargeRate = PRECHARGE_RATE_DEFAULT;
+    playlistBatlabSettings.chargeRate = CHARGE_RATE_DEFAULT;
+    playlistBatlabSettings.dischargeRate = DISCHARGE_RATE_DEFAULT;
+    playlistBatlabSettings.sineWaveFrequency = SINE_WAVE_FREQUENCY_DEFAULT;
+    playlistBatlabSettings.sineWaveMagnitude = SINE_WAVE_MAGNITUDE_DEFAULT;
 }
+
+
 
 bool CellPlaylist::write(QString filename)
 {
@@ -52,26 +55,26 @@ bool CellPlaylist::write(QString filename)
 
     playlistJson[REST_PERIOD_FIELDSTR] = restPeriod;
 
-    playlistJson[HIGH_VOLTAGE_CUTOFF_FIELDSTR] = highVoltageCutoff;
-    playlistJson[LOW_VOLTAGE_CUTOFF_FIELDSTR] = lowVoltageCutoff;
+    playlistJson[HIGH_VOLTAGE_CUTOFF_FIELDSTR] = playlistBatlabSettings.highVoltageCutoff;
+    playlistJson[LOW_VOLTAGE_CUTOFF_FIELDSTR] = playlistBatlabSettings.lowVoltageCutoff;
 
-    playlistJson[CHARGE_TEMP_CUTOFF_FIELDSTR] = chargeTempCutoff;
-    playlistJson[DISCHARGE_TEMP_CUTOFF_FIELDSTR] = dischargeTempCutoff;
+    playlistJson[CHARGE_TEMP_CUTOFF_FIELDSTR] = playlistBatlabSettings.chargeTempCutoff;
+    playlistJson[DISCHARGE_TEMP_CUTOFF_FIELDSTR] = playlistBatlabSettings.dischargeTempCutoff;
 
-    playlistJson[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = chargeCurrentSafetyCutoff;
-    playlistJson[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = dischargeCurrentSafetyCutoff;
+    playlistJson[CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = playlistBatlabSettings.chargeCurrentSafetyCutoff;
+    playlistJson[DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR] = playlistBatlabSettings.dischargeCurrentSafetyCutoff;
 
-    playlistJson[PRECHARGE_RATE_FIELDSTR] = prechargeRate;
-    playlistJson[CHARGE_RATE_FIELDSTR] = chargeRate;
-    playlistJson[DISCHARGE_RATE_FIELDSTR] = dischargeRate;
+    playlistJson[PRECHARGE_RATE_FIELDSTR] = playlistBatlabSettings.prechargeRate;
+    playlistJson[CHARGE_RATE_FIELDSTR] = playlistBatlabSettings.chargeRate;
+    playlistJson[DISCHARGE_RATE_FIELDSTR] = playlistBatlabSettings.dischargeRate;
 
     playlistJson[ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR] = acceptableImpedanceThreshold;
 
     playlistJson[REPORTING_PERIOD_FIELDSTR] = reportingPeriod;
     playlistJson[IMPEDANCE_REPORTING_PERIOD_FIELDSTR] = impedanceReportingPeriod;
 
-    playlistJson[SINE_WAVE_FREQUENCY_FIELDSTR] = sineWaveFrequency;
-    playlistJson[SINE_WAVE_MAGNITUDE_FIELDSTR] = sineWaveMagnitude;
+    playlistJson[SINE_WAVE_FREQUENCY_FIELDSTR] = playlistBatlabSettings.sineWaveFrequency;
+    playlistJson[SINE_WAVE_MAGNITUDE_FIELDSTR] = playlistBatlabSettings.sineWaveMagnitude;
 
     playlistJson[INDIVIDUAL_CELL_LOGS_FIELDSTR] = individualCellLogs;
     playlistJson[CELL_LOG_TIMESTAMPS_FIELDSTR] = cellLogTimestamps;
@@ -207,28 +210,28 @@ bool CellPlaylist::setHighVoltageCutoff(double num)
 {
     if(HIGH_VOLTAGE_CUTOFF_MIN <= num && num <= HIGH_VOLTAGE_CUTOFF_MAX)
     {
-        highVoltageCutoff = num;
+        playlistBatlabSettings.highVoltageCutoff = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getHighVoltageCutoff() {
-    return highVoltageCutoff;
+    return playlistBatlabSettings.highVoltageCutoff;
 }
 
 bool CellPlaylist::setLowVoltageCutoff(double num)
 {
     if(LOW_VOLTAGE_CUTOFF_MIN <= num && num <= LOW_VOLTAGE_CUTOFF_MAX)
     {
-        lowVoltageCutoff = num;
+        playlistBatlabSettings.lowVoltageCutoff = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getLowVoltageCutoff() {
-    return lowVoltageCutoff;
+    return playlistBatlabSettings.lowVoltageCutoff;
 }
 
 bool CellPlaylist::setStorageDischarge(bool val)
@@ -243,7 +246,7 @@ bool CellPlaylist::getStorageDischarge() {
 
 bool CellPlaylist::setStorageDischargeVoltage(double num)
 {
-    if(STORAGE_DISCHARGE_VOLTAGE_MIN <= num && num <= highVoltageCutoff) // Should set highVoltageCutoff first if it is not the default
+    if(STORAGE_DISCHARGE_VOLTAGE_MIN <= num && num <= playlistBatlabSettings.highVoltageCutoff) // Should set highVoltageCutoff first if it is not the default
     {
         storageDischargeVoltage = num;
         return true;
@@ -273,98 +276,98 @@ bool CellPlaylist::setChargeTempCutoff(double num)
 {
     if(CHARGE_TEMP_CUTOFF_MIN <= num && num <= CHARGE_TEMP_CUTOFF_MAX)
     {
-        chargeTempCutoff = num;
+        playlistBatlabSettings.chargeTempCutoff = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getChargeTempCutoff() {
-    return chargeTempCutoff;
+    return playlistBatlabSettings.chargeTempCutoff;
 }
 
 bool CellPlaylist::setDischargeTempCutoff(double num)
 {
     if(DISCHARGE_TEMP_CUTOFF_MIN <= num && num <= DISCHARGE_TEMP_CUTOFF_MAX)
     {
-        dischargeTempCutoff = num;
+        playlistBatlabSettings.dischargeTempCutoff = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getDischargeTempCutoff() {
-    return dischargeTempCutoff;
+    return playlistBatlabSettings.dischargeTempCutoff;
 }
 
 bool CellPlaylist::setChargeCurrentSafetyCutoff(double num)
 {
     if(CHARGE_CURRENT_SAFETY_CUTOFF_MIN <= num && num <= CHARGE_CURRENT_SAFETY_CUTOFF_MAX)
     {
-        chargeCurrentSafetyCutoff = num;
+        playlistBatlabSettings.chargeCurrentSafetyCutoff = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getChargeCurrentSafetyCutoff() {
-    return chargeCurrentSafetyCutoff;
+    return playlistBatlabSettings.chargeCurrentSafetyCutoff;
 }
 
 bool CellPlaylist::setDischargeCurrentSafetyCutoff(double num)
 {
     if(DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN <= num && num <= DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX)
     {
-        dischargeCurrentSafetyCutoff = num;
+        playlistBatlabSettings.dischargeCurrentSafetyCutoff = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getDischargeCurrentSafetyCutoff() {
-    return dischargeCurrentSafetyCutoff;
+    return playlistBatlabSettings.dischargeCurrentSafetyCutoff;
 }
 
 bool CellPlaylist::setPrechargeRate(double num)
 {
-    if(PRECHARGE_RATE_MIN <= num && num <= chargeCurrentSafetyCutoff) // Should set chargeCurrentSafetyCutoff first if it is not the default
+    if(PRECHARGE_RATE_MIN <= num && num <= playlistBatlabSettings.chargeCurrentSafetyCutoff) // Should set chargeCurrentSafetyCutoff first if it is not the default
     {
-        prechargeRate = num;
+        playlistBatlabSettings.prechargeRate = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getPrechargeRate() {
-    return prechargeRate;
+    return playlistBatlabSettings.prechargeRate;
 }
 
 bool CellPlaylist::setChargeRate(double num)
 {
-    if(CHARGE_RATE_MIN <= num && num <= chargeCurrentSafetyCutoff) // Should set chargeCurrentSafetyCutoff first if it is not the default
+    if(CHARGE_RATE_MIN <= num && num <= playlistBatlabSettings.chargeCurrentSafetyCutoff) // Should set chargeCurrentSafetyCutoff first if it is not the default
     {
-        chargeRate = num;
+        playlistBatlabSettings.chargeRate = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getChargeRate() {
-    return chargeRate;
+    return playlistBatlabSettings.chargeRate;
 }
 
 bool CellPlaylist::setDischargeRate(double num)
 {
-    if(DISCHARGE_RATE_MIN <= num && num <= dischargeCurrentSafetyCutoff) // Should set dischargeCurrentSafetyCutoff first if it is not the default
+    if(DISCHARGE_RATE_MIN <= num && num <= playlistBatlabSettings.dischargeCurrentSafetyCutoff) // Should set dischargeCurrentSafetyCutoff first if it is not the default
     {
-        dischargeRate = num;
+        playlistBatlabSettings.dischargeRate = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getDischargeRate() {
-    return dischargeRate;
+    return playlistBatlabSettings.dischargeRate;
 }
 
 bool CellPlaylist::setAcceptableImpedanceThreshold(double num)
@@ -413,28 +416,28 @@ bool CellPlaylist::setSineWaveFrequency(double num)
 {
     if(SINE_WAVE_FREQUENCY_MIN <= num && num <= SINE_WAVE_FREQUENCY_MAX)
     {
-        sineWaveFrequency = num;
+        playlistBatlabSettings.sineWaveFrequency = num;
         return true;
     }
     else { return false; }
 }
 
 double CellPlaylist::getSineWaveFrequency() {
-    return sineWaveFrequency;
+    return playlistBatlabSettings.sineWaveFrequency;
 }
 
 bool CellPlaylist::setSineWaveMagnitude(int num)
 {
     if(SINE_WAVE_MAGNITUDE_MIN <= num && num <= SINE_WAVE_MAGNITUDE_MAX)
     {
-        sineWaveMagnitude = num;
+        playlistBatlabSettings.sineWaveMagnitude = num;
         return true;
     }
     else { return false; }
 }
 
 int CellPlaylist::getSineWaveMagnitude() {
-    return sineWaveMagnitude;
+    return playlistBatlabSettings.sineWaveMagnitude;
 }
 
 bool CellPlaylist::setIndividualCellLogs(bool val)

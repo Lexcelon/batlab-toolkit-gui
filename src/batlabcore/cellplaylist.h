@@ -75,28 +75,18 @@ private:
     QString batlabCellPlaylistFileVersion;
     int numWarmupCycles;
     int numMeasurementCycles;
-    double highVoltageCutoff;
-    double lowVoltageCutoff;
     bool storageDischarge;
     double storageDischargeVoltage;
     int restPeriod;
-    double chargeTempCutoff;
-    double dischargeTempCutoff;
-    double chargeCurrentSafetyCutoff;
-    double dischargeCurrentSafetyCutoff;
-    double prechargeRate;
-    double chargeRate;
-    double dischargeRate;
     double acceptableImpedanceThreshold;
     double reportingPeriod;
     double impedanceReportingPeriod;
-    double sineWaveFrequency;
-    int sineWaveMagnitude;
     bool individualCellLogs;
     bool cellLogTimestamps;
     QString playlistOutputDirectory;
     QString playlistSaveFilename;
     QVector<QString> cellNames;
+    batlabSettings playlistBatlabSettings;
 };
 
 // TODO review limits with Daniel
