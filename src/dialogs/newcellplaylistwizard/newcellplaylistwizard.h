@@ -3,7 +3,7 @@
 
 #include <QWizard>
 #include <QtWidgets>
-#include "batlabcore/batlabsettings.h"
+#include "batlabcore/cellplaylist.h"
 #include "batlabcore/version.h"
 
 QString cellName(QString designator, int numCells, int startingCellNum, int cellId);
@@ -21,7 +21,7 @@ public:
 
 private:
     bool skipped;
-    BatlabSettings *settings;
+    CellPlaylist *playlist;
 };
 
 class IntroPage : public QWizardPage

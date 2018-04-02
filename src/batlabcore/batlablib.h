@@ -155,6 +155,20 @@ struct cellResultsDisplayInfo {
     float runtime;
 };
 
+struct batlabSettings {
+    double highVoltageCutoff;
+    double lowVoltageCutoff;
+    double chargeTempCutoff;
+    double dischargeTempCutoff;
+    double chargeCurrentSafetyCutoff;
+    double dischargeCurrentSafetyCutoff;
+    double prechargeRate;
+    double chargeRate;
+    double dischargeRate;
+    double sineWaveFrequency;
+    int sineWaveMagnitude;
+};
+
 namespace BatlabLib
 {
     void bubblesort(QVector<float> data, QVector<int> &indices);

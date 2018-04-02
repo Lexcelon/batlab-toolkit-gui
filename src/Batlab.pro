@@ -54,7 +54,6 @@ SOURCES += main.cpp\
     qtautoupdater/autoupdatergui/updateinfodialog.cpp \
     settings.cpp \
     qtautoupdater/autoupdatergui/dialogmaster.cpp \
-    batlabcore/batlabsettings.cpp \
     batlabcore/batlabmanager.cpp \
     batlabcore/batlab.cpp \
     components/batlabwidget.cpp \
@@ -62,7 +61,8 @@ SOURCES += main.cpp\
     batlabcore/batlabcommthread.cpp \
     batlabcore/batlablib.cpp \
     components/cellteststatuswidget.cpp \
-    components/resultswidget.cpp
+    components/resultswidget.cpp \
+    batlabcore/cellplaylist.cpp
 
 HEADERS  += \
     batlabconfig.h \
@@ -95,7 +95,6 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/updateinfodialog_p.h \
     settings.h \
     qtautoupdater/autoupdatergui/dialogmaster.h \
-    batlabcore/batlabsettings.h \
     batlabcore/version.h \
     batlabcore/batlabmanager.h \
     batlabcore/batlab.h \
@@ -105,7 +104,8 @@ HEADERS  += \
     components/hexspinbox.h \
     batlabcore/batlabcommthread.h \
     components/cellteststatuswidget.h \
-    components/resultswidget.h
+    components/resultswidget.h \
+    batlabcore/cellplaylist.h
 
 FORMS    += \
     testwindow.ui \

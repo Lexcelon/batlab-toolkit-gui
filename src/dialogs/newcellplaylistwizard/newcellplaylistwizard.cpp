@@ -16,7 +16,7 @@ void NewCellPlaylistWizard::accept()
 NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
 {
     skipped = false;
-    settings = new BatlabSettings;
+    playlist = new CellPlaylist;
     // The fields registered do not by default know what value and signal
     // to use with a QDoubleSpinBox, so we have to tell it how to handle those.
     // Why it does not have the same default behavior as QSpinBox I do not know.
@@ -494,24 +494,24 @@ void NewCellPlaylistWizard::savePlaylist()
         // We also don't want to do this if they got to the next page with the "Skip" button
         if (skipped == false) {
 
-            settings->setCellPlaylistName(field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified());
-            settings->setNumWarmupCycles(field(NUM_WARMUP_CYCLES_FIELDSTR).toInt());
-            settings->setNumMeasurementCycles(field(NUM_MEASUREMENT_CYCLES_FIELDSTR).toInt());
-            settings->setHighVoltageCutoff(field(HIGH_VOLTAGE_CUTOFF_FIELDSTR).toDouble());
-            settings->setLowVoltageCutoff(field(LOW_VOLTAGE_CUTOFF_FIELDSTR).toDouble());
-            settings->setStorageDischarge(field(STORAGE_DISCHARGE_FIELDSTR).toBool());
-            settings->setStorageDischargeVoltage(field(STORAGE_DISCHARGE_VOLTAGE_FIELDSTR).toDouble());
-            settings->setRestPeriod(field(REST_PERIOD_FIELDSTR).toInt());
-            settings->setChargeTempCutoff(field(CHARGE_TEMP_CUTOFF_FIELDSTR).toDouble());
-            settings->setDischargeTempCutoff(field(DISCHARGE_TEMP_CUTOFF_FIELDSTR).toDouble());
-            settings->setChargeCurrentSafetyCutoff(field(CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble());
-            settings->setDischargeCurrentSafetyCutoff(field(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble());
-            settings->setPrechargeRate(field(PRECHARGE_RATE_FIELDSTR).toDouble());
-            settings->setChargeRate(field(CHARGE_RATE_FIELDSTR).toDouble());
-            settings->setDischargeRate(field(DISCHARGE_RATE_FIELDSTR).toDouble());
-            settings->setAcceptableImpedanceThreshold(field(ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR).toDouble());
-            settings->setPlaylistOutputDirectory(field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString());
-            settings->setPlaylistSaveFilename(field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString());
+            playlist->setCellPlaylistName(field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified());
+            playlist->setNumWarmupCycles(field(NUM_WARMUP_CYCLES_FIELDSTR).toInt());
+            playlist->setNumMeasurementCycles(field(NUM_MEASUREMENT_CYCLES_FIELDSTR).toInt());
+            playlist->setHighVoltageCutoff(field(HIGH_VOLTAGE_CUTOFF_FIELDSTR).toDouble());
+            playlist->setLowVoltageCutoff(field(LOW_VOLTAGE_CUTOFF_FIELDSTR).toDouble());
+            playlist->setStorageDischarge(field(STORAGE_DISCHARGE_FIELDSTR).toBool());
+            playlist->setStorageDischargeVoltage(field(STORAGE_DISCHARGE_VOLTAGE_FIELDSTR).toDouble());
+            playlist->setRestPeriod(field(REST_PERIOD_FIELDSTR).toInt());
+            playlist->setChargeTempCutoff(field(CHARGE_TEMP_CUTOFF_FIELDSTR).toDouble());
+            playlist->setDischargeTempCutoff(field(DISCHARGE_TEMP_CUTOFF_FIELDSTR).toDouble());
+            playlist->setChargeCurrentSafetyCutoff(field(CHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble());
+            playlist->setDischargeCurrentSafetyCutoff(field(DISCHARGE_CURRENT_SAFETY_CUTOFF_FIELDSTR).toDouble());
+            playlist->setPrechargeRate(field(PRECHARGE_RATE_FIELDSTR).toDouble());
+            playlist->setChargeRate(field(CHARGE_RATE_FIELDSTR).toDouble());
+            playlist->setDischargeRate(field(DISCHARGE_RATE_FIELDSTR).toDouble());
+            playlist->setAcceptableImpedanceThreshold(field(ACCEPTABLE_IMPEDANCE_THRESHOLD_FIELDSTR).toDouble());
+            playlist->setPlaylistOutputDirectory(field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString());
+            playlist->setPlaylistSaveFilename(field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString());
 
             QVector<QString> names;
             int numCells = field(NUM_CELLS_FIELDSTR).toInt();
@@ -521,10 +521,10 @@ void NewCellPlaylistWizard::savePlaylist()
                 QString cellStr = cellName(designator, numCells, startingCellNumber, cellId);
                 names.append(cellStr);
             }
-            settings->setCellNames(names);
+            playlist->setCellNames(names);
 
             QString saveFileName = field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified();
-            settings->write(saveFileName);
+            playlist->write(saveFileName);
         }
         skipped = false;
     }
