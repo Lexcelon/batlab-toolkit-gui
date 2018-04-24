@@ -146,13 +146,12 @@ struct cellResultsDisplayInfo {
     bool testInProgress;
     bool testCompleted;
 
-    float chargeCapacity;
-    float energyCapacity;
-    float avgImpedance;
-    float deltaTemperature;
-    float avgCurrent;
+    float capacity;
+    float capacityRange;
+    float coloumbicEfficiency;
+    float impedance;
     float avgVoltage;
-    float runtime;
+    float avgCurrent;
 };
 
 struct batlabSettings {

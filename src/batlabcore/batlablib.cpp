@@ -189,13 +189,13 @@ cellResultsDisplayInfo BatlabLib::createInitializedcellResultsDisplayInfo() {
     newCellResult.cellName = "";
     newCellResult.testInProgress = false;
     newCellResult.testCompleted = false;
-    newCellResult.chargeCapacity = -1;
-    newCellResult.energyCapacity = -1;
-    newCellResult.avgImpedance = -1;
-    newCellResult.deltaTemperature = -1;
-    newCellResult.avgCurrent = -1;
+
+    newCellResult.capacity = -1;
+    newCellResult.capacityRange = -1;
+    newCellResult.coloumbicEfficiency = -1;
+    newCellResult.impedance = -1;
     newCellResult.avgVoltage = -1;
-    newCellResult.runtime = -1;
+    newCellResult.avgCurrent = -1;
 
     return newCellResult;
 }

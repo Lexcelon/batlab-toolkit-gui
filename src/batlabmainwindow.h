@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QCloseEvent>
+#include <QPair>
 
 #include "batlabconfig.h"
 #include "settings.h"
@@ -137,7 +138,7 @@ private slots:
     void aboutBatlabToolkitGUI();
 
     void showNewCellPlaylistWizard();
-    void loadPlaylistIntoGUI();
+    void loadPlaylistIntoGUI(CellPlaylist* CellPlaylist);
 
     void savelogView();
     void processQtLogMessage(QtMsgType type, QString str);
@@ -149,5 +150,15 @@ private slots:
 };
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+
+#define TEST_TYPE_HEADER            "Test Type"
+#define CAPACITY_HEADER             "Capacity"
+#define CAPACITY_RANGE_HEADER       "CapacityRange"
+#define COLOUMBIC_EFFICIENCY_HEADER "ColoumbicEfficiency"
+#define IMPEDANCE_HEADER            "Impedance"
+#define AVG_VOLTAGE_HEADER          "AvgVoltage"
+#define AVG_CURRENT_HEADER          "AvgCurrent"
+#define SUMMARY_HEADER              "SUMMARY"
+
 
 #endif // BATLAB_MAIN_WINDOW_H

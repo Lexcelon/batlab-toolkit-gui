@@ -37,17 +37,16 @@ ResultsWidget::ResultsWidget(QVector<cellResultsDisplayInfo> infos, QFrame *pare
     // Create the Table Widget
     resultsTableWidget = new QTableWidget;
     resultsTableWidget->setRowCount(infos.length());
-    resultsTableWidget->setColumnCount(8);
+    resultsTableWidget->setColumnCount(7);
 
     // Create the Table Header
     resultsTableWidget->setHorizontalHeaderItem(0,  new QTableWidgetItem(tr("Test Status")));
-    resultsTableWidget->setHorizontalHeaderItem(1,  new QTableWidgetItem(tr("Charge Capacity (C)")));
-    resultsTableWidget->setHorizontalHeaderItem(2,  new QTableWidgetItem(tr("Energy Capacity (J)")));
-    resultsTableWidget->setHorizontalHeaderItem(3,  new QTableWidgetItem(tr("Avg Impedance (Ohm)")));
-    resultsTableWidget->setHorizontalHeaderItem(4,  new QTableWidgetItem(tr("Delta Temperature (C)")));
+    resultsTableWidget->setHorizontalHeaderItem(1,  new QTableWidgetItem(tr("Capacity (C)")));
+    resultsTableWidget->setHorizontalHeaderItem(2,  new QTableWidgetItem(tr("Capacity Range (C)")));
+    resultsTableWidget->setHorizontalHeaderItem(3,  new QTableWidgetItem(tr("Coloumbic Efficiency (%)")));
+    resultsTableWidget->setHorizontalHeaderItem(4,  new QTableWidgetItem(tr("Impedance (Ohms)")));
     resultsTableWidget->setHorizontalHeaderItem(5,  new QTableWidgetItem(tr("Avg Current (A)")));
     resultsTableWidget->setHorizontalHeaderItem(6,  new QTableWidgetItem(tr("Avg Voltage (V)")));
-    resultsTableWidget->setHorizontalHeaderItem(7,  new QTableWidgetItem(tr("Runtime (s)")));
 
     // Stretch the Columns to Fill Available Space
     for (int c = 1; c < resultsTableWidget->horizontalHeader()->count(); c++)
@@ -81,13 +80,12 @@ ResultsWidget::ResultsWidget(QVector<cellResultsDisplayInfo> infos, QFrame *pare
             resultsTableWidget->setItem(i, 0, completedItem);
         }
 
-        resultsTableWidget->setItem(i, 1, new QTableWidgetItem(infos[i].chargeCapacity == -1 ? "--" : QString::number(infos[i].chargeCapacity)));
-        resultsTableWidget->setItem(i, 2, new QTableWidgetItem(infos[i].energyCapacity == -1 ? "--" : QString::number(infos[i].energyCapacity)));
-        resultsTableWidget->setItem(i, 3, new QTableWidgetItem(infos[i].avgImpedance == -1 ? "--" : QString::number(infos[i].avgImpedance)));
-        resultsTableWidget->setItem(i, 4, new QTableWidgetItem(infos[i].deltaTemperature == -1 ? "--" : QString::number(infos[i].deltaTemperature)));
-        resultsTableWidget->setItem(i, 5, new QTableWidgetItem(infos[i].avgCurrent == -1 ? "--" : QString::number(infos[i].avgCurrent)));
-        resultsTableWidget->setItem(i, 6, new QTableWidgetItem(infos[i].avgVoltage == -1 ? "--" : QString::number(infos[i].avgVoltage)));
-        resultsTableWidget->setItem(i, 7, new QTableWidgetItem(infos[i].runtime == -1 ? "--" : QString::number(infos[i].runtime)));
+        resultsTableWidget->setItem(i, 1, new QTableWidgetItem(infos[i].capacity == -1 ? "--" : QString::number(infos[i].capacity)));
+        resultsTableWidget->setItem(i, 2, new QTableWidgetItem(infos[i].capacityRange == -1 ? "--" : QString::number(infos[i].capacityRange)));
+        resultsTableWidget->setItem(i, 3, new QTableWidgetItem(infos[i].coloumbicEfficiency == -1 ? "--" : QString::number(infos[i].coloumbicEfficiency * 100)));
+        resultsTableWidget->setItem(i, 4, new QTableWidgetItem(infos[i].impedance == -1 ? "--" : QString::number(infos[i].impedance)));
+        resultsTableWidget->setItem(i, 5, new QTableWidgetItem(infos[i].avgVoltage == -1 ? "--" : QString::number(infos[i].avgVoltage)));
+        resultsTableWidget->setItem(i, 6, new QTableWidgetItem(infos[i].avgCurrent == -1 ? "--" : QString::number(infos[i].avgCurrent)));
     }
 
     resultsLayout->addLayout(resultsButtonLayout);
@@ -98,14 +96,14 @@ ResultsWidget::ResultsWidget(QVector<cellResultsDisplayInfo> infos, QFrame *pare
 }
 
 void ResultsWidget::showSelectCells() {
-    resultsTableWidget->setColumnCount(9);
+    resultsTableWidget->setColumnCount(8);
     selectCellsButton->setText(tr("Cancel"));
 
     // Resize the Selection Column
     resultsTableWidget->horizontalHeader()->setSectionResizeMode(
-        8, QHeaderView::Fixed);
-    resultsTableWidget->horizontalHeader()->resizeSection(8, 30);
-    resultsTableWidget->setHorizontalHeaderItem(8,  new QTableWidgetItem(tr("X")));
+        7, QHeaderView::Fixed);
+    resultsTableWidget->horizontalHeader()->resizeSection(7, 30);
+    resultsTableWidget->setHorizontalHeaderItem(7,  new QTableWidgetItem(tr("X")));
 
     // Reset Button Connections
     disconnect(selectCellsButton, &QAbstractButton::released, this, &ResultsWidget::showSelectCells);
@@ -125,13 +123,13 @@ void ResultsWidget::showSelectCells() {
         checkBoxItems.push_back(checkBoxItem);
 
         // Add Check Box to Row
-        resultsTableWidget->setItem(i, 8, checkBoxItem);
+        resultsTableWidget->setItem(i, 7, checkBoxItem);
     }
 
 }
 
 void ResultsWidget::hideSelectCells() {
-    resultsTableWidget->setColumnCount(8);
+    resultsTableWidget->setColumnCount(7);
     selectCellsButton->setText(tr("Select Cells"));
 
     // Stretch the Columns to Fill Available Space

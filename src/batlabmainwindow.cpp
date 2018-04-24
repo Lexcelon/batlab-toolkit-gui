@@ -250,6 +250,9 @@ void BatlabMainWindow::redrawResultsInfo(QVector<cellResultsDisplayInfo> infos)
 
     ResultsWidget *resultsWidget = new ResultsWidget(infos);
     resultsTabLayout->addWidget(resultsWidget);
+
+    // Move to the Results Tab
+    mainStackedWidget->setCurrentWidget(resultsTabWidget);
 }
 
 void BatlabMainWindow::createActions()
@@ -309,11 +312,19 @@ void BatlabMainWindow::newCellPlaylist()
 
 void BatlabMainWindow::openCellPlaylist()
 {
-    // First do the file thing
-    // Then actually load the settings into the GUI
-    loadPlaylistIntoGUI();
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                    "/",
+                                                    tr("Json Files (*.json)"));
 
+    if (fileName != "") {
+        CellPlaylist *cellPlaylist = new CellPlaylist;
+        bool loadedSuccessfully = cellPlaylist->load(fileName);
 
+        // Then actually load the settings into the GUI
+        if (loadedSuccessfully) {
+            loadPlaylistIntoGUI(cellPlaylist);
+        }
+    }
 }
 
 void BatlabMainWindow::exitBatlabToolkitGUI()
@@ -492,50 +503,124 @@ void BatlabMainWindow::showNewCellPlaylistWizard() {
     wizard->show();
 }
 
-void BatlabMainWindow::loadPlaylistIntoGUI() {
+void BatlabMainWindow::loadPlaylistIntoGUI(CellPlaylist* cellPlaylist) {
 
     QVector<cellResultsDisplayInfo> cellResultsDisplayInfoVector;
 
-    // ****** Dummy Data *******
-    cellResultsDisplayInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
-    newCellResult1.cellName = "CELL_1";
-    newCellResult1.testInProgress = true;
-    newCellResult1.testCompleted = false;
-    cellResultsDisplayInfoVector.push_back(newCellResult1);
+    // Initialize the Cell Results Display Info Vector
+    QVector<QString> cellNames = cellPlaylist->getCellNames();
+    for (int i = 0; i < cellNames.size(); i++) {
+        cellResultsDisplayInfo newCellResult = BatlabLib::createInitializedcellResultsDisplayInfo();
 
-    cellResultsDisplayInfo newCellResult2 = BatlabLib::createInitializedcellResultsDisplayInfo();
-    newCellResult2.cellName = "CELL_2";
-    newCellResult2.testInProgress = false;
-    newCellResult2.testCompleted = false;
-    cellResultsDisplayInfoVector.push_back(newCellResult2);
+        // Update the values of the newCellResult from the CSV files
+        newCellResult.cellName = cellNames[i];
+        cellResultsDisplayInfoVector.push_back(newCellResult);
+    }
 
-    cellResultsDisplayInfo newCellResult3 = BatlabLib::createInitializedcellResultsDisplayInfo();
-    newCellResult3.cellName = "CELL_3";
-    newCellResult3.testInProgress = false;
-    newCellResult3.testCompleted = true;
-    newCellResult3.chargeCapacity = 9.27;
-    newCellResult3.energyCapacity = 0.23;
-    newCellResult3.avgImpedance = 7.23;
-    newCellResult3.deltaTemperature = 19.23;
-    newCellResult3.avgCurrent = 8.00;
-    newCellResult3.avgVoltage = 4.21;
-    newCellResult3.runtime = 50.22;
-    cellResultsDisplayInfoVector.push_back(newCellResult3);
+    // Open the CSV File
+    QFile file(cellPlaylist->getPlaylistOutputDirectory() + cellPlaylist->getCellPlaylistName() + ".csv");
+    if ( !file.open(QFile::ReadOnly | QFile::Text) ) {
+        qDebug() << "File does not exist";
+    }
+    else {
 
-    cellResultsDisplayInfo newCellResult4 = BatlabLib::createInitializedcellResultsDisplayInfo();
-    newCellResult4.cellName = "CELL_4";
-    newCellResult4.testInProgress = true;
-    newCellResult4.testCompleted = true;
-    newCellResult4.chargeCapacity = 6.43;
-    newCellResult4.energyCapacity = 1.20;
-    newCellResult4.avgImpedance = 9.22;
-    newCellResult4.deltaTemperature = 5.92;
-    newCellResult4.avgCurrent = 339.23;
-    newCellResult4.avgVoltage = 82.40;
-    newCellResult4.runtime = 100.21;
-    cellResultsDisplayInfoVector.push_back(newCellResult4);
-    // ****** End Dummy Data *******
+        // Create a thread to retrieve data from a file
+        QTextStream in(&file);
 
+        // Reads the data up to the end of file
+        int counter = 0;
+        int headerIndex = -1;
+        QList<QList<QString>> lineList;
+        while (!in.atEnd()) {
+
+            QString line = in.readLine();
+            QList<QString> columnList;
+
+            // Split the line up using commas
+            for (QString item : line.split(",")) {
+                if (item == "Cell Name") {
+                    headerIndex = counter;
+                }
+                columnList.append(item);
+            }
+            counter ++;
+            lineList.append(columnList);
+        }
+
+        int testTypeColumnIndex = -1;
+        int capacityColumnIndex = -1;
+        int capacityRangeColumnIndex = -1;
+        int coloumbicEfficiencyColumnIndex = -1;
+        int impedianceColumnIndex = -1;
+        int avgVoltageColumnIndex = -1;
+        int avgCurrentColumnIndex = -1;
+        if (headerIndex != -1) {
+
+            // Loop through each of the header columns
+            for (int i = 0; i < lineList.at(headerIndex).size(); i++) {
+
+                // Find the header column indexes
+                if (lineList.at(headerIndex).at(i) == TEST_TYPE_HEADER) {
+                    testTypeColumnIndex = i;
+                }
+                else if (lineList.at(headerIndex).at(i) == CAPACITY_HEADER) {
+                    capacityColumnIndex = i;
+                }
+                else if (lineList.at(headerIndex).at(i) == CAPACITY_RANGE_HEADER) {
+                    capacityRangeColumnIndex = i;
+                }
+                else if (lineList.at(headerIndex).at(i) == COLOUMBIC_EFFICIENCY_HEADER) {
+                    coloumbicEfficiencyColumnIndex = i;
+                }
+                else if (lineList.at(headerIndex).at(i) == IMPEDANCE_HEADER) {
+                    impedianceColumnIndex = i;
+                }
+                else if (lineList.at(headerIndex).at(i) == AVG_VOLTAGE_HEADER) {
+                    avgVoltageColumnIndex = i;
+                }
+                else if (lineList.at(headerIndex).at(i) == AVG_CURRENT_HEADER) {
+                    avgCurrentColumnIndex = i;
+                }
+            }
+        }
+
+        // Find the most recent line for each cell
+        QMap<QString, int> recentCellLines;
+        for (int i = headerIndex + 1; i < lineList.size(); i++) {
+            if (recentCellLines.contains(lineList.at(i).at(0))) {
+                recentCellLines[lineList.at(i).at(0)] = i;
+            }
+            else {
+                recentCellLines.insert(lineList.at(i).at(0), i);
+            }
+        }
+
+        // Update the cellResultsDisplayInfoVector
+        for (int i = 0; i < cellResultsDisplayInfoVector.size(); i++) {
+            QString tempCellName = QString::number(cellResultsDisplayInfoVector.at(i).cellName.toInt());
+            if (recentCellLines.contains(tempCellName)) {
+                if (lineList.at(recentCellLines[tempCellName]).at(testTypeColumnIndex) == SUMMARY_HEADER) {
+                    cellResultsDisplayInfoVector[i].testInProgress = false;
+                    cellResultsDisplayInfoVector[i].testCompleted = true;
+                    cellResultsDisplayInfoVector[i].capacity = lineList.at(recentCellLines[tempCellName]).at(capacityColumnIndex) == "" ? -1 : lineList.at(recentCellLines[tempCellName]).at(capacityColumnIndex).toDouble();
+                    cellResultsDisplayInfoVector[i].capacityRange = lineList.at(recentCellLines[tempCellName]).at(capacityRangeColumnIndex) == "" ? -1 : lineList.at(recentCellLines[tempCellName]).at(capacityRangeColumnIndex).toDouble();
+                    cellResultsDisplayInfoVector[i].coloumbicEfficiency = lineList.at(recentCellLines[tempCellName]).at(coloumbicEfficiencyColumnIndex) == "" ? -1 : lineList.at(recentCellLines[tempCellName]).at(coloumbicEfficiencyColumnIndex).toDouble();
+                    cellResultsDisplayInfoVector[i].impedance = lineList.at(recentCellLines[tempCellName]).at(impedianceColumnIndex) == "" ? -1 : lineList.at(recentCellLines[tempCellName]).at(impedianceColumnIndex).toDouble();
+                    cellResultsDisplayInfoVector[i].avgVoltage = lineList.at(recentCellLines[tempCellName]).at(avgVoltageColumnIndex) == "" ? -1 : lineList.at(recentCellLines[tempCellName]).at(avgVoltageColumnIndex).toDouble();
+                    cellResultsDisplayInfoVector[i].avgCurrent = lineList.at(recentCellLines[tempCellName]).at(avgCurrentColumnIndex) == "" ? -1 : lineList.at(recentCellLines[tempCellName]).at(avgCurrentColumnIndex).toDouble();
+                }
+                else {
+                    cellResultsDisplayInfoVector[i].testInProgress = true;
+                    cellResultsDisplayInfoVector[i].testCompleted = false;
+                }
+            }
+            else {
+                cellResultsDisplayInfoVector[i].testInProgress = false;
+                cellResultsDisplayInfoVector[i].testCompleted = false;
+            }
+        }
+        file.close();
+    }
     redrawResultsInfo(cellResultsDisplayInfoVector);
 }
 
