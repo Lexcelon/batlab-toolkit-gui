@@ -10,6 +10,8 @@
 #include <QComboBox>
 #include <QInputDialog>
 #include <qmath.h>
+#include <QFileInfo>
+
 #include "batlablib.h"
 #include "batlabcommthread.h"
 

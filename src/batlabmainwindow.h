@@ -11,18 +11,14 @@
 #include <QSpinBox>
 #include <QCloseEvent>
 
-#include "batlabconfig.h"
-#include "settings.h"
 #include "dialogs/batlabdebugdialog/batlabdebugdialog.h"
 #include "batlabcore/batlab.h"
-#include "batlabcellmanager.h"
 #include "batlabcore/version.h"
 #include "batlabcore/batlabmanager.h"
 #include "batlabcore/batlablogger.h"
 #include "components/batlabwidget.h"
 #include "components/resultswidget.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
-#include "testdata.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"
 #include "qtautoupdater/autoupdatergui/updatecontroller.h"
 
@@ -61,7 +57,6 @@ private:
     BatlabManager *batlabManager;
 
     BatlabDebugDialog *batlabDebugDialog = nullptr;
-    batlabCellManager * cellManager = nullptr;
 
     void initializeMainWindowUI();
     void createMenus();

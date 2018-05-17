@@ -1,8 +1,6 @@
 #include "batlabmainwindow.h"
 #include <QFileDialog>
-#include "inputstringdialog.h"
 #include <QScrollBar>
-#include <cellmodulewidget.h>
 #include <QSpacerItem>
 
 BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
