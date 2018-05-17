@@ -30,21 +30,9 @@ win32 {
 }
 
 SOURCES += main.cpp\
-    batlabconfig.cpp \
-    batlabcellmanager.cpp \
-    batlabcell.cpp \
-    batlabsystemtest.cpp \
-    testwindow.cpp \
-    batlabtestgroup.cpp \
-    batlabtestplan.cpp \
     dialogs/batlabdebugdialog/batlabdebugdialog.cpp \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.cpp \
     batlabmainwindow.cpp \
-    cellmodulewidget.cpp \
-    histogramobject.cpp \
-    histogramwidget.cpp \
-    inputstringdialog.cpp \
-    testdata.cpp \
     qtautoupdater/autoupdatercore/simplescheduler.cpp \
     qtautoupdater/autoupdatercore/updater.cpp \
     qtautoupdater/autoupdatercore/updater_p.cpp \
@@ -52,7 +40,6 @@ SOURCES += main.cpp\
     qtautoupdater/autoupdatergui/updatebutton.cpp \
     qtautoupdater/autoupdatergui/updatecontroller.cpp \
     qtautoupdater/autoupdatergui/updateinfodialog.cpp \
-    settings.cpp \
     qtautoupdater/autoupdatergui/dialogmaster.cpp \
     batlabcore/batlabmanager.cpp \
     batlabcore/batlab.cpp \
@@ -65,21 +52,9 @@ SOURCES += main.cpp\
     batlabcore/cellplaylist.cpp
 
 HEADERS  += \
-    batlabconfig.h \
-    batlabcellmanager.h \
-    batlabcell.h \
-    batlabsystemtest.h \
-    testwindow.h \
-    batlabtestgroup.h \
-    batlabtestplan.h \
     dialogs/batlabdebugdialog/batlabdebugdialog.h \
     dialogs/newcellplaylistwizard/newcellplaylistwizard.h \
-    testdata.h \
-    histogramwidget.h \
-    inputstringdialog.h \
     batlabmainwindow.h \
-    cellmodulewidget.h \
-    histogramobject.h \
     qtautoupdater/autoupdatercore/adminauthoriser.h \
     qtautoupdater/autoupdatercore/qtautoupdatercore_global.h \
     qtautoupdater/autoupdatercore/simplescheduler_p.h \
@@ -93,7 +68,6 @@ HEADERS  += \
     qtautoupdater/autoupdatergui/updatecontroller.h \
     qtautoupdater/autoupdatergui/updatecontroller_p.h \
     qtautoupdater/autoupdatergui/updateinfodialog_p.h \
-    settings.h \
     qtautoupdater/autoupdatergui/dialogmaster.h \
     batlabcore/version.h \
     batlabcore/batlabmanager.h \
