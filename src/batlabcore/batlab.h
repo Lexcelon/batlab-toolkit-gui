@@ -33,7 +33,6 @@ signals:
     void infoUpdated();
 
 public slots:
-    void processAvailableSerialPortData();
     void initiateRegisterRead(int, int);
     void initiateRegisterWrite(int, int, int);
     void initiateFirmwareFlash(QString firmwareFilePath);
