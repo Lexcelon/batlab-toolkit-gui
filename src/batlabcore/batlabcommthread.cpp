@@ -14,7 +14,7 @@ BatlabCommThread::~BatlabCommThread()
     wait();
 }
 
-void BatlabCommThread::transaction(const int serialnumber, const QString &portName, int waitTimeout, const QVector<uchar> request)
+void BatlabCommThread::transaction(const int serialnumber, const QString &portName, int waitTimeout, const QVector<uchar> request, int sleepAfterTransaction)
 {
     const QMutexLocker locker(&m_mutex);
     m_portName = portName;
@@ -22,7 +22,7 @@ void BatlabCommThread::transaction(const int serialnumber, const QString &portNa
 
     // Add this command to this Batlab's queue.
     // Without the queue, this command wouldn't get sent if the thread were in the process of waiting for a response from another command.
-    m_commandQueue.enqueue({waitTimeout, request});
+    m_commandQueue.enqueue({waitTimeout, request, sleepAfterTransaction});
 
     if (!isRunning())
     {
@@ -51,6 +51,7 @@ void BatlabCommThread::run()
     batlabCommand currentCommand = m_commandQueue.dequeue();
     int currentWaitTimeout = currentCommand.waitTimeout;
     QVector<uchar> currentRequest = currentCommand.request;
+    int currentSleepAfterTransaction = currentCommand.sleepAfterTransaction;
 
     m_mutex.unlock();
 
@@ -140,6 +141,8 @@ void BatlabCommThread::run()
                          .arg(QTime::currentTime().toString()));
 
         }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(currentSleepAfterTransaction));
 
         m_mutex.lock();
 

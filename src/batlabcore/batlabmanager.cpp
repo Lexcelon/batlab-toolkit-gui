@@ -140,12 +140,6 @@ void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address,
 
 void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVersion)
 {
-    if (networkAccessManager == nullptr)
-    {
-        qWarning() << "Cannot request firmware download, network access manager has not been initialized.";
-        return;
-    }
-
     if (testsInProgress)
     {
         // TODO grey out firmware flash button when tests are in progress
@@ -156,6 +150,7 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
     if (batlabSerialToFirmwareVersionWaiting.keys().contains(serial))
     {
         qWarning() << "Batlab " << QString::number(serial) << " already has pending firmware update.";
+        // TODO replace that update with this one?
     }
 
     batlabSerialToFirmwareVersionWaiting[serial] = firmwareVersion;
@@ -163,37 +158,103 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
     QString firmwareFileUrl = availableFirmwareVersionToUrl[firmwareVersion];
     QString firmwareFilename = QFileInfo(firmwareFileUrl).fileName();
 
-    QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
-    QString firmwareDirPath = appLocalDataPath + "/firmware-bin-files/";
+    QDir appLocalDataPath(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first());
+    QString firmwareDirPath = appLocalDataPath.absoluteFilePath("firmware-bin-files");
 
     QDir dir;
     if (!dir.mkpath(firmwareDirPath)) {
         qWarning() << "Unable to find/make firmware download path.";
     }
 
-    QString firmwareFilePath = firmwareDirPath + firmwareFilename;
-    qDebug() << firmwareFilePath;
+    QString firmwareFilePath = QDir(firmwareDirPath).absoluteFilePath(firmwareFilename);
+    QFileInfo firmwareFileInfo(firmwareFilePath);
+    // Check if file already exists and is correct size. If so, flash.
+    if (firmwareFileInfo.exists() && firmwareFileInfo.size() == FIRMWARE_FILE_SIZE)
+    {
+        batlabSerialToFirmwareVersionWaiting.remove(serial);
+        connectedBatlabsByPortName[getPortNameFromSerial(serial)]->initiateFirmwareFlash(firmwareFilePath);
+        return;
+    }
+    else
+    {
+        if (networkAccessManager == nullptr)
+        {
+            qWarning() << "Cannot request firmware download, network access manager has not been initialized.";
+            return;
+        }
 
-    // Get filename from version
-    // Check if file already exists and is correct size
-        // If so, flash
-    // Check if URL already in map
+        // Check if URL already in map
         // If yes, do nothing
+        if (pendingFirmwareDownloadVersions.keys().contains(firmwareVersion))
+        {
+            // This firmware version already has a download pending. No action.
+            return;
+        }
         // If no, create network reply and add to map
+        else
+        {
+            QNetworkRequest request = QNetworkRequest(QUrl(availableFirmwareVersionToUrl[firmwareVersion]));
+            request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+            QNetworkReply* firmwareDownloadReply = networkAccessManager->get(request);
+            pendingFirmwareDownloadVersions[firmwareVersion] = firmwareDownloadReply;
+
+            connect(firmwareDownloadReply, &QNetworkReply::finished, this, &BatlabManager::processFirmwareDownloadFinished);
+            connect(firmwareDownloadReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &BatlabManager::processFirmwareDownloadError);
+        }
+    }
+
+
+
             // connect timeout, error to function that removes it and throws warning
-            // connect finished to function that processes waiting batlab list and kicks off flashing
-
-    QNetworkReply* firmwareDownloadReply = networkAccessManager->get(QNetworkRequest(QUrl(availableFirmwareVersionToUrl[firmwareVersion])));
-
-    connect(firmwareDownloadReply, &QNetworkReply::finished, this, &BatlabManager::requestFirmwareFlash);
+            // connect finished to function that processes waiting batlab list and kicks off flashing (and removes this from pending downloads)
 }
 
-void BatlabManager::requestFirmwareFlash()
+void BatlabManager::processFirmwareDownloadError()
 {
-    // Double check file is existent and correct size
     QNetworkReply* firmwareDownloadReply = qobject_cast<QNetworkReply*>(QObject::sender());
-    qDebug() << firmwareDownloadReply->url();
+    // TODO
+}
 
+void BatlabManager::processFirmwareDownloadFinished()
+{
+    // TODO Double check file is existent and correct size
+    QNetworkReply* firmwareDownloadReply = qobject_cast<QNetworkReply*>(QObject::sender());
+
+    // Find what firmware version this was
+    QString firmwareVersion;
+    for (auto version : pendingFirmwareDownloadVersions.keys())
+    {
+        if (pendingFirmwareDownloadVersions[version] == firmwareDownloadReply)
+        {
+            firmwareVersion = version;
+        }
+    }
+
+    QString firmwareFileUrl = firmwareDownloadReply->url().toString();
+    QString firmwareFilename = firmwareVersion + ".bin";
+
+    QDir appLocalDataPath(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first());
+    QString firmwareDirPath = appLocalDataPath.absoluteFilePath("firmware-bin-files");
+
+    QDir dir;
+    if (!dir.mkpath(firmwareDirPath)) {
+        qWarning() << "Unable to find/make firmware download path.";
+    }
+
+    QString firmwareFilePath = QDir(firmwareDirPath).absoluteFilePath(firmwareFilename);
+    QFile file(firmwareFilePath);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qWarning() << "Could not open firmware file for write.";
+        return;
+    }
+    const QByteArray data = firmwareDownloadReply->readAll();
+    file.write(data);
+    file.close();
+
+    // TODO handle partially existent, already existent, no existent file
+
+    // TODO For each Batlab wanting this, flash it
 //    QString portName = getPortNameFromSerial(serial);
 //    if (!portName.isEmpty()) { connectedBatlabsByPortName[portName]->initiateFirmwareFlash(firmwareFilePath); }
 }

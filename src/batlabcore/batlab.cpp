@@ -142,9 +142,9 @@ batlabDisplayInfo Batlab::getInfo()
     return info;
 }
 
-void Batlab::serialTransaction(int timeout, const QVector<uchar> request)
+void Batlab::serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction)
 {
-    m_commThread.transaction(info.serialNumberComplete, info.portName, timeout, request);
+    m_commThread.transaction(info.serialNumberComplete, info.portName, timeout, request, sleepAfterTransaction);
 }
 
 void Batlab::processSerialResponse(const QVector<uchar> response)
@@ -478,8 +478,9 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     // Message that we are entering bootloader
 
     // Enter bootloader self.write(UNIT,BOOTLOAD,0x0000)
-    // Set internal state machine to bootload
+    // TODO Set internal state machine to bootload
     // Sleep (2)
+    serialTransaction();
 
     // ctr = 0x0400
     // for each byte in the file

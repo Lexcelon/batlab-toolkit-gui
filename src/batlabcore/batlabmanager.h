@@ -43,7 +43,8 @@ public slots:
     void processRegisterReadRequest(int serial, int ns, int address);
     void processRegisterWriteRequest(int serial, int ns, int address, int value);
     void processFirmwareFlashRequest(int serial, QString firmwareVersion);
-    void requestFirmwareFlash();
+    void processFirmwareDownloadFinished();
+    void processFirmwareDownloadError();
 
     void initializeNetworkAccessManager();
     void requestAvailableFirmwareVersions();
@@ -60,7 +61,7 @@ private:
 
     QMap<QString, QString> availableFirmwareVersionToUrl;
     QMap<int, QString> batlabSerialToFirmwareVersionWaiting;
-    QMap<QString, QNetworkReply*> pendingFirmwareDownloads;
+    QMap<QString, QNetworkReply*> pendingFirmwareDownloadVersions;
 
     QNetworkAccessManager* networkAccessManager;
     QNetworkReply* firmwareVersionsReply;

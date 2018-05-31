@@ -214,20 +214,6 @@ namespace BatlabLib
     };
 }
 
-struct testParms
-{
-    int restTime = 10; //300;
-    float hightVoltageCutoff = 4.2f;
-    float lowVoltageCutoff = 2.65f;
-    float temperatureCutoffCharge = 45.0f;
-    float temperatureCutoffDischarge = 0.0f;
-    float currentCutoffCharge = 4.095f;
-    float currentCutoffDischarge = 4.095f;
-    float reportingFrequency = 1.0f;
-    float chargeCurrentSetpoint = 2.0f;
-    float dischargeCurrentSetpoint = 2.0f;
-};
-
 //Status register codes
 #define STAT_VOLTAGE_LIMIT_CHG  0x0001
 #define STAT_VOLTAGE_LIMIT_DCHG 0x0002
@@ -263,6 +249,9 @@ struct testParms
 #define MODE_DISCHARGE         0x0004
 #define MODE_IMPEDANCE         0x0005
 #define MODE_STOPPED           0x0006
+
+// Firmware
+#define FIRMWARE_FILE_SIZE     15360
 
 #endif // BATLABLIB_H
 

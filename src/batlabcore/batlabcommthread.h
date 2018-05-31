@@ -1,6 +1,9 @@
 #ifndef BATLABCOMMTHREAD_H
 #define BATLABCOMMTHREAD_H
 
+#include <chrono>
+#include <thread>
+
 #include <QObject>
 #include <QMutex>
 #include <QWaitCondition>
@@ -15,6 +18,7 @@
 struct batlabCommand {
     int waitTimeout;
     QVector<uchar> request;
+    int sleepAfterTransaction;
 };
 
 class BatlabCommThread : public QThread
@@ -25,7 +29,7 @@ public:
     explicit BatlabCommThread(QObject *parent = nullptr);
     ~BatlabCommThread();
 
-    void transaction(const int serialnumber, const QString &portName, int waitTimeout, const QVector<uchar> request);
+    void transaction(const int serialnumber, const QString &portName, int waitTimeout, const QVector<uchar> request, int sleepAfterTransaction);
 
 signals:
     void response(const QVector<uchar> response);

@@ -46,7 +46,7 @@ public slots:
     bool hasReceivedValidResponse();
 
 private slots:
-    void serialTransaction(int timeout, const QVector<uchar> request);
+    void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);
     void processSerialResponse(const QVector<uchar> response);
     void processSerialError(const QString &s);
     void processSerialTimeout(const QString &s);
