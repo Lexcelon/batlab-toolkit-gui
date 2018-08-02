@@ -96,19 +96,6 @@ enum commsNamespace {
     EXTERNAL_PSU_VOLTAGE,
 };
 
-struct testPacket {
-    QDateTime time;
-    QVector<int> TIME;
-    QVector<int> REG_MODE;
-    QVector<int> REG_STATUS;
-    QVector<float> REG_TEMPERATURE;
-    QVector<float> REG_CURRENT;
-    QVector<float> REG_VOLTAGE;
-    QVector<QPair<float,QPair<int,float>>> VOLTAGE_PP;
-    QVector<QPair<float,QPair<int,float>>> CURRENT_PP;
-    QVector<QPair<int,int>> CHARGE;
-};
-
 struct channelDisplayInfo {
     QString cellName;
 
@@ -167,6 +154,14 @@ struct batlabSettings {
     double dischargeRate;
     double sineWaveFrequency;
     int sineWaveMagnitude;
+};
+
+struct batlabPacket {
+    uchar startByte;
+    uchar nameSpace;
+    uchar address;
+    uchar payloadLowByte;
+    uchar payloadHighByte;
 };
 
 namespace BatlabLib

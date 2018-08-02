@@ -480,7 +480,7 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     // Enter bootloader self.write(UNIT,BOOTLOAD,0x0000)
     // TODO Set internal state machine to bootload
     // Sleep (2)
-    serialTransaction();
+//    serialTransaction();
 
     // ctr = 0x0400
     // for each byte in the file

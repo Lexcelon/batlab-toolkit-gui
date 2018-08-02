@@ -11,6 +11,7 @@
 #include <QInputDialog>
 #include <qmath.h>
 #include <QFileInfo>
+#include <QQueue>
 
 #include "batlablib.h"
 #include "batlabcommthread.h"
@@ -38,7 +39,7 @@ public slots:
     void initiateFirmwareFlash(QString firmwareFilePath);
 
     QString getPortName() { return info.portName; }
-    int getSerialNumber() {return info.serialNumberRegister; }
+    int getSerialNumber() { return info.serialNumberRegister; }
     batlabDisplayInfo getInfo();
 
     void checkSerialPortError();
@@ -57,9 +58,9 @@ private:
     int tempCalibB[4];
     int tempCalibR[4];
 
-    BatlabCommThread m_commThread;
-
     bool m_hasReceivedValidResponse;
+
+    QQueue<QQueue<batlabPacket>> m_commandQueue;
 };
 
 #endif // BATLABCOM_H
