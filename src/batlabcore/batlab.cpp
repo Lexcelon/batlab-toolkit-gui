@@ -48,10 +48,6 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     QTimer *batlabPeriodicCheckTimer = new QTimer(this);
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
     batlabPeriodicCheckTimer->start(5000);
-
-    connect(&m_commThread, &BatlabCommThread::response, this, &Batlab::processSerialResponse);
-    connect(&m_commThread, &BatlabCommThread::error, this, &Batlab::processSerialError);
-    connect(&m_commThread, &BatlabCommThread::timeout, this, &Batlab::processSerialTimeout);
 }
 
 void Batlab::periodicCheck()
@@ -144,7 +140,6 @@ batlabDisplayInfo Batlab::getInfo()
 
 void Batlab::serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction)
 {
-    m_commThread.transaction(info.serialNumberComplete, info.portName, timeout, request, sleepAfterTransaction);
 }
 
 void Batlab::processSerialResponse(const QVector<uchar> response)
