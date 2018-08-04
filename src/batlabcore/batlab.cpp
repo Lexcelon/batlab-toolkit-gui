@@ -28,8 +28,6 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
         tempCalibR[i] = -1;
     }
 
-    m_hasReceivedValidResponse = false;
-
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
     initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
@@ -145,8 +143,6 @@ void Batlab::serialTransaction(int timeout, const QVector<uchar> request, int sl
 void Batlab::processSerialResponse(const QVector<uchar> response)
 {
     BatlabLib::debugResponsePacket(info.serialNumberComplete, response);
-
-    m_hasReceivedValidResponse = true;
 
     uchar packetStartByte = response[0];
     uchar packetNamespace = response[1];
@@ -457,7 +453,8 @@ void Batlab::processSerialTimeout(const QString &s)
 
 bool Batlab::hasReceivedValidResponse()
 {
-    return m_hasReceivedValidResponse;
+    // TODO use state machine to answer this question
+    return true;
 }
 
 void Batlab::initiateFirmwareFlash(QString firmwareFilePath)

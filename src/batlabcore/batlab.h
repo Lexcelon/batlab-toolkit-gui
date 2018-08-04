@@ -12,6 +12,7 @@
 #include <qmath.h>
 #include <QFileInfo>
 #include <QQueue>
+#include <QStateMachine>
 
 #include "batlablib.h"
 #include "batlabcommthread.h"
@@ -58,9 +59,12 @@ private:
     int tempCalibB[4];
     int tempCalibR[4];
 
-    bool m_hasReceivedValidResponse;
-
     QQueue<QQueue<batlabPacket>> m_commandQueue;
+
+    QStateMachine batlabStateMachine;
+    QState s_unknown;
+    QState s_bootloader;
+    QState s_booted;
 };
 
 #endif // BATLABCOM_H
