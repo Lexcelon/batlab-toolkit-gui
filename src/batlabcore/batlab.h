@@ -16,6 +16,7 @@
 
 #include "batlablib.h"
 #include "batlabcommthread.h"
+#include "channel.h"
 
 class Batlab : public QObject
 {
@@ -62,9 +63,9 @@ private:
     QQueue<QQueue<batlabPacket>> m_commandQueue;
 
     QStateMachine batlabStateMachine;
-    QState s_unknown;
-    QState s_bootloader;
-    QState s_booted;
+    QState* s_unknown;
+    QState* s_bootloader;
+    QState* s_booted;
 };
 
 #endif // BATLABCOM_H

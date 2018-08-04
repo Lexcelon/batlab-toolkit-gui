@@ -49,7 +49,8 @@ SOURCES += main.cpp\
     batlabcore/batlablib.cpp \
     components/cellteststatuswidget.cpp \
     components/resultswidget.cpp \
-    batlabcore/cellplaylist.cpp
+    batlabcore/cellplaylist.cpp \
+    batlabcore/channel.cpp
 
 HEADERS  += \
     dialogs/batlabdebugdialog/batlabdebugdialog.h \
@@ -79,7 +80,8 @@ HEADERS  += \
     batlabcore/batlabcommthread.h \
     components/cellteststatuswidget.h \
     components/resultswidget.h \
-    batlabcore/cellplaylist.h
+    batlabcore/cellplaylist.h \
+    batlabcore/channel.h
 
 FORMS    += \
     testwindow.ui \
