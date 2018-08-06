@@ -184,8 +184,8 @@ int BatlabLib::sendSineFrequency(float val)
     return T;
 }
 
-cellResultsDisplayInfo BatlabLib::createInitializedcellResultsDisplayInfo() {
-    cellResultsDisplayInfo newCellResult;
+cellResultsStatusInfo BatlabLib::createInitializedcellResultsDisplayInfo() {
+    cellResultsStatusInfo newCellResult;
     newCellResult.cellName = "";
     newCellResult.testInProgress = false;
     newCellResult.testCompleted = false;

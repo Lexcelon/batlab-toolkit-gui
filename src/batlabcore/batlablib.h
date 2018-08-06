@@ -96,7 +96,7 @@ enum commsNamespace {
     EXTERNAL_PSU_VOLTAGE,
 };
 
-struct channelDisplayInfo {
+struct channelStatusInfo {
     QString cellName;
 
     bool testInProgress;
@@ -117,17 +117,17 @@ struct channelDisplayInfo {
     bool storageDischargeError;
 };
 
-struct batlabDisplayInfo {
+struct batlabStatusInfo {
     bool externalPowerConnected;
     qint16 firmwareVersion;
     QString portName;
     qint16 serialNumberRegister;
     qint16 deviceIdRegister;
     qint32 serialNumberComplete;
-    channelDisplayInfo channels[4];
+    channelStatusInfo channels[4];
 };
 
-struct cellResultsDisplayInfo {
+struct cellResultsStatusInfo {
     QString cellName;
 
     bool testInProgress;
@@ -181,7 +181,7 @@ namespace BatlabLib
     int sendCurrentSetpoint(float val);
     float getSineFrequency(int val);
     int sendSineFrequency(float val);
-    cellResultsDisplayInfo createInitializedcellResultsDisplayInfo();
+    cellResultsStatusInfo createInitializedcellResultsDisplayInfo();
 
     void debugResponsePacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
     void debugCommandPacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);

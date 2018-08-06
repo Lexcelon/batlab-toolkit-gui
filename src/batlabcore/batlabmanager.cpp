@@ -93,28 +93,28 @@ void BatlabManager::removeBatlab(QString portName)
 
 void BatlabManager::processUpdatedBatlabInfo()
 {
-    QVector<batlabDisplayInfo> infos;
+    QVector<batlabStatusInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
         // Only show information for devices that have received valid responses (i.e. are Batlabs)
         if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
         {
-            batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            batlabStatusInfo info = connectedBatlabsByPortName[portName]->getInfo();
             infos.push_back(info);
         }
     }
     emit batlabInfoUpdated(infos);
 }
 
-QVector<batlabDisplayInfo> BatlabManager::getBatlabInfos()
+QVector<batlabStatusInfo> BatlabManager::getBatlabInfos()
 {
-    QVector<batlabDisplayInfo> infos;
+    QVector<batlabStatusInfo> infos;
     for (int i = 0; i < connectedBatlabsByPortName.keys().size(); i++) {
         QString portName = connectedBatlabsByPortName.keys()[i];
         // Only return information for devices that have received valid responses (i.e. are Batlabs)
         if (connectedBatlabsByPortName[portName]->hasReceivedValidResponse())
         {
-            batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
+            batlabStatusInfo info = connectedBatlabsByPortName[portName]->getInfo();
             infos.push_back(info);
         }
     }
@@ -264,7 +264,7 @@ QString BatlabManager::getPortNameFromSerial(int serial)
     for (int i = 0; i < connectedBatlabsByPortName.size(); i++)
     {
         QString portName = connectedBatlabsByPortName.keys()[i];
-        batlabDisplayInfo info = connectedBatlabsByPortName[portName]->getInfo();
+        batlabStatusInfo info = connectedBatlabsByPortName[portName]->getInfo();
         if (info.serialNumberComplete == serial)
         {
             return portName;

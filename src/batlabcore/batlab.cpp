@@ -136,7 +136,7 @@ void Batlab::checkSerialPortError() {
 
 }
 
-batlabDisplayInfo Batlab::getInfo()
+batlabStatusInfo Batlab::getInfo()
 {
     return info;
 }

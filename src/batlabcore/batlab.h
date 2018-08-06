@@ -42,7 +42,7 @@ public slots:
 
     QString getPortName() { return info.portName; }
     int getSerialNumber() { return info.serialNumberRegister; }
-    batlabDisplayInfo getInfo();
+    batlabStatusInfo getInfo();
 
     void checkSerialPortError();
     void periodicCheck();
@@ -55,7 +55,7 @@ private slots:
     void processSerialTimeout(const QString &s);
 
 private:
-    batlabDisplayInfo info;
+    batlabStatusInfo info;
 
     int tempCalibB[4];
     int tempCalibR[4];

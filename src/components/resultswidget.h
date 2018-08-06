@@ -12,7 +12,7 @@
 class ResultsWidget : public QFrame
 {
 public:
-    explicit ResultsWidget(QVector<cellResultsDisplayInfo> infos, QFrame *parent = nullptr);
+    explicit ResultsWidget(QVector<cellResultsStatusInfo> infos, QFrame *parent = nullptr);
 
 signals:
 
@@ -34,7 +34,7 @@ private:
 
     QVector<QTableWidgetItem*> checkBoxItems;
 
-    QVector<cellResultsDisplayInfo> infos;
+    QVector<cellResultsStatusInfo> infos;
 
 };
 

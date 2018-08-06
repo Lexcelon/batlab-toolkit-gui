@@ -18,7 +18,7 @@ class BatlabDebugDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabDisplayInfo> infos = QVector<batlabDisplayInfo>(), QVector<QString> firmwareVersions = QVector<QString>());
+    explicit BatlabDebugDialog(QWidget *parent = 0, QVector<batlabStatusInfo> infos = QVector<batlabStatusInfo>(), QVector<QString> firmwareVersions = QVector<QString>());
     ~BatlabDebugDialog();
 
 public slots:
@@ -26,7 +26,7 @@ public slots:
     void processRegisterWriteClick();
     void processFirmwareFlashClick();
 
-    void updateInfo(QVector<batlabDisplayInfo> infos, QVector<QString> firmwareVersions);
+    void updateInfo(QVector<batlabStatusInfo> infos, QVector<QString> firmwareVersions);
 
 signals:
     void registerReadRequested(int serialNumber, int name_space, int address);

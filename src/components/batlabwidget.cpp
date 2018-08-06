@@ -1,7 +1,7 @@
 #include "batlabwidget.h"
 
 
-BatlabWidget::BatlabWidget(batlabDisplayInfo info, QFrame *parent) : QFrame(parent)
+BatlabWidget::BatlabWidget(batlabStatusInfo info, QFrame *parent) : QFrame(parent)
 {
     // **Chose to use QFrame instead of QWidget due to outline paint limitations
     batlabLayout = new QHBoxLayout;

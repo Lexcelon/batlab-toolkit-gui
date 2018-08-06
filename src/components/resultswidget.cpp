@@ -1,6 +1,6 @@
 #include "resultswidget.h"
 
-ResultsWidget::ResultsWidget(QVector<cellResultsDisplayInfo> infos, QFrame *parent) : QFrame(parent)
+ResultsWidget::ResultsWidget(QVector<cellResultsStatusInfo> infos, QFrame *parent) : QFrame(parent)
 {
 
     this->infos = infos;

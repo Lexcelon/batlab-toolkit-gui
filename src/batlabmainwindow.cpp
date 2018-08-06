@@ -230,7 +230,7 @@ void clearLayout(QLayout *layout, bool deleteWidgets)
 // http://www.qtforum.org/article/36406/events-not-called-unless-mouse-is-moving.html
 // https://forum.qt.io/topic/8630/events-not-called-unless-mouse-is-moving/2
 // https://bugreports.qt.io/browse/QTBUG-7728
-void BatlabMainWindow::redrawBatlabInfo(QVector<batlabDisplayInfo> infos)
+void BatlabMainWindow::redrawBatlabInfo(QVector<batlabStatusInfo> infos)
 {
     clearLayout(batlabsTabLayout, true);
 
@@ -242,7 +242,7 @@ void BatlabMainWindow::redrawBatlabInfo(QVector<batlabDisplayInfo> infos)
     batlabsButton->setText("Batlabs (" + QString::number(infos.size()) + ")");
 }
 
-void BatlabMainWindow::redrawResultsInfo(QVector<cellResultsDisplayInfo> infos)
+void BatlabMainWindow::redrawResultsInfo(QVector<cellResultsStatusInfo> infos)
 {
     clearLayout(resultsTabLayout, true);
 
@@ -492,22 +492,22 @@ void BatlabMainWindow::showNewCellPlaylistWizard() {
 
 void BatlabMainWindow::loadPlaylistIntoGUI() {
 
-    QVector<cellResultsDisplayInfo> cellResultsDisplayInfoVector;
+    QVector<cellResultsStatusInfo> cellResultsDisplayInfoVector;
 
     // ****** Dummy Data *******
-    cellResultsDisplayInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
+    cellResultsStatusInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult1.cellName = "CELL_1";
     newCellResult1.testInProgress = true;
     newCellResult1.testCompleted = false;
     cellResultsDisplayInfoVector.push_back(newCellResult1);
 
-    cellResultsDisplayInfo newCellResult2 = BatlabLib::createInitializedcellResultsDisplayInfo();
+    cellResultsStatusInfo newCellResult2 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult2.cellName = "CELL_2";
     newCellResult2.testInProgress = false;
     newCellResult2.testCompleted = false;
     cellResultsDisplayInfoVector.push_back(newCellResult2);
 
-    cellResultsDisplayInfo newCellResult3 = BatlabLib::createInitializedcellResultsDisplayInfo();
+    cellResultsStatusInfo newCellResult3 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult3.cellName = "CELL_3";
     newCellResult3.testInProgress = false;
     newCellResult3.testCompleted = true;
@@ -520,7 +520,7 @@ void BatlabMainWindow::loadPlaylistIntoGUI() {
     newCellResult3.runtime = 50.22;
     cellResultsDisplayInfoVector.push_back(newCellResult3);
 
-    cellResultsDisplayInfo newCellResult4 = BatlabLib::createInitializedcellResultsDisplayInfo();
+    cellResultsStatusInfo newCellResult4 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult4.cellName = "CELL_4";
     newCellResult4.testInProgress = true;
     newCellResult4.testCompleted = true;

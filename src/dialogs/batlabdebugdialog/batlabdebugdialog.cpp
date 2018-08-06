@@ -1,7 +1,7 @@
 #include "batlabdebugdialog.h"
 #include "ui_batlabdebugdialog.h"
 
-BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabDisplayInfo> infos, QVector<QString> firmwareVersions):
+BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabStatusInfo> infos, QVector<QString> firmwareVersions):
     QDialog(parent),
     ui(new Ui::debugDialog)
 {
@@ -66,7 +66,7 @@ BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabDisplayInfo>
     connect(flashFirmwareButton, &QPushButton::clicked, this, &BatlabDebugDialog::processFirmwareFlashClick);
 }
 
-void BatlabDebugDialog::updateInfo(QVector<batlabDisplayInfo> infos, QVector<QString> firmwareVersions)
+void BatlabDebugDialog::updateInfo(QVector<batlabStatusInfo> infos, QVector<QString> firmwareVersions)
 {
     ui->selectBatlabComboBox->clear();
     for (int i = 0; i < infos.size(); i++)
