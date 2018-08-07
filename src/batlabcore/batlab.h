@@ -47,6 +47,7 @@ public slots:
     void checkSerialPortError();
     void periodicCheck();
     bool hasReceivedValidResponse();
+    void verifyBatlabDevice();
 
 private slots:
     void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);

@@ -7,6 +7,8 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     QState* s_booted = new QState();
     batlabStateMachine.setInitialState(s_unknown);
 
+
+
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
     info.portName = newPortName;
@@ -51,6 +53,11 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     QTimer *batlabPeriodicCheckTimer = new QTimer(this);
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
     batlabPeriodicCheckTimer->start(5000);
+}
+
+void Batlab::verifyBatlabDevice()
+{
+    // TODO should handle both bootloader and non modes
 }
 
 void Batlab::periodicCheck()
