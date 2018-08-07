@@ -1,5 +1,16 @@
 #include "batlablib.h"
 
+batlabPacket BatlabLib::readPacket(int batlabNamespace, int batlabRegister)
+{
+    batlabPacket packet;
+    packet.startByte = static_cast<uchar>(0xAA);
+    packet.nameSpace = static_cast<uchar>(batlabNamespace);
+    packet.address = static_cast<uchar>(batlabRegister);
+    packet.payloadLowByte = static_cast<uchar>(0x00);
+    packet.payloadHighByte = static_cast<uchar>(0x00);
+    return packet;
+}
+
 void BatlabLib::debugResponsePacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte)
 {
     qDebug() << "Response Packet:" << "Batlab S/N:" << qPrintable(QString::number(serialnumber).leftJustified(6, ' '))

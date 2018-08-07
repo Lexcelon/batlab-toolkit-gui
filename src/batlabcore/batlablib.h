@@ -188,6 +188,8 @@ namespace BatlabLib
     void debugResponsePacket(int serialnumber, QVector<uchar> data);
     void debugCommandPacket(int serialnumber, QVector<uchar> data);
 
+    batlabPacket readPacket(int batlabNamespace, int batlabRegister);
+
     static QMap<QString, int> namespaceStringToInt {
         {"Channel 0", batlabNamespaces::CHANNEL0},
         {"Channel 1", batlabNamespaces::CHANNEL1},
