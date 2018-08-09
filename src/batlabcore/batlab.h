@@ -18,6 +18,15 @@
 #include "batlabcommthread.h"
 #include "channel.h"
 
+class Batlab;
+
+typedef void (Batlab::*serialResponseCallback)(QQueue<batlabPacket>);
+
+struct batlabPacketBundle {
+    QQueue<batlabPacket> packets;
+    serialResponseCallback callback;
+};
+
 class Batlab : public QObject
 {
     Q_OBJECT
@@ -48,6 +57,7 @@ public slots:
     void periodicCheck();
     bool hasReceivedValidResponse();
     void verifyBatlabDevice();
+    void handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response);
 
 private slots:
     void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);
@@ -61,7 +71,7 @@ private:
     int tempCalibB[4];
     int tempCalibR[4];
 
-    QQueue<QQueue<batlabPacket>> m_commandQueue;
+    QQueue<batlabPacketBundle> m_commandQueue;
 
     QStateMachine batlabStateMachine;
     QState* s_unknown;

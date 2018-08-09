@@ -58,8 +58,18 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 void Batlab::verifyBatlabDevice()
 {
     // TODO should handle both bootloader and non modes
-    QQueue<batlabPacket> verifyPacket;
-    verifyPacket.append(BatlabLib::readPacket(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM));
+    QQueue<batlabPacket> verifyPackets;
+    verifyPackets.append(BatlabLib::readPacket(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM));
+    batlabPacketBundle packetBundle;
+    packetBundle.packets = verifyPackets;
+    packetBundle.callback = &Batlab::handleVerifyBatlabDeviceResponse;
+    m_commandQueue.append(packetBundle);
+    // TODO should connect this queue to something so it knows when things get added
+}
+
+void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
+{
+    // TODO
 }
 
 void Batlab::periodicCheck()
