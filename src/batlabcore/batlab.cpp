@@ -7,8 +7,6 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     QState* s_booted = new QState();
     batlabStateMachine.setInitialState(s_unknown);
 
-
-
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
     info.portName = newPortName;
