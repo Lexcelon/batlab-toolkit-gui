@@ -60,7 +60,8 @@ void Batlab::verifyBatlabDevice()
     verifyPackets.append(BatlabLib::readPacket(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM));
     batlabPacketBundle packetBundle;
     packetBundle.packets = verifyPackets;
-    packetBundle.callback = &Batlab::handleVerifyBatlabDeviceResponse;
+    packetBundle.callback = "handleVerifyBatlabDeviceResponse";
+    packetBundle.channel = -1;
     m_commandQueue.append(packetBundle);
     // TODO should connect this queue to something so it knows when things get added
 }

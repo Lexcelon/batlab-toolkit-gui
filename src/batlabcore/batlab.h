@@ -24,7 +24,8 @@ typedef void (Batlab::*serialResponseCallback)(QQueue<batlabPacket>);
 
 struct batlabPacketBundle {
     QQueue<batlabPacket> packets;
-    serialResponseCallback callback;
+    QString callback;
+    int channel;  // -1 if not for specific channel
 };
 
 class Batlab : public QObject
