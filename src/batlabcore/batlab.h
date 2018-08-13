@@ -20,8 +20,6 @@
 
 class Batlab;
 
-typedef void (Batlab::*serialResponseCallback)(QQueue<batlabPacket>);
-
 struct batlabPacketBundle {
     QQueue<batlabPacket> packets;
     QString callback;
