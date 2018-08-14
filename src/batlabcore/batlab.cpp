@@ -62,13 +62,19 @@ void Batlab::verifyBatlabDevice()
     packetBundle.packets = verifyPackets;
     packetBundle.callback = "handleVerifyBatlabDeviceResponse";
     packetBundle.channel = -1;
-    m_commandQueue.append(packetBundle);
-    // TODO should connect this queue to something so it knows when things get added
+    addBatlabPacketBundleToQueue(packetBundle);
 }
 
 void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
 {
     // TODO
+}
+
+void Batlab::addBatlabPacketBundleToQueue(batlabPacketBundle bundle)
+{
+    m_commandQueue.append(bundle);
+    // TODO start processing things in queue
+    // TODO check at end if anything else is in queue
 }
 
 void Batlab::periodicCheck()

@@ -58,6 +58,8 @@ public slots:
     void verifyBatlabDevice();
     void handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response);
 
+    void addBatlabPacketBundleToQueue(batlabPacketBundle bundle);
+
 private slots:
     void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);
     void processSerialResponse(const QVector<uchar> response);
