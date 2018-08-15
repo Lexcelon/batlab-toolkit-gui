@@ -5,6 +5,7 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     QState* s_unknown = new QState();
     QState* s_bootloader = new QState();
     QState* s_booted = new QState();
+    QState* s_serialProcessing = new QState();
     batlabStateMachine.setInitialState(s_unknown);
 
     info.externalPowerConnected = false;
@@ -62,7 +63,7 @@ void Batlab::verifyBatlabDevice()
     packetBundle.packets = verifyPackets;
     packetBundle.callback = "handleVerifyBatlabDeviceResponse";
     packetBundle.channel = -1;
-    addBatlabPacketBundleToQueue(packetBundle);
+    addPacketBundleToQueue(packetBundle);
 }
 
 void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
@@ -70,11 +71,20 @@ void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
     // TODO
 }
 
-void Batlab::addBatlabPacketBundleToQueue(batlabPacketBundle bundle)
+void Batlab::addPacketBundleToQueue(batlabPacketBundle bundle)
 {
-    m_commandQueue.append(bundle);
-    // TODO start processing things in queue
-    // TODO check at end if anything else is in queue
+    m_packetBundleQueue.append(bundle);
+    processPacketBundleQueue();
+}
+
+void Batlab::processPacketBundleQueue()
+{
+    if (!m_packetBundleQueue.isEmpty())
+    {
+        batlabPacketBundle bundle = m_packetBundleQueue.dequeue();
+        // LEFT OFF
+        // TODO state machine
+    }
 }
 
 void Batlab::periodicCheck()

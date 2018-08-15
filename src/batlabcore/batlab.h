@@ -58,7 +58,8 @@ public slots:
     void verifyBatlabDevice();
     void handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response);
 
-    void addBatlabPacketBundleToQueue(batlabPacketBundle bundle);
+    void addPacketBundleToQueue(batlabPacketBundle bundle);
+    void processPacketBundleQueue();
 
 private slots:
     void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);
@@ -72,12 +73,13 @@ private:
     int tempCalibB[4];
     int tempCalibR[4];
 
-    QQueue<batlabPacketBundle> m_commandQueue;
+    QQueue<batlabPacketBundle> m_packetBundleQueue;
 
     QStateMachine batlabStateMachine;
     QState* s_unknown;
     QState* s_bootloader;
     QState* s_booted;
+    QState* s_serialProcessing;
 };
 
 #endif // BATLABCOM_H
