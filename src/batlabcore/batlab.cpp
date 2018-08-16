@@ -2,11 +2,13 @@
 
 Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 {
-    QState* s_unknown = new QState();
-    QState* s_bootloader = new QState();
-    QState* s_booted = new QState();
+    QState* s_serialResting = new QState();
+    QState* s_unknown = new QState(s_serialResting);
+    QState* s_bootloader = new QState(s_serialResting);
+    QState* s_booted = new QState(s_serialResting);
+    s_serialResting->setInitialState(s_unknown);
     QState* s_serialProcessing = new QState();
-    batlabStateMachine.setInitialState(s_unknown);
+    batlabStateMachine.setInitialState(s_serialResting);
 
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;

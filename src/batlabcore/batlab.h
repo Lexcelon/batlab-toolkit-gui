@@ -76,10 +76,12 @@ private:
     QQueue<batlabPacketBundle> m_packetBundleQueue;
 
     QStateMachine batlabStateMachine;
+    QState* s_serialProcessing;
+    QState* s_serialResting;
     QState* s_unknown;
     QState* s_bootloader;
     QState* s_booted;
-    QState* s_serialProcessing;
+
 };
 
 #endif // BATLABCOM_H
