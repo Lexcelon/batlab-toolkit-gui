@@ -61,7 +61,7 @@ public slots:
     void handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response);
 
     void addPacketBundleToQueue(batlabPacketBundle bundle);
-    void processPacketBundleQueue();
+    void processSerialQueue();
     void processCurrentPacketBundle();
 
 private slots:
@@ -77,17 +77,13 @@ private:
     int tempCalibB[4];
     int tempCalibR[4];
 
-
-    QSerialPort m_serialPort;
-
-    QQueue<batlabPacketBundle> m_packetBundleQueue;
-
     QStateMachine batlabStateMachine;
     QState* s_unknown;
     QState* s_bootloader;
     QState* s_booted;
 
-    bool m_serialCurrentlyProcessing;
+    QSerialPort m_serialPort;
+    QQueue<batlabPacketBundle> m_packetBundleQueue;
     batlabPacketBundle m_currentPacketBundle;
     batlabPacket m_currentPacket;
 

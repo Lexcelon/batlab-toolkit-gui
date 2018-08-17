@@ -8,7 +8,6 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     batlabStateMachine.setInitialState(s_unknown);
 
     m_serialPort.setPortName(newPortName);
-    m_serialCurrentlyProcessing = false;
 
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
@@ -76,10 +75,10 @@ void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
 void Batlab::addPacketBundleToQueue(batlabPacketBundle bundle)
 {
     m_packetBundleQueue.append(bundle);
-    processPacketBundleQueue();
+    processSerialQueue();
 }
 
-void Batlab::processPacketBundleQueue()
+void Batlab::processSerialQueue()
 {
     if (!m_packetBundleQueue.isEmpty())
     {
