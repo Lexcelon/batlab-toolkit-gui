@@ -43,6 +43,8 @@ signals:
     void batlabDisconnected(QString);
     void infoUpdated();
 
+    void batlabPacketBundleAddedToQueue();
+
 public slots:
     void initiateRegisterRead(int, int);
     void initiateRegisterWrite(int, int, int);
@@ -60,6 +62,7 @@ public slots:
 
     void addPacketBundleToQueue(batlabPacketBundle bundle);
     void processPacketBundleQueue();
+    void processCurrentPacketBundle();
 
 private slots:
     void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);
@@ -70,17 +73,23 @@ private slots:
 private:
     batlabStatusInfo info;
 
+    // TODO move to channels?
     int tempCalibB[4];
     int tempCalibR[4];
+
+
+    QSerialPort m_serialPort;
 
     QQueue<batlabPacketBundle> m_packetBundleQueue;
 
     QStateMachine batlabStateMachine;
-    QState* s_serialProcessing;
-    QState* s_serialResting;
     QState* s_unknown;
     QState* s_bootloader;
     QState* s_booted;
+
+    bool m_serialCurrentlyProcessing;
+    batlabPacketBundle m_currentPacketBundle;
+    batlabPacket m_currentPacket;
 
 };
 

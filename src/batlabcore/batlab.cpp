@@ -2,13 +2,13 @@
 
 Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
 {
-    QState* s_serialResting = new QState();
-    QState* s_unknown = new QState(s_serialResting);
-    QState* s_bootloader = new QState(s_serialResting);
-    QState* s_booted = new QState(s_serialResting);
-    s_serialResting->setInitialState(s_unknown);
-    QState* s_serialProcessing = new QState();
-    batlabStateMachine.setInitialState(s_serialResting);
+    QState* s_unknown = new QState();
+    QState* s_bootloader = new QState();
+    QState* s_booted = new QState();
+    batlabStateMachine.setInitialState(s_unknown);
+
+    m_serialPort.setPortName(newPortName);
+    m_serialCurrentlyProcessing = false;
 
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
@@ -83,9 +83,21 @@ void Batlab::processPacketBundleQueue()
 {
     if (!m_packetBundleQueue.isEmpty())
     {
-        batlabPacketBundle bundle = m_packetBundleQueue.dequeue();
-        // LEFT OFF
-        // TODO state machine
+        m_currentPacketBundle = m_packetBundleQueue.dequeue();
+
+        processCurrentPacketBundle();
+    }
+}
+
+void Batlab::processCurrentPacketBundle()
+{
+    if (m_currentPacketBundle.packets.empty())
+    {
+        // TODO
+    }
+    else
+    {
+        m_currentPacket = m_currentPacketBundle.packets.dequeue();
     }
 }
 
