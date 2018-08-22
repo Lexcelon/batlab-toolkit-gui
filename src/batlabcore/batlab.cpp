@@ -7,7 +7,8 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     QState* s_booted = new QState();
     batlabStateMachine.setInitialState(s_unknown);
 
-    m_serialPort.setPortName(newPortName);
+    m_serialPort = new QSerialPort(newPortName);
+    m_serialCurrentlyProcessing = false;
 
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
@@ -80,11 +81,9 @@ void Batlab::addPacketBundleToQueue(batlabPacketBundle bundle)
 
 void Batlab::processSerialQueue()
 {
-    if (!m_packetBundleQueue.isEmpty())
+    if (!m_serialCurrentlyProcessing)
     {
-        m_currentPacketBundle = m_packetBundleQueue.dequeue();
-
-        processCurrentPacketBundle();
+        // Then get the next packet from the queue and handle it
     }
 }
 

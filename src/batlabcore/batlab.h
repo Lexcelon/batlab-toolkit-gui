@@ -82,10 +82,11 @@ private:
     QState* s_bootloader;
     QState* s_booted;
 
-    QSerialPort m_serialPort;
+    QSerialPort* m_serialPort;
     QQueue<batlabPacketBundle> m_packetBundleQueue;
     batlabPacketBundle m_currentPacketBundle;
     batlabPacket m_currentPacket;
+    bool m_serialCurrentlyProcessing;
 
 };
 
