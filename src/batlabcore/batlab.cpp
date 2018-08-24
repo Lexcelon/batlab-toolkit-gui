@@ -8,7 +8,13 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
     batlabStateMachine.setInitialState(s_unknown);
 
     m_serialPort = new QSerialPort(newPortName);
-    m_serialCurrentlyProcessing = false;
+    m_serialWaiting = false;
+
+    if (!m_serialPort->open(QIODevice::ReadWrite))
+    {
+        emit error(tr("Can't open %1, error code %2.")
+                .arg(newPortName).arg(m_serialPort->error()));
+    }
 
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
@@ -81,21 +87,24 @@ void Batlab::addPacketBundleToQueue(batlabPacketBundle bundle)
 
 void Batlab::processSerialQueue()
 {
-    if (!m_serialCurrentlyProcessing)
-    {
-        // Then get the next packet from the queue and handle it
-    }
-}
+    if (m_serialWaiting) { return; }
 
-void Batlab::processCurrentPacketBundle()
-{
     if (m_currentPacketBundle.packets.empty())
     {
-        // TODO
+        if (!m_packetBundleQueue.empty())
+        {
+            m_currentPacketBundle = m_packetBundleQueue.dequeue();
+            processSerialQueue();
+            // TODO handle when we get a success from the last packet in a packet bundle
+        }
     }
     else
     {
         m_currentPacket = m_currentPacketBundle.packets.dequeue();
+        // TODO write serial
+//        m_serialPort->write();  // LEFT OFF
+        // TODO connect its various states
+        m_serialWaiting = true;
     }
 }
 

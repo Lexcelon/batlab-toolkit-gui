@@ -45,6 +45,8 @@ signals:
 
     void batlabPacketBundleAddedToQueue();
 
+    void error(const QString &s);
+
 public slots:
     void initiateRegisterRead(int, int);
     void initiateRegisterWrite(int, int, int);
@@ -62,7 +64,6 @@ public slots:
 
     void addPacketBundleToQueue(batlabPacketBundle bundle);
     void processSerialQueue();
-    void processCurrentPacketBundle();
 
 private slots:
     void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);
@@ -86,7 +87,7 @@ private:
     QQueue<batlabPacketBundle> m_packetBundleQueue;
     batlabPacketBundle m_currentPacketBundle;
     batlabPacket m_currentPacket;
-    bool m_serialCurrentlyProcessing;
+    bool m_serialWaiting;
 
 };
 
