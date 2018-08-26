@@ -101,9 +101,16 @@ void Batlab::processSerialQueue()
     else
     {
         m_currentPacket = m_currentPacketBundle.packets.dequeue();
-        // TODO write serial
-//        m_serialPort->write();  // LEFT OFF
-        // TODO connect its various states
+        QVector<uchar> request(5);
+        request[0] = m_currentPacket.startByte;
+        request[1] = m_currentPacket.nameSpace;
+        request[2] = m_currentPacket.address;
+        request[3] = m_currentPacket.payloadLowByte;
+        request[4] = m_currentPacket.payloadHighByte;
+        m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
+        // LEFT OFF
+
+        // TODO connect its various states (probably in constructor)
         m_serialWaiting = true;
     }
 }
