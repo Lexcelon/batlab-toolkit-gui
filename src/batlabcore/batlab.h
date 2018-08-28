@@ -64,6 +64,7 @@ public slots:
 
     void addPacketBundleToQueue(batlabPacketBundle bundle);
     void processSerialQueue();
+    void handleBytesWritten(qint64 bytes);
 
 private slots:
     void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);

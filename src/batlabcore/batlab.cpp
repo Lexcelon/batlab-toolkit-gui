@@ -16,6 +16,8 @@ Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
                 .arg(newPortName).arg(m_serialPort->error()));
     }
 
+    connect(m_serialPort, &QSerialPort::bytesWritten, this, &Batlab::handleBytesWritten);
+
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
     info.portName = newPortName;
@@ -108,11 +110,15 @@ void Batlab::processSerialQueue()
         request[3] = m_currentPacket.payloadLowByte;
         request[4] = m_currentPacket.payloadHighByte;
         m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
-        // LEFT OFF
 
         // TODO connect its various states (probably in constructor)
         m_serialWaiting = true;
     }
+}
+
+void Batlab::handleBytesWritten(qint64 bytes)
+{
+        // LEFT OFF
 }
 
 void Batlab::periodicCheck()
