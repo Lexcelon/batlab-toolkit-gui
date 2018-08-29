@@ -118,7 +118,10 @@ void Batlab::processSerialQueue()
 
 void Batlab::handleBytesWritten(qint64 bytes)
 {
-        // LEFT OFF
+    if (bytes != 5)
+    {
+        qWarning() << "Unable to write complete packet.";
+    }
 }
 
 void Batlab::periodicCheck()
