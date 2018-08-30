@@ -1,26 +1,17 @@
 #include "batlab.h"
 
-Batlab::Batlab(QString newPortName, QObject *parent) : QObject(parent)
+Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
 {
     QState* s_unknown = new QState();
     QState* s_bootloader = new QState();
     QState* s_booted = new QState();
     batlabStateMachine.setInitialState(s_unknown);
 
-    m_serialPort = new QSerialPort(newPortName);
-    m_serialWaiting = false;
-
-    if (!m_serialPort->open(QIODevice::ReadWrite))
-    {
-        emit error(tr("Can't open %1, error code %2.")
-                .arg(newPortName).arg(m_serialPort->error()));
-    }
-
-    connect(m_serialPort, &QSerialPort::bytesWritten, this, &Batlab::handleBytesWritten);
+    m_commsManager = new BatlabCommsManager(portName);
 
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
-    info.portName = newPortName;
+    info.portName = portName;
     info.serialNumberRegister = -1;
     info.deviceIdRegister = -1;
     info.serialNumberComplete = -1;
@@ -73,55 +64,12 @@ void Batlab::verifyBatlabDevice()
     packetBundle.packets = verifyPackets;
     packetBundle.callback = "handleVerifyBatlabDeviceResponse";
     packetBundle.channel = -1;
-    addPacketBundleToQueue(packetBundle);
+    m_commsManager->addPacketBundleToQueue(packetBundle);
 }
 
 void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
 {
     // TODO
-}
-
-void Batlab::addPacketBundleToQueue(batlabPacketBundle bundle)
-{
-    m_packetBundleQueue.append(bundle);
-    processSerialQueue();
-}
-
-void Batlab::processSerialQueue()
-{
-    if (m_serialWaiting) { return; }
-
-    if (m_currentPacketBundle.packets.empty())
-    {
-        if (!m_packetBundleQueue.empty())
-        {
-            m_currentPacketBundle = m_packetBundleQueue.dequeue();
-            processSerialQueue();
-            // TODO handle when we get a success from the last packet in a packet bundle
-        }
-    }
-    else
-    {
-        m_currentPacket = m_currentPacketBundle.packets.dequeue();
-        QVector<uchar> request(5);
-        request[0] = m_currentPacket.startByte;
-        request[1] = m_currentPacket.nameSpace;
-        request[2] = m_currentPacket.address;
-        request[3] = m_currentPacket.payloadLowByte;
-        request[4] = m_currentPacket.payloadHighByte;
-        m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
-
-        // TODO connect its various states (probably in constructor)
-        m_serialWaiting = true;
-    }
-}
-
-void Batlab::handleBytesWritten(qint64 bytes)
-{
-    if (bytes != 5)
-    {
-        qWarning() << "Unable to write complete packet.";
-    }
 }
 
 void Batlab::periodicCheck()
@@ -195,16 +143,6 @@ void Batlab::initiateRegisterWrite(int batlabNamespace, int batlabRegister, int 
     data[4] = msb;
 
     this->serialTransaction(1000, data);
-}
-
-// TODO do this in the comm thread
-void Batlab::checkSerialPortError() {
-
-    // ResourceError indicates that the Batlab was disconnected
-//    if (port->error() == QSerialPort::ResourceError) {
-//        emit batlabDisconnected(info.portName);
-//    }
-
 }
 
 batlabStatusInfo Batlab::getInfo()

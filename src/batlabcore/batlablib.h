@@ -13,6 +13,7 @@
 #include <QSpinBox>
 #include <QDateTime>
 #include <QDoubleSpinBox>
+#include <QQueue>
 
 #include "version.h"
 
@@ -162,6 +163,12 @@ struct batlabPacket {
     uchar address;
     uchar payloadLowByte;
     uchar payloadHighByte;
+};
+
+struct batlabPacketBundle {
+    QQueue<batlabPacket> packets;
+    QString callback;
+    int channel;  // -1 if not for specific channel
 };
 
 namespace BatlabLib
