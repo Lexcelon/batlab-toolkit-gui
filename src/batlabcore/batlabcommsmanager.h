@@ -22,6 +22,8 @@ public slots:
 private:
     void processSerialQueue();
     void handleBytesWritten(qint64 bytes);
+    void handleError(QSerialPort::SerialPortError serialPortError);
+    void handleWriteTimeout();
 
     QSerialPort* m_serialPort;
     QQueue<batlabPacketBundle> m_packetBundleQueue;

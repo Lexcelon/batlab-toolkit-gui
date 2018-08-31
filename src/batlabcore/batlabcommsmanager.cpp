@@ -3,6 +3,7 @@
 BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObject(parent)
 {
     m_serialPort = new QSerialPort(portName);
+    m_serialPort->setBaudRate(DEFAULT_BAUD_RATE);
     m_serialWaiting = false;
 
     if (!m_serialPort->open(QIODevice::ReadWrite))
@@ -11,7 +12,8 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
                 .arg(portName).arg(m_serialPort->error()));
     }
 
-    // connect(m_serialPort, &QSerialPort::bytesWritten, this, &Batlab::handleBytesWritten);
+     connect(m_serialPort, &QSerialPort::bytesWritten, this, &BatlabCommsManager::handleBytesWritten);
+     connect(m_serialPort, &QSerialPort::errorOccurred, this, &BatlabCommsManager::handleError);
 }
 
 void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle)
@@ -44,7 +46,6 @@ void BatlabCommsManager::processSerialQueue()
         request[4] = m_currentPacket.payloadHighByte;
         m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
 
-        // TODO connect its various states (probably in constructor)
         m_serialWaiting = true;
     }
 }
@@ -55,4 +56,19 @@ void BatlabCommsManager::handleBytesWritten(qint64 bytes)
     {
         qWarning() << "Unable to write complete packet.";
     }
+
+    // Start timer to wait for read response
+    // Up front make sure readyRead is connected to something
+    // LEFT OFF
+    // TODO connect write timeout
+}
+
+void BatlabCommsManager::handleError(QSerialPort::SerialPortError serialPortError)
+{
+    // TODO
+}
+
+void BatlabCommsManager::handleWriteTimeout()
+{
+    // TODO
 }

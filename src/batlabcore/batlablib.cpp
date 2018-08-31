@@ -8,6 +8,27 @@ batlabPacket BatlabLib::readPacket(int batlabNamespace, int batlabRegister)
     packet.address = static_cast<uchar>(batlabRegister);
     packet.payloadLowByte = static_cast<uchar>(0x00);
     packet.payloadHighByte = static_cast<uchar>(0x00);
+    packet.writeTimeout_ms = DEFAULT_WRITE_TIMEOUT;
+    packet.readTimeout_ms = DEFAULT_READ_TIMEOUT;
+    packet.sleepAfterTransaction_ms = DEFAULT_SLEEP_AFTER_TRANSACTION;
+    packet.readVerify = false;
+    packet.retries = DEFAULT_RETRIES;
+    return packet;
+}
+
+batlabPacket BatlabLib::writePacket(int batlabNamespace, int batlabRegister, uchar lowByte, uchar highByte)
+{
+    batlabPacket packet;
+    packet.startByte = static_cast<uchar>(0xAA);
+    packet.nameSpace = static_cast<uchar>(batlabNamespace);
+    packet.address = static_cast<uchar>(batlabRegister);
+    packet.payloadLowByte = static_cast<uchar>(lowByte);
+    packet.payloadHighByte = static_cast<uchar>(highByte);
+    packet.writeTimeout_ms = DEFAULT_WRITE_TIMEOUT;
+    packet.readTimeout_ms = DEFAULT_READ_TIMEOUT;
+    packet.sleepAfterTransaction_ms = DEFAULT_SLEEP_AFTER_TRANSACTION;
+    packet.readVerify = false;
+    packet.retries = DEFAULT_RETRIES;
     return packet;
 }
 

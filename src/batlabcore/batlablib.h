@@ -157,12 +157,23 @@ struct batlabSettings {
     int sineWaveMagnitude;
 };
 
+#define DEFAULT_WRITE_TIMEOUT           500
+#define DEFAULT_READ_TIMEOUT            2000
+#define DEFAULT_SLEEP_AFTER_TRANSACTION 0
+#define DEFAULT_BAUD_RATE               38400
+#define DEFAULT_RETRIES                 3
+
 struct batlabPacket {
     uchar startByte;
     uchar nameSpace;
     uchar address;
     uchar payloadLowByte;
     uchar payloadHighByte;
+    int writeTimeout_ms;
+    int readTimeout_ms;
+    int sleepAfterTransaction_ms;
+    bool readVerify;
+    int retries;
 };
 
 struct batlabPacketBundle {
@@ -196,6 +207,7 @@ namespace BatlabLib
     void debugCommandPacket(int serialnumber, QVector<uchar> data);
 
     batlabPacket readPacket(int batlabNamespace, int batlabRegister);
+    batlabPacket writePacket(int batlabNamespace, int batlabRegister, uchar lowByte, uchar highByte);
 
     static QMap<QString, int> namespaceStringToInt {
         {"Channel 0", batlabNamespaces::CHANNEL0},
