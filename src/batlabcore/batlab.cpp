@@ -64,7 +64,7 @@ void Batlab::verifyBatlabDevice()
     packetBundle.packets = verifyPackets;
     packetBundle.callback = "handleVerifyBatlabDeviceResponse";
     packetBundle.channel = -1;
-    m_commsManager->addPacketBundleToQueue(packetBundle);
+    m_commsManager->sendPacketBundle(packetBundle);
 }
 
 void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)

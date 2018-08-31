@@ -14,7 +14,7 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
     // connect(m_serialPort, &QSerialPort::bytesWritten, this, &Batlab::handleBytesWritten);
 }
 
-void BatlabCommsManager::addPacketBundleToQueue(batlabPacketBundle bundle)
+void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle)
 {
     m_packetBundleQueue.append(bundle);
     processSerialQueue();

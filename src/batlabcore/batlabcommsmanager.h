@@ -12,9 +12,7 @@ class BatlabCommsManager : public QObject
 public:
     explicit BatlabCommsManager(QString portName, QObject *parent = nullptr);
 
-    void addPacketBundleToQueue(batlabPacketBundle bundle);
-    void processSerialQueue();
-    void handleBytesWritten(qint64 bytes);
+    void sendPacketBundle(batlabPacketBundle bundle);
 
 signals:
     void error(const QString &s);
@@ -22,6 +20,9 @@ signals:
 public slots:
 
 private:
+    void processSerialQueue();
+    void handleBytesWritten(qint64 bytes);
+
     QSerialPort* m_serialPort;
     QQueue<batlabPacketBundle> m_packetBundleQueue;
     batlabPacketBundle m_currentPacketBundle;
