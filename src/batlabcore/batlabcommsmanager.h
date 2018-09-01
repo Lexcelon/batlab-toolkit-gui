@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSerialPort>
+#include <QTimer>
 
 #include "batlablib.h"
 
@@ -30,6 +31,7 @@ private:
     batlabPacketBundle m_currentPacketBundle;
     batlabPacket m_currentPacket;
     bool m_serialWaiting;
+    QTimer m_timer;
 };
 
 #endif // BATLABCOMMSMANAGER_H
