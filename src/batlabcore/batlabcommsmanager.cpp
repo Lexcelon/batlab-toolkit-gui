@@ -5,6 +5,7 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
     m_serialPort = new QSerialPort(portName);
     m_serialPort->setBaudRate(DEFAULT_BAUD_RATE);
     m_serialWaiting = false;
+    m_timer.setSingleShot(true);
 
     if (!m_serialPort->open(QIODevice::ReadWrite))
     {
@@ -14,6 +15,7 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
 
      connect(m_serialPort, &QSerialPort::bytesWritten, this, &BatlabCommsManager::handleBytesWritten);
      connect(m_serialPort, &QSerialPort::errorOccurred, this, &BatlabCommsManager::handleError);
+     connect(&m_timer, &QTimer::timeout, this, &BatlabCommsManager::handleTimeout);
 }
 
 void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle)
@@ -44,9 +46,25 @@ void BatlabCommsManager::processSerialQueue()
         request[2] = m_currentPacket.address;
         request[3] = m_currentPacket.payloadLowByte;
         request[4] = m_currentPacket.payloadHighByte;
-        m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
+        const qint64 bytesWritten = m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
+
+        if (bytesWritten == -1)
+        {
+            emit error(tr("Failed to write data to port %1, error: %2")
+                       .arg(m_serialPort->portName())
+                       .arg(m_serialPort->errorString()));
+            return;
+        }
+        else if (bytesWritten != 5)
+        {
+            emit error(tr("Failed to write all data to port %1, error: %2")
+                       .arg(m_serialPort->portName())
+                       .arg(m_serialPort->errorString()));
+            return;
+        }
 
         m_serialWaiting = true;
+        m_timer.start(m_currentPacket.writeTimeout_ms);
     }
 }
 
@@ -68,7 +86,7 @@ void BatlabCommsManager::handleError(QSerialPort::SerialPortError serialPortErro
     // TODO
 }
 
-void BatlabCommsManager::handleWriteTimeout()
+void BatlabCommsManager::handleTimeout()
 {
     // TODO
 }
