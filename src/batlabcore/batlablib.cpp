@@ -12,7 +12,7 @@ batlabPacket BatlabLib::readPacket(int batlabNamespace, int batlabRegister)
     packet.readTimeout_ms = DEFAULT_READ_TIMEOUT;
     packet.sleepAfterTransaction_ms = DEFAULT_SLEEP_AFTER_TRANSACTION;
     packet.readVerify = false;
-    packet.retries = DEFAULT_RETRIES;
+    packet.retries = DEFAULT_SERIAL_RETRIES;
     return packet;
 }
 
@@ -28,7 +28,7 @@ batlabPacket BatlabLib::writePacket(int batlabNamespace, int batlabRegister, uch
     packet.readTimeout_ms = DEFAULT_READ_TIMEOUT;
     packet.sleepAfterTransaction_ms = DEFAULT_SLEEP_AFTER_TRANSACTION;
     packet.readVerify = false;
-    packet.retries = DEFAULT_RETRIES;
+    packet.retries = DEFAULT_SERIAL_RETRIES;
     return packet;
 }
 

@@ -29,6 +29,7 @@ private:
     void handleError(QSerialPort::SerialPortError serialPortError);
     void handleTimeout();
     void handleReadyRead();
+    void attemptWriteCurrentPacket();
 
     QSerialPort* m_serialPort;
     QQueue<batlabPacketBundle> m_packetBundleQueue;
@@ -37,6 +38,7 @@ private:
     bool m_serialWaiting;
     QTimer m_timer;
     QByteArray m_readData;
+    int m_retries;
 };
 
 #endif // BATLABCOMMSMANAGER_H

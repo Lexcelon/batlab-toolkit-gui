@@ -161,7 +161,7 @@ struct batlabSettings {
 #define DEFAULT_READ_TIMEOUT            2000
 #define DEFAULT_SLEEP_AFTER_TRANSACTION 0
 #define DEFAULT_BAUD_RATE               38400
-#define DEFAULT_RETRIES                 3
+#define DEFAULT_SERIAL_RETRIES          3
 
 struct batlabPacket {
     uchar startByte;

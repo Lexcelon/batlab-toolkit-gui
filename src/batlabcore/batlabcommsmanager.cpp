@@ -6,6 +6,7 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
     m_serialPort->setBaudRate(DEFAULT_BAUD_RATE);
     m_serialWaiting = false;
     m_timer.setSingleShot(true);
+    m_retries = 0;
 
     if (!m_serialPort->open(QIODevice::ReadWrite))
     {
@@ -41,32 +42,38 @@ void BatlabCommsManager::processSerialQueue()
     else
     {
         m_currentPacket = m_currentPacketBundle.packets.dequeue();
-        QVector<uchar> request(5);
-        request[0] = m_currentPacket.startByte;
-        request[1] = m_currentPacket.nameSpace;
-        request[2] = m_currentPacket.address;
-        request[3] = m_currentPacket.payloadLowByte;
-        request[4] = m_currentPacket.payloadHighByte;
-        const qint64 bytesWritten = m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
-
-        if (bytesWritten == -1)
-        {
-            emit error(tr("Failed to write data to port %1, error: %2")
-                       .arg(m_serialPort->portName())
-                       .arg(m_serialPort->errorString()));
-            return;
-        }
-        else if (bytesWritten != 5)
-        {
-            emit error(tr("Failed to write all data to port %1, error: %2")
-                       .arg(m_serialPort->portName())
-                       .arg(m_serialPort->errorString()));
-            return;
-        }
-
-        m_serialWaiting = true;
-        m_timer.start(m_currentPacket.writeTimeout_ms);
+        attemptWriteCurrentPacket();
     }
+}
+
+void BatlabCommsManager::attemptWriteCurrentPacket()
+{
+    // TODO check retries
+    QVector<uchar> request(5);
+    request[0] = m_currentPacket.startByte;
+    request[1] = m_currentPacket.nameSpace;
+    request[2] = m_currentPacket.address;
+    request[3] = m_currentPacket.payloadLowByte;
+    request[4] = m_currentPacket.payloadHighByte;
+    const qint64 bytesWritten = m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
+
+    if (bytesWritten == -1)
+    {
+        emit error(tr("Failed to write data to port %1, error: %2")
+                   .arg(m_serialPort->portName())
+                   .arg(m_serialPort->errorString()));
+        return;
+    }
+    else if (bytesWritten != 5)
+    {
+        emit error(tr("Failed to write all data to port %1, error: %2")
+                   .arg(m_serialPort->portName())
+                   .arg(m_serialPort->errorString()));
+        return;
+    }
+
+    m_serialWaiting = true;
+    m_timer.start(m_currentPacket.writeTimeout_ms);
 }
 
 // https://stackoverflow.com/questions/7512559/qt-qiodevicewrite-qtcpsocketwrite-and-bytes-written
