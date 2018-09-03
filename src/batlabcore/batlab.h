@@ -49,7 +49,9 @@ public slots:
     void periodicCheck();
     bool hasReceivedValidResponse();
     void verifyBatlabDevice();
+    void handleResponseBundle(batlabPacketBundle bundle);
     void handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response);
+    void handleSerialError(const QString &s);
 
 private slots:
     void serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction = 0);

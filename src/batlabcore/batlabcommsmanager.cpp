@@ -15,6 +15,7 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
 
      connect(m_serialPort, &QSerialPort::bytesWritten, this, &BatlabCommsManager::handleBytesWritten);
      connect(m_serialPort, &QSerialPort::errorOccurred, this, &BatlabCommsManager::handleError);
+     connect(m_serialPort, &QSerialPort::readyRead, this, &BatlabCommsManager::handleReadyRead);
      connect(&m_timer, &QTimer::timeout, this, &BatlabCommsManager::handleTimeout);
 }
 
@@ -68,25 +69,57 @@ void BatlabCommsManager::processSerialQueue()
     }
 }
 
+// https://stackoverflow.com/questions/7512559/qt-qiodevicewrite-qtcpsocketwrite-and-bytes-written
 void BatlabCommsManager::handleBytesWritten(qint64 bytes)
 {
     if (bytes != 5)
     {
-        qWarning() << "Unable to write complete packet.";
+        emit error(tr("Failed to write all data to port %1, error: %2")
+                   .arg(m_serialPort->portName())
+                   .arg(m_serialPort->errorString()));
+        return;
     }
 
-    // Start timer to wait for read response
-    // Up front make sure readyRead is connected to something
-    // LEFT OFF
-    // TODO connect write timeout
+    // Start waiting for response
+    m_timer.start(m_currentPacket.readTimeout_ms);
+}
+
+void BatlabCommsManager::handleReadyRead()
+{
+    m_readData.append(m_serialPort->readAll());
+
+    if (m_readData.size() == 5)
+    {
+        m_timer.stop();
+
+        // Read the stuff
+        // LEFT OFF
+
+        m_readData.clear();
+    }
 }
 
 void BatlabCommsManager::handleError(QSerialPort::SerialPortError serialPortError)
 {
-    // TODO
+    m_readData.clear();
+    if (serialPortError == QSerialPort::WriteError)
+    {
+        emit error(tr("I/O error occurred while writing data to port %1, error: %2")
+                   .arg(m_serialPort->portName())
+                   .arg(m_serialPort->errorString()));
+    }
+    else if (serialPortError == QSerialPort::ReadError)
+    {
+        emit error(tr("I/O error occurred while reading data from port %1, error: %2")
+                   .arg(m_serialPort->portName())
+                   .arg(m_serialPort->errorString()));
+    }
 }
 
 void BatlabCommsManager::handleTimeout()
 {
-    // TODO
+    m_readData.clear();
+    emit error(tr("Operation timed out for port %1, error: %2")
+               .arg(m_serialPort->portName())
+               .arg(m_serialPort->errorString()));
 }

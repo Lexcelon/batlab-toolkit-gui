@@ -16,7 +16,10 @@ public:
     void sendPacketBundle(batlabPacketBundle bundle);
 
 signals:
+    // TODO upstream handle these
+    // TODO allow for retries before giving up
     void error(const QString &s);
+    void responseBundleReady(batlabPacketBundle bundle);
 
 public slots:
 
@@ -25,6 +28,7 @@ private:
     void handleBytesWritten(qint64 bytes);
     void handleError(QSerialPort::SerialPortError serialPortError);
     void handleTimeout();
+    void handleReadyRead();
 
     QSerialPort* m_serialPort;
     QQueue<batlabPacketBundle> m_packetBundleQueue;
@@ -32,6 +36,7 @@ private:
     batlabPacket m_currentPacket;
     bool m_serialWaiting;
     QTimer m_timer;
+    QByteArray m_readData;
 };
 
 #endif // BATLABCOMMSMANAGER_H

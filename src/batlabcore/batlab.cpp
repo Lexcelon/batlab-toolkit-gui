@@ -8,6 +8,8 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     batlabStateMachine.setInitialState(s_unknown);
 
     m_commsManager = new BatlabCommsManager(portName);
+    connect(m_commsManager, &BatlabCommsManager::responseBundleReady, this, &Batlab::handleResponseBundle);
+    connect(m_commsManager, &BatlabCommsManager::error, this, &Batlab::handleSerialError);
 
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
@@ -53,6 +55,16 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     QTimer *batlabPeriodicCheckTimer = new QTimer(this);
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
     batlabPeriodicCheckTimer->start(5000);
+}
+
+void Batlab::handleSerialError(const QString &s)
+{
+    // TODO
+}
+
+void Batlab::handleResponseBundle(batlabPacketBundle bundle)
+{
+    // TODO
 }
 
 void Batlab::verifyBatlabDevice()
