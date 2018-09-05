@@ -100,6 +100,12 @@ void BatlabCommsManager::handleReadyRead()
         m_timer.stop();
 
         // Read the stuff
+        batlabPacket readPacket = m_currentPacket;
+        readPacket.startByte = m_readData[0];
+        readPacket.nameSpace = m_readData[1];
+        readPacket.address = m_readData[2];
+        readPacket.payloadLowByte = m_readData[3];
+        readPacket.payloadHighByte = m_readData[4];
         // LEFT OFF
 
         m_readData.clear();
