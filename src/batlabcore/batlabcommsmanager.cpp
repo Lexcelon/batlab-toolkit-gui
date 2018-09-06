@@ -106,6 +106,14 @@ void BatlabCommsManager::handleReadyRead()
         readPacket.address = m_readData[2];
         readPacket.payloadLowByte = m_readData[3];
         readPacket.payloadHighByte = m_readData[4];
+
+        if (readPacket.startByte != m_currentPacket.startByte
+                || readPacket.nameSpace != m_currentPacket.nameSpace
+                || readPacket.address != m_currentPacket.address)
+        {
+            emit error(tr("Response packet did not match command packet."));
+            return;
+        }
         // LEFT OFF
 
         m_readData.clear();
