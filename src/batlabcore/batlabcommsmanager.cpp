@@ -32,9 +32,16 @@ void BatlabCommsManager::processSerialQueue()
 
     if (m_currentPacketBundle.packets.empty())
     {
+        if (!m_currentResponseBundle.packets.empty())
+        {
+            emit responseBundleReady(m_currentResponseBundle);
+        }
         if (!m_packetBundleQueue.empty())
         {
             m_currentPacketBundle = m_packetBundleQueue.dequeue();
+            m_currentResponseBundle.packets.clear();
+            m_currentResponseBundle.callback = m_currentPacketBundle.callback;
+            m_currentResponseBundle.channel = m_currentPacketBundle.channel;
             processSerialQueue();
             // TODO handle when we get a success from the last packet in a packet bundle
         }
@@ -93,36 +100,40 @@ void BatlabCommsManager::handleBytesWritten(qint64 bytes)
 
 void BatlabCommsManager::handleReadyRead()
 {
-    m_readData.append(m_serialPort->readAll());
+    m_responseData.append(m_serialPort->readAll());
 
-    if (m_readData.size() == 5)
+    if (m_responseData.size() == 5)
     {
         m_timer.stop();
 
         // Read the stuff
-        batlabPacket readPacket = m_currentPacket;
-        readPacket.startByte = m_readData[0];
-        readPacket.nameSpace = m_readData[1];
-        readPacket.address = m_readData[2];
-        readPacket.payloadLowByte = m_readData[3];
-        readPacket.payloadHighByte = m_readData[4];
+        batlabPacket responsePacket = m_currentPacket;
+        responsePacket.startByte = m_responseData[0];
+        responsePacket.nameSpace = m_responseData[1];
+        responsePacket.address = m_responseData[2];
+        responsePacket.payloadLowByte = m_responseData[3];
+        responsePacket.payloadHighByte = m_responseData[4];
 
-        if (readPacket.startByte != m_currentPacket.startByte
-                || readPacket.nameSpace != m_currentPacket.nameSpace
-                || readPacket.address != m_currentPacket.address)
+        if (responsePacket.startByte != m_currentPacket.startByte
+                || responsePacket.nameSpace != m_currentPacket.nameSpace
+                || responsePacket.address != m_currentPacket.address)
         {
             emit error(tr("Response packet did not match command packet."));
             return;
         }
-        // LEFT OFF
 
-        m_readData.clear();
+        // TODO sleep if requested
+
+        m_serialWaiting = false;
+        m_responseData.clear();
+        m_currentResponseBundle.packets.enqueue(responsePacket);
+        processSerialQueue();
     }
 }
 
 void BatlabCommsManager::handleError(QSerialPort::SerialPortError serialPortError)
 {
-    m_readData.clear();
+    m_responseData.clear();
     if (serialPortError == QSerialPort::WriteError)
     {
         emit error(tr("I/O error occurred while writing data to port %1, error: %2")
@@ -139,7 +150,7 @@ void BatlabCommsManager::handleError(QSerialPort::SerialPortError serialPortErro
 
 void BatlabCommsManager::handleTimeout()
 {
-    m_readData.clear();
+    m_responseData.clear();
     emit error(tr("Operation timed out for port %1, error: %2")
                .arg(m_serialPort->portName())
                .arg(m_serialPort->errorString()));

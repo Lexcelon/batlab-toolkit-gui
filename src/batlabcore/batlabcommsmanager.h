@@ -34,10 +34,11 @@ private:
     QSerialPort* m_serialPort;
     QQueue<batlabPacketBundle> m_packetBundleQueue;
     batlabPacketBundle m_currentPacketBundle;
+    batlabPacketBundle m_currentResponseBundle;
     batlabPacket m_currentPacket;
     bool m_serialWaiting;
     QTimer m_timer;
-    QByteArray m_readData;
+    QByteArray m_responseData;
     int m_retries;
 };
 
