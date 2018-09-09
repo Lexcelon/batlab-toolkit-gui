@@ -55,13 +55,23 @@ void BatlabCommsManager::processSerialQueue()
 
 void BatlabCommsManager::attemptWriteCurrentPacket()
 {
-    // TODO check retries
+    if (m_retries++ >= DEFAULT_SERIAL_RETRIES)
+    {
+        emit packetBundleSendFailed();
+        return;
+    }
     QVector<uchar> request(5);
     request[0] = m_currentPacket.startByte;
     request[1] = m_currentPacket.nameSpace;
     request[2] = m_currentPacket.address;
     request[3] = m_currentPacket.payloadLowByte;
     request[4] = m_currentPacket.payloadHighByte;
+    if (!m_serialPort->isOpen())
+    {
+        qWarning() << tr("Attempted packet write but serial port %1 is not open").arg(m_serialPort->portName());
+        attemptWriteCurrentPacket();
+        return;
+    }
     const qint64 bytesWritten = m_serialPort->write(reinterpret_cast<char*>(request.data()), 5);
 
     if (bytesWritten == -1)
@@ -69,6 +79,7 @@ void BatlabCommsManager::attemptWriteCurrentPacket()
         qWarning() << tr("Failed to write data to port %1, error: %2")
                       .arg(m_serialPort->portName())
                       .arg(m_serialPort->errorString());
+        attemptWriteCurrentPacket();
         return;
     }
     else if (bytesWritten != 5)
@@ -76,6 +87,7 @@ void BatlabCommsManager::attemptWriteCurrentPacket()
         qWarning() << tr("Failed to write all data to port %1, error: %2")
                       .arg(m_serialPort->portName())
                       .arg(m_serialPort->errorString());
+        attemptWriteCurrentPacket();
         return;
     }
 
@@ -91,6 +103,7 @@ void BatlabCommsManager::handleBytesWritten(qint64 bytes)
         qWarning() << tr("Failed to write all data to port %1, error: %2")
                       .arg(m_serialPort->portName())
                       .arg(m_serialPort->errorString());
+        attemptWriteCurrentPacket();
         return;
     }
 
@@ -119,6 +132,7 @@ void BatlabCommsManager::handleReadyRead()
                 || responsePacket.address != m_currentPacket.address)
         {
             qWarning() << tr("Response packet did not match command packet.");
+            attemptWriteCurrentPacket();
             return;
         }
 
@@ -139,12 +153,14 @@ void BatlabCommsManager::handleError(QSerialPort::SerialPortError serialPortErro
         qWarning() << tr("I/O error occurred while writing data to port %1, error: %2")
                       .arg(m_serialPort->portName())
                       .arg(m_serialPort->errorString());
+        attemptWriteCurrentPacket();
     }
     else if (serialPortError == QSerialPort::ReadError)
     {
         qWarning() << tr("I/O error occurred while reading data from port %1, error: %2")
                       .arg(m_serialPort->portName())
                       .arg(m_serialPort->errorString());
+        attemptWriteCurrentPacket();
     }
 }
 
@@ -154,4 +170,5 @@ void BatlabCommsManager::handleTimeout()
     qWarning() << tr("Operation timed out for port %1, error: %2")
                   .arg(m_serialPort->portName())
                   .arg(m_serialPort->errorString());
+    attemptWriteCurrentPacket();
 }

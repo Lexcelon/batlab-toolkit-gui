@@ -18,7 +18,7 @@ public:
 signals:
     // TODO upstream handle these
     // TODO allow for retries before giving up
-    void error(const QString &s);
+    void packetBundleSendFailed();
     void responseBundleReady(batlabPacketBundle bundle);
 
 public slots:

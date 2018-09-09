@@ -9,7 +9,7 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
 
     m_commsManager = new BatlabCommsManager(portName);
     connect(m_commsManager, &BatlabCommsManager::responseBundleReady, this, &Batlab::handleResponseBundle);
-    connect(m_commsManager, &BatlabCommsManager::error, this, &Batlab::handleSerialError);
+    connect(m_commsManager, &BatlabCommsManager::packetBundleSendFailed, this, &Batlab::handleSerialPacketBundleSendFailed);
 
     info.externalPowerConnected = false;
     info.firmwareVersion = -1;
@@ -57,7 +57,7 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     batlabPeriodicCheckTimer->start(5000);
 }
 
-void Batlab::handleSerialError(const QString &s)
+void Batlab::handleSerialPacketBundleSendFailed()
 {
     // TODO
 }
