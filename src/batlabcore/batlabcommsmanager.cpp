@@ -5,7 +5,8 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
     m_serialPort = new QSerialPort(portName);
     m_serialPort->setBaudRate(DEFAULT_BAUD_RATE);
     m_serialWaiting = false;
-    m_timer.setSingleShot(true);
+    m_readWriteTimer.setSingleShot(true);
+    m_sleepAfterTransactionTimer.setSingleShot(true);
     m_retries = 0;
 
     if (!m_serialPort->open(QIODevice::ReadWrite))
@@ -17,7 +18,8 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
      connect(m_serialPort, &QSerialPort::bytesWritten, this, &BatlabCommsManager::handleBytesWritten);
      connect(m_serialPort, &QSerialPort::errorOccurred, this, &BatlabCommsManager::handleError);
      connect(m_serialPort, &QSerialPort::readyRead, this, &BatlabCommsManager::handleReadyRead);
-     connect(&m_timer, &QTimer::timeout, this, &BatlabCommsManager::handleTimeout);
+     connect(&m_readWriteTimer, &QTimer::timeout, this, &BatlabCommsManager::handleTimeout);
+     connect(&m_sleepAfterTransactionTimer, &QTimer::timeout, this, &BatlabCommsManager::processSerialQueue);
 }
 
 void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle)
@@ -43,7 +45,6 @@ void BatlabCommsManager::processSerialQueue()
             m_currentResponseBundle.callback = m_currentPacketBundle.callback;
             m_currentResponseBundle.channel = m_currentPacketBundle.channel;
             processSerialQueue();
-            // TODO handle when we get a success from the last packet in a packet bundle
         }
     }
     else
@@ -92,7 +93,7 @@ void BatlabCommsManager::attemptWriteCurrentPacket()
     }
 
     m_serialWaiting = true;
-    m_timer.start(m_currentPacket.writeTimeout_ms);
+    m_readWriteTimer.start(m_currentPacket.writeTimeout_ms);
 }
 
 // https://stackoverflow.com/questions/7512559/qt-qiodevicewrite-qtcpsocketwrite-and-bytes-written
@@ -108,7 +109,7 @@ void BatlabCommsManager::handleBytesWritten(qint64 bytes)
     }
 
     // Start waiting for response
-    m_timer.start(m_currentPacket.readTimeout_ms);
+    m_readWriteTimer.start(m_currentPacket.readTimeout_ms);
 }
 
 void BatlabCommsManager::handleReadyRead()
@@ -117,7 +118,7 @@ void BatlabCommsManager::handleReadyRead()
 
     if (m_responseData.size() == 5)
     {
-        m_timer.stop();
+        m_readWriteTimer.stop();
 
         // Read the stuff
         batlabPacket responsePacket = m_currentPacket;
@@ -136,12 +137,12 @@ void BatlabCommsManager::handleReadyRead()
             return;
         }
 
-        // TODO sleep if requested
-
         m_serialWaiting = false;
         m_responseData.clear();
         m_currentResponseBundle.packets.enqueue(responsePacket);
-        processSerialQueue();
+
+        // Sleep until the next transaction (usually set to zero so won't sleep)
+        m_sleepAfterTransactionTimer.start(m_currentPacket.sleepAfterTransaction_ms);
     }
 }
 

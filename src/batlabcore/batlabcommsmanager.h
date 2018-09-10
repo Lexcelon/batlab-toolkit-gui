@@ -16,8 +16,6 @@ public:
     void sendPacketBundle(batlabPacketBundle bundle);
 
 signals:
-    // TODO upstream handle these
-    // TODO allow for retries before giving up
     void packetBundleSendFailed();
     void responseBundleReady(batlabPacketBundle bundle);
 
@@ -37,7 +35,8 @@ private:
     batlabPacketBundle m_currentResponseBundle;
     batlabPacket m_currentPacket;
     bool m_serialWaiting;
-    QTimer m_timer;
+    QTimer m_readWriteTimer;
+    QTimer m_sleepAfterTransactionTimer;
     QByteArray m_responseData;
     int m_retries;
 };
