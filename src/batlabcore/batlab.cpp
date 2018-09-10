@@ -5,10 +5,13 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     QState* s_unknown = new QState();
     QState* s_bootloader = new QState();
     QState* s_booted = new QState();
+    s_booted->addTransition(this, &Batlab::bootloaderEntered, s_bootloader); // TODO emit this signal when we detect we are in bootloader
     batlabStateMachine.setInitialState(s_unknown);
+    batlabStateMachine.start();
+
 
     m_commsManager = new BatlabCommsManager(portName);
-    connect(m_commsManager, &BatlabCommsManager::responseBundleReady, this, &Batlab::handleResponseBundle);
+    connect(m_commsManager, &BatlabCommsManager::responseBundleReady, this, &Batlab::handleSerialResponseBundleReady);
     connect(m_commsManager, &BatlabCommsManager::packetBundleSendFailed, this, &Batlab::handleSerialPacketBundleSendFailed);
 
     info.externalPowerConnected = false;
@@ -62,7 +65,7 @@ void Batlab::handleSerialPacketBundleSendFailed()
     // TODO
 }
 
-void Batlab::handleResponseBundle(batlabPacketBundle bundle)
+void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
 {
     // TODO
 }
@@ -493,12 +496,14 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
         return;
     }
 
-    // Message that we are entering bootloader
+    qDebug() << tr("Batlab connected to port %1 entering bootloader").arg(info.portName);
 
-    // Enter bootloader self.write(UNIT,BOOTLOAD,0x0000)
-    // TODO Set internal state machine to bootload
-    // Sleep (2)
-//    serialTransaction();
+    // Enter bootloader
+    QQueue<batlabPacket> packets;
+    batlabPacket packet = BatlabLib::writePacket(batlabNamespaces::UNIT, unitNamespace::UNIT_BOOTLOAD, 0x00, 0x00);
+    packet.sleepAfterTransaction_ms = 2000;
+    packets.append(packet);
+    // TODO check messages with Dan to see if we should read verify this or anything
 
     // ctr = 0x0400
     // for each byte in the file
@@ -521,4 +526,10 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     // else:
         // print("Batlab still in Bootloader -- Try again")
         // return False
+
+    batlabPacketBundle bundle;
+    bundle.packets = packets;
+    bundle.callback = "handleFirmwareFlashResponse";
+    bundle.channel = -1;
+    m_commsManager->sendPacketBundle(bundle);
 }

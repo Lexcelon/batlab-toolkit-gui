@@ -32,6 +32,8 @@ signals:
     void registerReadInitiated (int, int, int);
     void registerWriteInitiated(int, int, int, int);
 
+    void bootloaderEntered();
+
     void batlabDisconnected(QString);
     void infoUpdated();
 
@@ -49,7 +51,7 @@ public slots:
     void periodicCheck();
     bool hasReceivedValidResponse();
     void verifyBatlabDevice();
-    void handleResponseBundle(batlabPacketBundle bundle);
+    void handleSerialResponseBundleReady(batlabPacketBundle bundle);
     void handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response);
     void handleSerialPacketBundleSendFailed();
 
