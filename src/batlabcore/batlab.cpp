@@ -500,10 +500,11 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
 
     // Enter bootloader
     QQueue<batlabPacket> packets;
-    batlabPacket packet = BatlabLib::writePacket(batlabNamespaces::UNIT, unitNamespace::UNIT_BOOTLOAD, 0x00, 0x00);
-    packet.sleepAfterTransaction_ms = 2000;
-    packets.append(packet);
-    // TODO check messages with Dan to see if we should read verify this or anything
+    batlabPacket enterBootloaderPacket = BatlabLib::writePacket(batlabNamespaces::UNIT, unitNamespace::UNIT_BOOTLOAD, 0x00, 0x00);
+    enterBootloaderPacket.sleepAfterTransaction_ms = 2000;
+    packets.append(enterBootloaderPacket);
+
+    // LEFT OFF
 
     // ctr = 0x0400
     // for each byte in the file

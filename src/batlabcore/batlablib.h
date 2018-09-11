@@ -208,6 +208,7 @@ namespace BatlabLib
 
     batlabPacket readPacket(int batlabNamespace, int batlabRegister);
     batlabPacket writePacket(int batlabNamespace, int batlabRegister, uchar lowByte, uchar highByte);
+    batlabPacket writePacket(int batlabNamespace, int batlabRegister, int payload);
 
     static QMap<QString, int> namespaceStringToInt {
         {"Channel 0", batlabNamespaces::CHANNEL0},

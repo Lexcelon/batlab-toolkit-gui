@@ -22,14 +22,21 @@ batlabPacket BatlabLib::writePacket(int batlabNamespace, int batlabRegister, uch
     packet.startByte = static_cast<uchar>(0xAA);
     packet.nameSpace = static_cast<uchar>(batlabNamespace);
     packet.address = static_cast<uchar>(batlabRegister);
-    packet.payloadLowByte = static_cast<uchar>(lowByte);
-    packet.payloadHighByte = static_cast<uchar>(highByte);
+    packet.payloadLowByte = lowByte;
+    packet.payloadHighByte = highByte;
     packet.writeTimeout_ms = DEFAULT_WRITE_TIMEOUT;
     packet.readTimeout_ms = DEFAULT_READ_TIMEOUT;
     packet.sleepAfterTransaction_ms = DEFAULT_SLEEP_AFTER_TRANSACTION;
     packet.readVerify = false;
     packet.retries = DEFAULT_SERIAL_RETRIES;
     return packet;
+}
+
+batlabPacket BatlabLib::writePacket(int batlabNamespace, int batlabRegister, int payload)
+{
+    uchar lowByte = static_cast<uchar>(payload & 0xff);
+    uchar highByte = static_cast<uchar>(payload >> 8);
+    return writePacket(batlabNamespace, batlabRegister, lowByte, highByte);
 }
 
 void BatlabLib::debugResponsePacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte)
