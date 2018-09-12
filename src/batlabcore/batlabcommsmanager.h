@@ -29,6 +29,8 @@ private:
     void handleReadyRead();
     void attemptWriteCurrentPacket();
 
+    void debug();
+
     QSerialPort* m_serialPort;
     QQueue<batlabPacketBundle> m_packetBundleQueue;
     batlabPacketBundle m_currentPacketBundle;

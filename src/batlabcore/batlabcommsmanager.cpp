@@ -22,6 +22,15 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent) : QObj
      connect(&m_sleepAfterTransactionTimer, &QTimer::timeout, this, &BatlabCommsManager::processSerialQueue);
 }
 
+void BatlabCommsManager::debug()
+{
+    qDebug() << "\tPort Name: " << m_serialPort->portName() << "Waiting: " << m_serialWaiting
+             << "\n\tBundles remaining in queue: " << m_packetBundleQueue.size()
+             << "\n\tPackets remaining in current bundle: " << m_currentPacketBundle.packets.size()
+             << "\n\tPackets in current response bundle: " << m_currentResponseBundle.packets.size()
+             << "\n\tCurrent retry: " << m_retries;
+}
+
 void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle)
 {
     m_packetBundleQueue.append(bundle);
@@ -30,14 +39,20 @@ void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle)
 
 void BatlabCommsManager::processSerialQueue()
 {
+    debug();
+
     if (m_serialWaiting) { return; }
 
+    // If we are done with packets in current bundle
     if (m_currentPacketBundle.packets.empty())
     {
+        // If we have some responses ready to go, send them
         if (!m_currentResponseBundle.packets.empty())
         {
             emit responseBundleReady(m_currentResponseBundle);
+            m_currentResponseBundle.packets.clear();
         }
+        // If we have another bundle to deal with
         if (!m_packetBundleQueue.empty())
         {
             m_currentPacketBundle = m_packetBundleQueue.dequeue();
@@ -140,6 +155,7 @@ void BatlabCommsManager::handleReadyRead()
         m_serialWaiting = false;
         m_responseData.clear();
         m_currentResponseBundle.packets.enqueue(responsePacket);
+        m_retries = 0;
 
         // Sleep until the next transaction (usually set to zero so won't sleep)
         m_sleepAfterTransactionTimer.start(m_currentPacket.sleepAfterTransaction_ms);

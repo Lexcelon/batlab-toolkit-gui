@@ -12,7 +12,6 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     batlabStateMachine.setInitialState(s_unknown);
     batlabStateMachine.start();
 
-
     m_commsManager = new BatlabCommsManager(portName);
     connect(m_commsManager, &BatlabCommsManager::responseBundleReady, this, &Batlab::handleSerialResponseBundleReady);
     connect(m_commsManager, &BatlabCommsManager::packetBundleSendFailed, this, &Batlab::handleSerialPacketBundleSendFailed);
@@ -43,20 +42,23 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
         tempCalibR[i] = -1;
     }
 
-    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
-    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
-    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
+    verifyBatlabDevice();
 
-    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
-    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B);
-    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B);
-    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_B);
-    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_R);
-    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R);
-    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R);
-    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R);
+    // TODO reimplement
+//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
+//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
+//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
 
-    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_B);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_R);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R);
+
+//    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
 
     QTimer *batlabPeriodicCheckTimer = new QTimer(this);
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
@@ -75,9 +77,8 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
 
 void Batlab::verifyBatlabDevice()
 {
-    // TODO should handle both bootloader and non modes
     QQueue<batlabPacket> verifyPackets;
-    verifyPackets.append(BatlabLib::readPacket(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM));
+    verifyPackets.append(BatlabLib::readPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR));
     batlabPacketBundle packetBundle;
     packetBundle.packets = verifyPackets;
     packetBundle.callback = "handleVerifyBatlabDeviceResponse";
