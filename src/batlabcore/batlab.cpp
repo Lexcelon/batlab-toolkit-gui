@@ -44,7 +44,7 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
 
     verifyBatlabDevice();
 
-    // TODO reimplement
+    // TODO reimplement LEFT OFF
 //    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
 //    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
 //    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
@@ -72,7 +72,10 @@ void Batlab::handleSerialPacketBundleSendFailed()
 
 void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
 {
-    // TODO
+    if (bundle.callback == "handleVerifyBatlabDeviceResponse")
+    {
+        handleVerifyBatlabDeviceResponse(bundle.packets);
+    }
 }
 
 void Batlab::verifyBatlabDevice()

@@ -39,8 +39,6 @@ void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle)
 
 void BatlabCommsManager::processSerialQueue()
 {
-    debug();
-
     if (m_serialWaiting) { return; }
 
     // If we are done with packets in current bundle
