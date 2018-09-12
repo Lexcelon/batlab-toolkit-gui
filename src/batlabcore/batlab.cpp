@@ -6,6 +6,9 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     QState* s_bootloader = new QState();
     QState* s_booted = new QState();
     s_booted->addTransition(this, &Batlab::bootloaderEntered, s_bootloader); // TODO emit this signal when we detect we are in bootloader
+    batlabStateMachine.addState(s_unknown);
+    batlabStateMachine.addState(s_bootloader);
+    batlabStateMachine.addState(s_booted);
     batlabStateMachine.setInitialState(s_unknown);
     batlabStateMachine.start();
 
