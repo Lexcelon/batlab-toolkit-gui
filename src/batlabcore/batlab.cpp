@@ -44,22 +44,6 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
 
     verifyBatlabDevice();
 
-    // TODO reimplement LEFT OFF
-//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
-//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
-//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
-
-//    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_B);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_R);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R);
-
-//    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
-
     QTimer *batlabPeriodicCheckTimer = new QTimer(this);
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
     batlabPeriodicCheckTimer->start(5000);
@@ -91,7 +75,23 @@ void Batlab::verifyBatlabDevice()
 
 void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
 {
-    // TODO
+    // LEFT OFF
+
+    // TODO reimplement
+//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
+//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
+//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
+
+//    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_B);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_R);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R);
+//    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R);
+
+//    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
 }
 
 void Batlab::periodicCheck()
