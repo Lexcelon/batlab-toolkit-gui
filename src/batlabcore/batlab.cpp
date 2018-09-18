@@ -76,6 +76,16 @@ void Batlab::verifyBatlabDevice()
 void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
 {
     // LEFT OFF
+    batlabPacket responsePacket = response.dequeue();
+    if (responsePacket.payloadLowByte + responsePacket.payloadHighByte*256 == 257)
+    {
+        qDebug() << "Not in bootloader";
+        qDebug() << responsePacket.payloadLowByte + responsePacket.payloadHighByte*256;
+    }
+    else
+    {
+        qDebug() << "In bootloader";
+    }
 
     // TODO reimplement
 //    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
