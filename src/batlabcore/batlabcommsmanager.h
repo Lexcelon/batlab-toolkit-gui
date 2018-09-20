@@ -6,6 +6,7 @@
 #include <QTimer>
 
 #include "batlablib.h"
+#include "batlabpacket.h"
 
 class BatlabCommsManager : public QObject
 {
@@ -35,7 +36,7 @@ private:
     QQueue<batlabPacketBundle> m_packetBundleQueue;
     batlabPacketBundle m_currentPacketBundle;
     batlabPacketBundle m_currentResponseBundle;
-    batlabPacket m_currentPacket;
+    BatlabPacket m_currentPacket;
     bool m_serialWaiting;
     QTimer m_readWriteTimer;
     QTimer m_sleepAfterTransactionTimer;

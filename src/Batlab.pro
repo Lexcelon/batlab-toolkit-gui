@@ -51,7 +51,8 @@ SOURCES += main.cpp\
     components/resultswidget.cpp \
     batlabcore/cellplaylist.cpp \
     batlabcore/channel.cpp \
-    batlabcore/batlabcommsmanager.cpp
+    batlabcore/batlabcommsmanager.cpp \
+    batlabcore/batlabpacket.cpp
 
 HEADERS  += \
     dialogs/batlabdebugdialog/batlabdebugdialog.h \
@@ -83,7 +84,8 @@ HEADERS  += \
     components/resultswidget.h \
     batlabcore/cellplaylist.h \
     batlabcore/channel.h \
-    batlabcore/batlabcommsmanager.h
+    batlabcore/batlabcommsmanager.h \
+    batlabcore/batlabpacket.h
 
 FORMS    += \
     testwindow.ui \

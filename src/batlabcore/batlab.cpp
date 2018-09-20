@@ -64,8 +64,8 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
 
 void Batlab::verifyBatlabDevice()
 {
-    QQueue<batlabPacket> verifyPackets;
-    verifyPackets.append(BatlabLib::readPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR));
+    QQueue<BatlabPacket> verifyPackets;
+    verifyPackets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR));
     batlabPacketBundle packetBundle;
     packetBundle.packets = verifyPackets;
     packetBundle.callback = "handleVerifyBatlabDeviceResponse";
@@ -73,14 +73,14 @@ void Batlab::verifyBatlabDevice()
     m_commsManager->sendPacketBundle(packetBundle);
 }
 
-void Batlab::handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response)
+void Batlab::handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response)
 {
     // LEFT OFF
-    batlabPacket responsePacket = response.dequeue();
-    if (responsePacket.payloadLowByte + responsePacket.payloadHighByte*256 == 257)
+    BatlabPacket responsePacket = response.dequeue();
+    if (responsePacket.value() == 257)
     {
         qDebug() << "Not in bootloader";
-        qDebug() << responsePacket.payloadLowByte + responsePacket.payloadHighByte*256;
+        qDebug() << responsePacket.value();
     }
     else
     {

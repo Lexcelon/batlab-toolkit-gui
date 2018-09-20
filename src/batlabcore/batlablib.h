@@ -163,25 +163,6 @@ struct batlabSettings {
 #define DEFAULT_BAUD_RATE               38400
 #define DEFAULT_SERIAL_RETRIES          3
 
-struct batlabPacket {
-    uchar startByte;
-    uchar nameSpace;
-    uchar address;
-    uchar payloadLowByte;
-    uchar payloadHighByte;
-    int writeTimeout_ms;
-    int readTimeout_ms;
-    int sleepAfterTransaction_ms;
-    bool readVerify;
-    int retries;
-};
-
-struct batlabPacketBundle {
-    QQueue<batlabPacket> packets;
-    QString callback;
-    int channel;  // -1 if not for specific channel
-};
-
 namespace BatlabLib
 {
     void bubblesort(QVector<float> data, QVector<int> &indices);
@@ -200,15 +181,6 @@ namespace BatlabLib
     float getSineFrequency(int val);
     int sendSineFrequency(float val);
     cellResultsStatusInfo createInitializedcellResultsDisplayInfo();
-
-    void debugResponsePacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
-    void debugCommandPacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte);
-    void debugResponsePacket(int serialnumber, QVector<uchar> data);
-    void debugCommandPacket(int serialnumber, QVector<uchar> data);
-
-    batlabPacket readPacket(int batlabNamespace, int batlabRegister);
-    batlabPacket writePacket(int batlabNamespace, int batlabRegister, uchar lowByte, uchar highByte);
-    batlabPacket writePacket(int batlabNamespace, int batlabRegister, int payload);
 
     static QMap<QString, int> namespaceStringToInt {
         {"Channel 0", batlabNamespaces::CHANNEL0},

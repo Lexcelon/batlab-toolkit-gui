@@ -52,7 +52,7 @@ public slots:
     bool hasReceivedValidResponse();
     void verifyBatlabDevice();
     void handleSerialResponseBundleReady(batlabPacketBundle bundle);
-    void handleVerifyBatlabDeviceResponse(QQueue<batlabPacket> response);
+    void handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response);
     void handleSerialPacketBundleSendFailed();
 
 private slots:
