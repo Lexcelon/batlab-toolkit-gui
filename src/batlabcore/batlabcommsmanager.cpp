@@ -75,11 +75,11 @@ void BatlabCommsManager::attemptWriteCurrentPacket()
         return;
     }
     QVector<uchar> request(5);
-    request[0] = m_currentPacket.startByte;
-    request[1] = m_currentPacket.nameSpace;
-    request[2] = m_currentPacket.address;
-    request[3] = m_currentPacket.payloadLowByte;
-    request[4] = m_currentPacket.payloadHighByte;
+    request[0] = m_currentPacket.getStartByte();
+    request[1] = m_currentPacket.getNamespace();
+    request[2] = m_currentPacket.getAddress();
+    request[3] = m_currentPacket.getPayloadLowByte();
+    request[4] = m_currentPacket.getPayloadHighByte();
     if (!m_serialPort->isOpen())
     {
         qWarning() << tr("Attempted packet write but serial port %1 is not open").arg(m_serialPort->portName());
@@ -106,7 +106,7 @@ void BatlabCommsManager::attemptWriteCurrentPacket()
     }
 
     m_serialWaiting = true;
-    m_readWriteTimer.start(m_currentPacket.writeTimeout_ms);
+    m_readWriteTimer.start(m_currentPacket.getWriteTimeout_ms());
 }
 
 // https://stackoverflow.com/questions/7512559/qt-qiodevicewrite-qtcpsocketwrite-and-bytes-written
@@ -122,7 +122,7 @@ void BatlabCommsManager::handleBytesWritten(qint64 bytes)
     }
 
     // Start waiting for response
-    m_readWriteTimer.start(m_currentPacket.readTimeout_ms);
+    m_readWriteTimer.start(m_currentPacket.getReadTimeout_ms());
 }
 
 void BatlabCommsManager::handleReadyRead()
@@ -134,16 +134,17 @@ void BatlabCommsManager::handleReadyRead()
         m_readWriteTimer.stop();
 
         // Read the stuff
-        batlabPacket responsePacket = m_currentPacket;
-        responsePacket.startByte = m_responseData[0];
-        responsePacket.nameSpace = m_responseData[1];
-        responsePacket.address = m_responseData[2];
-        responsePacket.payloadLowByte = m_responseData[3];
-        responsePacket.payloadHighByte = m_responseData[4];
+        BatlabPacket responsePacket = m_currentPacket;
+        // TODO make a function to make these just a constructor
+        responsePacket.setStartByte(m_responseData[0]);
+        responsePacket.setNamespace(m_responseData[1]);
+        responsePacket.setAddress(m_responseData[2]);
+        responsePacket.setPayloadLowByte(m_responseData[3]);
+        responsePacket.setPayloadHighByte(m_responseData[4]);
 
-        if (responsePacket.startByte != m_currentPacket.startByte
-                || responsePacket.nameSpace != m_currentPacket.nameSpace
-                || responsePacket.address != m_currentPacket.address)
+        if (responsePacket.getStartByte() != m_currentPacket.getStartByte()
+                || responsePacket.getNamespace() != m_currentPacket.getNamespace()
+                || responsePacket.getAddress() != m_currentPacket.getAddress())
         {
             qWarning() << tr("Response packet did not match command packet.");
             attemptWriteCurrentPacket();
@@ -156,7 +157,7 @@ void BatlabCommsManager::handleReadyRead()
         m_retries = 0;
 
         // Sleep until the next transaction (usually set to zero so won't sleep)
-        m_sleepAfterTransactionTimer.start(m_currentPacket.sleepAfterTransaction_ms);
+        m_sleepAfterTransactionTimer.start(m_currentPacket.getSleepAfterTransaction_ms());
     }
 }
 

@@ -1,17 +1,38 @@
 #ifndef BATLABPACKET_H
 #define BATLABPACKET_H
 
+#include <QObject>
+
+#include "batlablib.h"
+
 class BatlabPacket
 {
 public:
     explicit BatlabPacket();
     explicit BatlabPacket(int batlabNamespace, int batlabRegister);
+    explicit BatlabPacket(int batlabNamespace, int batlabRegister, int payloadLowByte, int payloadHighByte);
     // TODO
-//    BatlabPacket readPacket(int batlabNamespace, int batlabRegister);
 //    BatlabPacket writePacket(int batlabNamespace, int batlabRegister, uchar lowByte, uchar highByte);
 //    BatlabPacket writePacket(int batlabNamespace, int batlabRegister, int payload);
     // void debug();
     int value();
+    uchar getStartByte();
+    void setStartByte(uchar startByte);
+    uchar getNamespace();
+    void setNamespace(uchar ns);
+    uchar getAddress();
+    void setAddress(uchar address);
+    uchar getPayloadLowByte();
+    void setPayloadLowByte(uchar lowByte);
+    uchar getPayloadHighByte();
+    void setPayloadHighByte(uchar highByte);
+    int getWriteTimeout_ms();
+    void setWriteTimeout_ms(int writeTimeout_ms);
+    int getReadTimeout_ms();
+    int getSleepAfterTransaction_ms();
+    void setSleepAfterTransaction_ms(int ms);
+    bool getReadVerify();
+    int getRetries();
 signals:
 
 public slots:

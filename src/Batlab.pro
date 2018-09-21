@@ -45,7 +45,6 @@ SOURCES += main.cpp\
     batlabcore/batlab.cpp \
     components/batlabwidget.cpp \
     batlabcore/batlablogger.cpp \
-    batlabcore/batlabcommthread.cpp \
     batlabcore/batlablib.cpp \
     components/cellteststatuswidget.cpp \
     components/resultswidget.cpp \
@@ -79,7 +78,6 @@ HEADERS  += \
     components/batlabwidget.h \
     batlabcore/batlablogger.h \
     components/hexspinbox.h \
-    batlabcore/batlabcommthread.h \
     components/cellteststatuswidget.h \
     components/resultswidget.h \
     batlabcore/cellplaylist.h \
