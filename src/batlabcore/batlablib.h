@@ -79,7 +79,11 @@ enum unitNamespace {
     VOLT_DC_CALIB_OFF,
     VOLT_DC_CALIB_SCA,
     LOCK,
+    ZERO_AMP_THRESH,
+    WATCHDOG_TIMER,
 };
+
+#define WATCHDOG_TIMER_RESET    255
 
 enum bootloaderNamespace
 {

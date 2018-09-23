@@ -2,7 +2,16 @@
 
 BatlabPacket::BatlabPacket()
 {
-    // TODO
+    m_startByte = static_cast<uchar>(0xAA);
+    m_nameSpace = static_cast<uchar>(0x00);
+    m_address = static_cast<uchar>(0x00);
+    m_payloadLowByte = static_cast<uchar>(0x00);
+    m_payloadHighByte = static_cast<uchar>(0x00);
+    m_writeTimeout_ms = DEFAULT_WRITE_TIMEOUT;
+    m_readTimeout_ms = DEFAULT_READ_TIMEOUT;
+    m_sleepAfterTransaction_ms = DEFAULT_SLEEP_AFTER_TRANSACTION;
+    m_readVerify = false;
+    m_retries = DEFAULT_SERIAL_RETRIES;
 }
 
 BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister)
@@ -33,6 +42,20 @@ BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister, int payloadL
     m_retries = DEFAULT_SERIAL_RETRIES;
 }
 
+BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister, int payload)
+{
+    m_startByte = static_cast<uchar>(0xAA);
+    m_nameSpace = static_cast<uchar>(batlabNamespace);
+    m_address = static_cast<uchar>(batlabRegister);
+    m_payloadLowByte = static_cast<uchar>(payload & 0xff);
+    m_payloadHighByte = static_cast<uchar>(payload >> 8);
+    m_writeTimeout_ms = DEFAULT_WRITE_TIMEOUT;
+    m_readTimeout_ms = DEFAULT_READ_TIMEOUT;
+    m_sleepAfterTransaction_ms = DEFAULT_SLEEP_AFTER_TRANSACTION;
+    m_readVerify = false;
+    m_retries = DEFAULT_SERIAL_RETRIES;
+}
+
 uchar BatlabPacket::getStartByte() { return m_startByte; }
 void BatlabPacket::setStartByte(uchar startByte) { m_startByte = startByte; }
 
@@ -51,62 +74,20 @@ void BatlabPacket::setPayloadHighByte(uchar highByte) { m_payloadHighByte = high
 int BatlabPacket::getWriteTimeout_ms() { return m_writeTimeout_ms; }
 void BatlabPacket::setWriteTimeout_ms(int writeTimeout_ms) { m_writeTimeout_ms = writeTimeout_ms; }
 
-int BatlabPacket::getReadTimeout_ms()
-{
-    return m_readTimeout_ms;
-}
+int BatlabPacket::getReadTimeout_ms() { return m_readTimeout_ms; }
+int BatlabPacket::getSleepAfterTransaction_ms() { return m_sleepAfterTransaction_ms; }
 
-int BatlabPacket::getSleepAfterTransaction_ms()
-{
-    return m_sleepAfterTransaction_ms;
-}
+void BatlabPacket::setSleepAfterTransaction_ms(int ms) { m_sleepAfterTransaction_ms = ms; }
+bool BatlabPacket::getReadVerify() { return m_readVerify; }
 
-void BatlabPacket::setSleepAfterTransaction_ms(int ms)
-{
-    m_sleepAfterTransaction_ms = ms;
-}
+int BatlabPacket::getRetries() { return m_retries; }
+int BatlabPacket::value() { return m_payloadLowByte + m_payloadHighByte*256; }
 
-bool BatlabPacket::getReadVerify()
-{
-    return m_readVerify;
-}
+// TODO functions from python packet implementation
 
-int BatlabPacket::getRetries()
-{
-    return m_retries;
-}
-
-int BatlabPacket::value()
-{
-    return m_payloadLowByte + m_payloadHighByte*256;
-}
-
-//batlabPacket BatlabLib::writePacket(int batlabNamespace, int batlabRegister, uchar lowByte, uchar highByte)
+//void debug()
 //{
-//    batlabPacket packet;
-//    packet.startByte = static_cast<uchar>(0xAA);
-//    packet.nameSpace = static_cast<uchar>(batlabNamespace);
-//    packet.address = static_cast<uchar>(batlabRegister);
-//    packet.payloadLowByte = lowByte;
-//    packet.payloadHighByte = highByte;
-//    packet.writeTimeout_ms = DEFAULT_WRITE_TIMEOUT;
-//    packet.readTimeout_ms = DEFAULT_READ_TIMEOUT;
-//    packet.sleepAfterTransaction_ms = DEFAULT_SLEEP_AFTER_TRANSACTION;
-//    packet.readVerify = false;
-//    packet.retries = DEFAULT_SERIAL_RETRIES;
-//    return packet;
-//}
-
-//batlabPacket BatlabLib::writePacket(int batlabNamespace, int batlabRegister, int payload)
-//{
-//    uchar lowByte = static_cast<uchar>(payload & 0xff);
-//    uchar highByte = static_cast<uchar>(payload >> 8);
-//    return writePacket(batlabNamespace, batlabRegister, lowByte, highByte);
-//}
-
-//void BatlabLib::debugResponsePacket(int serialnumber, uchar packetStartByte, uchar packetNamespace, uchar packetAddress, uchar packetLowByte, uchar packetHighByte)
-//{
-//    qDebug() << "Response Packet:" << "Batlab S/N:" << qPrintable(QString::number(serialnumber).leftJustified(6, ' '))
+//    qDebug() << "Packet:" << "Batlab S/N:" << qPrintable(QString::number(serialnumber).leftJustified(6, ' '))
 //             << "Start Byte:"<< qPrintable("0x" + QString("%1").arg(packetStartByte, 0, 16).toUpper().rightJustified(2, '0'))
 //             << "Namespace:" << qPrintable(BatlabLib::namespaceIntToString[packetNamespace].leftJustified(12, ' '))
 //             << "Address:" << qPrintable("0x" + QString("%1").arg(packetAddress, 0, 16).toUpper().rightJustified(2, '0'))
