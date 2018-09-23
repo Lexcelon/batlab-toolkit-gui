@@ -80,32 +80,31 @@ void Batlab::handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response)
     {
         QQueue<BatlabPacket> initPackets;  // TODO fix namespaces for units and addresses
         initPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::WATCHDOG_TIMER, WATCHDOG_TIMER_RESET));
-//                    self.write(CELL0,MODE,MODE_IDLE)
-//        initPackets.append(BatlabPacket());  // LEFT OFF
-//                    self.write(CELL1,MODE,MODE_IDLE)
-//                    self.write(CELL2,MODE,MODE_IDLE)
-//                    self.write(CELL3,MODE,MODE_IDLE)
-//                    self.R[0] = self.read(0x00,0x16).data
-//                    self.R[1] = self.read(0x01,0x16).data
-//                    self.R[2] = self.read(0x02,0x16).data
-//                    self.R[3] = self.read(0x03,0x16).data
-//                    self.B[0] = self.read(0x00,0x17).data
-//                    self.B[1] = self.read(0x01,0x17).data
-//                    self.B[2] = self.read(0x02,0x17).data
-//                    self.B[3] = self.read(0x03,0x17).data
-//                    self.setpoints[0] = self.read(0x00,CURRENT_SETPOINT).data
-//                    self.setpoints[1] = self.read(0x01,CURRENT_SETPOINT).data
-//                    self.setpoints[2] = self.read(0x02,CURRENT_SETPOINT).data
-//                    self.setpoints[3] = self.read(0x03,CURRENT_SETPOINT).data
-//                    a = self.read(0x04,0x00).data
-//                    b = self.read(0x04,0x01).data
-//                    self.sn = str(a + b*65536)
-//                    if(math.isnan(a) or math.isnan(b)):
-//                        logging.warning("Serial Number retrieval failed. Trying Again")
-//                        a = self.read(0x04,0x00).data
-//                        b = self.read(0x04,0x01).data
 
-//                    self.ver = str(self.read(0x04,0x02).data)
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::MODE, MODE_IDLE));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL1, cellNamespace::MODE, MODE_IDLE));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL2, cellNamespace::MODE, MODE_IDLE));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL3, cellNamespace::MODE, MODE_IDLE));
+
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_R));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_B));
+
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::CURRENT_SETPOINT));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL1, cellNamespace::CURRENT_SETPOINT));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL2, cellNamespace::CURRENT_SETPOINT));
+        initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL3, cellNamespace::CURRENT_SETPOINT));
+
+        initPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM));
+        initPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID));
+        initPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER));
+
+        initPackets.append(BatlabPacket(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU));
 
 //                    if int(self.ver) > 3:
 //                        self.write_verify(UNIT,SETTINGS,SET_WATCHDOG_TIMER) #this setting is only meaningful if the firmware version is 4 or greater.
@@ -115,22 +114,6 @@ void Batlab::handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response)
     {
         // In bootloader
     }
-
-    // TODO reimplement
-//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
-//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
-//    initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
-
-//    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_B);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_R);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R);
-//    initiateRegisterRead(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R);
-
-//    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
 }
 
 void Batlab::periodicCheck()
