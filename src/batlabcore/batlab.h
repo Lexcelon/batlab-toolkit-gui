@@ -48,12 +48,15 @@ public slots:
     int getSerialNumber() { return info.serialNumberRegister; }
     batlabStatusInfo getInfo();
 
+    void handleSerialResponseBundleReady(batlabPacketBundle bundle);
+    void handleSerialPacketBundleSendFailed();
     void periodicCheck();
     bool hasReceivedValidResponse();
     void verifyBatlabDevice();
-    void handleSerialResponseBundleReady(batlabPacketBundle bundle);
     void handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response);
-    void handleSerialPacketBundleSendFailed();
+    void initBatlabDevice();
+    void handleInitBatlabDeviceResponse(QQueue<BatlabPacket> response);
+
 
 private slots:
 
