@@ -151,6 +151,8 @@ void BatlabCommsManager::handleReadyRead()
             return;
         }
 
+        // TODO handle read verify
+
         m_serialWaiting = false;
         m_responseData.clear();
         m_currentResponseBundle.packets.enqueue(responsePacket);

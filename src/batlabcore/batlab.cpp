@@ -550,6 +550,8 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     // LEFT OFF
 
     // ctr = 0x0400
+    int ctr = 0x0400;
+
     // for each byte in the file
         // self.write(BOOTLOADER,BL_ADDR,int(ctr))
         // self.write(BOOTLOADER,BL_DATA,int(ord(byte)))
@@ -557,6 +559,8 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
         // verify bb == int(ord(byte))
         // print str(ctr - 0x03FF) of FIRMWARE_SIZE: str(bb)
         // ctr++
+
+
     // reboot into new image
     // self.write(BOOTLOADER,BL_BOOTLOAD,0x0000)
     // sleep(2)
