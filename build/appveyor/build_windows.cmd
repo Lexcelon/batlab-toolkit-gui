@@ -7,12 +7,13 @@ set PATH=C:\Qt\QtIFW-3.0.1\bin\;%PATH%
 set PATH=C:\Qt\Tools\mingw530_32\bin\;%PATH%
 set PATH=C:\MinGW\bin\;%PATH%
 
-
-IF "%APPVEYOR_REPO_TAG%"=="true" (
-    echo Setting program version...   
-    perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_REPO_TAG_NAME%/g" src\batlabcore\version.h dist\windows\config\config.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
+echo Setting program version...
+IF "%APPVEYOR_REPO_BRANCH%"=="master" (
+   IF "%APPVEYOR_REPO_TAG%"=="true" (
+       perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_REPO_TAG_NAME%/g" src\batlabcore\version.h dist\windows\config\config.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
+   )
 ) ELSE (
-    echo Skipping program version setting since not a tagged build...
+    perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_REPO_COMMIT_TIMESTAMP%/g" src\batlabcore\version.h dist\windows\config\config.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
 )
 
 echo Setting program date...

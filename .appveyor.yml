@@ -58,4 +58,3 @@ deploy:
     artifact: /.*\.xml/,/.*\.7z.*/
     on:
       branch: develop
-      appveyor_repo_tag: true
