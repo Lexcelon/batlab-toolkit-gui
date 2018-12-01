@@ -13,7 +13,7 @@ IF "%APPVEYOR_REPO_BRANCH%"=="master" (
        perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_REPO_TAG_NAME%/g" src\batlabcore\version.h dist\windows\config\config.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
    )
 ) ELSE (
-    perl.exe -p -i.bak -e "s/0\.0\.0/%APPVEYOR_REPO_COMMIT_TIMESTAMP%/g" src\batlabcore\version.h dist\windows\config\config.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
+    perl.exe -p -i.bak -e "s/0\.0\.0/'0.0.' . time()/e" src\batlabcore\version.h dist\windows\config\config.xml dist\windows\packages\com.lexcelon.batlabtoolkitgui\meta\package.xml
 )
 
 echo Setting program date...
