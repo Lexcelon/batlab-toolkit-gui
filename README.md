@@ -42,3 +42,17 @@ Then you must wait a couple of minutes to make sure the build passes. If the bui
     $ git push --tags
 
 When this is done, a few things will happen. A release will be created on GitHub. Appveyor/Travis will perform a build of the source code on their respective platforms. They will also build the installer for that platform and upload it to the GitHub release. They will then use the Qt Installer Framework tools to generate a repository with the built program binaries and upload it to Amazon S3. This way, when users check for updates, the program can read the contents of the S3 repository and determine if updates are available (and download them if so).
+
+## Development Builds
+
+To install a version of Batlab Toolkit GUI that gets updates from the ``develop`` branch, use the following steps. This can be installed independently, alongside a release build. Note that builds from ``develop`` are considered unstable.
+
+First, you may wish to rename the desktop shortcut if you have an existing installation, as this ``develop`` installation will overwrite an existing shortcut of the same name. For example, rename ``Batlab Toolkit GUI`` to ``Batlab Toolkit GUI - Release`` on the desktop.
+
+Just like a release build, visit the [Releases](https://github.com/Lexcelon/batlab-toolkit-gui/releases) page and download the most recent installer.
+
+Run the installer, and on the first page click on "Settings" and then the "Repositories" tab. Click on "User defined repositories" -> "Add" and enter the following URL: ``https://lexcelon-s3-1.s3.amazonaws.com/repository/batlab-toolkit-gui/develop/%platform%`` replacing ``%platform%`` based on your machine (currently only ``windows`` is an option). Uncheck the Updates Repository under "Default repositories". Click "OK" -> "Next".
+
+When prompted to specify an installation directory, give it a different name such as ``C:\Program Files (x86)\Lexcelon\Batlab Toolit GUI_develop``.
+
+Continue the installation as you would for a release build. You may wish to give the new desktop shortcut a name such as ``Batlab Toolkit GUI - Develop``.
