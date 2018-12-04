@@ -38,8 +38,8 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
         info.channels[i].storageDischargeComplete = false;
         info.channels[i].storageDischargeError = false;
 
-        tempCalibB[i] = -1;
-        tempCalibR[i] = -1;
+        m_tempCalibB[i] = -1;
+        m_tempCalibR[i] = -1;
     }
 
     verifyBatlabDevice();
@@ -59,6 +59,10 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
     if (bundle.callback == "handleVerifyBatlabDeviceResponse")
     {
         handleVerifyBatlabDeviceResponse(bundle.packets);
+    }
+    else if (bundle.callback == "handleInitBatlabDeviceResponse")
+    {
+        handleInitBatlabDeviceResponse(bundle.packets);
     }
 }
 
@@ -114,7 +118,22 @@ void Batlab::initBatlabDevice()
 
 void Batlab::handleInitBatlabDeviceResponse(QQueue<BatlabPacket> response)
 {
+    for (int i = 0; i < 5; i++)
+    {
+        response.dequeue();
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        m_tempCalibR[i] = response.dequeue().value();
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        m_tempCalibB[i] = response.dequeue().value();
+    }
 
+    // LEFT OFF
+
+    emit infoUpdated();
 }
 
 void Batlab::handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response)

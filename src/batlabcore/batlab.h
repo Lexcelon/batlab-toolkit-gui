@@ -64,8 +64,8 @@ private:
     batlabStatusInfo info;
 
     // TODO move to channels?
-    int tempCalibB[4];
-    int tempCalibR[4];
+    int m_tempCalibB[4];
+    int m_tempCalibR[4];
 
     QStateMachine batlabStateMachine;
     QState* s_unknown;
