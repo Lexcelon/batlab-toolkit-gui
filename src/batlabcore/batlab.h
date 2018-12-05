@@ -28,10 +28,6 @@ public:
     void setAllIdle();
 
 signals:
-    void newStreamReceived(int,int,int,float,float,float);
-    void registerReadInitiated (int, int, int);
-    void registerWriteInitiated(int, int, int, int);
-
     void bootloaderEntered();
 
     void batlabDisconnected(QString);
@@ -40,8 +36,6 @@ signals:
     void error(const QString &s);
 
 public slots:
-    void initiateRegisterRead(int, int);
-    void initiateRegisterWrite(int, int, int);
     void initiateFirmwareFlash(QString firmwareFilePath);
 
     QString getPortName() { return m_info.portName; }
@@ -56,7 +50,6 @@ public slots:
     void handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response);
     void initBatlabDevice();
     void handleInitBatlabDeviceResponse(QQueue<BatlabPacket> response);
-
 
 private slots:
 
