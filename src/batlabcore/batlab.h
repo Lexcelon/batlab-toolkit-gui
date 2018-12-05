@@ -29,6 +29,7 @@ public:
 
 signals:
     void bootloaderEntered();
+    void booted();
 
     void batlabDisconnected(QString);
     void infoUpdated();

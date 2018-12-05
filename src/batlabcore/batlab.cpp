@@ -5,7 +5,9 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     QState* s_unknown = new QState();
     QState* s_bootloader = new QState();
     QState* s_booted = new QState();
+    s_unknown->addTransition(this, &Batlab::booted, s_booted);
     s_booted->addTransition(this, &Batlab::bootloaderEntered, s_bootloader); // TODO emit this signal when we detect we are in bootloader
+    s_unknown->addTransition(this, &Batlab::bootloaderEntered, s_bootloader);
     m_batlabStateMachine.addState(s_unknown);
     m_batlabStateMachine.addState(s_bootloader);
     m_batlabStateMachine.addState(s_booted);
@@ -144,11 +146,13 @@ void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
     BatlabPacket responsePacket = response[0];
     if (responsePacket.value() == 257)
     {
+        emit booted();
         initBatlabDevice();
     }
     else
     {
         // In bootloader
+        emit bootloaderEntered();
     }
 }
 
@@ -208,8 +212,7 @@ batlabStatusInfo Batlab::getInfo()
 
 bool Batlab::hasReceivedValidResponse()
 {
-    // TODO use state machine to answer this question
-    return true;
+    return !m_batlabStateMachine.configuration().contains(s_unknown);
 }
 
 void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
