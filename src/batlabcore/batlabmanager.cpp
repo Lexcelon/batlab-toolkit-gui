@@ -16,6 +16,14 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
     QTimer::singleShot(500, this, &BatlabManager::requestAvailableFirmwareVersions);
 }
 
+void BatlabManager::setAllBatlabChannelsIdle()
+{
+    for (auto portName : connectedBatlabsByPortName.keys())
+    {
+        connectedBatlabsByPortName[portName]->setAllIdle();
+    }
+}
+
 void BatlabManager::initializeNetworkAccessManager()
 {
     networkAccessManager = new QNetworkAccessManager;

@@ -376,10 +376,7 @@ void BatlabMainWindow::closeEvent(QCloseEvent *event)
                                   QMessageBox::Yes|QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
-        // TODO update to set all batlabs idle using whatever new comm standard is developed
-//        for (int i = 0; i < BatlabObjects.size(); ++i) {
-//            BatlabObjects[i]->setAllIdle();
-//        }
+        batlabManager->setAllBatlabChannelsIdle();
         event->accept();
     } else {
         event->ignore();

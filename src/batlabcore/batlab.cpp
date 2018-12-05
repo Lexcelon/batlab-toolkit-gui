@@ -128,7 +128,7 @@ void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response)
     {
         m_tempCalibB[i] = response[responseCounter++].value();
     }
-    responseCounter += 4;  // Current setpoint (presently unused)
+    responseCounter += 4;  // Skip current setpoint (presently unused)
     m_info.serialNumberRegister = response[responseCounter++].value();
     m_info.deviceIdRegister = response[responseCounter++].value();
     m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
@@ -185,11 +185,20 @@ Batlab::~Batlab()
 {
 }
 
-void Batlab::setAllIdle()
+void Batlab::setAllIdle()  // TODO validate this behavior
 {
-    for (int i = 0; i < 4; ++i) {
-//        TODO initiateRegisterWrite(i, cellNamespace::MODE, MODE_IDLE);
-    }
+    QVector<BatlabPacket> idlePackets;
+
+    idlePackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::MODE, MODE_IDLE));
+    idlePackets.append(BatlabPacket(batlabNamespaces::CHANNEL1, cellNamespace::MODE, MODE_IDLE));
+    idlePackets.append(BatlabPacket(batlabNamespaces::CHANNEL2, cellNamespace::MODE, MODE_IDLE));
+    idlePackets.append(BatlabPacket(batlabNamespaces::CHANNEL3, cellNamespace::MODE, MODE_IDLE));
+
+    batlabPacketBundle packetBundle;
+    packetBundle.packets = idlePackets;
+    packetBundle.callback = "handleSetAllIdleResponse";
+    packetBundle.channel = -1;
+    m_commsManager->sendPacketBundle(packetBundle);
 }
 
 batlabStatusInfo Batlab::getInfo()

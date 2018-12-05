@@ -45,6 +45,7 @@ public slots:
     void processFirmwareFlashRequest(int serial, QString firmwareVersion);
     void processFirmwareDownloadFinished();
     void processFirmwareDownloadError();
+    void setAllBatlabChannelsIdle();
 
     void initializeNetworkAccessManager();
     void requestAvailableFirmwareVersions();
