@@ -222,25 +222,28 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
 
     // Enter bootloader
     QQueue<BatlabPacket> packets;
-    BatlabPacket enterBootloaderPacket = BatlabPacket(batlabNamespaces::UNIT, unitNamespace::UNIT_BOOTLOAD, 0x00, 0x00);
+    BatlabPacket enterBootloaderPacket = BatlabPacket(batlabNamespaces::UNIT, unitNamespace::UNIT_BOOTLOAD, 0x0000);
     enterBootloaderPacket.setSleepAfterTransaction_ms(2000);
     packets.append(enterBootloaderPacket);
 
-    // LEFT OFF
+    QFile firmwareFile(firmwareFilePath);
+    if (!firmwareFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << tr("Unable to open firmware file");
+        return;
+    }
+    QByteArray firmwareBytes = firmwareFile.readAll();
 
-    // ctr = 0x0400
-    int ctr = 0x0400;
+    // Write firmware payload
+    for(int i = 0; i < firmwareBytes.size(); i++)
+    {
+        BatlabPacket firmwareAddrPacket = BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR, 0x0400 + i);
+        packets.append(firmwareAddrPacket);
+        BatlabPacket firmwareDataPacket = BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::DATA, firmwareBytes[i]);
+        packets.append(firmwareDataPacket);
+    }
 
-    // for each byte in the file
-        // self.write(BOOTLOADER,BL_ADDR,int(ctr))
-        // self.write(BOOTLOADER,BL_DATA,int(ord(byte)))
-        // bb = self.read(BOOTLOADER,BL_DATA).value()
-        // verify bb == int(ord(byte))
-        // print str(ctr - 0x03FF) of FIRMWARE_SIZE: str(bb)
-        // ctr++
-
-
-    // reboot into new image
+    // Reboot into new image
     // self.write(BOOTLOADER,BL_BOOTLOAD,0x0000)
     // sleep(2)
     // if(self.read(BOOTLOADER,BL_DATA).value() == COMMAND_ERROR):
