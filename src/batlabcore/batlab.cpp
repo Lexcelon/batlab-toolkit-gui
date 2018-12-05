@@ -6,40 +6,40 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     QState* s_bootloader = new QState();
     QState* s_booted = new QState();
     s_booted->addTransition(this, &Batlab::bootloaderEntered, s_bootloader); // TODO emit this signal when we detect we are in bootloader
-    batlabStateMachine.addState(s_unknown);
-    batlabStateMachine.addState(s_bootloader);
-    batlabStateMachine.addState(s_booted);
-    batlabStateMachine.setInitialState(s_unknown);
-    batlabStateMachine.start();
+    m_batlabStateMachine.addState(s_unknown);
+    m_batlabStateMachine.addState(s_bootloader);
+    m_batlabStateMachine.addState(s_booted);
+    m_batlabStateMachine.setInitialState(s_unknown);
+    m_batlabStateMachine.start();
 
     m_commsManager = new BatlabCommsManager(portName);
     connect(m_commsManager, &BatlabCommsManager::responseBundleReady, this, &Batlab::handleSerialResponseBundleReady);
     connect(m_commsManager, &BatlabCommsManager::packetBundleSendFailed, this, &Batlab::handleSerialPacketBundleSendFailed);
 
-    info.externalPowerConnected = false;
-    info.firmwareVersion = -1;
-    info.portName = portName;
-    info.serialNumberRegister = -1;
-    info.deviceIdRegister = -1;
-    info.serialNumberComplete = -1;
+    m_info.externalPowerConnected = false;
+    m_info.firmwareVersion = -1;
+    m_info.portName = portName;
+    m_info.serialNumberRegister = -1;
+    m_info.deviceIdRegister = -1;
+    m_info.serialNumberComplete = -1;
     for (int i = 0; i < 4; i++)
     {
-        info.channels[i].cellName = "";
-        info.channels[i].testInProgress = false;
-        info.channels[i].preChargeComplete = false;
-        info.channels[i].preChargeError = false;
-        info.channels[i].numWarmupCycles = -1;
-        info.channels[i].numWarmupCyclesCompleted = -1;
-        info.channels[i].warmupCyclesError = false;
-        info.channels[i].numMeasurementCycles = -1;
-        info.channels[i].numMeasurementCyclesCompleted = -1;
-        info.channels[i].measurementCyclesError = false;
-        info.channels[i].storageDischarge = false;
-        info.channels[i].storageDischargeComplete = false;
-        info.channels[i].storageDischargeError = false;
+        m_info.channels[i].cellName = "";
+        m_info.channels[i].testInProgress = false;
+        m_info.channels[i].preChargeComplete = false;
+        m_info.channels[i].preChargeError = false;
+        m_info.channels[i].numWarmupCycles = -1;
+        m_info.channels[i].numWarmupCyclesCompleted = -1;
+        m_info.channels[i].warmupCyclesError = false;
+        m_info.channels[i].numMeasurementCycles = -1;
+        m_info.channels[i].numMeasurementCyclesCompleted = -1;
+        m_info.channels[i].measurementCyclesError = false;
+        m_info.channels[i].storageDischarge = false;
+        m_info.channels[i].storageDischargeComplete = false;
+        m_info.channels[i].storageDischargeError = false;
 
-        tempCalibB[i] = -1;
-        tempCalibR[i] = -1;
+        m_tempCalibB[i] = -1;
+        m_tempCalibR[i] = -1;
     }
 
     verifyBatlabDevice();
@@ -59,6 +59,10 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
     if (bundle.callback == "handleVerifyBatlabDeviceResponse")
     {
         handleVerifyBatlabDeviceResponse(bundle.packets);
+    }
+    else if (bundle.callback == "handleInitBatlabDeviceResponse")
+    {
+        handleInitBatlabDeviceResponse(bundle.packets);
     }
 }
 
@@ -114,7 +118,30 @@ void Batlab::initBatlabDevice()
 
 void Batlab::handleInitBatlabDeviceResponse(QQueue<BatlabPacket> response)
 {
+    for (int i = 0; i < 5; i++)
+    {
+        response.dequeue();
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        m_tempCalibR[i] = response.dequeue().value();
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        m_tempCalibB[i] = response.dequeue().value();
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        response.dequeue();  // Current setpoint (presently unused)
+    }
+    m_info.serialNumberRegister = response.dequeue().value();
+    m_info.deviceIdRegister = response.dequeue().value();
+    m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
+    m_info.firmwareVersion = response.dequeue().value();
 
+    m_info.externalPowerConnected = response.dequeue().value();
+
+    emit infoUpdated();
 }
 
 void Batlab::handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response)
@@ -172,7 +199,7 @@ void Batlab::setAllIdle()
 
 void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
 {
-    emit registerReadInitiated(info.serialNumberRegister, batlabNamespace, batlabRegister);
+    emit registerReadInitiated(m_info.serialNumberRegister, batlabNamespace, batlabRegister);
 
     QVector<uchar> data(5);
     data[0] = static_cast<uchar>(0xAA);
@@ -187,7 +214,7 @@ void Batlab::initiateRegisterRead(int batlabNamespace, int batlabRegister)
 
 void Batlab::initiateRegisterWrite(int batlabNamespace, int batlabRegister, int num)
 {
-    emit registerWriteInitiated(info.serialNumberRegister, batlabNamespace, batlabRegister, num);
+    emit registerWriteInitiated(m_info.serialNumberRegister, batlabNamespace, batlabRegister, num);
 
     QVector<uchar> data(5);
 
@@ -205,7 +232,7 @@ void Batlab::initiateRegisterWrite(int batlabNamespace, int batlabRegister, int 
 
 batlabStatusInfo Batlab::getInfo()
 {
-    return info;
+    return m_info;
 }
 
 //void Batlab::serialTransaction(int timeout, const QVector<uchar> request, int sleepAfterTransaction)
@@ -539,7 +566,7 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
         return;
     }
 
-    qDebug() << tr("Batlab connected to port %1 entering bootloader").arg(info.portName);
+    qDebug() << tr("Batlab connected to port %1 entering bootloader").arg(m_info.portName);
 
     // Enter bootloader
     QQueue<BatlabPacket> packets;
