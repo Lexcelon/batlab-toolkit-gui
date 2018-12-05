@@ -47,9 +47,9 @@ public slots:
     void periodicCheck();
     bool hasReceivedValidResponse();
     void verifyBatlabDevice();
-    void handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response);
+    void handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response);
     void initBatlabDevice();
-    void handleInitBatlabDeviceResponse(QQueue<BatlabPacket> response);
+    void handleInitBatlabDeviceResponse(QVector<BatlabPacket> response);
 
 private slots:
 

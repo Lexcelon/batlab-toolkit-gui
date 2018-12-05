@@ -68,7 +68,7 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
 
 void Batlab::verifyBatlabDevice()
 {
-    QQueue<BatlabPacket> verifyPackets;
+    QVector<BatlabPacket> verifyPackets;
     verifyPackets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR));
     batlabPacketBundle packetBundle;
     packetBundle.packets = verifyPackets;
@@ -79,7 +79,7 @@ void Batlab::verifyBatlabDevice()
 
 void Batlab::initBatlabDevice()
 {
-    QQueue<BatlabPacket> initPackets;  // TODO fix namespaces for units and addresses
+    QVector<BatlabPacket> initPackets;  // TODO fix namespaces for units and addresses
     initPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::WATCHDOG_TIMER, WATCHDOG_TIMER_RESET));
 
     initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::MODE, MODE_IDLE));
@@ -116,37 +116,32 @@ void Batlab::initBatlabDevice()
     // TODO check Python code for where we set watchdog timer if firmware > 3
 }
 
-void Batlab::handleInitBatlabDeviceResponse(QQueue<BatlabPacket> response)
+void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response)
 {
-    for (int i = 0; i < 5; i++)
+    int responseCounter = 0;
+    responseCounter += 5;  // Skip cell mode return values
+    for (int i = 0; i < 4; i++)
     {
-        response.dequeue();
+        m_tempCalibR[i] = response[responseCounter++].value();
     }
     for (int i = 0; i < 4; i++)
     {
-        m_tempCalibR[i] = response.dequeue().value();
+        m_tempCalibB[i] = response[responseCounter++].value();
     }
-    for (int i = 0; i < 4; i++)
-    {
-        m_tempCalibB[i] = response.dequeue().value();
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        response.dequeue();  // Current setpoint (presently unused)
-    }
-    m_info.serialNumberRegister = response.dequeue().value();
-    m_info.deviceIdRegister = response.dequeue().value();
+    responseCounter += 4;  // Current setpoint (presently unused)
+    m_info.serialNumberRegister = response[responseCounter++].value();
+    m_info.deviceIdRegister = response[responseCounter++].value();
     m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
-    m_info.firmwareVersion = response.dequeue().value();
+    m_info.firmwareVersion = response[responseCounter++].value();
 
-    m_info.externalPowerConnected = response.dequeue().value();
+    m_info.externalPowerConnected = response[responseCounter++].value();
 
     emit infoUpdated();
 }
 
-void Batlab::handleVerifyBatlabDeviceResponse(QQueue<BatlabPacket> response)
+void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
 {
-    BatlabPacket responsePacket = response.dequeue();
+    BatlabPacket responsePacket = response[0];
     if (responsePacket.value() == 257)
     {
         initBatlabDevice();
@@ -221,7 +216,7 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     qDebug() << tr("Batlab connected to port %1 entering bootloader").arg(m_info.portName);
 
     // Enter bootloader
-    QQueue<BatlabPacket> packets;
+    QVector<BatlabPacket> packets;
     BatlabPacket enterBootloaderPacket = BatlabPacket(batlabNamespaces::UNIT, unitNamespace::UNIT_BOOTLOAD, 0x0000);
     enterBootloaderPacket.setSleepAfterTransaction_ms(2000);
     packets.append(enterBootloaderPacket);

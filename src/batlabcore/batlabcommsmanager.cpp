@@ -63,7 +63,7 @@ void BatlabCommsManager::processSerialQueue()
     }
     else
     {
-        m_currentPacket = m_currentPacketBundle.packets.dequeue();
+        m_currentPacket = m_currentPacketBundle.packets.takeFirst();
         attemptWriteCurrentPacket();
     }
 }
@@ -156,7 +156,7 @@ void BatlabCommsManager::handleReadyRead()
 
         m_serialWaiting = false;
         m_responseData.clear();
-        m_currentResponseBundle.packets.enqueue(responsePacket);
+        m_currentResponseBundle.packets.append(responsePacket);
         m_retries = 0;
 
         // Sleep until the next transaction (usually set to zero so won't sleep)

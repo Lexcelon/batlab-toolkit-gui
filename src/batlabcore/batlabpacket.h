@@ -49,7 +49,7 @@ private:
 };
 
 struct batlabPacketBundle {
-    QQueue<BatlabPacket> packets;
+    QVector<BatlabPacket> packets;
     QString callback;
     int channel;  // -1 if not for specific channel
 };
