@@ -44,8 +44,8 @@ public slots:
     void initiateRegisterWrite(int, int, int);
     void initiateFirmwareFlash(QString firmwareFilePath);
 
-    QString getPortName() { return info.portName; }
-    int getSerialNumber() { return info.serialNumberRegister; }
+    QString getPortName() { return m_info.portName; }
+    int getSerialNumber() { return m_info.serialNumberRegister; }
     batlabStatusInfo getInfo();
 
     void handleSerialResponseBundleReady(batlabPacketBundle bundle);
@@ -61,13 +61,13 @@ public slots:
 private slots:
 
 private:
-    batlabStatusInfo info;
+    batlabStatusInfo m_info;
 
     // TODO move to channels?
     int m_tempCalibB[4];
     int m_tempCalibR[4];
 
-    QStateMachine batlabStateMachine;
+    QStateMachine m_batlabStateMachine;
     QState* s_unknown;
     QState* s_bootloader;
     QState* s_booted;
