@@ -47,7 +47,7 @@ void BatlabCommsManager::processSerialQueue()
         // If we have some responses ready to go, send them
         if (!m_currentResponseBundle.packets.empty())
         {
-            batlabPacketBundle emitBundle = m_currentResponseBundle;
+            batlabPacketBundle emitBundle = m_currentResponseBundle;  // TODO validate this is the same size as the requested data
             m_currentResponseBundle.packets.clear();
             emit responseBundleReady(emitBundle);
         }

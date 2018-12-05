@@ -45,10 +45,15 @@ public slots:
 
     void handleSerialResponseBundleReady(batlabPacketBundle bundle);
     void handleSerialPacketBundleSendFailed();
+
     void periodicCheck();
+    void handlePeriodicCheckResponse(QVector<BatlabPacket> response);
+
     bool hasReceivedValidResponse();
+
     void verifyBatlabDevice();
     void handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response);
+
     void initBatlabDevice();
     void handleInitBatlabDeviceResponse(QVector<BatlabPacket> response);
 

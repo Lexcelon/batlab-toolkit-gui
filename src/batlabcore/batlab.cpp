@@ -66,6 +66,10 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
     {
         handleInitBatlabDeviceResponse(bundle.packets);
     }
+    else if (bundle.callback == "handlePeriodicCheckResponse")
+    {
+        handlePeriodicCheckResponse(bundle.packets);
+    }
 }
 
 void Batlab::verifyBatlabDevice()
@@ -158,31 +162,53 @@ void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
 
 void Batlab::periodicCheck()
 {
-//    if (info.serialNumberRegister == -1)
-//    {
-//        initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM);
-//    }
-//    if (info.deviceIdRegister == -1)
-//    {
-//        initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID);
-//    }
-//    if (info.firmwareVersion == -1)
-//    {
-//        initiateRegisterRead(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER);
-//    }
-//    for (int i = 0; i < 4; i++)
-//    {
-//        if (tempCalibB[i] == -1)
-//        {
-//            initiateRegisterRead(i, cellNamespace::TEMP_CALIB_B);
-//        }
-//        if (tempCalibR[i] == -1)
-//        {
-//            initiateRegisterRead(i, cellNamespace::TEMP_CALIB_R);
-//        }
-//    }
+    QVector<BatlabPacket> checkPackets;
+    checkPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::WATCHDOG_TIMER, WATCHDOG_TIMER_RESET));
 
-//    initiateRegisterRead(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU);
+    checkPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::SERIAL_NUM));
+    checkPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::DEVICE_ID));
+    checkPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::FIRMWARE_VER));
+
+    checkPackets.append(BatlabPacket(batlabNamespaces::COMMS, commsNamespace::EXTERNAL_PSU));
+
+    checkPackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_R));
+    checkPackets.append(BatlabPacket(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_R));
+    checkPackets.append(BatlabPacket(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_R));
+    checkPackets.append(BatlabPacket(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_R));
+    checkPackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::TEMP_CALIB_B));
+    checkPackets.append(BatlabPacket(batlabNamespaces::CHANNEL1, cellNamespace::TEMP_CALIB_B));
+    checkPackets.append(BatlabPacket(batlabNamespaces::CHANNEL2, cellNamespace::TEMP_CALIB_B));
+    checkPackets.append(BatlabPacket(batlabNamespaces::CHANNEL3, cellNamespace::TEMP_CALIB_B));
+
+    batlabPacketBundle packetBundle;
+    packetBundle.packets = checkPackets;
+    packetBundle.callback = "handlePeriodicCheckResponse";
+    packetBundle.channel = -1;
+    m_commsManager->sendPacketBundle(packetBundle);
+}
+
+void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response)
+{
+    int responseCounter = 0;
+    responseCounter += 1;  // Skip watchdog return value
+
+    m_info.serialNumberRegister = response[responseCounter++].value();
+    m_info.deviceIdRegister = response[responseCounter++].value();
+    m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
+    m_info.firmwareVersion = response[responseCounter++].value();
+
+    m_info.externalPowerConnected = response[responseCounter++].value();
+
+    for (int i = 0; i < 4; i++)
+    {
+        m_tempCalibR[i] = response[responseCounter++].value();
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        m_tempCalibB[i] = response[responseCounter++].value();
+    }
+
+    emit infoUpdated();
 }
 
 Batlab::~Batlab()
