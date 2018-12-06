@@ -13,6 +13,7 @@ class BatlabCommsManager : public QObject
     Q_OBJECT
 public:
     explicit BatlabCommsManager(QString portName, QObject *parent = nullptr);
+    ~BatlabCommsManager();
 
     void sendPacketBundle(batlabPacketBundle bundle);
 
@@ -29,12 +30,14 @@ private:
     void handleTimeout();
     void handleReadyRead();
     void attemptWriteCurrentPacket();
+    void fail();
 
     void debug();
 
     QSerialPort* m_serialPort;
     QQueue<batlabPacketBundle> m_packetBundleQueue;
     batlabPacketBundle m_currentPacketBundle;
+    int m_currentPacketBundleSize;
     batlabPacketBundle m_currentResponseBundle;
     BatlabPacket m_currentPacket;
     bool m_serialWaiting;

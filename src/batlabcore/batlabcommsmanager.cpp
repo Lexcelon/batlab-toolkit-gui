@@ -31,6 +31,11 @@ void BatlabCommsManager::debug()
              << "\n\tCurrent retry: " << m_retries;
 }
 
+BatlabCommsManager::~BatlabCommsManager()
+{
+    delete m_serialPort;
+}
+
 void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle)
 {
     m_packetBundleQueue.append(bundle);
@@ -41,20 +46,33 @@ void BatlabCommsManager::processSerialQueue()
 {
     if (m_serialWaiting) { return; }
 
-    // If we are done with packets in current bundle
+    // If we are done sending packets in current bundle
     if (m_currentPacketBundle.packets.empty())
     {
-        // If we have some responses ready to go, send them
+        // If we have some response packets back, send the bundle
         if (!m_currentResponseBundle.packets.empty())
         {
-            batlabPacketBundle emitBundle = m_currentResponseBundle;  // TODO validate this is the same size as the requested data
-            m_currentResponseBundle.packets.clear();
-            emit responseBundleReady(emitBundle);
+            // Make sure we got the expected number back
+            if (m_currentResponseBundle.packets.size() == m_currentPacketBundleSize)
+            {
+                batlabPacketBundle emitBundle = m_currentResponseBundle;
+                m_currentResponseBundle.packets.clear();
+                emit responseBundleReady(emitBundle);
+            }
+            else
+            {
+                qWarning() << tr("Expected %1 response packets on port %2 but received %3 instead")
+                              .arg(m_currentPacketBundleSize)
+                              .arg(m_serialPort->portName())
+                              .arg(m_currentResponseBundle.packets.size());
+                fail();
+            }
         }
         // If we have another bundle to deal with
         if (!m_packetBundleQueue.empty())
         {
             m_currentPacketBundle = m_packetBundleQueue.dequeue();
+            m_currentPacketBundleSize = m_currentPacketBundle.packets.size();
             m_currentResponseBundle.packets.clear();
             m_currentResponseBundle.callback = m_currentPacketBundle.callback;
             m_currentResponseBundle.channel = m_currentPacketBundle.channel;
@@ -68,11 +86,23 @@ void BatlabCommsManager::processSerialQueue()
     }
 }
 
+void BatlabCommsManager::fail()
+{
+    m_currentPacketBundle.packets.clear();
+    m_currentResponseBundle.packets.clear();
+    m_serialWaiting = false;
+    m_readWriteTimer.stop();
+    m_sleepAfterTransactionTimer.stop();
+    m_responseData.clear();
+    m_retries = 0;
+    emit packetBundleSendFailed();
+}
+
 void BatlabCommsManager::attemptWriteCurrentPacket()
 {
     if (m_retries++ >= DEFAULT_SERIAL_RETRIES)
     {
-        emit packetBundleSendFailed();
+        fail();
         return;
     }
     QVector<uchar> request(5);
@@ -136,7 +166,7 @@ void BatlabCommsManager::handleReadyRead()
 
         // Read the stuff
         BatlabPacket responsePacket = m_currentPacket;
-        // TODO make a function to make these just a constructor
+
         responsePacket.setStartByte(m_responseData[0]);
         responsePacket.setNamespace(m_responseData[1]);
         responsePacket.setAddress(m_responseData[2]);
@@ -186,8 +216,9 @@ void BatlabCommsManager::handleError(QSerialPort::SerialPortError serialPortErro
 void BatlabCommsManager::handleTimeout()
 {
     m_responseData.clear();
-    qWarning() << tr("Operation timed out for port %1, error: %2")
+    qWarning() << tr("Operation timed out for port %1 on attempt %2 of %3, error: %4")
                   .arg(m_serialPort->portName())
+                  .arg(m_retries).arg(DEFAULT_SERIAL_RETRIES)
                   .arg(m_serialPort->errorString());
     attemptWriteCurrentPacket();
 }

@@ -54,6 +54,7 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
 void Batlab::handleSerialPacketBundleSendFailed()
 {
     // TODO
+    qWarning() << "FAIL";
 }
 
 void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
@@ -213,6 +214,7 @@ void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response)
 
 Batlab::~Batlab()
 {
+    delete m_commsManager;
 }
 
 void Batlab::setAllIdle()  // TODO validate this behavior
