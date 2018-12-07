@@ -88,6 +88,7 @@ void BatlabCommsManager::processSerialQueue()
 
 void BatlabCommsManager::fail()
 {
+    batlabPacketBundle emitBundle = m_currentResponseBundle;
     m_currentPacketBundle.packets.clear();
     m_currentResponseBundle.packets.clear();
     m_serialWaiting = false;
@@ -95,7 +96,7 @@ void BatlabCommsManager::fail()
     m_sleepAfterTransactionTimer.stop();
     m_responseData.clear();
     m_retries = 0;
-    emit packetBundleSendFailed();
+    emit packetBundleSendFailed(emitBundle);
 }
 
 void BatlabCommsManager::attemptWriteCurrentPacket()

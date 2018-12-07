@@ -6,7 +6,7 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     QState* s_bootloader = new QState();
     QState* s_booted = new QState();
     s_unknown->addTransition(this, &Batlab::booted, s_booted);
-    s_booted->addTransition(this, &Batlab::bootloaderEntered, s_bootloader); // TODO emit this signal when we detect we are in bootloader
+    s_booted->addTransition(this, &Batlab::bootloaderEntered, s_bootloader);
     s_unknown->addTransition(this, &Batlab::bootloaderEntered, s_bootloader);
     m_batlabStateMachine.addState(s_unknown);
     m_batlabStateMachine.addState(s_bootloader);
@@ -51,10 +51,20 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     batlabPeriodicCheckTimer->start(5000);
 }
 
-void Batlab::handleSerialPacketBundleSendFailed()
+void Batlab::handleSerialPacketBundleSendFailed(batlabPacketBundle bundle)
 {
-    // TODO
-    qWarning() << "FAIL";
+    if (bundle.callback == "handleVerifyBatlabDeviceResponse")
+    {
+        qWarning() << tr("Failed to verify Batlab device on port %1").arg(m_info.portName);
+    }
+    else if (bundle.callback == "handleInitBatlabDeviceResponse")
+    {
+        qWarning() << tr("Serial failure during Batlab initialization on port %1").arg(m_info.portName);
+    }
+    else if (bundle.callback == "handlePeriodicCheckResponse")
+    {
+        qWarning() << tr("Serial failure during periodic check on port %1").arg(m_info.portName);
+    }
 }
 
 void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
@@ -86,7 +96,7 @@ void Batlab::verifyBatlabDevice()
 
 void Batlab::initBatlabDevice()
 {
-    QVector<BatlabPacket> initPackets;  // TODO fix namespaces for units and addresses
+    QVector<BatlabPacket> initPackets;
     initPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::WATCHDOG_TIMER, WATCHDOG_TIMER_RESET));
 
     initPackets.append(BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::MODE, MODE_IDLE));
@@ -121,6 +131,10 @@ void Batlab::initBatlabDevice()
     m_commsManager->sendPacketBundle(packetBundle);
 
     // TODO check Python code for where we set watchdog timer if firmware > 3
+//    if int(self.ver) > 3:
+//        self.write_verify(UNIT,SETTINGS,SET_WATCHDOG_TIMER) #this setting is only meaningful if the firmware version is 4 or greater.
+//self.write(UNIT,WATCHDOG_TIMER,WDT_RESET)
+    // LEFT OFF
 }
 
 void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response)
@@ -156,7 +170,6 @@ void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
     }
     else
     {
-        // In bootloader
         emit bootloaderEntered();
     }
 }

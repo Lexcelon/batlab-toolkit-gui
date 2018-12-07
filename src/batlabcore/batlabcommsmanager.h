@@ -18,7 +18,7 @@ public:
     void sendPacketBundle(batlabPacketBundle bundle);
 
 signals:
-    void packetBundleSendFailed();
+    void packetBundleSendFailed(batlabPacketBundle bundle);
     void responseBundleReady(batlabPacketBundle bundle);
 
 public slots:

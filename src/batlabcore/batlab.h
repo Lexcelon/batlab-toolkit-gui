@@ -44,7 +44,7 @@ public slots:
     batlabStatusInfo getInfo();
 
     void handleSerialResponseBundleReady(batlabPacketBundle bundle);
-    void handleSerialPacketBundleSendFailed();
+    void handleSerialPacketBundleSendFailed(batlabPacketBundle bundle);
 
     void periodicCheck();
     void handlePeriodicCheckResponse(QVector<BatlabPacket> response);
