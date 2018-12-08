@@ -84,6 +84,7 @@ enum unitNamespace {
 };
 
 #define WATCHDOG_TIMER_RESET    255
+#define SET_WATCHDOG_TIMER      0x0004
 
 enum bootloaderNamespace
 {

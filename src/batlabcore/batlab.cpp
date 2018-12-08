@@ -81,6 +81,10 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
     {
         handlePeriodicCheckResponse(bundle.packets);
     }
+    else if (bundle.callback == "setWatchdogTimerResponse")
+    {
+        handleSetWatchdogTimerResponse(bundle.packets);
+    }
 }
 
 void Batlab::verifyBatlabDevice()
@@ -129,12 +133,6 @@ void Batlab::initBatlabDevice()
     packetBundle.callback = "handleInitBatlabDeviceResponse";
     packetBundle.channel = -1;
     m_commsManager->sendPacketBundle(packetBundle);
-
-    // TODO check Python code for where we set watchdog timer if firmware > 3
-//    if int(self.ver) > 3:
-//        self.write_verify(UNIT,SETTINGS,SET_WATCHDOG_TIMER) #this setting is only meaningful if the firmware version is 4 or greater.
-//self.write(UNIT,WATCHDOG_TIMER,WDT_RESET)
-    // LEFT OFF
 }
 
 void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response)
@@ -155,9 +153,29 @@ void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response)
     m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
     m_info.firmwareVersion = response[responseCounter++].value();
 
+    if (m_info.firmwareVersion > 3)
+    {
+        setWatchdogTimer();
+    }
+
     m_info.externalPowerConnected = response[responseCounter++].value();
 
     emit infoUpdated();
+}
+
+void Batlab::setWatchdogTimer()
+{
+    QVector<BatlabPacket> packets;
+    packets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::SETTINGS, SET_WATCHDOG_TIMER));
+    batlabPacketBundle packetBundle;
+    packetBundle.packets = packets;
+    packetBundle.callback = "handleSetWatchdogTimerResponse";
+    packetBundle.channel = -1;
+    m_commsManager->sendPacketBundle(packetBundle);
+}
+
+void Batlab::handleSetWatchdogTimerResponse(QVector<BatlabPacket> response)
+{
 }
 
 void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
@@ -291,6 +309,7 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
         packets.append(firmwareDataPacket);
     }
 
+    // LEFT OFF
     // Reboot into new image
     // self.write(BOOTLOADER,BL_BOOTLOAD,0x0000)
     // sleep(2)

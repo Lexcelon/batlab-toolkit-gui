@@ -57,6 +57,9 @@ public slots:
     void initBatlabDevice();
     void handleInitBatlabDeviceResponse(QVector<BatlabPacket> response);
 
+    void setWatchdogTimer();
+    void handleSetWatchdogTimerResponse(QVector<BatlabPacket> response);
+
 private slots:
 
 private:
