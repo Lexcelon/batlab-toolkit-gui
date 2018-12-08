@@ -31,9 +31,10 @@ public:
     explicit BatlabManager(QObject *parent = nullptr);
     QVector<batlabStatusInfo> getBatlabInfos();
     QVector<QString> getFirmwareVersions();
+    int getLatestFirmwareVersion();
 
 signals:
-    void batlabInfoUpdated(QVector<batlabStatusInfo>);
+    void batlabInfoUpdated(QVector<batlabStatusInfo>, int latestFirmwareVersion);
 
 public slots:
     void updateConnectedBatlabs();

@@ -194,6 +194,8 @@ void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
 
 void Batlab::periodicCheck()
 {
+    if (!m_batlabStateMachine.configuration().contains(s_booted)) { return; }
+
     QVector<BatlabPacket> checkPackets;
     checkPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::WATCHDOG_TIMER, WATCHDOG_TIMER_RESET));
 
@@ -303,16 +305,16 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     // Write firmware payload
     for(int i = 0; i < firmwareBytes.size(); i++)
     {
-        BatlabPacket firmwareAddrPacket = BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR, 0x0400 + i);
-        packets.append(firmwareAddrPacket);
-        BatlabPacket firmwareDataPacket = BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::DATA, firmwareBytes[i]);
-        packets.append(firmwareDataPacket);
+        packets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR, 0x0400 + i));
+        packets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::DATA, firmwareBytes[i]));
     }
 
-    // LEFT OFF
     // Reboot into new image
-    // self.write(BOOTLOADER,BL_BOOTLOAD,0x0000)
-    // sleep(2)
+    BatlabPacket rebootPacket = BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::BOOTLOAD, 0x0000);
+    rebootPacket.setSleepAfterTransaction_ms(2000);
+    packets.append(rebootPacket);
+    packets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::DATA));
+
     // if(self.read(BOOTLOADER,BL_DATA).value() == COMMAND_ERROR):
         // self.bootloader = False
         // self.sn = int(self.read(UNIT,SERIAL_NUM).value()) + (int(self.read(UNIT,DEVICE_ID).value()) << 16)

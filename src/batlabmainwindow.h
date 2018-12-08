@@ -43,7 +43,7 @@ public slots:
 
     void updatelogViewTextBrowser(QString);
 
-    void redrawBatlabInfo(QVector<batlabStatusInfo> infos);
+    void redrawBatlabInfo(QVector<batlabStatusInfo> infos, int latestFirmwareVersion);
     void redrawResultsInfo(QVector<cellResultsStatusInfo> infos);
 
     void togglePrintDebugMessages(bool value);

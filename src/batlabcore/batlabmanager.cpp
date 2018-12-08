@@ -111,7 +111,19 @@ void BatlabManager::processUpdatedBatlabInfo()
             infos.push_back(info);
         }
     }
-    emit batlabInfoUpdated(infos);
+    emit batlabInfoUpdated(infos, getLatestFirmwareVersion());
+}
+
+int BatlabManager::getLatestFirmwareVersion()
+{
+    auto versions = getFirmwareVersions();
+    QVector<int> versions_i;
+    for (auto version : versions)
+    {
+        versions_i.append(version.toInt());
+    }
+//    qDebug() << versions_i.last();
+    return 0;  // LEFT OFF resume this with SSL
 }
 
 QVector<batlabStatusInfo> BatlabManager::getBatlabInfos()

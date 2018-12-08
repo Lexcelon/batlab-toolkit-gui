@@ -84,12 +84,3 @@ int BatlabPacket::getRetries() { return m_retries; }
 int BatlabPacket::value() { return m_payloadLowByte + m_payloadHighByte*256; }
 
 // TODO functions from python packet implementation
-
-//void debug()
-//{
-//    qDebug() << "Packet:" << "Batlab S/N:" << qPrintable(QString::number(serialnumber).leftJustified(6, ' '))
-//             << "Start Byte:"<< qPrintable("0x" + QString("%1").arg(packetStartByte, 0, 16).toUpper().rightJustified(2, '0'))
-//             << "Namespace:" << qPrintable(BatlabLib::namespaceIntToString[packetNamespace].leftJustified(12, ' '))
-//             << "Address:" << qPrintable("0x" + QString("%1").arg(packetAddress, 0, 16).toUpper().rightJustified(2, '0'))
-//             << "Value:" << qPrintable("0x" + QString("%1").arg(256*packetHighByte + packetLowByte, 0, 16).toUpper().rightJustified(4, '0'));
-//}

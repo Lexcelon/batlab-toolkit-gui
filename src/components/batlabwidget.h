@@ -11,7 +11,7 @@ class BatlabWidget : public QFrame
     Q_OBJECT
 public:
 
-    explicit BatlabWidget(batlabStatusInfo info, QFrame *parent = nullptr);
+    explicit BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFrame *parent = nullptr);
 
 signals:
 

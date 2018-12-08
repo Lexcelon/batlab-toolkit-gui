@@ -230,12 +230,12 @@ void clearLayout(QLayout *layout, bool deleteWidgets)
 // http://www.qtforum.org/article/36406/events-not-called-unless-mouse-is-moving.html
 // https://forum.qt.io/topic/8630/events-not-called-unless-mouse-is-moving/2
 // https://bugreports.qt.io/browse/QTBUG-7728
-void BatlabMainWindow::redrawBatlabInfo(QVector<batlabStatusInfo> infos)
+void BatlabMainWindow::redrawBatlabInfo(QVector<batlabStatusInfo> infos, int latestFirmwareVersion)
 {
     clearLayout(batlabsTabLayout, true);
 
     for (int i = 0; i < infos.size(); i++) {
-        BatlabWidget *batlabWidget = new BatlabWidget(infos[i]);
+        BatlabWidget *batlabWidget = new BatlabWidget(infos[i], latestFirmwareVersion);
         batlabsTabLayout->addWidget(batlabWidget);
     }
 

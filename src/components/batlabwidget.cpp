@@ -1,7 +1,7 @@
 #include "batlabwidget.h"
 
 
-BatlabWidget::BatlabWidget(batlabStatusInfo info, QFrame *parent) : QFrame(parent)
+BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFrame *parent) : QFrame(parent)
 {
     // **Chose to use QFrame instead of QWidget due to outline paint limitations
     batlabLayout = new QHBoxLayout;
@@ -34,8 +34,7 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, QFrame *parent) : QFrame(paren
     batlabInfoLayout->addWidget(firmwareVersionLabel, 3, 0);
     batlabInfoLayout->addWidget(firmwareVersionValueLabel, 3, 1);
 
-    // TODO: Update the current firmware version
-    if (info.firmwareVersion < 4.0 /* CURRENT_FIRMWARE */) {
+    if (info.firmwareVersion < latestFirmwareVersion) {
         batlabInfoLayout->addWidget(firmwareVersionUpdateButton, 4, 1);
     }
 
