@@ -193,6 +193,10 @@ void BatlabCommsManager::handleReadyRead()
         // Sleep until the next transaction (usually set to zero so won't sleep)
         m_sleepAfterTransactionTimer.start(m_currentPacket.getSleepAfterTransaction_ms());
     }
+    else if (m_responseData.size() > 5)
+    {
+        m_responseData.clear();
+    }
 }
 
 void BatlabCommsManager::handleError(QSerialPort::SerialPortError serialPortError)
