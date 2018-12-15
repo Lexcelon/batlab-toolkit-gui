@@ -38,6 +38,7 @@ signals:
 
 public slots:
     void initiateFirmwareFlash(QString firmwareFilePath);
+    void handleFirmwareFlashResponse(QVector<BatlabPacket> response);
 
     QString getPortName() { return m_info.portName; }
     int getSerialNumber() { return m_info.serialNumberRegister; }

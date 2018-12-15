@@ -170,7 +170,7 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
     if (batlabSerialToFirmwareVersionWaiting.keys().contains(serial))
     {
         qWarning() << "Batlab " << QString::number(serial) << " already has pending firmware update.";
-        // TODO replace that update with this one?
+        return;
     }
 
     batlabSerialToFirmwareVersionWaiting[serial] = firmwareVersion;
@@ -191,6 +191,7 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
     // Check if file already exists and is correct size. If so, flash.
     if (firmwareFileInfo.exists() && firmwareFileInfo.size() == FIRMWARE_FILE_SIZE)
     {
+        qInfo() << tr("Requested firmware version already downloaded, proceeding to flash.");
         batlabSerialToFirmwareVersionWaiting.remove(serial);
         connectedBatlabsByPortName[getPortNameFromSerial(serial)]->initiateFirmwareFlash(firmwareFilePath);
         return;
@@ -213,6 +214,7 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
         // If no, create network reply and add to map
         else
         {
+            qInfo() << tr("Downloading requested firmware version.");
             QNetworkRequest request = QNetworkRequest(QUrl(availableFirmwareVersionToUrl[firmwareVersion]));
             request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
             QNetworkReply* firmwareDownloadReply = networkAccessManager->get(request);
@@ -222,17 +224,12 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
             connect(firmwareDownloadReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &BatlabManager::processFirmwareDownloadError);
         }
     }
-
-
-
-            // connect timeout, error to function that removes it and throws warning
-            // connect finished to function that processes waiting batlab list and kicks off flashing (and removes this from pending downloads)
 }
 
 void BatlabManager::processFirmwareDownloadError()
 {
     QNetworkReply* firmwareDownloadReply = qobject_cast<QNetworkReply*>(QObject::sender());
-    // TODO
+    qWarning() << tr("Unable to download requested firmware version, error: %1").arg(firmwareDownloadReply->errorString());
 }
 
 void BatlabManager::processFirmwareDownloadFinished()
@@ -269,14 +266,25 @@ void BatlabManager::processFirmwareDownloadFinished()
         return;
     }
     const QByteArray data = firmwareDownloadReply->readAll();
+    qInfo() << tr("Saving downloaded firmware.");
     file.write(data);
     file.close();
 
     // TODO handle partially existent, already existent, no existent file
 
-    // TODO For each Batlab wanting this, flash it
-//    QString portName = getPortNameFromSerial(serial);
-//    if (!portName.isEmpty()) { connectedBatlabsByPortName[portName]->initiateFirmwareFlash(firmwareFilePath); }
+    // For each Batlab wanting this, flash it
+    for (auto serial : batlabSerialToFirmwareVersionWaiting.keys())
+    {
+        if (batlabSerialToFirmwareVersionWaiting[serial] == firmwareVersion)
+        {
+            QString portName = getPortNameFromSerial(serial);
+            batlabSerialToFirmwareVersionWaiting.remove(serial);
+            if (!portName.isEmpty())
+            {
+                connectedBatlabsByPortName[portName]->initiateFirmwareFlash(firmwareFilePath);
+            }
+        }
+    }
 }
 
 QString BatlabManager::getPortNameFromSerial(int serial)

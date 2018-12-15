@@ -23,7 +23,7 @@
 
 #include "batlab.h"
 
-// There is one BatlabManager for the entire program. It keeps track of connected Batlabs, manages their communication, and handles test state and execution.
+// There is one BatlabManager for the entire program.
 class BatlabManager : public QObject
 {
     Q_OBJECT

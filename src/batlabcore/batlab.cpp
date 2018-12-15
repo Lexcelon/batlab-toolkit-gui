@@ -65,6 +65,10 @@ void Batlab::handleSerialPacketBundleSendFailed(batlabPacketBundle bundle)
     {
         qWarning() << tr("Serial failure during periodic check on port %1").arg(m_info.portName);
     }
+    else if (bundle.callback == "handleFirmwareFlashResponse")
+    {
+        qWarning() << tr("Unable to flash firmware on device on port %1").arg(m_info.portName);
+    }
 }
 
 void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
@@ -84,6 +88,10 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
     else if (bundle.callback == "setWatchdogTimerResponse")
     {
         handleSetWatchdogTimerResponse(bundle.packets);
+    }
+    else if (bundle.callback == "handleFirmwareFlashResponse")
+    {
+        handleFirmwareFlashResponse(bundle.packets);
     }
 }
 
@@ -286,7 +294,7 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
         return;
     }
 
-    qDebug() << tr("Batlab connected to port %1 entering bootloader").arg(m_info.portName);
+    qInfo() << tr("Batlab connected to port %1 entering bootloader").arg(m_info.portName);
 
     // Enter bootloader
     QVector<BatlabPacket> packets;
@@ -331,4 +339,9 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     bundle.callback = "handleFirmwareFlashResponse";
     bundle.channel = -1;
     m_commsManager->sendPacketBundle(bundle);
+}
+
+void Batlab::handleFirmwareFlashResponse(QVector<BatlabPacket> response)
+{
+    // TODO
 }
