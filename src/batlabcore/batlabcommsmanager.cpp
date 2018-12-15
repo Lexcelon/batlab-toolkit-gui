@@ -179,6 +179,7 @@ void BatlabCommsManager::handleReadyRead()
                 || responsePacket.getAddress() != m_currentPacket.getAddress())
         {
             qWarning() << tr("Response packet did not match command packet.");
+            debug();
             attemptWriteCurrentPacket();
             return;
         }
