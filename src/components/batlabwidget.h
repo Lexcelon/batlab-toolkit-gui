@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QProgressBar>
 #include "batlabcore/batlablib.h"
 #include "cellteststatuswidget.h"
 

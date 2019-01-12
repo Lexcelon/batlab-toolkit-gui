@@ -634,5 +634,10 @@ void BatlabMainWindow::processRegisterWriteRequest(int serial, int ns, int addre
 
 void BatlabMainWindow::processFirmwareFlashRequest(int serial, QString firmwareVersion)
 {
+    mainStackedWidget->setCurrentWidget(batlabsTabWidget);
+    cellPlaylistButton->setEnabled(true);
+    batlabsButton->setEnabled(false);
+    logViewButton->setEnabled(true);
+    resultsButton->setEnabled(true);
     batlabManager->processFirmwareFlashRequest(serial, firmwareVersion);
 }

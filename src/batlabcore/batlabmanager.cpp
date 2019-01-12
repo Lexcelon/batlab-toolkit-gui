@@ -94,6 +94,7 @@ void BatlabManager::addNewBatlab(QString portName)
 
 void BatlabManager::removeBatlab(QString portName)
 {
+    batlabSerialToFirmwareVersionWaiting.remove(connectedBatlabsByPortName[portName]->getSerialNumber());
     delete connectedBatlabsByPortName[portName];
     connectedBatlabsByPortName.remove(portName);
     processUpdatedBatlabInfo();

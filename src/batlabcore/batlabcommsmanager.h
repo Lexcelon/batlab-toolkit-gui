@@ -20,6 +20,7 @@ public:
 signals:
     void packetBundleSendFailed(batlabPacketBundle bundle);
     void responseBundleReady(batlabPacketBundle bundle);
+    void firmwareFlashProgress(int packetsRemaining);
 
 public slots:
 

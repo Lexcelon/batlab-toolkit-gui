@@ -191,6 +191,11 @@ void BatlabCommsManager::handleReadyRead()
         m_currentResponseBundle.packets.append(responsePacket);
         m_retries = 0;
 
+        if (m_currentPacketBundle.callback == "handleFirmwareFlashResponse")
+        {
+            emit firmwareFlashProgress(m_currentPacketBundle.packets.size());
+        }
+
         // Sleep until the next transaction (usually set to zero so won't sleep)
         m_sleepAfterTransactionTimer.start(m_currentPacket.getSleepAfterTransaction_ms());
     }

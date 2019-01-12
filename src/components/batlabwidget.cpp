@@ -47,26 +47,40 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFr
     line->setFrameShadow(QFrame::Sunken);
     line->setLineWidth(1);
 
-    // SETUP CELL INFO WIDGET
-    QWidget *batlabCellInfoWidget = new QWidget;
-    batlabCellInfoLayout = new QGridLayout;
-
-    for (int i = 0; i < 4; i++) {
-        CellTestStatusWidgetList[i] = new CellTestStatusWidget(info.channels[i]);
-        QLabel *cellNameLabel = new QLabel(tr(info.channels[i].cellName.toStdString().c_str()));
-        cellNameLabel->setFixedWidth(50);
-
-        // Add Batlab Cell Widgets to View Layout
-        batlabCellInfoLayout->addWidget(cellNameLabel, i, 0);
-        batlabCellInfoLayout->addWidget(CellTestStatusWidgetList[i], i, 1);
-    }
-
-    batlabCellInfoWidget->setLayout(batlabCellInfoLayout);
-
-    // Add All to Batlab Widget
     batlabLayout->addWidget(batlabInfoWidget);
     batlabLayout->addWidget(line);
-    batlabLayout->addWidget(batlabCellInfoWidget);
+
+    if (info.firmwareBytesRemaining == -1)
+    {
+
+        // SETUP CELL INFO WIDGET
+        QWidget *batlabCellInfoWidget = new QWidget;
+        batlabCellInfoLayout = new QGridLayout;
+
+        for (int i = 0; i < 4; i++) {
+            CellTestStatusWidgetList[i] = new CellTestStatusWidget(info.channels[i]);
+            QLabel *cellNameLabel = new QLabel(tr(info.channels[i].cellName.toStdString().c_str()));
+            cellNameLabel->setFixedWidth(50);
+
+            // Add Batlab Cell Widgets to View Layout
+            batlabCellInfoLayout->addWidget(cellNameLabel, i, 0);
+            batlabCellInfoLayout->addWidget(CellTestStatusWidgetList[i], i, 1);
+        }
+
+        batlabCellInfoWidget->setLayout(batlabCellInfoLayout);
+        batlabLayout->addWidget(batlabCellInfoWidget);
+    }
+    else
+    {
+        QProgressBar *firmwareProgress = new QProgressBar;
+        firmwareProgress->setMinimum(0);
+        firmwareProgress->setMaximum(FIRMWARE_FILE_SIZE * 2);
+        firmwareProgress->setValue(firmwareProgress->maximum() - info.firmwareBytesRemaining);
+        batlabLayout->addWidget(firmwareProgress);
+//        QLabel *firmwareProgress = new QLabel;
+//        firmwareProgress->setText(QString::number(info.firmwareBytesRemaining));
+//        batlabLayout->addWidget(firmwareProgress);
+    }
 
     this->setLayout(batlabLayout);
     this->setAutoFillBackground(true);

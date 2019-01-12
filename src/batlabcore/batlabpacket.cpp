@@ -28,11 +28,11 @@ BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister)
     m_retries = DEFAULT_SERIAL_RETRIES;
 }
 
-BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister, int payloadLowByte, int payloadHighByte)
+BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister, uchar payloadLowByte, uchar payloadHighByte)
 {
     m_startByte = static_cast<uchar>(0xAA);
     m_nameSpace = static_cast<uchar>(batlabNamespace);
-    m_address = static_cast<uchar>(batlabRegister);
+    m_address = static_cast<uchar>(batlabRegister | 0x80);
     m_payloadLowByte = static_cast<uchar>(payloadLowByte);
     m_payloadHighByte = static_cast<uchar>(payloadHighByte);
     m_writeTimeout_ms = DEFAULT_WRITE_TIMEOUT;
@@ -42,11 +42,11 @@ BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister, int payloadL
     m_retries = DEFAULT_SERIAL_RETRIES;
 }
 
-BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister, int payload)
+BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister, uint16_t payload)
 {
     m_startByte = static_cast<uchar>(0xAA);
     m_nameSpace = static_cast<uchar>(batlabNamespace);
-    m_address = static_cast<uchar>(batlabRegister);
+    m_address = static_cast<uchar>(batlabRegister | 0x80);
     m_payloadLowByte = static_cast<uchar>(payload & 0xff);
     m_payloadHighByte = static_cast<uchar>(payload >> 8);
     m_writeTimeout_ms = DEFAULT_WRITE_TIMEOUT;

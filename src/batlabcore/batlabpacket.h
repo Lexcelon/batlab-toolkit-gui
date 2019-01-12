@@ -10,8 +10,8 @@ class BatlabPacket
 public:
     explicit BatlabPacket();
     explicit BatlabPacket(int batlabNamespace, int batlabRegister);  // Read packet
-    explicit BatlabPacket(int batlabNamespace, int batlabRegister, int payload);  // Write packet
-    explicit BatlabPacket(int batlabNamespace, int batlabRegister, int payloadLowByte, int payloadHighByte);  // Write packet
+    explicit BatlabPacket(int batlabNamespace, int batlabRegister, uint16_t payload);  // Write packet
+    explicit BatlabPacket(int batlabNamespace, int batlabRegister, uchar payloadLowByte, uchar payloadHighByte);  // Write packet
 
     int value();
     uchar getStartByte();

@@ -131,6 +131,7 @@ struct batlabStatusInfo {
     qint16 deviceIdRegister;
     qint32 serialNumberComplete;
     channelStatusInfo channels[4];
+    qint32 firmwareBytesRemaining;
 };
 
 struct cellResultsStatusInfo {

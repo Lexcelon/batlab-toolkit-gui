@@ -17,6 +17,7 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     m_commsManager = new BatlabCommsManager(portName);
     connect(m_commsManager, &BatlabCommsManager::responseBundleReady, this, &Batlab::handleSerialResponseBundleReady);
     connect(m_commsManager, &BatlabCommsManager::packetBundleSendFailed, this, &Batlab::handleSerialPacketBundleSendFailed);
+    connect(m_commsManager, &BatlabCommsManager::firmwareFlashProgress, this, &Batlab::updateFirmwareFlashProgress);
 
     m_info.externalPowerConnected = false;
     m_info.firmwareVersion = -1;
@@ -24,6 +25,7 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     m_info.serialNumberRegister = -1;
     m_info.deviceIdRegister = -1;
     m_info.serialNumberComplete = -1;
+    m_info.firmwareBytesRemaining = -1;
     for (int i = 0; i < 4; i++)
     {
         m_info.channels[i].cellName = "";
@@ -49,6 +51,12 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     QTimer *batlabPeriodicCheckTimer = new QTimer(this);
     connect(batlabPeriodicCheckTimer, &QTimer::timeout, this, &Batlab::periodicCheck);
     batlabPeriodicCheckTimer->start(5000);
+}
+
+void Batlab::updateFirmwareFlashProgress(int packetsRemaining)
+{
+    m_info.firmwareBytesRemaining = packetsRemaining;
+    emit infoUpdated();
 }
 
 void Batlab::handleSerialPacketBundleSendFailed(batlabPacketBundle bundle)
@@ -344,4 +352,7 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
 void Batlab::handleFirmwareFlashResponse(QVector<BatlabPacket> response)
 {
     // TODO
+    qDebug() << "Done with firmware flash.";
+    m_info.firmwareBytesRemaining = -1;
+    emit infoUpdated();
 }

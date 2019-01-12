@@ -97,4 +97,5 @@ void BatlabDebugDialog::processRegisterWriteClick() {
 void BatlabDebugDialog::processFirmwareFlashClick()
 {
     emit firmwareFlashRequested(ui->selectBatlabComboBox->currentText().toInt(), flashFirmwareComboBox->currentText());
+    done(QDialog::Accepted);  // Firmware flashing makes things goofy so it is best that they reopen this dialog if they want later
 }
