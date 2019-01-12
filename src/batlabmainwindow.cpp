@@ -349,6 +349,10 @@ void BatlabMainWindow::exitBatlabToolkitGUI()
 void BatlabMainWindow::debugBatlab()
 {
     mainStackedWidget->setCurrentWidget(logViewTabWidget);
+    cellPlaylistButton->setEnabled(true);
+    batlabsButton->setEnabled(true);
+    logViewButton->setEnabled(false);
+    resultsButton->setEnabled(true);
     logViewPrintDebugCheckBox->setChecked(true);
     togglePrintDebugMessages(true);
 
