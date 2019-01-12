@@ -165,7 +165,7 @@ void BatlabMainWindow::initializeMainWindowUI()
 
     mainTabWidget = new QTabWidget;
     mainTabWidget->addTab(testCellsTab, tr("Test Cells"));
-    mainTabWidget->addTab(configurePackTab, tr("Configure Pack"));
+//    mainTabWidget->addTab(configurePackTab, tr("Configure Pack"));  // TODO
 
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
