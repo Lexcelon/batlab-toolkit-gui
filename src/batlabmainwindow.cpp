@@ -144,12 +144,39 @@ void BatlabMainWindow::initializeMainWindowUI()
     mainStackedWidget->addWidget(logViewTabWidget);
     mainStackedWidget->addWidget(resultsTabWidget);
 
+    mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget);
+    cellPlaylistButton->setEnabled(false);
+
     // Some fun functor syntax to pass arguments to the signal https://stackoverflow.com/a/22411267
     // You have to capture ''this'' and then access variables from there https://stackoverflow.com/questions/7895879/using-member-variable-in-lambda-capture-list-inside-a-member-function
-    connect(cellPlaylistButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget); });
-    connect(batlabsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(batlabsTabWidget); });
-    connect(logViewButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(logViewTabWidget); });
-    connect(resultsButton, &QPushButton::clicked, this, [this]{ mainStackedWidget->setCurrentWidget(resultsTabWidget); });
+    connect(cellPlaylistButton, &QPushButton::clicked, this, [this]{
+        mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget);
+        cellPlaylistButton->setEnabled(false);
+        batlabsButton->setEnabled(true);
+        logViewButton->setEnabled(true);
+        resultsButton->setEnabled(true);
+    });
+    connect(batlabsButton, &QPushButton::clicked, this, [this]{
+        mainStackedWidget->setCurrentWidget(batlabsTabWidget);
+        cellPlaylistButton->setEnabled(true);
+        batlabsButton->setEnabled(false);
+        logViewButton->setEnabled(true);
+        resultsButton->setEnabled(true);
+    });
+    connect(logViewButton, &QPushButton::clicked, this, [this]{
+        mainStackedWidget->setCurrentWidget(logViewTabWidget);
+        cellPlaylistButton->setEnabled(true);
+        batlabsButton->setEnabled(true);
+        logViewButton->setEnabled(false);
+        resultsButton->setEnabled(true);
+    });
+    connect(resultsButton, &QPushButton::clicked, this, [this]{
+        mainStackedWidget->setCurrentWidget(resultsTabWidget);
+        cellPlaylistButton->setEnabled(true);
+        batlabsButton->setEnabled(true);
+        logViewButton->setEnabled(true);
+        resultsButton->setEnabled(false);
+    });
 
     testCellsTabLayout = new QGridLayout;
     testCellsTabLayout->addWidget(tabButtonBox, 0, 0);
@@ -165,7 +192,7 @@ void BatlabMainWindow::initializeMainWindowUI()
 
     mainTabWidget = new QTabWidget;
     mainTabWidget->addTab(testCellsTab, tr("Test Cells"));
-    mainTabWidget->addTab(configurePackTab, tr("Configure Pack"));
+//    mainTabWidget->addTab(configurePackTab, tr("Configure Pack"));  // TODO
 
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
