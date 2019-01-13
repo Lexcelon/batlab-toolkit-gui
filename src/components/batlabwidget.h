@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QLabel>
 #include <QProgressBar>
+#include <QMessageBox>
+
 #include "batlabcore/batlablib.h"
 #include "cellteststatuswidget.h"
 
@@ -15,6 +17,7 @@ public:
     explicit BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFrame *parent = nullptr);
 
 signals:
+    void firmwareUpdateRequested(int serial, QString firmwareVersion);
 
 public slots:
     void updateFirmware();
@@ -41,6 +44,9 @@ private:
     QGridLayout *batlabCellInfoLayout;
 
     CellTestStatusWidget* CellTestStatusWidgetList[4];
+
+    batlabStatusInfo m_info;
+    int m_latestFirmwareVersion;
 
 };
 

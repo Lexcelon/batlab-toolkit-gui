@@ -3,6 +3,9 @@
 
 BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFrame *parent) : QFrame(parent)
 {
+    m_info = info;
+    m_latestFirmwareVersion = latestFirmwareVersion;
+
     // **Chose to use QFrame instead of QWidget due to outline paint limitations
     batlabLayout = new QHBoxLayout;
 
@@ -23,7 +26,7 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFr
     firmwareVersionLabel = new QLabel(tr("Firmware Version:"));
     firmwareVersionValueLabel = new QLabel(info.firmwareVersion == -1 ? "" : QString::number(info.firmwareVersion));
     firmwareVersionUpdateButton = new QPushButton(tr("Update Firmware"));
-    connect(firmwareVersionUpdateButton, &QAbstractButton::released, this, &BatlabWidget::updateFirmware);
+    connect(firmwareVersionUpdateButton, &QAbstractButton::released, this, &BatlabWidget::updateFirmware, Qt::QueuedConnection);
 
     batlabInfoLayout->addWidget(serialNumberLabel, 0, 0);
     batlabInfoLayout->addWidget(serialNumberValueLabel, 0, 1);
@@ -34,8 +37,8 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFr
     batlabInfoLayout->addWidget(firmwareVersionLabel, 3, 0);
     batlabInfoLayout->addWidget(firmwareVersionValueLabel, 3, 1);
 
-    if (info.firmwareVersion < latestFirmwareVersion) {
-        batlabInfoLayout->addWidget(firmwareVersionUpdateButton, 4, 1);
+    if (info.firmwareVersion != -1 && info.firmwareVersion < latestFirmwareVersion && info.firmwareBytesRemaining == -1) {
+        batlabInfoLayout->addWidget(firmwareVersionUpdateButton, 4, 0);
     }
 
     batlabInfoWidget->setLayout(batlabInfoLayout);
@@ -72,14 +75,20 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFr
     }
     else
     {
-        QProgressBar *firmwareProgress = new QProgressBar;
-        firmwareProgress->setMinimum(0);
-        firmwareProgress->setMaximum(FIRMWARE_FILE_SIZE * 2);
-        firmwareProgress->setValue(firmwareProgress->maximum() - info.firmwareBytesRemaining);
+        QWidget *firmwareProgress = new QWidget;
+        QVBoxLayout *firmwareProgressLayout = new QVBoxLayout;
+        firmwareProgressLayout->addStretch();
+        QLabel *firmwareProgressText = new QLabel(tr("Firmware update in progress. Please do not disconnect Batlab."));
+        firmwareProgressText->setAlignment(Qt::AlignCenter);
+        firmwareProgressLayout->addWidget(firmwareProgressText);
+        QProgressBar *firmwareProgressBar = new QProgressBar;
+        firmwareProgressBar->setMinimum(0);
+        firmwareProgressBar->setMaximum(FIRMWARE_FILE_SIZE * 2);
+        firmwareProgressBar->setValue(firmwareProgressBar->maximum() - info.firmwareBytesRemaining);
+        firmwareProgressLayout->addWidget(firmwareProgressBar);
+        firmwareProgressLayout->addStretch();
+        firmwareProgress->setLayout(firmwareProgressLayout);
         batlabLayout->addWidget(firmwareProgress);
-//        QLabel *firmwareProgress = new QLabel;
-//        firmwareProgress->setText(QString::number(info.firmwareBytesRemaining));
-//        batlabLayout->addWidget(firmwareProgress);
     }
 
     this->setLayout(batlabLayout);
@@ -91,5 +100,20 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFr
 }
 
 void BatlabWidget::updateFirmware() {
-    // TODO: Update the Firmware
+    // This message box is causing seg faults, going to just disable and can figure it out later if we want the box
+//    QMessageBox messageBox(this);
+//    messageBox.setWindowTitle(tr("Firmware Update"));
+//    messageBox.setText(tr("The firmware on Batlab %1 will be updated from v%2.0 to v%3.0.\n\n"
+//                          "Please do not disconnect your Batlab during the update."
+//                          "This process can take a few minutes.")
+//                       .arg(m_info.serialNumberComplete)
+//                       .arg(m_info.firmwareVersion)
+//                       .arg(m_latestFirmwareVersion));
+//    messageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+//    messageBox.setDefaultButton(QMessageBox::Ok);
+//    int ret = messageBox.exec();
+//    if (ret == QMessageBox::Ok)
+//    {
+        emit firmwareUpdateRequested(m_info.serialNumberComplete, "v" + QString::number(m_latestFirmwareVersion) + ".0");
+//    }
 }

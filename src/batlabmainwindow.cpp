@@ -264,6 +264,7 @@ void BatlabMainWindow::redrawBatlabInfo(QVector<batlabStatusInfo> infos, int lat
     for (int i = 0; i < infos.size(); i++) {
         BatlabWidget *batlabWidget = new BatlabWidget(infos[i], latestFirmwareVersion);
         batlabsTabLayout->addWidget(batlabWidget);
+        connect(batlabWidget, &BatlabWidget::firmwareUpdateRequested, batlabManager, &BatlabManager::processFirmwareFlashRequest);
     }
 
     batlabsButton->setText("Batlabs (" + QString::number(infos.size()) + ")");
@@ -294,7 +295,7 @@ void BatlabMainWindow::createActions()
     exitBatlabToolkitGUIAct->setStatusTip(tr("Close Batlab Toolkit GUI"));
     connect(exitBatlabToolkitGUIAct, &QAction::triggered, this, &BatlabMainWindow::exitBatlabToolkitGUI);
 
-    debugBatlabAct = new QAction(tr("Debug Batlab"), this);
+    debugBatlabAct = new QAction(tr("Debug Batlab (Advanced)"), this);
     debugBatlabAct->setStatusTip(tr("Debug a Batlab by reading and writing registers"));
     connect(debugBatlabAct, &QAction::triggered, this, &BatlabMainWindow::debugBatlab);
 

@@ -121,10 +121,16 @@ int BatlabManager::getLatestFirmwareVersion()
     QVector<int> versions_i;
     for (auto version : versions)
     {
-        versions_i.append(version.toInt());
+        versions_i.append(qRound(version.remove(0, 1).toFloat()));
     }
-//    qDebug() << versions_i.last();
-    return 0;  // LEFT OFF resume this with SSL
+    if (versions_i.size() > 0)
+    {
+        return *std::max_element(versions_i.begin(), versions_i.end());
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 QVector<batlabStatusInfo> BatlabManager::getBatlabInfos()

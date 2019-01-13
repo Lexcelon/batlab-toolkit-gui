@@ -124,6 +124,8 @@ struct channelStatusInfo {
 };
 
 struct batlabStatusInfo {
+    bool confirmedBatlabDevice;
+    bool inBootloader;
     bool externalPowerConnected;
     qint16 firmwareVersion;
     QString portName;

@@ -2,23 +2,13 @@
 
 Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
 {
-    QState* s_unknown = new QState();
-    QState* s_bootloader = new QState();
-    QState* s_booted = new QState();
-    s_unknown->addTransition(this, &Batlab::booted, s_booted);
-    s_booted->addTransition(this, &Batlab::bootloaderEntered, s_bootloader);
-    s_unknown->addTransition(this, &Batlab::bootloaderEntered, s_bootloader);
-    m_batlabStateMachine.addState(s_unknown);
-    m_batlabStateMachine.addState(s_bootloader);
-    m_batlabStateMachine.addState(s_booted);
-    m_batlabStateMachine.setInitialState(s_unknown);
-    m_batlabStateMachine.start();
-
     m_commsManager = new BatlabCommsManager(portName);
     connect(m_commsManager, &BatlabCommsManager::responseBundleReady, this, &Batlab::handleSerialResponseBundleReady);
     connect(m_commsManager, &BatlabCommsManager::packetBundleSendFailed, this, &Batlab::handleSerialPacketBundleSendFailed);
     connect(m_commsManager, &BatlabCommsManager::firmwareFlashProgress, this, &Batlab::updateFirmwareFlashProgress);
 
+    m_info.confirmedBatlabDevice = false;
+    m_info.inBootloader = false;
     m_info.externalPowerConnected = false;
     m_info.firmwareVersion = -1;
     m_info.portName = portName;
@@ -196,21 +186,21 @@ void Batlab::handleSetWatchdogTimerResponse(QVector<BatlabPacket> response)
 
 void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
 {
+    m_info.confirmedBatlabDevice = true;
     BatlabPacket responsePacket = response[0];
     if (responsePacket.value() == 257)
     {
-        emit booted();
-        initBatlabDevice();
+       initBatlabDevice();
     }
     else
     {
-        emit bootloaderEntered();
+        m_info.inBootloader = true;
     }
 }
 
 void Batlab::periodicCheck()
 {
-    if (!m_batlabStateMachine.configuration().contains(s_booted)) { return; }
+    if (!m_info.confirmedBatlabDevice || m_info.inBootloader) { return; }
 
     QVector<BatlabPacket> checkPackets;
     checkPackets.append(BatlabPacket(batlabNamespaces::UNIT, unitNamespace::WATCHDOG_TIMER, WATCHDOG_TIMER_RESET));
@@ -289,7 +279,7 @@ batlabStatusInfo Batlab::getInfo()
 
 bool Batlab::hasReceivedValidResponse()
 {
-    return !m_batlabStateMachine.configuration().contains(s_unknown);
+    return m_info.confirmedBatlabDevice;
 }
 
 void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
@@ -306,9 +296,13 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
 
     // Enter bootloader
     QVector<BatlabPacket> packets;
-    BatlabPacket enterBootloaderPacket = BatlabPacket(batlabNamespaces::UNIT, unitNamespace::UNIT_BOOTLOAD, 0x0000);
-    enterBootloaderPacket.setSleepAfterTransaction_ms(2000);
-    packets.append(enterBootloaderPacket);
+
+    if (!m_info.inBootloader)
+    {
+        BatlabPacket enterBootloaderPacket = BatlabPacket(batlabNamespaces::UNIT, unitNamespace::UNIT_BOOTLOAD, 0x0000);
+        enterBootloaderPacket.setSleepAfterTransaction_ms(2000);
+        packets.append(enterBootloaderPacket);
+    }
 
     QFile firmwareFile(firmwareFilePath);
     if (!firmwareFile.open(QIODevice::ReadOnly))
@@ -331,17 +325,6 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     packets.append(rebootPacket);
     packets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::DATA));
 
-    // if(self.read(BOOTLOADER,BL_DATA).value() == COMMAND_ERROR):
-        // self.bootloader = False
-        // self.sn = int(self.read(UNIT,SERIAL_NUM).value()) + (int(self.read(UNIT,DEVICE_ID).value()) << 16)
-        // print("Connected to Batlab " + str(self.sn))
-        // fw = int(self.read(UNIT,FIRMWARE_VER).value())
-        // print("Firmware Version " + str(fw))
-        // return True
-    // else:
-        // print("Batlab still in Bootloader -- Try again")
-        // return False
-
     batlabPacketBundle bundle;
     bundle.packets = packets;
     bundle.callback = "handleFirmwareFlashResponse";
@@ -351,8 +334,8 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
 
 void Batlab::handleFirmwareFlashResponse(QVector<BatlabPacket> response)
 {
-    // TODO
     qDebug() << "Done with firmware flash.";
     m_info.firmwareBytesRemaining = -1;
+    m_info.inBootloader = false;
     emit infoUpdated();
 }

@@ -12,7 +12,6 @@
 #include <qmath.h>
 #include <QFileInfo>
 #include <QQueue>
-#include <QStateMachine>
 
 #include "batlablib.h"
 #include "channel.h"
@@ -28,9 +27,6 @@ public:
     void setAllIdle();
 
 signals:
-    void bootloaderEntered();
-    void booted();
-
     void batlabDisconnected(QString);
     void infoUpdated();
 
@@ -70,11 +66,6 @@ private:
     // TODO move to channels?
     int m_tempCalibB[4];
     int m_tempCalibR[4];
-
-    QStateMachine m_batlabStateMachine;
-    QState* s_unknown;
-    QState* s_bootloader;
-    QState* s_booted;
 
     BatlabCommsManager* m_commsManager;
 };
