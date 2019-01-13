@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Debug Batlab</string>
+   <string>Debug Batlab (Advanced)</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

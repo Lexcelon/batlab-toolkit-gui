@@ -31,6 +31,8 @@ public:
     void setSleepAfterTransaction_ms(int ms);
     bool getReadVerify();
     int getRetries();
+
+    void debug();
 signals:
 
 public slots:

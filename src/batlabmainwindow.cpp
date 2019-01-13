@@ -297,7 +297,7 @@ void BatlabMainWindow::createActions()
     exitBatlabToolkitGUIAct->setStatusTip(tr("Close Batlab Toolkit GUI"));
     connect(exitBatlabToolkitGUIAct, &QAction::triggered, this, &BatlabMainWindow::exitBatlabToolkitGUI);
 
-    debugBatlabAct = new QAction(tr("Debug Batlab (Advanced)"), this);
+    debugBatlabAct = new QAction(tr("Debug Batlab"), this);
     debugBatlabAct->setStatusTip(tr("Debug a Batlab by reading and writing registers"));
     connect(debugBatlabAct, &QAction::triggered, this, &BatlabMainWindow::debugBatlab);
 

@@ -156,13 +156,13 @@ QVector<QString> BatlabManager::getFirmwareVersions()
 void BatlabManager::processRegisterReadRequest(int serial, int ns, int address)
 {
     QString portName = getPortNameFromSerial(serial);
-//    TODO if (!portName.isEmpty()) { connectedBatlabsByPortName[portName]->initiateRegisterRead(ns, address); }
+    if (!portName.isEmpty()) { connectedBatlabsByPortName[portName]->registerRead(ns, address); }
 }
 
 void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address, int value)
 {
     QString portName = getPortNameFromSerial(serial);
-//    TODO if (!portName.isEmpty()) { connectedBatlabsByPortName[portName]->initiateRegisterWrite(ns, address, value); }
+    if (!portName.isEmpty()) { connectedBatlabsByPortName[portName]->registerWrite(ns, address, value); }
 }
 
 void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVersion)

@@ -67,6 +67,10 @@ void Batlab::handleSerialPacketBundleSendFailed(batlabPacketBundle bundle)
     {
         qWarning() << tr("Unable to flash firmware on device on port %1").arg(m_info.portName);
     }
+    else
+    {
+        qWarning() << tr("Error during serial communication on port %1").arg(m_info.portName);
+    }
 }
 
 void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
@@ -91,6 +95,14 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
     {
         handleFirmwareFlashResponse(bundle.packets);
     }
+    else if (bundle.callback == "handleRegisterReadResponse")
+    {
+        handleRegisterReadResponse(bundle.packets);
+    }
+    else if (bundle.callback == "handleRegisterWriteResponse")
+    {
+        handleRegisterWriteResponse(bundle.packets);
+    }
 }
 
 void Batlab::verifyBatlabDevice()
@@ -100,6 +112,28 @@ void Batlab::verifyBatlabDevice()
     batlabPacketBundle packetBundle;
     packetBundle.packets = verifyPackets;
     packetBundle.callback = "handleVerifyBatlabDeviceResponse";
+    packetBundle.channel = -1;
+    m_commsManager->sendPacketBundle(packetBundle);
+}
+
+void Batlab::registerRead(int ns, int address)
+{
+    QVector<BatlabPacket> packets;
+    packets.append(BatlabPacket(ns, address));
+    batlabPacketBundle packetBundle;
+    packetBundle.packets = packets;
+    packetBundle.callback = "handleRegisterReadResponse";
+    packetBundle.channel = -1;
+    m_commsManager->sendPacketBundle(packetBundle);
+}
+
+void Batlab::registerWrite(int ns, int address, int value)
+{
+    QVector<BatlabPacket> packets;
+    packets.append(BatlabPacket(ns, address, value));
+    batlabPacketBundle packetBundle;
+    packetBundle.packets = packets;
+    packetBundle.callback = "handleRegisterWriteResponse";
     packetBundle.channel = -1;
     m_commsManager->sendPacketBundle(packetBundle);
 }
@@ -196,6 +230,18 @@ void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
     {
         m_info.inBootloader = true;
     }
+}
+
+void Batlab::handleRegisterReadResponse(QVector<BatlabPacket> response)
+{
+    BatlabPacket responsePacket = response[0];
+    responsePacket.debug();
+}
+
+void Batlab::handleRegisterWriteResponse(QVector<BatlabPacket> response)
+{
+    BatlabPacket responsePacket = response[0];
+    responsePacket.debug();
 }
 
 void Batlab::periodicCheck()
@@ -334,7 +380,7 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
 
 void Batlab::handleFirmwareFlashResponse(QVector<BatlabPacket> response)
 {
-    qDebug() << "Done with firmware flash.";
+    qInfo() << "Done with firmware flash.";
     m_info.firmwareBytesRemaining = -1;
     m_info.inBootloader = false;
     emit infoUpdated();

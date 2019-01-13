@@ -56,6 +56,16 @@ BatlabPacket::BatlabPacket(int batlabNamespace, int batlabRegister, uint16_t pay
     m_retries = DEFAULT_SERIAL_RETRIES;
 }
 
+void BatlabPacket::debug()
+{
+    qDebug() << "Response packet:\n"
+             << "    " << QString("%1").arg(m_startByte , 0, 16) << "\n"
+             << "    " << QString("%1").arg(m_nameSpace , 0, 16) << "\n"
+             << "    " << QString("%1").arg(m_address , 0, 16) << "\n"
+             << "    " << QString("%1").arg(m_payloadLowByte , 0, 16) << "\n"
+             << "    " << QString("%1").arg(m_payloadHighByte , 0, 16) << "\n";
+}
+
 uchar BatlabPacket::getStartByte() { return m_startByte; }
 void BatlabPacket::setStartByte(uchar startByte) { m_startByte = startByte; }
 

@@ -33,6 +33,11 @@ signals:
     void error(const QString &s);
 
 public slots:
+    void registerRead(int ns, int address);
+    void handleRegisterReadResponse(QVector<BatlabPacket> response);
+    void registerWrite(int ns, int address, int value);
+    void handleRegisterWriteResponse(QVector<BatlabPacket> response);
+
     void initiateFirmwareFlash(QString firmwareFilePath);
     void handleFirmwareFlashResponse(QVector<BatlabPacket> response);
     void updateFirmwareFlashProgress(int packetsRemaining);
