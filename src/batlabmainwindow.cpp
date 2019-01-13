@@ -365,6 +365,7 @@ void BatlabMainWindow::debugBatlab()
         connect(batlabDebugDialog, &BatlabDebugDialog::registerReadRequested, this, &BatlabMainWindow::processRegisterReadRequest);
         connect(batlabDebugDialog, &BatlabDebugDialog::registerWriteRequested, this, &BatlabMainWindow::processRegisterWriteRequest);
         connect(batlabDebugDialog, &BatlabDebugDialog::firmwareFlashRequested, this, &BatlabMainWindow::processFirmwareFlashRequest);
+        connect(batlabManager, &BatlabManager::batlabInfoUpdated, batlabDebugDialog, &BatlabDebugDialog::updateBatlabs);
     }
     else
     {

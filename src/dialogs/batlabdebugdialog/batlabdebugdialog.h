@@ -27,6 +27,7 @@ public slots:
     void processFirmwareFlashClick();
 
     void updateInfo(QVector<batlabStatusInfo> infos, QVector<QString> firmwareVersions);
+    void updateBatlabs(QVector<batlabStatusInfo> infos, int latestFirmwareVersion);
 
 signals:
     void registerReadRequested(int serialNumber, int name_space, int address);
