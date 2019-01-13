@@ -267,6 +267,8 @@ void BatlabMainWindow::redrawBatlabInfo(QVector<batlabStatusInfo> infos, int lat
         connect(batlabWidget, &BatlabWidget::firmwareUpdateRequested, batlabManager, &BatlabManager::processFirmwareFlashRequest);
     }
 
+    batlabsTabLayout->addStretch();
+
     batlabsButton->setText("Batlabs (" + QString::number(infos.size()) + ")");
 }
 
