@@ -183,7 +183,7 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
     batlabSerialToFirmwareVersionWaiting[serial] = firmwareVersion;
 
     QString firmwareFileUrl = availableFirmwareVersionToUrl[firmwareVersion];
-    QString firmwareFilename = QFileInfo(firmwareFileUrl).fileName();
+    QString firmwareFilename = firmwareVersion + ".bin";
 
     QDir appLocalDataPath(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first());
     QString firmwareDirPath = appLocalDataPath.absoluteFilePath("firmware-bin-files");
@@ -195,6 +195,7 @@ void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVers
 
     QString firmwareFilePath = QDir(firmwareDirPath).absoluteFilePath(firmwareFilename);
     QFileInfo firmwareFileInfo(firmwareFilePath);
+
     // Check if file already exists and is correct size. If so, flash.
     if (firmwareFileInfo.exists() && firmwareFileInfo.size() == FIRMWARE_FILE_SIZE)
     {
@@ -251,6 +252,7 @@ void BatlabManager::processFirmwareDownloadFinished()
         if (pendingFirmwareDownloadVersions[version] == firmwareDownloadReply)
         {
             firmwareVersion = version;
+            pendingFirmwareDownloadVersions.remove(version);
         }
     }
 
