@@ -83,11 +83,13 @@ void BatlabDebugDialog::updateInfo(QVector<batlabStatusInfo> infos, QVector<QStr
 
 void BatlabDebugDialog::updateBatlabs(QVector<batlabStatusInfo> infos, int latestFirmwareVersion)
 {
+    QString prevSelectionText = ui->selectBatlabComboBox->currentText();
     ui->selectBatlabComboBox->clear();
     for (int i = 0; i < infos.size(); i++)
     {
         ui->selectBatlabComboBox->addItem(QString::number(infos.at(i).serialNumberComplete));
     }
+    ui->selectBatlabComboBox->setCurrentText(prevSelectionText);
 }
 
 BatlabDebugDialog::~BatlabDebugDialog()
