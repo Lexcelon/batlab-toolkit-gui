@@ -49,7 +49,7 @@ IntroPage::IntroPage(QWidget *parent) : QWizardPage(parent)
 
     label = new QLabel(tr("This wizard will generate a playlist file, which is "
                           "a list of cells with information about the cells and"
-                          " the tests you would like to run on the cells. Once "
+                          " the tests you would like to run on them. Once "
                           "you create a playlist, you can load that playlist and"
                           " execute the tests on your battery cells to generate results."));
     label->setWordWrap(true);
@@ -73,7 +73,7 @@ void BasicSetupPage::updateExampleCellName()
 BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
 {
     setTitle(tr("Basic Setup"));
-    setSubTitle(tr("Provide basic setup information for a new cell playlist. Please fill all fields."));
+    setSubTitle(tr("Provide basic setup information for a new cell playlist."));
 
     cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));
     cellPlaylistNameLineEdit = new QLineEdit;
@@ -430,24 +430,29 @@ PlaylistDirectoryPage::PlaylistDirectoryPage(QWidget *parent) : QWizardPage(pare
 void PlaylistDirectoryPage::initializePage()
 {
     // TODO put these one folder deeper in a playlists folder?
-    QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
-    QString playlistDirectoryPathString = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
-
-    QDir dir;
-    if (!dir.mkpath(playlistDirectoryPathString)) {
-        qWarning() << "Unable to find/make default playlist directory.";
-    }
+    QString homeDirPath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+    QString playlistDirectoryPathString = homeDirPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
 
     playlistDirectoryLineEdit->setText(playlistDirectoryPathString);
 }
 
 void PlaylistDirectoryPage::browseForPlaylistDirectory()
 {
-    QString appLocalDataPath = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first();
-    QString playlistDirectoryPathString = appLocalDataPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
+    QString homeDirPath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+    QString playlistDirectoryPathString = homeDirPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
     // TODO fix this so that if none is selected it leaves the path instead of setting it to ""
     playlistDirectoryPathString = QFileDialog::getExistingDirectory(this, tr("Choose playlist directory for output files:"), playlistDirectoryPathString);
     playlistDirectoryLineEdit->setText(playlistDirectoryPathString);
+}
+
+bool PlaylistDirectoryPage::validatePage()
+{
+    QDir dir;
+    if (!dir.mkpath(playlistDirectoryLineEdit->text())) {
+        qWarning() << "Unable to find/make default playlist directory.";
+        return false;
+    }
+    return true;
 }
 
 void SavePlaylistPage::initializePage()

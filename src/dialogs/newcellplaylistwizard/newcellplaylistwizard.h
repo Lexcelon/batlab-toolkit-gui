@@ -147,6 +147,7 @@ private:
 
     void browseForPlaylistDirectory();
     void initializePage();
+    bool validatePage();
 };
 
 class SavePlaylistPage : public QWizardPage
