@@ -121,6 +121,9 @@ struct channelStatusInfo {
     bool storageDischarge;
     bool storageDischargeComplete;
     bool storageDischargeError;
+
+    int tempCalibB;
+    int tempCalibR;
 };
 
 struct batlabStatusInfo {

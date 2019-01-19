@@ -19,9 +19,12 @@ public:
     void savePlaylist();
     void skipToNextPage();
 
+signals:
+    void finished(CellPlaylist);
+
 private:
     bool skipped;
-    CellPlaylist *playlist;
+    CellPlaylist m_playlist;
 };
 
 class IntroPage : public QWizardPage

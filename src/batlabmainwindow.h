@@ -122,7 +122,6 @@ private:
     QTextBrowser *logViewTextBrowser;
 
 private slots:
-    void newCellPlaylist();
     void openCellPlaylist();
     void exitBatlabToolkitGUI();
 
@@ -132,7 +131,7 @@ private slots:
     void aboutBatlabToolkitGUI();
 
     void showNewCellPlaylistWizard();
-    void loadPlaylistIntoGUI();
+    void loadPlaylistIntoGUI(CellPlaylist playlist);
 
     void savelogView();
     void processQtLogMessage(QtMsgType type, QString str);

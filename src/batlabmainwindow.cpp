@@ -282,7 +282,7 @@ void BatlabMainWindow::createActions()
     newCellPlaylistAct = new QAction(tr("&New Cell Playlist"), this);
     newCellPlaylistAct->setShortcuts(QKeySequence::New);
     newCellPlaylistAct->setStatusTip(tr("Create a new cell playlist"));
-    connect(newCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::newCellPlaylist);
+    connect(newCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::showNewCellPlaylistWizard);
 
     openCellPlaylistAct = new QAction(tr("&Open Cell Playlist"), this);
     openCellPlaylistAct->setShortcuts(QKeySequence::Open);
@@ -325,18 +325,12 @@ void BatlabMainWindow::createMenus()
     helpMenu->addAction(checkForUpdatesAct);
 }
 
-void BatlabMainWindow::newCellPlaylist()
-{
-    showNewCellPlaylistWizard();
-    loadPlaylistIntoGUI();
-}
-
 void BatlabMainWindow::openCellPlaylist()
 {
     // First select the playlist file
     // TODO
     // Then actually load the settings into the GUI
-    loadPlaylistIntoGUI();
+//    loadPlaylistIntoGUI();
 }
 
 void BatlabMainWindow::exitBatlabToolkitGUI()
@@ -516,9 +510,10 @@ void BatlabMainWindow::showNewCellPlaylistWizard()
     NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
     wizard->setWizardStyle(QWizard::ModernStyle);
     wizard->show();
+    connect(wizard, &NewCellPlaylistWizard::finished, this, &BatlabMainWindow::loadPlaylistIntoGUI);
 }
 
-void BatlabMainWindow::loadPlaylistIntoGUI()
+void BatlabMainWindow::loadPlaylistIntoGUI(CellPlaylist playlist)
 {
     mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget);
     cellPlaylistButton->setEnabled(false);
