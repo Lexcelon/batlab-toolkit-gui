@@ -97,15 +97,12 @@ void BatlabMainWindow::initializeMainWindowUI()
 
     cellPlaylistLoadedWidget = new QWidget;
     cellPlaylistLoadedLayout = new QGridLayout;
-
-    cellPlaylistLoadedLayout->addWidget(openCellPlaylistButton, 1, 0);
-    cellPlaylistLoadedLayout->addWidget(newCellPlaylistButton, 2, 0);
     cellPlaylistLoadedWidget->setLayout(cellPlaylistLoadedLayout);
 
     cellPlaylistStackedWidget = new QStackedWidget;
     cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);
     cellPlaylistStackedWidget->addWidget(cellPlaylistLoadedWidget);
-    cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget); // TODO temporary for testing
+    cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistNotLoadedWidget);
 
     cellPlaylistTabLayout = new QGridLayout;
     cellPlaylistTabLayout->addWidget(cellPlaylistStackedWidget, 0, 0);
@@ -192,7 +189,7 @@ void BatlabMainWindow::initializeMainWindowUI()
 
     mainTabWidget = new QTabWidget;
     mainTabWidget->addTab(testCellsTab, tr("Test Cells"));
-//    mainTabWidget->addTab(configurePackTab, tr("Configure Pack"));  // TODO
+//    mainTabWidget->addTab(configurePackTab, tr("Configure Pack"));
 
     centralWidgetLayout = new QGridLayout;
     centralWidgetLayout->addWidget(mainTabWidget);
@@ -526,7 +523,7 @@ void BatlabMainWindow::loadPlaylistIntoGUI() {
 
     QVector<cellResultsStatusInfo> cellResultsDisplayInfoVector;
 
-    // ****** Dummy Data *******
+    // ****** Dummy Data *******  // TODO
     cellResultsStatusInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
     newCellResult1.cellName = "CELL_1";
     newCellResult1.testInProgress = true;
