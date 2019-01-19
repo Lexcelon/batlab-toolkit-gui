@@ -32,6 +32,11 @@ public:
     bool getReadVerify();
     int getRetries();
 
+    float asvoltage();
+    float asfreq();
+    float asioff();
+
+
     void debug();
 signals:
 

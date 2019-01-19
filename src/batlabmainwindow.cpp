@@ -524,6 +524,8 @@ void BatlabMainWindow::loadPlaylistIntoGUI(CellPlaylist playlist)
 
     QVector<cellResultsStatusInfo> cellResultsDisplayInfoVector;
 
+    // LEFT OFF
+
     // ****** Dummy Data *******  // TODO
 //    cellResultsStatusInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
 //    newCellResult1.cellName = "CELL_1";
