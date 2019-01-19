@@ -429,7 +429,6 @@ PlaylistDirectoryPage::PlaylistDirectoryPage(QWidget *parent) : QWizardPage(pare
 
 void PlaylistDirectoryPage::initializePage()
 {
-    // TODO put these one folder deeper in a playlists folder?
     QString homeDirPath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
     QString playlistDirectoryPathString = homeDirPath + "/" + field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
 

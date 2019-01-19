@@ -328,17 +328,15 @@ void BatlabMainWindow::createMenus()
 void BatlabMainWindow::newCellPlaylist()
 {
     showNewCellPlaylistWizard();
-
-    // TODO: Show Playlist Results in the GUI?
+    loadPlaylistIntoGUI();
 }
 
 void BatlabMainWindow::openCellPlaylist()
 {
-    // First do the file thing
+    // First select the playlist file
+    // TODO
     // Then actually load the settings into the GUI
     loadPlaylistIntoGUI();
-
-
 }
 
 void BatlabMainWindow::exitBatlabToolkitGUI()
@@ -513,54 +511,62 @@ void BatlabMainWindow::updatelogViewWithReceivedStream(int cell,int mode,int sta
     emit emitUpdateText(str);
 }
 
-void BatlabMainWindow::showNewCellPlaylistWizard() {
+void BatlabMainWindow::showNewCellPlaylistWizard()
+{
     NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
     wizard->setWizardStyle(QWizard::ModernStyle);
     wizard->show();
 }
 
-void BatlabMainWindow::loadPlaylistIntoGUI() {
+void BatlabMainWindow::loadPlaylistIntoGUI()
+{
+    mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget);
+    cellPlaylistButton->setEnabled(false);
+    batlabsButton->setEnabled(true);
+    logViewButton->setEnabled(true);
+    resultsButton->setEnabled(true);
+    cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget);
 
     QVector<cellResultsStatusInfo> cellResultsDisplayInfoVector;
 
     // ****** Dummy Data *******  // TODO
-    cellResultsStatusInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
-    newCellResult1.cellName = "CELL_1";
-    newCellResult1.testInProgress = true;
-    newCellResult1.testCompleted = false;
-    cellResultsDisplayInfoVector.push_back(newCellResult1);
+//    cellResultsStatusInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
+//    newCellResult1.cellName = "CELL_1";
+//    newCellResult1.testInProgress = true;
+//    newCellResult1.testCompleted = false;
+//    cellResultsDisplayInfoVector.push_back(newCellResult1);
 
-    cellResultsStatusInfo newCellResult2 = BatlabLib::createInitializedcellResultsDisplayInfo();
-    newCellResult2.cellName = "CELL_2";
-    newCellResult2.testInProgress = false;
-    newCellResult2.testCompleted = false;
-    cellResultsDisplayInfoVector.push_back(newCellResult2);
+//    cellResultsStatusInfo newCellResult2 = BatlabLib::createInitializedcellResultsDisplayInfo();
+//    newCellResult2.cellName = "CELL_2";
+//    newCellResult2.testInProgress = false;
+//    newCellResult2.testCompleted = false;
+//    cellResultsDisplayInfoVector.push_back(newCellResult2);
 
-    cellResultsStatusInfo newCellResult3 = BatlabLib::createInitializedcellResultsDisplayInfo();
-    newCellResult3.cellName = "CELL_3";
-    newCellResult3.testInProgress = false;
-    newCellResult3.testCompleted = true;
-    newCellResult3.chargeCapacity = 9.27;
-    newCellResult3.energyCapacity = 0.23;
-    newCellResult3.avgImpedance = 7.23;
-    newCellResult3.deltaTemperature = 19.23;
-    newCellResult3.avgCurrent = 8.00;
-    newCellResult3.avgVoltage = 4.21;
-    newCellResult3.runtime = 50.22;
-    cellResultsDisplayInfoVector.push_back(newCellResult3);
+//    cellResultsStatusInfo newCellResult3 = BatlabLib::createInitializedcellResultsDisplayInfo();
+//    newCellResult3.cellName = "CELL_3";
+//    newCellResult3.testInProgress = false;
+//    newCellResult3.testCompleted = true;
+//    newCellResult3.chargeCapacity = 9.27;
+//    newCellResult3.energyCapacity = 0.23;
+//    newCellResult3.avgImpedance = 7.23;
+//    newCellResult3.deltaTemperature = 19.23;
+//    newCellResult3.avgCurrent = 8.00;
+//    newCellResult3.avgVoltage = 4.21;
+//    newCellResult3.runtime = 50.22;
+//    cellResultsDisplayInfoVector.push_back(newCellResult3);
 
-    cellResultsStatusInfo newCellResult4 = BatlabLib::createInitializedcellResultsDisplayInfo();
-    newCellResult4.cellName = "CELL_4";
-    newCellResult4.testInProgress = true;
-    newCellResult4.testCompleted = true;
-    newCellResult4.chargeCapacity = 6.43;
-    newCellResult4.energyCapacity = 1.20;
-    newCellResult4.avgImpedance = 9.22;
-    newCellResult4.deltaTemperature = 5.92;
-    newCellResult4.avgCurrent = 339.23;
-    newCellResult4.avgVoltage = 82.40;
-    newCellResult4.runtime = 100.21;
-    cellResultsDisplayInfoVector.push_back(newCellResult4);
+//    cellResultsStatusInfo newCellResult4 = BatlabLib::createInitializedcellResultsDisplayInfo();
+//    newCellResult4.cellName = "CELL_4";
+//    newCellResult4.testInProgress = true;
+//    newCellResult4.testCompleted = true;
+//    newCellResult4.chargeCapacity = 6.43;
+//    newCellResult4.energyCapacity = 1.20;
+//    newCellResult4.avgImpedance = 9.22;
+//    newCellResult4.deltaTemperature = 5.92;
+//    newCellResult4.avgCurrent = 339.23;
+//    newCellResult4.avgVoltage = 82.40;
+//    newCellResult4.runtime = 100.21;
+//    cellResultsDisplayInfoVector.push_back(newCellResult4);
     // ****** End Dummy Data *******
 
     redrawResultsInfo(cellResultsDisplayInfoVector);

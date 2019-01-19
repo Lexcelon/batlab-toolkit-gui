@@ -31,8 +31,6 @@ CellPlaylist::CellPlaylist()
     playlistBatlabSettings.sineWaveMagnitude = SINE_WAVE_MAGNITUDE_DEFAULT;
 }
 
-
-
 bool CellPlaylist::write(QString filename)
 {
     QFile file(filename);
