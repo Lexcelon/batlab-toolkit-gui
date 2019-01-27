@@ -522,9 +522,9 @@ void BatlabMainWindow::loadPlaylistIntoGUI(CellPlaylist playlist)
     resultsButton->setEnabled(true);
     cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget);
 
-    QVector<cellResultsStatusInfo> cellResultsDisplayInfoVector;
+    playlistSettingsWidget = new PlaylistSettingsWidget(playlist);
 
-    // LEFT OFF
+    QVector<cellResultsStatusInfo> cellResultsDisplayInfoVector;
 
     // ****** Dummy Data *******  // TODO
 //    cellResultsStatusInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();

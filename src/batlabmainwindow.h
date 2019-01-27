@@ -18,6 +18,7 @@
 #include "batlabcore/batlablogger.h"
 #include "components/batlabwidget.h"
 #include "components/resultswidget.h"
+#include "components/playlistsettingswidget.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"
 #include "qtautoupdater/autoupdatergui/updatecontroller.h"
@@ -55,6 +56,7 @@ private:
     void closeEvent(QCloseEvent *event);
 
     BatlabManager *batlabManager;
+    PlaylistSettingsWidget *playlistSettingsWidget;
 
     BatlabDebugDialog *batlabDebugDialog = nullptr;
 

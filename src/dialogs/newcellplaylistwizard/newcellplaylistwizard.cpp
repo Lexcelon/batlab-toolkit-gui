@@ -12,6 +12,7 @@ void NewCellPlaylistWizard::accept()
 {
     QDialog::accept();
     emit finished(m_playlist);
+    // TODO load changes even if they were not saved to a file
 }
 
 NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent) : QWizard(parent)
