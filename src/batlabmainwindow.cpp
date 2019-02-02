@@ -18,6 +18,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     // BatlabManager keeps track of connected Batlabs and handles state by itself. Only passes updates to BatlabMainWindow so that they can be drawn.
     batlabManager = new BatlabManager;
     connect(batlabManager, &BatlabManager::batlabInfoUpdated, this, &BatlabMainWindow::redrawBatlabInfo);
+    connect(batlabManager, &BatlabManager::cellPlaylistLoaded, this, &BatlabMainWindow::displayLoadedCellPlaylist);
 
     // Setup the UI
     initializeMainWindowUI();
@@ -95,9 +96,7 @@ void BatlabMainWindow::initializeMainWindowUI()
     cellPlaylistNotLoadedLayout->setRowStretch(4, 16);
     cellPlaylistNotLoadedWidget->setLayout(cellPlaylistNotLoadedLayout);
 
-    cellPlaylistLoadedWidget = new QWidget;
-    cellPlaylistLoadedLayout = new QGridLayout;
-    cellPlaylistLoadedWidget->setLayout(cellPlaylistLoadedLayout);
+    cellPlaylistLoadedWidget = new PlaylistSettingsWidget;
 
     cellPlaylistStackedWidget = new QStackedWidget;
     cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);
@@ -199,6 +198,17 @@ void BatlabMainWindow::initializeMainWindowUI()
 void BatlabMainWindow::togglePrintDebugMessages(bool value)
 {
     printDebugMessages = value;
+}
+
+void BatlabMainWindow::displayLoadedCellPlaylist(CellPlaylist playlist)
+{
+    cellPlaylistLoadedWidget->loadPlaylist(playlist);
+    cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget);
+    mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget);
+    cellPlaylistButton->setEnabled(false);
+    batlabsButton->setEnabled(true);
+    logViewButton->setEnabled(true);
+    resultsButton->setEnabled(true);
 }
 
 void BatlabMainWindow::savelogView()
@@ -328,9 +338,18 @@ void BatlabMainWindow::createMenus()
 void BatlabMainWindow::openCellPlaylist()
 {
     // First select the playlist file
-    // TODO
-    // Then actually load the settings into the GUI
-//    loadPlaylistIntoGUI();
+    QString playlistFileName = QFileDialog::getOpenFileName(this,
+                                                            tr("Select playlist file"),
+                                                            tr("%1").arg(QStandardPaths::HomeLocation),
+                                                            tr("Playlist Files (*.json);;All Files (*)"));
+    CellPlaylist playlist;
+    if (!playlist.load(playlistFileName))
+    {
+        qWarning() << "Unable to load cell playlist";
+        return;
+    }
+    // Then actually load the settings
+    batlabManager->loadPlaylist(playlist);
 }
 
 void BatlabMainWindow::exitBatlabToolkitGUI()
@@ -510,63 +529,7 @@ void BatlabMainWindow::showNewCellPlaylistWizard()
     NewCellPlaylistWizard * wizard = new NewCellPlaylistWizard();
     wizard->setWizardStyle(QWizard::ModernStyle);
     wizard->show();
-    connect(wizard, &NewCellPlaylistWizard::finished, this, &BatlabMainWindow::loadPlaylistIntoGUI);
-}
-
-void BatlabMainWindow::loadPlaylistIntoGUI(CellPlaylist playlist)
-{
-    mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget);
-    cellPlaylistButton->setEnabled(false);
-    batlabsButton->setEnabled(true);
-    logViewButton->setEnabled(true);
-    resultsButton->setEnabled(true);
-    cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget);
-
-    playlistSettingsWidget = new PlaylistSettingsWidget(playlist);
-
-    QVector<cellResultsStatusInfo> cellResultsDisplayInfoVector;
-
-    // ****** Dummy Data *******  // TODO
-//    cellResultsStatusInfo newCellResult1 = BatlabLib::createInitializedcellResultsDisplayInfo();
-//    newCellResult1.cellName = "CELL_1";
-//    newCellResult1.testInProgress = true;
-//    newCellResult1.testCompleted = false;
-//    cellResultsDisplayInfoVector.push_back(newCellResult1);
-
-//    cellResultsStatusInfo newCellResult2 = BatlabLib::createInitializedcellResultsDisplayInfo();
-//    newCellResult2.cellName = "CELL_2";
-//    newCellResult2.testInProgress = false;
-//    newCellResult2.testCompleted = false;
-//    cellResultsDisplayInfoVector.push_back(newCellResult2);
-
-//    cellResultsStatusInfo newCellResult3 = BatlabLib::createInitializedcellResultsDisplayInfo();
-//    newCellResult3.cellName = "CELL_3";
-//    newCellResult3.testInProgress = false;
-//    newCellResult3.testCompleted = true;
-//    newCellResult3.chargeCapacity = 9.27;
-//    newCellResult3.energyCapacity = 0.23;
-//    newCellResult3.avgImpedance = 7.23;
-//    newCellResult3.deltaTemperature = 19.23;
-//    newCellResult3.avgCurrent = 8.00;
-//    newCellResult3.avgVoltage = 4.21;
-//    newCellResult3.runtime = 50.22;
-//    cellResultsDisplayInfoVector.push_back(newCellResult3);
-
-//    cellResultsStatusInfo newCellResult4 = BatlabLib::createInitializedcellResultsDisplayInfo();
-//    newCellResult4.cellName = "CELL_4";
-//    newCellResult4.testInProgress = true;
-//    newCellResult4.testCompleted = true;
-//    newCellResult4.chargeCapacity = 6.43;
-//    newCellResult4.energyCapacity = 1.20;
-//    newCellResult4.avgImpedance = 9.22;
-//    newCellResult4.deltaTemperature = 5.92;
-//    newCellResult4.avgCurrent = 339.23;
-//    newCellResult4.avgVoltage = 82.40;
-//    newCellResult4.runtime = 100.21;
-//    cellResultsDisplayInfoVector.push_back(newCellResult4);
-    // ****** End Dummy Data *******
-
-    redrawResultsInfo(cellResultsDisplayInfoVector);
+    connect(wizard, &NewCellPlaylistWizard::finished, batlabManager, &BatlabManager::loadPlaylist);
 }
 
 void clearLayout(QLayout *layout) {

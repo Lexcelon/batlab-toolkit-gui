@@ -17,6 +17,14 @@ void BatlabLib::bubblesort(QVector<float> data, QVector<int> &indices)
     }
 }
 
+QString BatlabLib::cellName(QString designator, int numCells, int startingCellNum, int cellId) {
+    int maxCellNumber = numCells + startingCellNum;
+    int digits = std::max((int) log10((double) maxCellNumber) + 1, 3);
+    QString numStr = QString("%1").arg(cellId, digits, 10, QChar('0'));
+
+    return designator + "_" + numStr;
+}
+
 float BatlabLib::getCharge(int val) {
     return (6. * (static_cast<float>(val) / pow(2,15) )) * 4.096 / 9.765625;
 }

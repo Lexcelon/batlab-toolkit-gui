@@ -102,9 +102,8 @@ private:
     QFrame *resultsTabWidget;
 
     QWidget *cellPlaylistNotLoadedWidget;
-    QWidget *cellPlaylistLoadedWidget;
+    PlaylistSettingsWidget *cellPlaylistLoadedWidget;
     QGridLayout *cellPlaylistNotLoadedLayout;
-    QGridLayout *cellPlaylistLoadedLayout;
     QLabel *noCellPlaylistLoadedLabel;
     QPushButton *newCellPlaylistButton;
     QPushButton *openCellPlaylistButton;
@@ -133,7 +132,7 @@ private slots:
     void aboutBatlabToolkitGUI();
 
     void showNewCellPlaylistWizard();
-    void loadPlaylistIntoGUI(CellPlaylist playlist);
+    void displayLoadedCellPlaylist(CellPlaylist playlist);
 
     void savelogView();
     void processQtLogMessage(QtMsgType type, QString str);

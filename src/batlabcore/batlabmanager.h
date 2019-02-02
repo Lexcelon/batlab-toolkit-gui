@@ -22,6 +22,7 @@
 #include <QDir>
 
 #include "batlab.h"
+#include "cellplaylist.h"
 
 // There is one BatlabManager for the entire program.
 class BatlabManager : public QObject
@@ -35,6 +36,8 @@ public:
 
 signals:
     void batlabInfoUpdated(QVector<batlabStatusInfo>, int latestFirmwareVersion);
+    void cellPlaylistLoaded(CellPlaylist playlist);
+    void cellPlaylistUpdated(CellPlaylist playlist);
 
 public slots:
     void updateConnectedBatlabs();
@@ -54,9 +57,13 @@ public slots:
 
     QString getPortNameFromSerial(int serial);
 
+    void loadPlaylist(CellPlaylist playlist);
+
 private:
-    bool cellPlaylistLoaded;
+    bool isCellPlaylistLoaded;
     bool testsInProgress;
+
+    CellPlaylist loadedPlaylist;
 
     QMap<QString, Batlab*> candidateBatlabsByPortName;
     QMap<QString, Batlab*> connectedBatlabsByPortName;

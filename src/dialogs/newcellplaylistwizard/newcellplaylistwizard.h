@@ -3,10 +3,10 @@
 
 #include <QWizard>
 #include <QtWidgets>
+
+#include "batlabcore/batlablib.h"
 #include "batlabcore/cellplaylist.h"
 #include "batlabcore/version.h"
-
-QString cellName(QString designator, int numCells, int startingCellNum, int cellId);
 
 class NewCellPlaylistWizard : public QWizard
 {

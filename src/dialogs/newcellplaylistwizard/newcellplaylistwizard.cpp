@@ -1,13 +1,5 @@
 #include "newcellplaylistwizard.h"
 
-QString cellName(QString designator, int numCells, int startingCellNum, int cellId) {
-    int maxCellNumber = numCells + startingCellNum;
-    int digits = std::max((int) log10((double) maxCellNumber) + 1, 3);
-    QString numStr = QString("%1").arg(cellId, digits, 10, QChar('0'));
-
-    return designator + "_" + numStr;
-}
-
 void NewCellPlaylistWizard::accept()
 {
     QDialog::accept();
@@ -67,7 +59,7 @@ void BasicSetupPage::updateExampleCellName()
     int numCells = this->numCellsSpinBox->value();
     int startingCellNumber = this->startingCellNumberSpinBox->value();
 
-    QString cellStr = cellName(designator, numCells, startingCellNumber, startingCellNumber);
+    QString cellStr = BatlabLib::cellName(designator, numCells, startingCellNumber, startingCellNumber);
 
     this->exampleCellName->setText(cellStr);
 }
@@ -524,7 +516,7 @@ void NewCellPlaylistWizard::savePlaylist()
             int startingCellNumber = field(STARTING_CELL_NUMBER_FIELDSTR).toInt();
             QString designator = field(CELL_DESIGNATOR_FIELDSTR).toString();
             for (int cellId = startingCellNumber; cellId < startingCellNumber + numCells; cellId++) {
-                QString cellStr = cellName(designator, numCells, startingCellNumber, cellId);
+                QString cellStr = BatlabLib::cellName(designator, numCells, startingCellNumber, cellId);
                 names.append(cellStr);
             }
             m_playlist.setCellNames(names);

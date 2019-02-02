@@ -4,7 +4,7 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QVector<uchar>>("QVector<uchar>");
 
-    cellPlaylistLoaded = false;
+    isCellPlaylistLoaded = false;
     testsInProgress = false;
 
     QTimer *updateConnectedBatlabsTimer = new QTimer(this);
@@ -14,6 +14,13 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
     networkAccessManager = nullptr;
     QTimer::singleShot(100, this, &BatlabManager::initializeNetworkAccessManager);
     QTimer::singleShot(500, this, &BatlabManager::requestAvailableFirmwareVersions);
+}
+
+void BatlabManager::loadPlaylist(CellPlaylist playlist)
+{
+    loadedPlaylist = playlist;
+    isCellPlaylistLoaded = true;
+    emit cellPlaylistLoaded(loadedPlaylist);
 }
 
 void BatlabManager::setAllBatlabChannelsIdle()
