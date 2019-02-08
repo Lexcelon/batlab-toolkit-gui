@@ -1,6 +1,6 @@
 #include "playlistsettingswidget.h"
 
-PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent)
+PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent)  // LEFT OFF the TODOs in this file
 {
     cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));
     cellPlaylistNameLineEdit = new QLineEdit;
@@ -8,51 +8,6 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     QRegExp cellPlaylistNameRx("^[ \\w\\-\\.]+$");
     QValidator *cellPlaylistNameValidator = new QRegExpValidator(cellPlaylistNameRx);
     cellPlaylistNameLineEdit->setValidator(cellPlaylistNameValidator);
-
-    selectChemistryBox = new QGroupBox(tr("Cell chemistry type"));
-    lipoRadioButton = new QRadioButton(tr("Lithium Polymer (also called Lithium-Ion Polymer, LiPo, LIP or Li-poly)"));
-    ironPhosphateRadioButton = new QRadioButton(tr(qPrintable(QString::fromUtf8("Lithium Iron Phosphate (also called LiFePO\u2084 or LFP)"))));
-    otherRadioButton = new QRadioButton(tr("Other"));
-
-    lipoRadioButton->setChecked(true);
-
-    QVBoxLayout *groupBoxLayout = new QVBoxLayout;
-    groupBoxLayout->addWidget(lipoRadioButton);
-    groupBoxLayout->addWidget(ironPhosphateRadioButton);
-    groupBoxLayout->addWidget(otherRadioButton);
-    selectChemistryBox->setLayout(groupBoxLayout);
-
-    sameTypeLabel = new QLabel(tr("Please note that all cells in a playlist must be of the same type."));
-    sameTypeLabel->setWordWrap(true);
-
-    numCellsLabel = new QLabel(tr("Number of cells:"));
-    numCellsSpinBox = new QSpinBox;
-    numCellsSpinBox->setMinimum(MINIMUM_NUM_CELLS);
-    numCellsSpinBox->setMaximum(MAXIMUM_NUM_CELLS);
-
-    cellDesignatorLabel = new QLabel(tr("Cell designator:"));
-    cellDesignatorLineEdit = new QLineEdit;
-    cellDesignatorLineEdit->setText("CELL");
-    // Only valid characters
-    QRegExp cellDesignatorRx("^[\\w\\-\\.]+$");
-    QValidator *cellDesignatorValidator = new QRegExpValidator(cellDesignatorRx);
-    cellDesignatorLineEdit->setValidator(cellDesignatorValidator);
-
-    startingCellNumberLabel = new QLabel(tr("Starting cell number:"));
-    startingCellNumberSpinBox = new QSpinBox;
-    startingCellNumberSpinBox->setMinimum(MINIMUM_STARTING_CELL_NUMBER);
-    startingCellNumberSpinBox->setMaximum(MAXIMUM_STARTING_CELL_NUMBER);
-
-    exampleCellNameLabel = new QLabel(tr("Example cell name:"));
-    exampleCellName = new QLabel;
-
-    // Update the example cell name when the designator or starting cell number are changed
-    connect(cellDesignatorLineEdit, &QLineEdit::textChanged, this, &PlaylistSettingsWidget::updateExampleCellName);
-    // The static_cast is needed for these because QSpinBox overloads valueChanged and we need to specify which one we want
-    // https://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
-    connect(startingCellNumberSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &PlaylistSettingsWidget::updateExampleCellName);
-    connect(numCellsSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &PlaylistSettingsWidget::updateExampleCellName);
-    this->updateExampleCellName();
 
     numWarmupCyclesLabel = new QLabel(tr("Number of warmup cycles:"));
     numWarmupCyclesSpinBox = new QSpinBox;
@@ -69,15 +24,6 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     storageDischargeCheckBox = new QCheckBox(tr("Discharge to storage voltage after testing"));
     storageDischargeCheckBox->setChecked(STORAGE_DISCHARGE_DEFAULT);
 //    connect(storageDischargeCheckBox, &QCheckBox::toggled, this, &ConfigPlaylistPage::enableOrDisableStorageDischargeField);  // TODO
-
-    advancedConfigButton = new QPushButton(tr("Advanced"));
-    advancedConfigButton->setCheckable(true);
-    advancedConfigButton->setChecked(false);
-    advancedConfigButton->setMaximumWidth(80);
-
-    advancedConfigExtensionWidget = new QWidget;
-    // Do not show the advanced options by default
-    advancedConfigExtensionWidget->hide();
 
     restPeriodLabel = new QLabel(tr("Rest period:"));
     restPeriodSpinBox = new QDoubleSpinBox;
@@ -179,23 +125,10 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     acceptableCellImpedanceThresholdSpinBox->setRange(ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN, ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX);
     acceptableCellImpedanceThresholdSpinBox->setValue(ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT);
 
-    // Show/hide the advanced options when the Advanced button is toggled
-//    connect(advancedConfigButton, &QPushButton::toggled, advancedConfigExtensionWidget, &QWidget::setVisible);  // TODO
-
     QGridLayout *setupLayout = new QGridLayout;
     setupLayout->addWidget(cellPlaylistNameLabel, 0, 0);
     setupLayout->addWidget(cellPlaylistNameLineEdit, 0, 1);
-    setupLayout->addWidget(selectChemistryBox, 1, 0, 1, 2);
-    setupLayout->addWidget(sameTypeLabel, 2, 0, 1, 2);
-    setupLayout->addWidget(numCellsLabel, 3, 0);
-    setupLayout->addWidget(numCellsSpinBox, 3, 1);
-    setupLayout->addWidget(cellDesignatorLabel, 4, 0);
-    setupLayout->addWidget(cellDesignatorLineEdit, 4, 1);
-    setupLayout->addWidget(startingCellNumberLabel, 5, 0);
-    setupLayout->addWidget(startingCellNumberSpinBox, 5, 1);
-    setupLayout->addWidget(exampleCellNameLabel, 6, 0);
-    setupLayout->addWidget(exampleCellName, 6, 1);
-    setupLayout->setRowStretch(7, 1);
+    setupLayout->setRowStretch(1, 1);
 
     QGridLayout *basicConfigLayout = new QGridLayout;
     basicConfigLayout->addWidget(numWarmupCyclesLabel, 0, 0);
@@ -257,16 +190,21 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
 
 void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist)
 {
-    // TODO
-}
-
-void PlaylistSettingsWidget::updateExampleCellName()
-{
-    QString designator = this->cellDesignatorLineEdit->text();
-    int numCells = this->numCellsSpinBox->value();
-    int startingCellNumber = this->startingCellNumberSpinBox->value();
-
-    QString cellStr = BatlabLib::cellName(designator, numCells, startingCellNumber, startingCellNumber);
-
-    this->exampleCellName->setText(cellStr);
+    cellPlaylistNameLineEdit->setText(playlist.getCellPlaylistName());
+    // TODO don't show number of cells and prefix etc, just show all the cell names
+    numWarmupCyclesSpinBox->setValue(playlist.getNumWarmupCycles());
+    numMeasurementCyclesSpinBox->setValue(playlist.getNumMeasurementCycles());
+    storageDischargeCheckBox->setChecked(playlist.getStorageDischarge());
+    restPeriodSpinBox->setValue(playlist.getRestPeriod());
+    highVoltageCutoffSpinBox->setValue(playlist.getHighVoltageCutoff());
+    lowVoltageCutoffSpinBox->setValue(playlist.getLowVoltageCutoff());
+    chargeTemperatureCutoffSpinBox->setValue(playlist.getChargeTempCutoff());
+    dischargeTemperatureCutoffSpinBox->setValue(playlist.getDischargeTempCutoff());
+    chargeCurrentSafetyCutoffSpinBox->setValue(playlist.getChargeCurrentSafetyCutoff());
+    dischargeCurrentSafetyCutoffSpinBox->setValue(playlist.getDischargeCurrentSafetyCutoff());
+    prechargeRateSpinBox->setValue(playlist.getPrechargeRate());
+    chargeRateSpinBox->setValue(playlist.getChargeRate());
+    dischargeRateSpinBox->setValue(playlist.getDischargeRate());
+    storageDischargeVoltageSpinBox->setValue(playlist.getStorageDischargeVoltage());
+    acceptableCellImpedanceThresholdSpinBox->setValue(playlist.getAcceptableImpedanceThreshold());
 }

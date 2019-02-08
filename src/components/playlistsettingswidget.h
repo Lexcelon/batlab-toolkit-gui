@@ -15,7 +15,6 @@ class PlaylistSettingsWidget : public QWidget
     Q_OBJECT
 public:
     explicit PlaylistSettingsWidget(QWidget *parent = nullptr);
-    void updateExampleCellName();
     void loadPlaylist(CellPlaylist playlist);
 
 signals:
@@ -23,19 +22,6 @@ signals:
 public slots:
 
 private:
-    QGroupBox *selectChemistryBox;
-    QRadioButton *lipoRadioButton;
-    QRadioButton *ironPhosphateRadioButton;
-    QRadioButton *otherRadioButton;
-    QLabel *sameTypeLabel;
-    QLabel *numCellsLabel;
-    QSpinBox *numCellsSpinBox;
-    QLabel *cellDesignatorLabel;
-    QLineEdit *cellDesignatorLineEdit;
-    QLabel *startingCellNumberLabel;
-    QSpinBox *startingCellNumberSpinBox;
-    QLabel *exampleCellNameLabel;
-    QLabel *exampleCellName;
     QLabel *cellPlaylistNameLabel;
     QLineEdit *cellPlaylistNameLineEdit;
 
@@ -46,8 +32,6 @@ private:
     QSpinBox *numMeasurementCyclesSpinBox;
 
     QCheckBox *storageDischargeCheckBox;
-
-    QWidget *advancedConfigExtensionWidget;
 
     QLabel *restPeriodLabel;
     QDoubleSpinBox *restPeriodSpinBox;
@@ -96,9 +80,6 @@ private:
     QLabel *acceptableCellImpedanceThresholdLabel;
     QDoubleSpinBox *acceptableCellImpedanceThresholdSpinBox;
     QLabel *acceptableCellImpedanceThresholdUnit;
-
-    QWidget *basicConfigWidget;
-    QPushButton *advancedConfigButton;
 };
 
 #endif // PLAYLISTSETTINGSWIDGET_H
