@@ -21,6 +21,8 @@ public:
     QString getCellPlaylistName();
     bool setBatlabCellPlaylistFileVersion(QString str);
     QString getBatlabCellPlaylistFileVersion();
+    QString getCellChemistryType();
+    bool setCellChemistryType(QString type);
     bool setNumWarmupCycles(int num);
     int getNumWarmupCycles();
     bool setNumMeasurementCycles(int num);
@@ -73,6 +75,7 @@ public:
 private:
     QString cellPlaylistName;
     QString batlabCellPlaylistFileVersion;
+    QString cellChemistryType;
     int numWarmupCycles;
     int numMeasurementCycles;
     bool storageDischarge;
@@ -89,10 +92,10 @@ private:
     batlabSettings playlistBatlabSettings;
 };
 
-// TODO review limits with Daniel
 // Builtin variable default values and bounds
 
 #define CELL_PLAYLIST_NAME_FIELDSTR                         "cellPlaylistName"
+#define CELL_CHEMISTRY_TYPE_FIELDSTR                        "cellChemistryType"
 #define LIPO_CHEMISTRY_FIELDSTR                             "lipoChemistry"
 #define IRON_PHOSPHATE_CHEMISTRY_FIELDSTR                   "ironPhosphateChemistry"
 #define OTHER_CHEMISTRY_FIELDSTR                            "otherChemistry"
