@@ -1,6 +1,7 @@
 #include "playlistsettingswidget.h"
 
-PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent)  // LEFT OFF the TODOs in this file
+// TODO validate settings bounds at batlabManager level before starting tests, at least provide warning for them
+PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent)
 {
     cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));
     cellPlaylistNameLineEdit = new QLineEdit;
@@ -21,6 +22,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     groupBoxLayout->addWidget(ironPhosphateRadioButton);
     groupBoxLayout->addWidget(otherRadioButton);
     selectChemistryBox->setLayout(groupBoxLayout);
+    connect(lipoRadioButton, &QRadioButton::toggled, this, &PlaylistSettingsWidget::updateBoundsBasedOnChemistryType);
+    connect(ironPhosphateRadioButton, &QRadioButton::toggled, this, &PlaylistSettingsWidget::updateBoundsBasedOnChemistryType);
+    connect(otherRadioButton, &QRadioButton::toggled, this, &PlaylistSettingsWidget::updateBoundsBasedOnChemistryType);
 
     sameTypeLabel = new QLabel(tr("Please note that all cells in a playlist must be of the same type."));
     sameTypeLabel->setWordWrap(true);
@@ -39,7 +43,7 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
 
     storageDischargeCheckBox = new QCheckBox(tr("Discharge to storage voltage after testing"));
     storageDischargeCheckBox->setChecked(STORAGE_DISCHARGE_DEFAULT);
-//    connect(storageDischargeCheckBox, &QCheckBox::toggled, this, &ConfigPlaylistPage::enableOrDisableStorageDischargeField);  // TODO
+    connect(storageDischargeCheckBox, &QCheckBox::toggled, this, &PlaylistSettingsWidget::enableOrDisableStorageDischargeField);
 
     restPeriodLabel = new QLabel(tr("Rest period:"));
     restPeriodSpinBox = new QDoubleSpinBox;
@@ -55,7 +59,7 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     highVoltageCutoffSpinBox->setMinimum(HIGH_VOLTAGE_CUTOFF_MIN);
     highVoltageCutoffSpinBox->setMaximum(HIGH_VOLTAGE_CUTOFF_MAX);
     highVoltageCutoffSpinBox->setValue(HIGH_VOLTAGE_CUTOFF_DEFAULT);
-//    connect(highVoltageCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ConfigPlaylistPage::updateDynamicFieldBounds);  // TODO
+    connect(highVoltageCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
 
     lowVoltageCutoffLabel = new QLabel(tr("Low voltage cutoff:"));
     lowVoltageCutoffSpinBox = new QDoubleSpinBox;
@@ -87,7 +91,7 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     chargeCurrentSafetyCutoffSpinBox->setMinimum(CHARGE_CURRENT_SAFETY_CUTOFF_MIN);
     chargeCurrentSafetyCutoffSpinBox->setMaximum(CHARGE_CURRENT_SAFETY_CUTOFF_MAX);
     chargeCurrentSafetyCutoffSpinBox->setValue(CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT);
-//    connect(chargeCurrentSafetyCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ConfigPlaylistPage::updateDynamicFieldBounds);  // TODO
+    connect(chargeCurrentSafetyCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
 
     dischargeCurrentSafetyCutoffLabel = new QLabel(tr("Discharge current safety cutoff:"));
     dischargeCurrentSafetyCutoffSpinBox = new QDoubleSpinBox;
@@ -97,7 +101,7 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     dischargeCurrentSafetyCutoffSpinBox->setMinimum(DISCHARGE_CURRENT_SAFETY_CUTOFF_MIN);
     dischargeCurrentSafetyCutoffSpinBox->setMaximum(DISCHARGE_CURRENT_SAFETY_CUTOFF_MAX);
     dischargeCurrentSafetyCutoffSpinBox->setValue(DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT);
-//    connect(dischargeCurrentSafetyCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ConfigPlaylistPage::updateDynamicFieldBounds);  // TODO
+    connect(dischargeCurrentSafetyCutoffSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
 
     prechargeRateLabel = new QLabel(tr("Precharge rate:"));
     prechargeRateSpinBox = new QDoubleSpinBox;
@@ -126,7 +130,6 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     dischargeRateSpinBox->setMaximum(DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT); // Max is updated dynamically to not be greater than the discharge current safety cutoff
     dischargeRateSpinBox->setValue(DISCHARGE_RATE_DEFAULT);
 
-    // TODO grey out if storage discharge not selected
     storageDischargeVoltageLabel = new QLabel(tr("Storage discharge voltage:"));
     storageDischargeVoltageSpinBox = new QDoubleSpinBox;
     storageDischargeVoltageUnit = new QLabel(tr("V"));
@@ -206,6 +209,23 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     setLayout(layout);
 }
 
+void PlaylistSettingsWidget::enableOrDisableStorageDischargeField()
+{
+    if (storageDischargeCheckBox->isChecked()) {
+        storageDischargeVoltageSpinBox->setEnabled(true);
+    } else {
+        storageDischargeVoltageSpinBox->setEnabled(false);
+    }
+}
+
+void PlaylistSettingsWidget::updateDynamicFieldBounds()
+{
+    prechargeRateSpinBox->setMaximum(chargeCurrentSafetyCutoffSpinBox->value());
+    chargeRateSpinBox->setMaximum(chargeCurrentSafetyCutoffSpinBox->value());
+    dischargeRateSpinBox->setMaximum(dischargeCurrentSafetyCutoffSpinBox->value());
+    storageDischargeVoltageSpinBox->setMaximum(highVoltageCutoffSpinBox->value());
+}
+
 void PlaylistSettingsWidget::updateBoundsBasedOnChemistryType()
 {
     if (ironPhosphateRadioButton->isChecked())
@@ -227,7 +247,21 @@ void PlaylistSettingsWidget::updateBoundsBasedOnChemistryType()
 void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist)
 {
     cellPlaylistNameLineEdit->setText(playlist.getCellPlaylistName());
-    // TODO don't show number of cells and prefix etc, just show all the cell names
+
+    if (playlist.getCellChemistryType() == LIPO_CHEMISTRY_FIELDSTR)
+    {
+        lipoRadioButton->setChecked(true);
+    }
+    else if (playlist.getCellChemistryType() == IRON_PHOSPHATE_CHEMISTRY_FIELDSTR)
+    {
+        ironPhosphateRadioButton->setChecked(true);
+    }
+    else
+    {
+        otherRadioButton->setChecked(true);
+    }
+
+    // TODO LEFT OFF don't show number of cells and prefix etc, just show all the cell names
     numWarmupCyclesSpinBox->setValue(playlist.getNumWarmupCycles());
     numMeasurementCyclesSpinBox->setValue(playlist.getNumMeasurementCycles());
     storageDischargeCheckBox->setChecked(playlist.getStorageDischarge());
