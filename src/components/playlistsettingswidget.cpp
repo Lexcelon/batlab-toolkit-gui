@@ -29,6 +29,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     sameTypeLabel = new QLabel(tr("Please note that all cells in a playlist must be of the same type."));
     sameTypeLabel->setWordWrap(true);
 
+    cellNamesListLabel = new QLabel(tr("Cell names:"));
+    cellNamesListWidget = new QListWidget(this);
+
     numWarmupCyclesLabel = new QLabel(tr("Number of warmup cycles:"));
     numWarmupCyclesSpinBox = new QSpinBox;
     numWarmupCyclesSpinBox->setMinimum(NUM_WARMUP_CYCLES_MIN);
@@ -150,6 +153,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     setupLayout->addWidget(selectChemistryBox, 1, 0, 1, 2);
     setupLayout->addWidget(sameTypeLabel, 2, 0, 1, 2);
     setupLayout->setRowStretch(3, 1);
+    setupLayout->addWidget(cellNamesListLabel, 4, 0);
+    setupLayout->addWidget(cellNamesListWidget, 5, 0, 1, 2);
+    setupLayout->setRowStretch(6, 8);
 
     QGridLayout *basicConfigLayout = new QGridLayout;
     basicConfigLayout->addWidget(numWarmupCyclesLabel, 0, 0);
@@ -261,7 +267,12 @@ void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist)
         otherRadioButton->setChecked(true);
     }
 
-    // TODO LEFT OFF don't show number of cells and prefix etc, just show all the cell names
+    cellNamesListWidget->clear();
+    for (auto cellName : playlist.getCellNames())
+    {
+        cellNamesListWidget->addItem(cellName);
+    }
+
     numWarmupCyclesSpinBox->setValue(playlist.getNumWarmupCycles());
     numMeasurementCyclesSpinBox->setValue(playlist.getNumMeasurementCycles());
     storageDischargeCheckBox->setChecked(playlist.getStorageDischarge());
@@ -278,3 +289,5 @@ void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist)
     storageDischargeVoltageSpinBox->setValue(playlist.getStorageDischargeVoltage());
     acceptableCellImpedanceThresholdSpinBox->setValue(playlist.getAcceptableImpedanceThreshold());
 }
+
+// LEFT OFF load existing results and display them, though maybe that should wait until after tests. consult notebook

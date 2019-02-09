@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QListWidget>
 
 #include "batlabcore/cellplaylist.h"
 
@@ -27,11 +28,15 @@ public slots:
 private:
     QLabel *cellPlaylistNameLabel;
     QLineEdit *cellPlaylistNameLineEdit;
+
     QGroupBox *selectChemistryBox;
     QRadioButton *lipoRadioButton;
     QRadioButton *ironPhosphateRadioButton;
     QRadioButton *otherRadioButton;
     QLabel *sameTypeLabel;
+
+    QLabel *cellNamesListLabel;
+    QListWidget *cellNamesListWidget;
 
     QLabel *numWarmupCyclesLabel;
     QSpinBox *numWarmupCyclesSpinBox;
