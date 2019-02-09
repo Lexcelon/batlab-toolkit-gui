@@ -91,119 +91,134 @@ void BatlabPacket::setSleepAfterTransaction_ms(int ms) { m_sleepAfterTransaction
 bool BatlabPacket::getReadVerify() { return m_readVerify; }
 
 int BatlabPacket::getRetries() { return m_retries; }
-int BatlabPacket::value() { return m_payloadLowByte + m_payloadHighByte*256; }
 
-// TODO functions from python packet implementation
-
-float BatlabPacket::asvoltage()
+quint16 BatlabPacket::getValue() { return m_payloadLowByte + m_payloadHighByte*256; }
+void BatlabPacket::setValue(quint16 value)
 {
-    if (std::isnan(value())) { return NAN; }  // LEFT OFF
+    m_payloadHighByte = value >> 8;
+    m_payloadLowByte = value & 0xFF;
 }
 
-//def asvoltage(self):
-//    """Represents voltage ``data`` as a floating point voltage."""
-//    if(math.isnan(self.data)):
-//        return float(('nan'))
-//    if(self.data & 0x8000): # the voltage can be negative
-//        self.data = -0x10000 + self.data
-//    flt = float(self.data * 4.5 / 2**15)
-//    return flt
+// Represents voltage data as a floating point voltage
+float BatlabPacket::asVoltage()
+{
+    if (std::isnan(getValue())) { return NAN; }
+    if (getValue() & 0x8000)  // Voltage can be negative
+    {
+        setValue(-0x10000 + getValue());
+    }
+    return getValue() * 4.5 / pow(2, 15);
+}
 
-//def asvcc(self):
-//    """Represents vss ``data`` as a floating point voltage."""
-//    return 2**15 * 4.096 / self.data
+// Represents vss data as a floating point voltage
+float BatlabPacket::asVcc()
+{
+    return pow(2, 15) * 4.096 / getValue();
+}
 
-//def asfreq(self):
-//    """Represents frequency data in Hz."""
-//    return self.data * (10000.0 / 256.0)
+// Represents frequency data in Hz
+float BatlabPacket::asFreq()
+{
+    return getValue() * (10000.0 / 256.0);
+}
 
-//def asioff(self):
-//    """Represents register current to floating point Amps."""
-//    return self.data / 128.0
+// Represents register current to floating point Amps
+float BatlabPacket::asIOff()
+{
+    return getValue() / 128.0;
+}
 
-//def assetpoint(self):
-//    """Represents current setpoint as floating point Amps."""
-//    return self.data / 128.0
+// Represents current setpoint as floating point Amps
+float BatlabPacket::asSetPoint()
+{
+    return getValue() / 128.0;
+}
 
-//def asmagdiv(self):
-//    """Represents magdiv register as Ipp."""
-//    return 2.0 / (2 ** self.data)
+// Represents magdiv register as Ipp
+float BatlabPacket::asMagdiv()
+{
+    return 2.0 / pow(2, getValue());
+}
 
-//def asmode(self):
-//    """Represents a mode register value as an enum string."""
-//    try:
-//        return MODE_LIST[self.data]
-//    except:
-//        return 'MODE_UNKNOWN: ' + str(self.data)
+QString BatlabPacket::asMode()
+{
+    //    Represents a mode register value as an enum string
+    //    try:
+    //        return MODE_LIST[self.data]
+    //    except:
+    //        return 'MODE_UNKNOWN: ' + str(self.data)
+    return "";
+}
 
-//def aserr(self):
-//    """Represents error reg bit field as a string of the error flags."""
-//    if(math.isnan(self.data)):
-//        return 'ERR_NONE'
-//    for i in range(0,len(ERR_LIST)):
-//        if self.data & (1 << i):
-//            return ERR_LIST[i]
-//    return 'ERR_NONE'
+QString BatlabPacket::asErr()
+{
+    //    Represents error reg bit field as a string of the error flags
+    //    if(math.isnan(self.data)):
+    //        return 'ERR_NONE'
+    //    for i in range(0,len(ERR_LIST)):
+    //        if self.data & (1 << i):
+    //            return ERR_LIST[i]
+    //    return 'ERR_NONE'
+    return "";
+}
 
-//def astemperature(self):
-//    try:
-//        Rdiv = self.R[self.namespace]
-//        R = Rdiv / ((2**15 / self.data)-1)
-//        To = 25 + 273.15
-//        Ro = 10000
-//        B = self.B[self.namespace] # 3380
-//        Tinv = (1 / To) + (math.log(R/Ro) / B)
-//        T = (1 / Tinv) - 273.15
-//        T = (T * 1.8) + 32
-//    except:
-//        T = float('nan')
-//    return T
+// Represents data as temperature in F
+// Rlist: 4 list of 'R' calibration values needed to interpret temp
+// Blist: 4 list of 'B' calibration values needed to interpret temp
+float BatlabPacket::asTemperatureF(QVector<int> RList, QVector<int> BList)
+{
+    float T;
+    try
+    {
+        int Rdiv = RList[(int)getNamespace()];
+        float R = Rdiv / ((pow(2, 15) / getValue()) - 1);
+        float To = 25 + 273.15;
+        float Ro = 10000;
+        int B = BList[(int)getNamespace()];  // 3380
+        float Tinv = (1 / To) + (log(R / Ro) / B);
+        T = (1 / Tinv) - 273.15;
+        T = (T * 1.8) + 32;
+    }
+    catch (...)
+    {
+        T = NAN;
+    }
+    return T;
+}
 
-//def astemperature(self,Rlist,Blist):
-//    """Represents temp data as temperature in F.
-//    Args:
-//        Rlist: 4 list of 'R' calibration values needed to interpret temp
-//        Blist: 4 list of 'B' calibration values needed to interpret temp
-//    """
-//    try:
-//        Rdiv = Rlist[self.namespace]
-//        R = Rdiv / ((2**15 / self.data)-1)
-//        To = 25 + 273.15
-//        Ro = 10000
-//        B = Blist[self.namespace] # 3380
-//        Tinv = (1 / To) + (math.log(R/Ro) / B)
-//        T = (1 / Tinv) - 273.15
-//        T = (T * 1.8) + 32
+// Represents data as temperature in C
+// Rlist: 4 list of 'R' calibration values needed to interpret temp
+// Blist: 4 list of 'B' calibration values needed to interpret temp
+float BatlabPacket::asTemperatureC(QVector<int> RList, QVector<int> BList)
+{
+    float T;
+    try
+    {
+        int Rdiv = RList[(int)getNamespace()];
+        float R = Rdiv / ((pow(2, 15) / getValue()) - 1);
+        float To = 25 + 273.15;
+        float Ro = 10000;
+        int B = BList[(int)getNamespace()];  // 3380
+        float Tinv = (1 / To) + (log(R / Ro) / B);
+        T = (1 / Tinv) - 273.15;
+    }
+    catch (...)
+    {
+        T = NAN;
+    }
+    return T;
+}
 
-//    except:
-//        T = float('nan')
-//    return T
-
-//def astemperature_c(self,Rlist,Blist):
-//    """Represents temp data as temperature in C.
-//    Args:
-//        Rlist: 4 list of 'R' calibration values needed to interpret temp
-//        Blist: 4 list of 'B' calibration values needed to interpret temp
-//    """
-//    try:
-//        Rdiv = Rlist[self.namespace]
-//        R = Rdiv / ((2**15 / self.data)-1)
-//        To = 25 + 273.15
-//        Ro = 10000
-//        B = Blist[self.namespace] # 3380
-//        Tinv = (1 / To) + (math.log(R/Ro) / B)
-//        T = (1 / Tinv) - 273.15
-//    except:
-//        T = float('nan')
-//    return T
-
-//def ascurrent(self):
-//    if(math.isnan(self.data)):
-//        return float(('nan'))
-//    """Represents current measurement as float current in Amps."""
-//    if(self.data & 0x8000): # the current can be negative
-//        self.data = -0x10000 + self.data
-//    return self.data * 4.096 / 2**15
+// Represents current measurement as float current in Amps
+float BatlabPacket::asCurrent()
+{
+    if (std::isnan(getValue())) { return NAN; }
+    if (getValue() & 0x8000)  // Voltage can be negative
+    {
+        setValue(-0x10000 + getValue());
+    }
+    return getValue() * 4.096 / pow(2, 15);
+}
 
 //def print_packet(self):
 //    if(self.type == 'RESPONSE'):

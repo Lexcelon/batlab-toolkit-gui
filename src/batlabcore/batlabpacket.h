@@ -13,7 +13,9 @@ public:
     explicit BatlabPacket(int batlabNamespace, int batlabRegister, uint16_t payload);  // Write packet
     explicit BatlabPacket(int batlabNamespace, int batlabRegister, uchar payloadLowByte, uchar payloadHighByte);  // Write packet
 
-    int value();
+    quint16 getValue();
+    void setValue(quint16 value);
+
     uchar getStartByte();
     void setStartByte(uchar startByte);
     uchar getNamespace();
@@ -32,10 +34,17 @@ public:
     bool getReadVerify();
     int getRetries();
 
-    float asvoltage();
-    float asfreq();
-    float asioff();
-
+    float asVoltage();
+    float asVcc();
+    float asFreq();
+    float asIOff();
+    float asSetPoint();
+    float asMagdiv();
+    QString asMode();
+    QString asErr();
+    float asTemperatureF(QVector<int> RList, QVector<int> BList);
+    float asTemperatureC(QVector<int> RList, QVector<int> BList);
+    float asCurrent();
 
     void debug();
 signals:

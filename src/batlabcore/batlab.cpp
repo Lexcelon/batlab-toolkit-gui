@@ -180,24 +180,24 @@ void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response)
     responseCounter += 5;  // Skip cell mode return values
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].tempCalibR = response[responseCounter++].value();
+        m_info.channels[i].tempCalibR = response[responseCounter++].getValue();
     }
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].tempCalibB = response[responseCounter++].value();
+        m_info.channels[i].tempCalibB = response[responseCounter++].getValue();
     }
     responseCounter += 4;  // Skip current setpoint (presently unused)
-    m_info.serialNumberRegister = response[responseCounter++].value();
-    m_info.deviceIdRegister = response[responseCounter++].value();
+    m_info.serialNumberRegister = response[responseCounter++].getValue();
+    m_info.deviceIdRegister = response[responseCounter++].getValue();
     m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
-    m_info.firmwareVersion = response[responseCounter++].value();
+    m_info.firmwareVersion = response[responseCounter++].getValue();
 
     if (m_info.firmwareVersion > 3)
     {
         setWatchdogTimer();
     }
 
-    m_info.externalPowerConnected = response[responseCounter++].value();
+    m_info.externalPowerConnected = response[responseCounter++].getValue();
 
     emit infoUpdated();
 }
@@ -221,7 +221,7 @@ void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
 {
     m_info.confirmedBatlabDevice = true;
     BatlabPacket responsePacket = response[0];
-    if (responsePacket.value() == 257)
+    if (responsePacket.getValue() == 257)
     {
        initBatlabDevice();
     }
@@ -277,20 +277,20 @@ void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response)
     int responseCounter = 0;
     responseCounter += 1;  // Skip watchdog return value
 
-    m_info.serialNumberRegister = response[responseCounter++].value();
-    m_info.deviceIdRegister = response[responseCounter++].value();
+    m_info.serialNumberRegister = response[responseCounter++].getValue();
+    m_info.deviceIdRegister = response[responseCounter++].getValue();
     m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
-    m_info.firmwareVersion = response[responseCounter++].value();
+    m_info.firmwareVersion = response[responseCounter++].getValue();
 
-    m_info.externalPowerConnected = response[responseCounter++].value();
+    m_info.externalPowerConnected = response[responseCounter++].getValue();
 
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].tempCalibR = response[responseCounter++].value();
+        m_info.channels[i].tempCalibR = response[responseCounter++].getValue();
     }
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].tempCalibB = response[responseCounter++].value();
+        m_info.channels[i].tempCalibB = response[responseCounter++].getValue();
     }
 
     emit infoUpdated();

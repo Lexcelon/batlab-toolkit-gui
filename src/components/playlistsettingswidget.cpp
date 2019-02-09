@@ -290,4 +290,4 @@ void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist)
     acceptableCellImpedanceThresholdSpinBox->setValue(playlist.getAcceptableImpedanceThreshold());
 }
 
-// LEFT OFF load existing results and display them, though maybe that should wait until after tests. consult notebook
+// TODO load existing results and display them, though maybe that should wait until after tests. consult notebook
