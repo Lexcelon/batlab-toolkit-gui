@@ -18,6 +18,7 @@
 #include "batlabcore/batlablogger.h"
 #include "components/batlabwidget.h"
 #include "components/resultswidget.h"
+#include "components/playlistsettingswidget.h"
 #include "dialogs/newcellplaylistwizard/newcellplaylistwizard.h"
 #include "qtautoupdater/autoupdatergui/updatebutton.h"
 #include "qtautoupdater/autoupdatergui/updatecontroller.h"
@@ -55,6 +56,7 @@ private:
     void closeEvent(QCloseEvent *event);
 
     BatlabManager *batlabManager;
+    PlaylistSettingsWidget *playlistSettingsWidget;
 
     BatlabDebugDialog *batlabDebugDialog = nullptr;
 
@@ -100,9 +102,8 @@ private:
     QFrame *resultsTabWidget;
 
     QWidget *cellPlaylistNotLoadedWidget;
-    QWidget *cellPlaylistLoadedWidget;
+    PlaylistSettingsWidget *cellPlaylistLoadedWidget;
     QGridLayout *cellPlaylistNotLoadedLayout;
-    QGridLayout *cellPlaylistLoadedLayout;
     QLabel *noCellPlaylistLoadedLabel;
     QPushButton *newCellPlaylistButton;
     QPushButton *openCellPlaylistButton;
@@ -122,7 +123,6 @@ private:
     QTextBrowser *logViewTextBrowser;
 
 private slots:
-    void newCellPlaylist();
     void openCellPlaylist();
     void exitBatlabToolkitGUI();
 
@@ -132,7 +132,7 @@ private slots:
     void aboutBatlabToolkitGUI();
 
     void showNewCellPlaylistWizard();
-    void loadPlaylistIntoGUI();
+    void displayLoadedCellPlaylist(CellPlaylist playlist);
 
     void savelogView();
     void processQtLogMessage(QtMsgType type, QString str);

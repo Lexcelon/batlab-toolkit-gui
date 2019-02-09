@@ -94,3 +94,128 @@ int BatlabPacket::getRetries() { return m_retries; }
 int BatlabPacket::value() { return m_payloadLowByte + m_payloadHighByte*256; }
 
 // TODO functions from python packet implementation
+
+float BatlabPacket::asvoltage()
+{
+    if (std::isnan(value())) { return NAN; }  // LEFT OFF
+}
+
+//def asvoltage(self):
+//    """Represents voltage ``data`` as a floating point voltage."""
+//    if(math.isnan(self.data)):
+//        return float(('nan'))
+//    if(self.data & 0x8000): # the voltage can be negative
+//        self.data = -0x10000 + self.data
+//    flt = float(self.data * 4.5 / 2**15)
+//    return flt
+
+//def asvcc(self):
+//    """Represents vss ``data`` as a floating point voltage."""
+//    return 2**15 * 4.096 / self.data
+
+//def asfreq(self):
+//    """Represents frequency data in Hz."""
+//    return self.data * (10000.0 / 256.0)
+
+//def asioff(self):
+//    """Represents register current to floating point Amps."""
+//    return self.data / 128.0
+
+//def assetpoint(self):
+//    """Represents current setpoint as floating point Amps."""
+//    return self.data / 128.0
+
+//def asmagdiv(self):
+//    """Represents magdiv register as Ipp."""
+//    return 2.0 / (2 ** self.data)
+
+//def asmode(self):
+//    """Represents a mode register value as an enum string."""
+//    try:
+//        return MODE_LIST[self.data]
+//    except:
+//        return 'MODE_UNKNOWN: ' + str(self.data)
+
+//def aserr(self):
+//    """Represents error reg bit field as a string of the error flags."""
+//    if(math.isnan(self.data)):
+//        return 'ERR_NONE'
+//    for i in range(0,len(ERR_LIST)):
+//        if self.data & (1 << i):
+//            return ERR_LIST[i]
+//    return 'ERR_NONE'
+
+//def astemperature(self):
+//    try:
+//        Rdiv = self.R[self.namespace]
+//        R = Rdiv / ((2**15 / self.data)-1)
+//        To = 25 + 273.15
+//        Ro = 10000
+//        B = self.B[self.namespace] # 3380
+//        Tinv = (1 / To) + (math.log(R/Ro) / B)
+//        T = (1 / Tinv) - 273.15
+//        T = (T * 1.8) + 32
+//    except:
+//        T = float('nan')
+//    return T
+
+//def astemperature(self,Rlist,Blist):
+//    """Represents temp data as temperature in F.
+//    Args:
+//        Rlist: 4 list of 'R' calibration values needed to interpret temp
+//        Blist: 4 list of 'B' calibration values needed to interpret temp
+//    """
+//    try:
+//        Rdiv = Rlist[self.namespace]
+//        R = Rdiv / ((2**15 / self.data)-1)
+//        To = 25 + 273.15
+//        Ro = 10000
+//        B = Blist[self.namespace] # 3380
+//        Tinv = (1 / To) + (math.log(R/Ro) / B)
+//        T = (1 / Tinv) - 273.15
+//        T = (T * 1.8) + 32
+
+//    except:
+//        T = float('nan')
+//    return T
+
+//def astemperature_c(self,Rlist,Blist):
+//    """Represents temp data as temperature in C.
+//    Args:
+//        Rlist: 4 list of 'R' calibration values needed to interpret temp
+//        Blist: 4 list of 'B' calibration values needed to interpret temp
+//    """
+//    try:
+//        Rdiv = Rlist[self.namespace]
+//        R = Rdiv / ((2**15 / self.data)-1)
+//        To = 25 + 273.15
+//        Ro = 10000
+//        B = Blist[self.namespace] # 3380
+//        Tinv = (1 / To) + (math.log(R/Ro) / B)
+//        T = (1 / Tinv) - 273.15
+//    except:
+//        T = float('nan')
+//    return T
+
+//def ascurrent(self):
+//    if(math.isnan(self.data)):
+//        return float(('nan'))
+//    """Represents current measurement as float current in Amps."""
+//    if(self.data & 0x8000): # the current can be negative
+//        self.data = -0x10000 + self.data
+//    return self.data * 4.096 / 2**15
+
+//def print_packet(self):
+//    if(self.type == 'RESPONSE'):
+//        if self.write == True:
+//            logging.info("Wrote: Cell "+str(self.namespace)+", Addr "+"{0:#4X}".format(self.addr & 0x7F))
+//        else:
+//            logging.info("Read: Cell "+str(self.namespace)+", Addr "+"{0:#4X}".format(self.addr & 0x7F)+": "+str(self.data))
+
+//def display(self):
+//    """Prints out the basic info about the packet transaction ### charge function."""
+//    if(self.type == 'RESPONSE'):
+//        if self.write == True:
+//            print('Wrote: Cell '+str(self.namespace)+', Addr '+"{0:#4X}".format(self.addr & 0x7F))
+//        else:
+//print('Read: Cell '+str(self.namespace)+', Addr '+"{0:#4X}".format(self.addr & 0x7F)+': '+str(self.data))

@@ -4,7 +4,7 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QVector<uchar>>("QVector<uchar>");
 
-    cellPlaylistLoaded = false;
+    isCellPlaylistLoaded = false;
     testsInProgress = false;
 
     QTimer *updateConnectedBatlabsTimer = new QTimer(this);
@@ -14,6 +14,13 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
     networkAccessManager = nullptr;
     QTimer::singleShot(100, this, &BatlabManager::initializeNetworkAccessManager);
     QTimer::singleShot(500, this, &BatlabManager::requestAvailableFirmwareVersions);
+}
+
+void BatlabManager::loadPlaylist(CellPlaylist playlist)
+{
+    loadedPlaylist = playlist;
+    isCellPlaylistLoaded = true;
+    emit cellPlaylistLoaded(loadedPlaylist);
 }
 
 void BatlabManager::setAllBatlabChannelsIdle()
@@ -50,7 +57,6 @@ void BatlabManager::processAvailableFirmwareVersions()
 
 void BatlabManager::updateConnectedBatlabs()
 {
-    // TODO make sure that things are actually Batlabs
     QList<QSerialPortInfo> availableCommPorts = QSerialPortInfo::availablePorts();
     QStringList availableCommPortNames;
 
@@ -242,7 +248,6 @@ void BatlabManager::processFirmwareDownloadError()
 
 void BatlabManager::processFirmwareDownloadFinished()
 {
-    // TODO Double check file is existent and correct size
     QNetworkReply* firmwareDownloadReply = qobject_cast<QNetworkReply*>(QObject::sender());
 
     // Find what firmware version this was
@@ -278,8 +283,6 @@ void BatlabManager::processFirmwareDownloadFinished()
     qInfo() << tr("Saving downloaded firmware.");
     file.write(data);
     file.close();
-
-    // TODO handle partially existent, already existent, no existent file
 
     // For each Batlab wanting this, flash it
     for (auto serial : batlabSerialToFirmwareVersionWaiting.keys())

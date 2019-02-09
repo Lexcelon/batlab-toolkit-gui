@@ -31,9 +31,8 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
         m_info.channels[i].storageDischarge = false;
         m_info.channels[i].storageDischargeComplete = false;
         m_info.channels[i].storageDischargeError = false;
-
-        m_tempCalibB[i] = -1;
-        m_tempCalibR[i] = -1;
+        m_info.channels[i].tempCalibB = -1;
+        m_info.channels[i].tempCalibR = -1;
     }
 
     verifyBatlabDevice();
@@ -181,11 +180,11 @@ void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response)
     responseCounter += 5;  // Skip cell mode return values
     for (int i = 0; i < 4; i++)
     {
-        m_tempCalibR[i] = response[responseCounter++].value();
+        m_info.channels[i].tempCalibR = response[responseCounter++].value();
     }
     for (int i = 0; i < 4; i++)
     {
-        m_tempCalibB[i] = response[responseCounter++].value();
+        m_info.channels[i].tempCalibB = response[responseCounter++].value();
     }
     responseCounter += 4;  // Skip current setpoint (presently unused)
     m_info.serialNumberRegister = response[responseCounter++].value();
@@ -287,11 +286,11 @@ void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response)
 
     for (int i = 0; i < 4; i++)
     {
-        m_tempCalibR[i] = response[responseCounter++].value();
+        m_info.channels[i].tempCalibR = response[responseCounter++].value();
     }
     for (int i = 0; i < 4; i++)
     {
-        m_tempCalibB[i] = response[responseCounter++].value();
+        m_info.channels[i].tempCalibB = response[responseCounter++].value();
     }
 
     emit infoUpdated();

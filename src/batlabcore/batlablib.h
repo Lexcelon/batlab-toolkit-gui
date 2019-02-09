@@ -121,6 +121,9 @@ struct channelStatusInfo {
     bool storageDischarge;
     bool storageDischargeComplete;
     bool storageDischargeError;
+
+    int tempCalibB;
+    int tempCalibR;
 };
 
 struct batlabStatusInfo {
@@ -189,6 +192,7 @@ namespace BatlabLib
     float getSineFrequency(int val);
     int sendSineFrequency(float val);
     cellResultsStatusInfo createInitializedcellResultsDisplayInfo();
+    QString cellName(QString designator, int numCells, int startingCellNum, int cellId);
 
     static QMap<QString, int> namespaceStringToInt {
         {"Channel 0", batlabNamespaces::CHANNEL0},

@@ -68,10 +68,6 @@ private slots:
 private:
     batlabStatusInfo m_info;
 
-    // TODO move to channels?
-    int m_tempCalibB[4];
-    int m_tempCalibR[4];
-
     BatlabCommsManager* m_commsManager;
 };
 
