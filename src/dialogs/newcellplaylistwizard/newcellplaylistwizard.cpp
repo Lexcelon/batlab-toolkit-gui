@@ -493,11 +493,6 @@ void NewCellPlaylistWizard::savePlaylist()
         if (skipped == false) {
 
             m_playlist.setCellPlaylistName(field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified());
-
-            if (field(LIPO_CHEMISTRY_FIELDSTR).toBool()) { m_playlist.setCellChemistryType(LIPO_CHEMISTRY_FIELDSTR); }
-            else if (field(IRON_PHOSPHATE_CHEMISTRY_FIELDSTR).toBool()) { m_playlist.setCellChemistryType(IRON_PHOSPHATE_CHEMISTRY_FIELDSTR); }
-            else if (field(OTHER_CHEMISTRY_FIELDSTR).toBool()) { m_playlist.setCellChemistryType(OTHER_CHEMISTRY_FIELDSTR); }
-
             m_playlist.setNumWarmupCycles(field(NUM_WARMUP_CYCLES_FIELDSTR).toInt());
             m_playlist.setNumMeasurementCycles(field(NUM_MEASUREMENT_CYCLES_FIELDSTR).toInt());
             m_playlist.setHighVoltageCutoff(field(HIGH_VOLTAGE_CUTOFF_FIELDSTR).toDouble());

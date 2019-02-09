@@ -15,7 +15,6 @@ class PlaylistSettingsWidget : public QWidget
     Q_OBJECT
 public:
     explicit PlaylistSettingsWidget(QWidget *parent = nullptr);
-    void updateBoundsBasedOnChemistryType();
     void loadPlaylist(CellPlaylist playlist);
 
 signals:
@@ -25,11 +24,6 @@ public slots:
 private:
     QLabel *cellPlaylistNameLabel;
     QLineEdit *cellPlaylistNameLineEdit;
-    QGroupBox *selectChemistryBox;
-    QRadioButton *lipoRadioButton;
-    QRadioButton *ironPhosphateRadioButton;
-    QRadioButton *otherRadioButton;
-    QLabel *sameTypeLabel;
 
     QLabel *numWarmupCyclesLabel;
     QSpinBox *numWarmupCyclesSpinBox;

@@ -4,7 +4,6 @@ CellPlaylist::CellPlaylist()
 {
     cellPlaylistName = "";
     batlabCellPlaylistFileVersion = BATLAB_CELL_PLAYLIST_FILE_VERSION;
-    cellChemistryType = LIPO_CHEMISTRY_FIELDSTR;
     numWarmupCycles = NUM_WARMUP_CYCLES_DEFAULT;
     numMeasurementCycles = NUM_MEASUREMENT_CYCLES_DEFAULT;
     storageDischarge = STORAGE_DISCHARGE_DEFAULT;
@@ -46,8 +45,6 @@ bool CellPlaylist::write(QString filename)
     playlistJson[CELL_PLAYLIST_NAME_FIELDSTR] = cellPlaylistName;
 
     playlistJson[BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR] = batlabCellPlaylistFileVersion;
-
-    playlistJson[CELL_CHEMISTRY_TYPE_FIELDSTR] = cellChemistryType;
 
     playlistJson[NUM_WARMUP_CYCLES_FIELDSTR] = numWarmupCycles;
     playlistJson[NUM_MEASUREMENT_CYCLES_FIELDSTR] = numMeasurementCycles;
@@ -115,7 +112,6 @@ bool CellPlaylist::load(QString filename)
     const QVector<QString> requiredFields = {
         CELL_PLAYLIST_NAME_FIELDSTR,
         BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR,
-        CELL_CHEMISTRY_TYPE_FIELDSTR,
         CELL_NAMES_FIELDSTR,
         BATLAB_SETTINGS_FIELDSTR
     };
@@ -131,7 +127,6 @@ bool CellPlaylist::load(QString filename)
 
     setCellPlaylistName(jsonObject[CELL_PLAYLIST_NAME_FIELDSTR].toString());
     setBatlabCellPlaylistFileVersion(jsonObject[BATLAB_CELL_PLAYLIST_FILE_VERSION_FIELDSTR].toString());
-    setCellChemistryType(jsonObject[CELL_CHEMISTRY_TYPE_FIELDSTR].toString());
 
     if(jsonObject.contains(NUM_WARMUP_CYCLES_FIELDSTR)) { setNumWarmupCycles(jsonObject[NUM_WARMUP_CYCLES_FIELDSTR].toInt()); }
     if(jsonObject.contains(NUM_MEASUREMENT_CYCLES_FIELDSTR)) { setNumMeasurementCycles(jsonObject[NUM_MEASUREMENT_CYCLES_FIELDSTR].toInt()); }
@@ -185,23 +180,6 @@ bool CellPlaylist::setBatlabCellPlaylistFileVersion(QString str)
 
 QString CellPlaylist::getBatlabCellPlaylistFileVersion() {
     return batlabCellPlaylistFileVersion;
-}
-
-QString CellPlaylist::getCellChemistryType()
-{
-    return cellChemistryType;
-}
-
-bool CellPlaylist::setCellChemistryType(QString type)
-{
-    QVector<QString> types;
-    types << LIPO_CHEMISTRY_FIELDSTR << IRON_PHOSPHATE_CHEMISTRY_FIELDSTR << OTHER_CHEMISTRY_FIELDSTR;
-    if (types.contains(type))
-    {
-        cellChemistryType = type;
-        return true;
-    }
-    return false;
 }
 
 bool CellPlaylist::setNumWarmupCycles(int num)

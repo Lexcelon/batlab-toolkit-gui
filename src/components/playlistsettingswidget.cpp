@@ -9,22 +9,6 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     QValidator *cellPlaylistNameValidator = new QRegExpValidator(cellPlaylistNameRx);
     cellPlaylistNameLineEdit->setValidator(cellPlaylistNameValidator);
 
-    selectChemistryBox = new QGroupBox(tr("Cell chemistry type"));
-    lipoRadioButton = new QRadioButton(tr("Lithium Polymer (also called Lithium-Ion Polymer, LiPo, LIP or Li-poly)"));
-    ironPhosphateRadioButton = new QRadioButton(tr(qPrintable(QString::fromUtf8("Lithium Iron Phosphate (also called LiFePO\u2084 or LFP)"))));
-    otherRadioButton = new QRadioButton(tr("Other"));
-
-    lipoRadioButton->setChecked(true);
-
-    QVBoxLayout *groupBoxLayout = new QVBoxLayout;
-    groupBoxLayout->addWidget(lipoRadioButton);
-    groupBoxLayout->addWidget(ironPhosphateRadioButton);
-    groupBoxLayout->addWidget(otherRadioButton);
-    selectChemistryBox->setLayout(groupBoxLayout);
-
-    sameTypeLabel = new QLabel(tr("Please note that all cells in a playlist must be of the same type."));
-    sameTypeLabel->setWordWrap(true);
-
     numWarmupCyclesLabel = new QLabel(tr("Number of warmup cycles:"));
     numWarmupCyclesSpinBox = new QSpinBox;
     numWarmupCyclesSpinBox->setMinimum(NUM_WARMUP_CYCLES_MIN);
@@ -144,9 +128,7 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     QGridLayout *setupLayout = new QGridLayout;
     setupLayout->addWidget(cellPlaylistNameLabel, 0, 0);
     setupLayout->addWidget(cellPlaylistNameLineEdit, 0, 1);
-    setupLayout->addWidget(selectChemistryBox, 1, 0, 1, 2);
-    setupLayout->addWidget(sameTypeLabel, 2, 0, 1, 2);
-    setupLayout->setRowStretch(3, 1);
+    setupLayout->setRowStretch(1, 1);
 
     QGridLayout *basicConfigLayout = new QGridLayout;
     basicConfigLayout->addWidget(numWarmupCyclesLabel, 0, 0);
@@ -206,32 +188,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     setLayout(layout);
 }
 
-void PlaylistSettingsWidget::updateBoundsBasedOnChemistryType()
-{
-    if (ironPhosphateRadioButton->isChecked())
-    {
-        highVoltageCutoffSpinBox->setMaximum(IRON_PHOSPHATE_HIGH_VOLTAGE_CUTOFF_MAX);
-        highVoltageCutoffSpinBox->setValue(IRON_PHOSPHATE_HIGH_VOLTAGE_CUTOFF_DEFAULT);
-        lowVoltageCutoffSpinBox->setValue(IRON_PHOSPHATE_LOW_VOLTAGE_CUTOFF_DEFAULT);
-        storageDischargeVoltageSpinBox->setValue(IRON_PHOSPHATE_STORAGE_DISCHARGE_VOLTAGE_DEFAULT);
-    }
-    else
-    {
-        highVoltageCutoffSpinBox->setMaximum(HIGH_VOLTAGE_CUTOFF_MAX);
-        highVoltageCutoffSpinBox->setValue(HIGH_VOLTAGE_CUTOFF_DEFAULT);
-        lowVoltageCutoffSpinBox->setValue(LOW_VOLTAGE_CUTOFF_DEFAULT);
-        storageDischargeVoltageSpinBox->setValue(STORAGE_DISCHARGE_VOLTAGE_DEFAULT);
-    }
-}
-
 void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist)
 {
     cellPlaylistNameLineEdit->setText(playlist.getCellPlaylistName());
-
-    // TODO set the check boxes based on playlist
-    updateBoundsBasedOnChemistryType();  // TODO just connect this in constructor, don't call it here
-    // TODO update bounds when chemistry type changed
-
     // TODO don't show number of cells and prefix etc, just show all the cell names
     numWarmupCyclesSpinBox->setValue(playlist.getNumWarmupCycles());
     numMeasurementCyclesSpinBox->setValue(playlist.getNumMeasurementCycles());
