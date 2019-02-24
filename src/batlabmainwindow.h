@@ -75,6 +75,7 @@ private:
     QAction *debugBatlabAct;
     QAction *checkForBatlabFirmwareUpdatesAct;
 
+    QAction *userGuideAct;
     QAction *aboutBatlabToolkitGUIAct;
     QAction *checkForUpdatesAct;
 
@@ -130,6 +131,7 @@ private slots:
     void checkForBatlabFirmwareUpdates();
 
     void aboutBatlabToolkitGUI();
+    void openUserGuide();
 
     void showNewCellPlaylistWizard();
     void displayLoadedCellPlaylist(CellPlaylist playlist);

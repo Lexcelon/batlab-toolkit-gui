@@ -12,6 +12,10 @@ To install the latest release, visit the [Releases](https://github.com/Lexcelon/
 
 To upgrade your installation with any changes released since then, you can go to "Help" -> "Check for Updates" inside the Batlab Toolkit GUI program.
 
+## Usage
+
+See the [User Guide](#user-guide) section.
+
 ## Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository.
@@ -56,3 +60,7 @@ Run the installer, and on the first page click on "Settings" and then the "Repos
 When prompted to specify an installation directory, give it a different name such as ``C:\Program Files (x86)\Lexcelon\Batlab Toolit GUI_develop``.
 
 Continue the installation as you would for a release build. You may wish to give the new desktop shortcut a name such as ``Batlab Toolkit GUI - Develop``.
+
+# User Guide
+
+The Batlab Toolkit GUI is a tool to control a set of Batlabs and run tests on battery cells.
