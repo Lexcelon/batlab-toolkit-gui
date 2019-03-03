@@ -51,6 +51,9 @@ public slots:
     void processFirmwareDownloadError();
     void setAllBatlabChannelsIdle();
 
+    void startTests();
+    void stopTests();
+
     void initializeNetworkAccessManager();
     void requestAvailableFirmwareVersions();
     void processAvailableFirmwareVersions();

@@ -16,6 +16,20 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
     QTimer::singleShot(500, this, &BatlabManager::requestAvailableFirmwareVersions);
 }
 
+void BatlabManager::startTests()
+{
+    // TODO See if playlist settings have been edited and act accordingly
+    // TODO Make sure at least one Batlab is connected
+    // TODO make sure Batlabs have adequate firmware
+    // TODO make sure Batlabs have external power
+    // TODO actually run the tests
+}
+
+void BatlabManager::stopTests()
+{
+    // TODO
+}
+
 void BatlabManager::loadPlaylist(CellPlaylist playlist)
 {
     loadedPlaylist = playlist;

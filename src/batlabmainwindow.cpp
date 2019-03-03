@@ -43,10 +43,14 @@ void BatlabMainWindow::initializeMainWindowUI()
     batlabsButton = new QPushButton(tr("Batlabs"));
     logViewButton = new QPushButton(tr("Log"));
     resultsButton = new QPushButton(tr("Results"));
+
     startTestsButton = new QPushButton(tr("Start Tests"));
     startTestsButton->setEnabled(false);
+    connect(startTestsButton, &QPushButton::clicked, batlabManager, &BatlabManager::startTests);
+
     stopTestsButton = new QPushButton(tr("Stop Tests"));
     stopTestsButton->setEnabled(false);
+    connect(stopTestsButton, &QPushButton::clicked, batlabManager, &BatlabManager::stopTests);
 
     tabButtonBox = new QVBoxLayout;
     tabButtonBox->addWidget(cellPlaylistButton);
