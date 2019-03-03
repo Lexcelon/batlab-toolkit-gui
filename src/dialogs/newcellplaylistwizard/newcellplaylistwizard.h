@@ -166,7 +166,7 @@ private:
     QPushButton *saveFilenameBrowseButton;
     void browseForSaveFilename();
     void initializePage();
-
+    bool validatePage();
 };
 
 class FinishPlaylistPage : public QWizardPage
