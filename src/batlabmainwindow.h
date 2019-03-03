@@ -81,11 +81,13 @@ private:
 
     QtAutoUpdater::UpdateController *applicationUpdateController;
 
-    QDialogButtonBox *tabButtonBox;
+    QVBoxLayout *tabButtonBox;
     QPushButton *cellPlaylistButton;
     QPushButton *batlabsButton;
     QPushButton *logViewButton;
     QPushButton *resultsButton;
+    QPushButton *startTestsButton;
+    QPushButton *stopTestsButton;
 
     QWidget *centralWidget;
     QGridLayout *centralWidgetLayout;

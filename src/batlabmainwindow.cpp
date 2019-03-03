@@ -43,13 +43,20 @@ void BatlabMainWindow::initializeMainWindowUI()
     batlabsButton = new QPushButton(tr("Batlabs"));
     logViewButton = new QPushButton(tr("Log"));
     resultsButton = new QPushButton(tr("Results"));
+    startTestsButton = new QPushButton(tr("Start Tests"));
+    startTestsButton->setEnabled(false);
+    stopTestsButton = new QPushButton(tr("Stop Tests"));
+    stopTestsButton->setEnabled(false);
 
-    tabButtonBox = new QDialogButtonBox;
-    tabButtonBox->setOrientation(Qt::Vertical);
-    tabButtonBox->addButton(cellPlaylistButton, QDialogButtonBox::ActionRole);
-    tabButtonBox->addButton(batlabsButton, QDialogButtonBox::ActionRole);
-    tabButtonBox->addButton(logViewButton, QDialogButtonBox::ActionRole);
-    tabButtonBox->addButton(resultsButton, QDialogButtonBox::ActionRole);
+    tabButtonBox = new QVBoxLayout;
+    tabButtonBox->addWidget(cellPlaylistButton);
+    tabButtonBox->addWidget(batlabsButton);
+    tabButtonBox->addWidget(logViewButton);
+    tabButtonBox->addWidget(resultsButton);
+    tabButtonBox->addStretch(8);
+    tabButtonBox->addWidget(startTestsButton);
+    tabButtonBox->addWidget(stopTestsButton);
+    tabButtonBox->addStretch(1);
 
     mainStackedWidget = new QStackedWidget;
 
@@ -175,7 +182,7 @@ void BatlabMainWindow::initializeMainWindowUI()
     });
 
     testCellsTabLayout = new QGridLayout;
-    testCellsTabLayout->addWidget(tabButtonBox, 0, 0);
+    testCellsTabLayout->addLayout(tabButtonBox, 0, 0);
     testCellsTabLayout->addWidget(mainStackedWidget, 0, 1);
 
     testCellsTab = new QWidget;
