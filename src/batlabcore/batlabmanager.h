@@ -38,6 +38,7 @@ signals:
     void batlabInfoUpdated(QVector<batlabStatusInfo>, int latestFirmwareVersion);
     void cellPlaylistLoaded(CellPlaylist playlist);
     void cellPlaylistUpdated(CellPlaylist playlist);
+    void error(QString e);
 
 public slots:
     void updateConnectedBatlabs();

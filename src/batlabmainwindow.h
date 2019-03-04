@@ -145,6 +145,7 @@ private slots:
     void processRegisterWriteRequest(int serial, int ns, int address, int value);
     void processFirmwareFlashRequest(int serial, QString firmwareVersion);
 
+    void showError(QString e);
 };
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);

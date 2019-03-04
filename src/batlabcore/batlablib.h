@@ -252,7 +252,8 @@ namespace BatlabLib
 #define MODE_STOPPED           0x0006
 
 // Firmware
-#define FIRMWARE_FILE_SIZE     15360
+#define FIRMWARE_FILE_SIZE         15360
+#define MINIMUM_FIRMWARE_VERSION   4
 
 #endif // BATLABLIB_H
 

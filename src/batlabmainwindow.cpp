@@ -19,6 +19,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     batlabManager = new BatlabManager;
     connect(batlabManager, &BatlabManager::batlabInfoUpdated, this, &BatlabMainWindow::redrawBatlabInfo);
     connect(batlabManager, &BatlabManager::cellPlaylistLoaded, this, &BatlabMainWindow::displayLoadedCellPlaylist);
+    connect(batlabManager, &BatlabManager::error, this, &BatlabMainWindow::showError);
 
     // Setup the UI
     initializeMainWindowUI();
@@ -215,11 +216,14 @@ void BatlabMainWindow::displayLoadedCellPlaylist(CellPlaylist playlist)
 {
     cellPlaylistLoadedWidget->loadPlaylist(playlist);
     cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget);
+
     mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget);
     cellPlaylistButton->setEnabled(false);
     batlabsButton->setEnabled(true);
     logViewButton->setEnabled(true);
     resultsButton->setEnabled(true);
+
+    startTestsButton->setEnabled(true);  // LEFT OFF (not here) connect new, open, save buttons
 }
 
 void BatlabMainWindow::savelogView()
@@ -629,4 +633,9 @@ void BatlabMainWindow::processFirmwareFlashRequest(int serial, QString firmwareV
     logViewButton->setEnabled(true);
     resultsButton->setEnabled(true);
     batlabManager->processFirmwareFlashRequest(serial, firmwareVersion);
+}
+
+void BatlabMainWindow::showError(QString e)
+{
+    QMessageBox::warning(this, "Error", e);
 }

@@ -26,6 +26,10 @@ signals:
 public slots:
 
 private:
+    QPushButton *newCellPlaylistButton;
+    QPushButton *openCellPlaylistButton;
+    QPushButton *saveCellPlaylistButton;
+
     QLabel *cellPlaylistNameLabel;
     QLineEdit *cellPlaylistNameLineEdit;
 
