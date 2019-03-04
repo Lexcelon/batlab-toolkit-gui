@@ -81,7 +81,7 @@ void BatlabDebugDialog::updateInfo(QVector<batlabStatusInfo> infos, QVector<QStr
     }
 }
 
-void BatlabDebugDialog::updateBatlabs(QVector<batlabStatusInfo> infos, int latestFirmwareVersion)
+void BatlabDebugDialog::updateBatlabs(QVector<batlabStatusInfo> infos)
 {
     QString prevSelectionText = ui->selectBatlabComboBox->currentText();
     ui->selectBatlabComboBox->clear();

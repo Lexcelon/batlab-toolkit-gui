@@ -102,7 +102,7 @@ void BatlabPacket::setValue(quint16 value)
 // Represents voltage data as a floating point voltage
 float BatlabPacket::asVoltage()
 {
-    if (std::isnan(getValue())) { return NAN; }
+    if (std::isnan((float)getValue())) { return NAN; }
     if (getValue() & 0x8000)  // Voltage can be negative
     {
         setValue(-0x10000 + getValue());
@@ -212,7 +212,7 @@ float BatlabPacket::asTemperatureC(QVector<int> RList, QVector<int> BList)
 // Represents current measurement as float current in Amps
 float BatlabPacket::asCurrent()
 {
-    if (std::isnan(getValue())) { return NAN; }
+    if (std::isnan((float)getValue())) { return NAN; }
     if (getValue() & 0x8000)  // Voltage can be negative
     {
         setValue(-0x10000 + getValue());
