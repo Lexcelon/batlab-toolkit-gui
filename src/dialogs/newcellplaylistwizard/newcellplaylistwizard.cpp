@@ -441,7 +441,15 @@ void PlaylistDirectoryPage::browseForPlaylistDirectory()
 bool PlaylistDirectoryPage::validatePage()
 {
     QDir dir;
-    if (!dir.mkpath(playlistDirectoryLineEdit->text())) {
+    dir.setPath(playlistDirectoryLineEdit->text());
+    if (dir.exists())
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Directory Exists", "This Playlist directory already exists. Continue?", QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::No) { return false; }
+    }
+    if (!dir.mkpath(playlistDirectoryLineEdit->text()))
+    {
         qWarning() << "Unable to find/make default playlist directory.";
         return false;
     }
@@ -453,6 +461,18 @@ void SavePlaylistPage::initializePage()
     QString directoryPath = field(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR).toString().simplified();
     QString defaultSaveFilename = directoryPath + "/playlist.json";
     saveFilenameLineEdit->setText(defaultSaveFilename);
+}
+
+bool SavePlaylistPage::validatePage()
+{
+    QFileInfo fileInfo(field(PLAYLIST_SAVE_FILENAME_FIELDSTR).toString().simplified());
+    if (fileInfo.exists())
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "File Exists", "This Playlist file already exists. Continue?", QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::No) { return false; }
+    }
+    return true;
 }
 
 SavePlaylistPage::SavePlaylistPage(QWidget *parent) : QWizardPage(parent)

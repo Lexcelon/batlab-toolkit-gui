@@ -1,8 +1,12 @@
 #include "playlistsettingswidget.h"
 
-// TODO validate settings bounds at batlabManager level before starting tests, at least provide warning for them
 PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent)
 {
+    newCellPlaylistButton = new QPushButton(tr("New"));
+    openCellPlaylistButton = new QPushButton(tr("Open"));
+    saveCellPlaylistButton = new QPushButton(tr("Save"));
+    saveCellPlaylistButton->setEnabled(false);
+
     cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));
     cellPlaylistNameLineEdit = new QLineEdit;
     // Only valid characters
@@ -147,6 +151,12 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     acceptableCellImpedanceThresholdSpinBox->setRange(ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN, ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX);
     acceptableCellImpedanceThresholdSpinBox->setValue(ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT);
 
+    QVBoxLayout *manageLayout = new QVBoxLayout;
+    manageLayout->addWidget(newCellPlaylistButton);
+    manageLayout->addWidget(openCellPlaylistButton);
+    manageLayout->addWidget(saveCellPlaylistButton);
+    manageLayout->addStretch();
+
     QGridLayout *setupLayout = new QGridLayout;
     setupLayout->addWidget(cellPlaylistNameLabel, 0, 0);
     setupLayout->addWidget(cellPlaylistNameLineEdit, 0, 1);
@@ -208,6 +218,7 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
     configLayout->addStretch(1);
 
     QHBoxLayout *layout = new QHBoxLayout;
+    layout->addLayout(manageLayout);
     layout->addLayout(setupLayout);
     layout->addStretch(1);
     layout->addLayout(configLayout);
@@ -290,4 +301,4 @@ void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist)
     acceptableCellImpedanceThresholdSpinBox->setValue(playlist.getAcceptableImpedanceThreshold());
 }
 
-// LEFT OFF load existing results and display them, though maybe that should wait until after tests. consult notebook
+// TODO load existing results and display them, though maybe that should wait until after tests. consult notebook

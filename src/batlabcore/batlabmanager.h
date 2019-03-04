@@ -38,6 +38,7 @@ signals:
     void batlabInfoUpdated(QVector<batlabStatusInfo>, int latestFirmwareVersion);
     void cellPlaylistLoaded(CellPlaylist playlist);
     void cellPlaylistUpdated(CellPlaylist playlist);
+    void error(QString e);
 
 public slots:
     void updateConnectedBatlabs();
@@ -50,6 +51,9 @@ public slots:
     void processFirmwareDownloadFinished();
     void processFirmwareDownloadError();
     void setAllBatlabChannelsIdle();
+
+    void startTests();
+    void stopTests();
 
     void initializeNetworkAccessManager();
     void requestAvailableFirmwareVersions();

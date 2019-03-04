@@ -16,6 +16,39 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
     QTimer::singleShot(500, this, &BatlabManager::requestAvailableFirmwareVersions);
 }
 
+void BatlabManager::startTests()
+{
+    // TODO See if playlist settings have been edited and act accordingly (offer to save) TODO also do this when making a new playlist
+    // TODO validate playlist settings are within limits
+
+    if (connectedBatlabsByPortName.size() == 0)
+    {
+        emit error(tr("At least one Batlab must be connected to start tests."));
+        return;
+    }
+
+    for (auto batlab : connectedBatlabsByPortName.values())
+    {
+        if (batlab->getFirmwareVersion() < MINIMUM_FIRMWARE_VERSION)
+        {
+            emit error(tr("All Batlabs must have firmware version of at least %1 in order to start tests. Please upgrade Batlab firmware.").arg(MINIMUM_FIRMWARE_VERSION));
+            return;
+        }
+        if (!batlab->getExternalPowerConnected())
+        {
+            emit error(tr("All Batlabs must have external power connected in order to start tests."));
+            return;
+        }
+    }
+
+    // TODO actually run the tests
+}
+
+void BatlabManager::stopTests()
+{
+    // TODO
+}
+
 void BatlabManager::loadPlaylist(CellPlaylist playlist)
 {
     loadedPlaylist = playlist;

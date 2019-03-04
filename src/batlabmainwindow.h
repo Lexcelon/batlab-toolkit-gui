@@ -75,16 +75,19 @@ private:
     QAction *debugBatlabAct;
     QAction *checkForBatlabFirmwareUpdatesAct;
 
+    QAction *userGuideAct;
     QAction *aboutBatlabToolkitGUIAct;
     QAction *checkForUpdatesAct;
 
     QtAutoUpdater::UpdateController *applicationUpdateController;
 
-    QDialogButtonBox *tabButtonBox;
+    QVBoxLayout *tabButtonBox;
     QPushButton *cellPlaylistButton;
     QPushButton *batlabsButton;
     QPushButton *logViewButton;
     QPushButton *resultsButton;
+    QPushButton *startTestsButton;
+    QPushButton *stopTestsButton;
 
     QWidget *centralWidget;
     QGridLayout *centralWidgetLayout;
@@ -130,6 +133,7 @@ private slots:
     void checkForBatlabFirmwareUpdates();
 
     void aboutBatlabToolkitGUI();
+    void openUserGuide();
 
     void showNewCellPlaylistWizard();
     void displayLoadedCellPlaylist(CellPlaylist playlist);
@@ -141,6 +145,7 @@ private slots:
     void processRegisterWriteRequest(int serial, int ns, int address, int value);
     void processFirmwareFlashRequest(int serial, QString firmwareVersion);
 
+    void showError(QString e);
 };
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);

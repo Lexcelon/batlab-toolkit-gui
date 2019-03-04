@@ -44,6 +44,8 @@ public slots:
 
     QString getPortName() { return m_info.portName; }
     int getSerialNumber() { return m_info.serialNumberRegister; }
+    bool getExternalPowerConnected() { return m_info.externalPowerConnected; }
+    int getFirmwareVersion() { return m_info.firmwareVersion; }
     batlabStatusInfo getInfo();
 
     void handleSerialResponseBundleReady(batlabPacketBundle bundle);

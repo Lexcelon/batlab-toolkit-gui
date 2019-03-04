@@ -19,6 +19,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     batlabManager = new BatlabManager;
     connect(batlabManager, &BatlabManager::batlabInfoUpdated, this, &BatlabMainWindow::redrawBatlabInfo);
     connect(batlabManager, &BatlabManager::cellPlaylistLoaded, this, &BatlabMainWindow::displayLoadedCellPlaylist);
+    connect(batlabManager, &BatlabManager::error, this, &BatlabMainWindow::showError);
 
     // Setup the UI
     initializeMainWindowUI();
@@ -44,12 +45,23 @@ void BatlabMainWindow::initializeMainWindowUI()
     logViewButton = new QPushButton(tr("Log"));
     resultsButton = new QPushButton(tr("Results"));
 
-    tabButtonBox = new QDialogButtonBox;
-    tabButtonBox->setOrientation(Qt::Vertical);
-    tabButtonBox->addButton(cellPlaylistButton, QDialogButtonBox::ActionRole);
-    tabButtonBox->addButton(batlabsButton, QDialogButtonBox::ActionRole);
-    tabButtonBox->addButton(logViewButton, QDialogButtonBox::ActionRole);
-    tabButtonBox->addButton(resultsButton, QDialogButtonBox::ActionRole);
+    startTestsButton = new QPushButton(tr("Start Tests"));
+    startTestsButton->setEnabled(false);
+    connect(startTestsButton, &QPushButton::clicked, batlabManager, &BatlabManager::startTests);
+
+    stopTestsButton = new QPushButton(tr("Stop Tests"));
+    stopTestsButton->setEnabled(false);
+    connect(stopTestsButton, &QPushButton::clicked, batlabManager, &BatlabManager::stopTests);
+
+    tabButtonBox = new QVBoxLayout;
+    tabButtonBox->addWidget(cellPlaylistButton);
+    tabButtonBox->addWidget(batlabsButton);
+    tabButtonBox->addWidget(logViewButton);
+    tabButtonBox->addWidget(resultsButton);
+    tabButtonBox->addStretch(8);
+    tabButtonBox->addWidget(startTestsButton);
+    tabButtonBox->addWidget(stopTestsButton);
+    tabButtonBox->addStretch(1);
 
     mainStackedWidget = new QStackedWidget;
 
@@ -175,7 +187,7 @@ void BatlabMainWindow::initializeMainWindowUI()
     });
 
     testCellsTabLayout = new QGridLayout;
-    testCellsTabLayout->addWidget(tabButtonBox, 0, 0);
+    testCellsTabLayout->addLayout(tabButtonBox, 0, 0);
     testCellsTabLayout->addWidget(mainStackedWidget, 0, 1);
 
     testCellsTab = new QWidget;
@@ -204,11 +216,14 @@ void BatlabMainWindow::displayLoadedCellPlaylist(CellPlaylist playlist)
 {
     cellPlaylistLoadedWidget->loadPlaylist(playlist);
     cellPlaylistStackedWidget->setCurrentWidget(cellPlaylistLoadedWidget);
+
     mainStackedWidget->setCurrentWidget(cellPlaylistTabWidget);
     cellPlaylistButton->setEnabled(false);
     batlabsButton->setEnabled(true);
     logViewButton->setEnabled(true);
     resultsButton->setEnabled(true);
+
+    startTestsButton->setEnabled(true);  // LEFT OFF (not here) connect new, open, save buttons
 }
 
 void BatlabMainWindow::savelogView()
@@ -308,6 +323,10 @@ void BatlabMainWindow::createActions()
     debugBatlabAct->setStatusTip(tr("Debug a Batlab by reading and writing registers"));
     connect(debugBatlabAct, &QAction::triggered, this, &BatlabMainWindow::debugBatlab);
 
+    userGuideAct = new QAction(tr("User Guide"), this);
+    userGuideAct->setStatusTip(tr("Open the User Guide documentation"));
+    connect(userGuideAct, &QAction::triggered, this, &BatlabMainWindow::openUserGuide);
+
     aboutBatlabToolkitGUIAct = new QAction(tr("About Batlab Toolkit GUI"), this);
     aboutBatlabToolkitGUIAct->setStatusTip(tr("Information about the Batlab Toolkit GUI program"));
     connect(aboutBatlabToolkitGUIAct, &QAction::triggered, this, &BatlabMainWindow::aboutBatlabToolkitGUI);
@@ -330,6 +349,7 @@ void BatlabMainWindow::createMenus()
     toolsMenu->addAction(debugBatlabAct);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu->addAction(userGuideAct);
     helpMenu->addAction(aboutBatlabToolkitGUIAct);
     helpMenu->addSeparator();
     helpMenu->addAction(checkForUpdatesAct);
@@ -396,14 +416,20 @@ void BatlabMainWindow::aboutBatlabToolkitGUI()
                               "<p>© Lexcelon, LLC %2"
                               "<hr>"
                               "<p>Batlab Toolkit GUI is provided under the GPL license."
-                              "<p>Source code is available on <a href=\"https://www.github.com/lexcelon/batlab-toolkit-gui\">GitHub</a>."
-                              "<p>Documentation is available on the <a href=\"https://www.lexcelon.com/resources/\">resources</a> page on our website."
+                              "<p>The Batlab Toolkit GUI User Guide can be found on <a href=\"https://github.com/Lexcelon/batlab-toolkit-gui/blob/master/README.md#user-guide\">GitHub</a>."
+                              "<p>Source code is also available on <a href=\"https://www.github.com/lexcelon/batlab-toolkit-gui\">GitHub</a>."
+                              "<p>General Batlab documentation is available on the <a href=\"https://www.lexcelon.com/resources/\">resources</a> page on our website."
                               "<p>Please <a href=\"https://www.lexcelon.com\">visit our website</a>"
                               " or <a href=\"mailto:support@lexcelon.com\">contact us</a> for more information."
                               "<hr>"
                               "<p>The Batlab is made possible through the support and participation of our backers and customers. Thank you!"
                               ).arg(BATLAB_TOOLKIT_GUI_VERSION, QDate::currentDate().toString("yyyy"));
     QMessageBox::information(this, tr("About Batlab Toolkit GUI"), msgText);
+}
+
+void BatlabMainWindow::openUserGuide()
+{
+    QDesktopServices::openUrl(QUrl("https://github.com/Lexcelon/batlab-toolkit-gui/blob/master/README.md#user-guide", QUrl::TolerantMode));
 }
 
 BatlabMainWindow::~BatlabMainWindow()
@@ -607,4 +633,9 @@ void BatlabMainWindow::processFirmwareFlashRequest(int serial, QString firmwareV
     logViewButton->setEnabled(true);
     resultsButton->setEnabled(true);
     batlabManager->processFirmwareFlashRequest(serial, firmwareVersion);
+}
+
+void BatlabMainWindow::showError(QString e)
+{
+    QMessageBox::warning(this, "Error", e);
 }
