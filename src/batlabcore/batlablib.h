@@ -103,6 +103,8 @@ enum commsNamespace {
 };
 
 struct channelStatusInfo {
+    int slot;
+
     QString cellName;
 
     bool testInProgress;

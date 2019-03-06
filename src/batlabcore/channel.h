@@ -19,7 +19,7 @@ signals:
 public slots:
 
 private:
-
+    Batlab *m_batlab;
 };
 
 #endif // CHANNEL_H

@@ -19,21 +19,6 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     for (int i = 0; i < 4; i++)
     {
         m_channels[i] = new Channel(this, i);
-        m_channels[i]->info.cellName = "";
-        m_channels[i]->info.testInProgress = false;
-        m_channels[i]->info.preChargeComplete = false;
-        m_channels[i]->info.preChargeError = false;
-        m_channels[i]->info.numWarmupCycles = -1;
-        m_channels[i]->info.numWarmupCyclesCompleted = -1;
-        m_channels[i]->info.warmupCyclesError = false;
-        m_channels[i]->info.numMeasurementCycles = -1;
-        m_channels[i]->info.numMeasurementCyclesCompleted = -1;
-        m_channels[i]->info.measurementCyclesError = false;
-        m_channels[i]->info.storageDischarge = false;
-        m_channels[i]->info.storageDischargeComplete = false;
-        m_channels[i]->info.storageDischargeError = false;
-        m_channels[i]->info.tempCalibB = -1;
-        m_channels[i]->info.tempCalibR = -1;
     }
 
     verifyBatlabDevice();
