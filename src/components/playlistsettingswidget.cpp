@@ -3,8 +3,11 @@
 PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent)
 {
     newCellPlaylistButton = new QPushButton(tr("New"));
+    connect(newCellPlaylistButton, &QPushButton::clicked, this, &PlaylistSettingsWidget::newPlaylist);
     openCellPlaylistButton = new QPushButton(tr("Open"));
+    connect(openCellPlaylistButton, &QPushButton::clicked, this, &PlaylistSettingsWidget::openPlaylist);
     saveCellPlaylistButton = new QPushButton(tr("Save"));
+    connect(saveCellPlaylistButton, &QPushButton::clicked, this, &PlaylistSettingsWidget::savePlaylist);
     saveCellPlaylistButton->setEnabled(false);
 
     cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));

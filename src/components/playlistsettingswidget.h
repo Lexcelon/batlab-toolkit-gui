@@ -22,6 +22,9 @@ public:
     void loadPlaylist(CellPlaylist playlist);
 
 signals:
+    void newPlaylist();
+    void openPlaylist();
+    void savePlaylist();
 
 public slots:
 

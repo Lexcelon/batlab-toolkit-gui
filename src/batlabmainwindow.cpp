@@ -109,6 +109,8 @@ void BatlabMainWindow::initializeMainWindowUI()
     cellPlaylistNotLoadedWidget->setLayout(cellPlaylistNotLoadedLayout);
 
     cellPlaylistLoadedWidget = new PlaylistSettingsWidget;
+    connect(cellPlaylistLoadedWidget, &PlaylistSettingsWidget::newPlaylist, this, &BatlabMainWindow::showNewCellPlaylistWizard);
+    connect(cellPlaylistLoadedWidget, &PlaylistSettingsWidget::openPlaylist, this, &BatlabMainWindow::openCellPlaylist);
 
     cellPlaylistStackedWidget = new QStackedWidget;
     cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);
@@ -223,7 +225,17 @@ void BatlabMainWindow::displayLoadedCellPlaylist(CellPlaylist playlist)
     logViewButton->setEnabled(true);
     resultsButton->setEnabled(true);
 
-    startTestsButton->setEnabled(true);  // LEFT OFF (not here) connect new, open, save buttons
+    startTestsButton->setEnabled(true);
+}
+
+void BatlabMainWindow::saveCellPlaylist()
+{
+    // TODO
+}
+
+void BatlabMainWindow::saveCellPlaylistAs()
+{
+    // TODO
 }
 
 void BatlabMainWindow::savelogView()
@@ -314,6 +326,16 @@ void BatlabMainWindow::createActions()
     openCellPlaylistAct->setStatusTip(tr("Open an existing cell playlist"));
     connect(openCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::openCellPlaylist);
 
+    saveCellPlaylistAct = new QAction(tr("&Save Cell Playlist"), this);
+    saveCellPlaylistAct->setShortcuts(QKeySequence::Save);
+    saveCellPlaylistAct->setStatusTip(tr("Save the loaded cell playlist"));
+    connect(saveCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::saveCellPlaylist);
+
+    saveCellPlaylistAsAct = new QAction(tr("&Save Cell Playlist As"), this);
+    saveCellPlaylistAsAct->setShortcuts(QKeySequence::SaveAs);
+    saveCellPlaylistAsAct->setStatusTip(tr("Save the loaded cell playlist As"));
+    connect(saveCellPlaylistAsAct, &QAction::triggered, this, &BatlabMainWindow::saveCellPlaylistAs);
+
     exitBatlabToolkitGUIAct = new QAction(tr("Exit"), this);
     exitBatlabToolkitGUIAct->setShortcuts(QKeySequence::Close);
     exitBatlabToolkitGUIAct->setStatusTip(tr("Close Batlab Toolkit GUI"));
@@ -342,6 +364,9 @@ void BatlabMainWindow::createMenus()
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newCellPlaylistAct);
     fileMenu->addAction(openCellPlaylistAct);
+    fileMenu->addSeparator();
+    fileMenu->addAction(saveCellPlaylistAct);
+    fileMenu->addAction(saveCellPlaylistAsAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitBatlabToolkitGUIAct);
 
