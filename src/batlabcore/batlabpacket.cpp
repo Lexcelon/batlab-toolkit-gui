@@ -102,12 +102,12 @@ void BatlabPacket::setValue(quint16 value)
 // Represents voltage data as a floating point voltage
 float BatlabPacket::asVoltage()
 {
-    if (std::isnan((float)getValue())) { return NAN; }
+    if (std::isnan(static_cast<float>(getValue()))) { return NAN; }
     if (getValue() & 0x8000)  // Voltage can be negative
     {
-        setValue(-0x10000 + getValue());
+        setValue(static_cast<quint16>(-0x10000 + getValue()));
     }
-    return getValue() * 4.5 / pow(2, 15);
+    return static_cast<float>(getValue() * 4.5 / pow(2, 15));
 }
 
 // Represents vss data as a floating point voltage
@@ -170,14 +170,14 @@ float BatlabPacket::asTemperatureF(QVector<int> RList, QVector<int> BList)
     float T;
     try
     {
-        int Rdiv = RList[(int)getNamespace()];
-        float R = Rdiv / ((pow(2, 15) / getValue()) - 1);
-        float To = 25 + 273.15;
+        int Rdiv = RList[static_cast<int>(getNamespace())];
+        float R = static_cast<float>(Rdiv / ((pow(2, 15) / getValue()) - 1));
+        float To = static_cast<float>(25 + 273.15);
         float Ro = 10000;
-        int B = BList[(int)getNamespace()];  // 3380
+        int B = BList[static_cast<int>(getNamespace())];  // 3380
         float Tinv = (1 / To) + (log(R / Ro) / B);
-        T = (1 / Tinv) - 273.15;
-        T = (T * 1.8) + 32;
+        T = static_cast<float>((1 / Tinv) - 273.15);
+        T = static_cast<float>((T * 1.8) + 32);
     }
     catch (...)
     {

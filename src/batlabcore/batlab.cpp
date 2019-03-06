@@ -18,21 +18,22 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     m_info.firmwareBytesRemaining = -1;
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].cellName = "";
-        m_info.channels[i].testInProgress = false;
-        m_info.channels[i].preChargeComplete = false;
-        m_info.channels[i].preChargeError = false;
-        m_info.channels[i].numWarmupCycles = -1;
-        m_info.channels[i].numWarmupCyclesCompleted = -1;
-        m_info.channels[i].warmupCyclesError = false;
-        m_info.channels[i].numMeasurementCycles = -1;
-        m_info.channels[i].numMeasurementCyclesCompleted = -1;
-        m_info.channels[i].measurementCyclesError = false;
-        m_info.channels[i].storageDischarge = false;
-        m_info.channels[i].storageDischargeComplete = false;
-        m_info.channels[i].storageDischargeError = false;
-        m_info.channels[i].tempCalibB = -1;
-        m_info.channels[i].tempCalibR = -1;
+        m_channels[i] = new Channel(this, i);
+        m_channels[i]->info.cellName = "";
+        m_channels[i]->info.testInProgress = false;
+        m_channels[i]->info.preChargeComplete = false;
+        m_channels[i]->info.preChargeError = false;
+        m_channels[i]->info.numWarmupCycles = -1;
+        m_channels[i]->info.numWarmupCyclesCompleted = -1;
+        m_channels[i]->info.warmupCyclesError = false;
+        m_channels[i]->info.numMeasurementCycles = -1;
+        m_channels[i]->info.numMeasurementCyclesCompleted = -1;
+        m_channels[i]->info.measurementCyclesError = false;
+        m_channels[i]->info.storageDischarge = false;
+        m_channels[i]->info.storageDischargeComplete = false;
+        m_channels[i]->info.storageDischargeError = false;
+        m_channels[i]->info.tempCalibB = -1;
+        m_channels[i]->info.tempCalibR = -1;
     }
 
     verifyBatlabDevice();
@@ -86,13 +87,9 @@ void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
     {
         handlePeriodicCheckResponse(bundle.packets);
     }
-    else if (bundle.callback == "setWatchdogTimerResponse")
-    {
-        handleSetWatchdogTimerResponse(bundle.packets);
-    }
     else if (bundle.callback == "handleFirmwareFlashResponse")
     {
-        handleFirmwareFlashResponse(bundle.packets);
+        handleFirmwareFlashResponse();
     }
     else if (bundle.callback == "handleRegisterReadResponse")
     {
@@ -129,7 +126,7 @@ void Batlab::registerRead(int ns, int address)
 void Batlab::registerWrite(int ns, int address, int value)
 {
     QVector<BatlabPacket> packets;
-    packets.append(BatlabPacket(ns, address, value));
+    packets.append(BatlabPacket(ns, address, static_cast<uint16_t>(value)));
     batlabPacketBundle packetBundle;
     packetBundle.packets = packets;
     packetBundle.callback = "handleRegisterWriteResponse";
@@ -180,17 +177,17 @@ void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response)
     responseCounter += 5;  // Skip cell mode return values
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].tempCalibR = response[responseCounter++].getValue();
+        m_channels[i]->info.tempCalibR = response[responseCounter++].getValue();
     }
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].tempCalibB = response[responseCounter++].getValue();
+        m_channels[i]->info.tempCalibB = response[responseCounter++].getValue();
     }
     responseCounter += 4;  // Skip current setpoint (presently unused)
-    m_info.serialNumberRegister = response[responseCounter++].getValue();
-    m_info.deviceIdRegister = response[responseCounter++].getValue();
+    m_info.serialNumberRegister = static_cast<qint16>(response[responseCounter++].getValue());
+    m_info.deviceIdRegister = static_cast<qint16>(response[responseCounter++].getValue());
     m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
-    m_info.firmwareVersion = response[responseCounter++].getValue();
+    m_info.firmwareVersion = static_cast<qint16>(response[responseCounter++].getValue());
 
     if (m_info.firmwareVersion > 3)
     {
@@ -211,10 +208,6 @@ void Batlab::setWatchdogTimer()
     packetBundle.callback = "handleSetWatchdogTimerResponse";
     packetBundle.channel = -1;
     m_commsManager->sendPacketBundle(packetBundle);
-}
-
-void Batlab::handleSetWatchdogTimerResponse(QVector<BatlabPacket> response)
-{
 }
 
 void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
@@ -277,20 +270,20 @@ void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response)
     int responseCounter = 0;
     responseCounter += 1;  // Skip watchdog return value
 
-    m_info.serialNumberRegister = response[responseCounter++].getValue();
-    m_info.deviceIdRegister = response[responseCounter++].getValue();
+    m_info.serialNumberRegister = static_cast<qint16>(response[responseCounter++].getValue());
+    m_info.deviceIdRegister = static_cast<qint16>(response[responseCounter++].getValue());
     m_info.serialNumberComplete = (m_info.deviceIdRegister<<16) + m_info.serialNumberRegister;
-    m_info.firmwareVersion = response[responseCounter++].getValue();
+    m_info.firmwareVersion = static_cast<qint16>(response[responseCounter++].getValue());
 
     m_info.externalPowerConnected = response[responseCounter++].getValue();
 
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].tempCalibR = response[responseCounter++].getValue();
+        m_channels[i]->info.tempCalibR = response[responseCounter++].getValue();
     }
     for (int i = 0; i < 4; i++)
     {
-        m_info.channels[i].tempCalibB = response[responseCounter++].getValue();
+        m_channels[i]->info.tempCalibB = response[responseCounter++].getValue();
     }
 
     emit infoUpdated();
@@ -319,6 +312,10 @@ void Batlab::setAllIdle()  // TODO validate this behavior
 
 batlabStatusInfo Batlab::getInfo()
 {
+    for (int i = 0; i < 4; i++)
+    {
+        m_info.channels[i] = m_channels[i]->info;
+    }
     return m_info;
 }
 
@@ -360,8 +357,8 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     // Write firmware payload
     for(int i = 0; i < firmwareBytes.size(); i++)
     {
-        packets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR, 0x0400 + i));
-        packets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::DATA, firmwareBytes[i]));
+        packets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::ADDR, static_cast<uint16_t>(0x0400 + i)));
+        packets.append(BatlabPacket(batlabNamespaces::BOOTLOADER, bootloaderNamespace::DATA, static_cast<uint16_t>(firmwareBytes[i])));
     }
 
     // Reboot into new image
@@ -377,7 +374,7 @@ void Batlab::initiateFirmwareFlash(QString firmwareFilePath)
     m_commsManager->sendPacketBundle(bundle);
 }
 
-void Batlab::handleFirmwareFlashResponse(QVector<BatlabPacket> response)
+void Batlab::handleFirmwareFlashResponse()
 {
     qInfo() << "Done with firmware flash.";
     m_info.firmwareBytesRemaining = -1;

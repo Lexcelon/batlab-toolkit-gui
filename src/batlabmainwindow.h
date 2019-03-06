@@ -32,7 +32,7 @@ class BatlabMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit BatlabMainWindow(QWidget *parent = 0);
+    explicit BatlabMainWindow(QWidget *parent = nullptr);
     ~BatlabMainWindow();
 
 public slots:

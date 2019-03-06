@@ -19,7 +19,7 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent) : QWidget(parent
 
     selectChemistryBox = new QGroupBox(tr("Cell chemistry type"));
     lipoRadioButton = new QRadioButton(tr("Lithium Polymer (also called Lithium-Ion Polymer, LiPo, LIP or Li-poly)"));
-    ironPhosphateRadioButton = new QRadioButton(tr(qPrintable(QString::fromUtf8("Lithium Iron Phosphate (also called LiFePO\u2084 or LFP)"))));
+    ironPhosphateRadioButton = new QRadioButton(tr(qPrintable(QString::fromUtf8("Lithium Iron Phosphate (also called LiFePO\xE2\x82\x84 or LFP)"))));
     otherRadioButton = new QRadioButton(tr("Other"));
 
     lipoRadioButton->setChecked(true);

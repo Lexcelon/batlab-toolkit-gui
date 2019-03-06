@@ -81,7 +81,7 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent)
     selectChemistryBox = new QGroupBox(tr("Cell chemistry type"));
     lipoRadioButton = new QRadioButton(tr("Lithium Polymer (also called Lithium-Ion Polymer, LiPo, LIP or Li-poly)"));
     registerField(LIPO_CHEMISTRY_FIELDSTR, lipoRadioButton);
-    ironPhosphateRadioButton = new QRadioButton(tr(qPrintable(QString::fromUtf8("Lithium Iron Phosphate (also called LiFePO\u2084 or LFP)"))));
+    ironPhosphateRadioButton = new QRadioButton(tr(qPrintable(QString::fromUtf8("Lithium Iron Phosphate (also called LiFePO\xE2\x82\x84 or LFP)"))));
     registerField(IRON_PHOSPHATE_CHEMISTRY_FIELDSTR, ironPhosphateRadioButton);
     otherRadioButton = new QRadioButton(tr("Other"));
     registerField(OTHER_CHEMISTRY_FIELDSTR, otherRadioButton);
