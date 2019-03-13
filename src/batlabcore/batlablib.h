@@ -144,16 +144,17 @@ struct batlabStatusInfo {
 struct cellResultsStatusInfo {
     QString cellName;
 
+    bool hasSomeResults;
+    bool hasCompleteResults;
     bool testInProgress;
-    bool testCompleted;
+    int batlabSerial;
 
-    float chargeCapacity;
-    float energyCapacity;
-    float avgImpedance;
-    float deltaTemperature;
+    float capacity;
+    float capacityRange;
+    // float coloumbicEfficiency;  // TODO handle old files that have this value
+    float impedance;
     float avgCurrent;
     float avgVoltage;
-    float runtime;
 };
 
 struct batlabSettings {
@@ -178,22 +179,7 @@ struct batlabSettings {
 
 namespace BatlabLib
 {
-    void bubblesort(QVector<float> data, QVector<int> &indices);
-    float getCharge(int val);
-    float getTemp(int val);
-    float getTemp(int val, int tempCalibB, int tempCalibR);
-    float getTemperature(signed short val);
-    float getCurrent(signed short val);
-    float getVoltage(signed short val);
-    float getPhase(unsigned char val);
-    int sendTemperatureLimits();
-    int sendCurrentLimit(float val);
-    int sendVoltageLimit(float val);
-    int sendReportingFrequency(float val);
-    int sendCurrentSetpoint(float val);
-    float getSineFrequency(int val);
-    int sendSineFrequency(float val);
-    cellResultsStatusInfo createInitializedcellResultsDisplayInfo();
+    cellResultsStatusInfo createInitializedCellResultsStatusInfo();
     QString cellName(QString designator, int numCells, int startingCellNum, int cellId);
 
     static QMap<QString, int> namespaceStringToInt {

@@ -60,6 +60,7 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFr
         QWidget *batlabCellInfoWidget = new QWidget;
         batlabCellInfoLayout = new QGridLayout;
 
+        // TODO if channel does not have anything going on, make it prettier
         for (int i = 0; i < 4; i++) {
             CellTestStatusWidgetList[i] = new CellTestStatusWidget(info.channels[i]);
             QLabel *cellNameLabel = new QLabel(tr(info.channels[i].cellName.toStdString().c_str()));
@@ -100,7 +101,7 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFr
 }
 
 void BatlabWidget::updateFirmware() {
-    // This message box is causing seg faults, going to just disable and can figure it out later if we want the box
+    // TODO This message box is causing seg faults, going to just disable and can figure it out later if we want the box
 //    QMessageBox messageBox(this);
 //    messageBox.setWindowTitle(tr("Firmware Update"));
 //    messageBox.setText(tr("The firmware on Batlab %1 will be updated from v%2.0 to v%3.0.\n\n"

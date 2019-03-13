@@ -38,6 +38,7 @@ signals:
     void batlabInfoUpdated(QVector<batlabStatusInfo>, int latestFirmwareVersion);
     void cellPlaylistLoaded(CellPlaylist playlist);
     void cellPlaylistUpdated(CellPlaylist playlist);
+    void cellResultsUpdated(QVector<cellResultsStatusInfo> infos);
     void error(QString e);
 
 public slots:
@@ -62,12 +63,14 @@ public slots:
     QString getPortNameFromSerial(int serial);
 
     void loadPlaylist(CellPlaylist playlist);
+    bool hasPartialCellResults(CellPlaylist playlist);
 
 private:
     bool isCellPlaylistLoaded;
     bool testsInProgress;
 
     CellPlaylist loadedPlaylist;
+    QMap<QString, cellResultsStatusInfo> m_cellResults;
 
     QMap<QString, Batlab*> candidateBatlabsByPortName;
     QMap<QString, Batlab*> connectedBatlabsByPortName;

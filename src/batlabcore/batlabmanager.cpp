@@ -42,6 +42,11 @@ void BatlabManager::startTests()
     }
 
     // TODO actually run the tests
+    // Start with the list of cell names in the playlist
+    // Filter out those with lvl3 results already
+    // For each cell remaining, find the first available channel and ask user if the cell is ready
+    // Or just give a list of all cells and where they should be in their respective channels
+
 }
 
 void BatlabManager::stopTests()
@@ -49,11 +54,175 @@ void BatlabManager::stopTests()
     // TODO
 }
 
+bool BatlabManager::hasPartialCellResults(CellPlaylist playlist)
+{
+    QMap<QString, cellResultsStatusInfo> cellResults;
+    QDir resultsDir(playlist.getPlaylistOutputDirectory());
+    for (auto cellName : playlist.getCellNames())
+    {
+        cellResults[cellName] = BatlabLib::createInitializedCellResultsStatusInfo();
+        cellResults[cellName].cellName = cellName;
+        // Note if that cell has some results
+        QFile cellFile(resultsDir.absoluteFilePath(playlist.getCellPlaylistName() + "_" + cellName + ".csv"));
+        if (cellFile.exists())
+        {
+            cellResults[cellName].hasSomeResults = true;
+        }
+    }
+    QFile summaryFile(resultsDir.absoluteFilePath(playlist.getCellPlaylistName() + ".csv"));
+    if (summaryFile.exists())
+    {
+        if (!summaryFile.open(QIODevice::ReadOnly))
+        {
+            qWarning() << summaryFile.errorString();
+            return true;
+        }
+        QByteArray json = summaryFile.readLine();
+        QByteArray headers = summaryFile.readLine();
+        while (!summaryFile.atEnd())
+        {
+            QString line = summaryFile.readLine();
+            auto values = QString(line).remove('"').split(',');
+            auto name = values[0];
+            cellResults[name].hasSomeResults = true;
+            if (values[11] == "SUMMARY")
+            {
+                cellResults[name].hasCompleteResults = true;
+            }
+        }
+    }
+    for (auto cell : cellResults.values())
+    {
+        if (cell.hasSomeResults && !cell.hasCompleteResults)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// This will automatically archive incomplete cell results (move them to archive_* files).
+// If you want to know in advance if that will happen, call hasIncompleteCellResults().
 void BatlabManager::loadPlaylist(CellPlaylist playlist)
 {
     loadedPlaylist = playlist;
+
+    m_cellResults.clear();
+    QDir resultsDir(playlist.getPlaylistOutputDirectory());
+    for (auto cellName : playlist.getCellNames())
+    {
+        m_cellResults[cellName] = BatlabLib::createInitializedCellResultsStatusInfo();
+        m_cellResults[cellName].cellName = cellName;
+        // Note if that cell has some results
+        QFile cellFile(resultsDir.absoluteFilePath(playlist.getCellPlaylistName() + "_" + cellName + ".csv"));
+        if (cellFile.exists())
+        {
+            m_cellResults[cellName].hasSomeResults = true;
+        }
+    }
+    // Go through summary CSV and mark cells with some data there
+    // Also mark cells that have complete SUMMARY entries, load those values
+    QFile summaryFile(resultsDir.absoluteFilePath(playlist.getCellPlaylistName() + ".csv"));
+    if (summaryFile.exists())
+    {
+        if (!summaryFile.open(QIODevice::ReadOnly))
+        {
+            qWarning() << summaryFile.errorString();
+            return;
+        }
+        QByteArray json = summaryFile.readLine();
+        QByteArray headers = summaryFile.readLine();
+        while (!summaryFile.atEnd())
+        {
+            QString line = summaryFile.readLine();
+            auto values = QString(line).remove('"').split(',');
+            auto name = values[0];
+            m_cellResults[name].hasSomeResults = true;
+            if (values[11] == "SUMMARY")
+            {
+                m_cellResults[name].hasCompleteResults = true;
+                m_cellResults[name].capacity = values[20].toFloat();
+                m_cellResults[name].capacityRange = values[21].toFloat();
+                m_cellResults[name].impedance = values[22].toFloat();
+                m_cellResults[name].avgVoltage = values[23].toFloat();
+                m_cellResults[name].avgCurrent = values[24].toFloat();
+            }
+        }
+    }
+    summaryFile.close();
+
+    // Handle those cells with only partial information
+    // First, rename individual cell files to archive_*
+    for (auto cell : m_cellResults.values())
+    {
+        if (cell.hasSomeResults && !cell.hasCompleteResults)
+        {
+            QFile::rename(resultsDir.absoluteFilePath(playlist.getCellPlaylistName() + "_" + cell.cellName + ".csv"),
+                          resultsDir.absoluteFilePath("archive_" + playlist.getCellPlaylistName() + "_" + cell.cellName + ".csv"));
+        }
+    }
+    // Next, move lvl2 lines for those cells to their archive_ file
+    if (!summaryFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << summaryFile.errorString();
+        return;
+    }
+    QByteArray output = summaryFile.readLine();  // JSON
+    output.append(summaryFile.readLine());  // Headers
+    while (!summaryFile.atEnd())
+    {
+        QString line = summaryFile.readLine();
+        auto values = QString(line).remove('"').split(',');
+        auto name = values[0];
+        auto cell = m_cellResults[name];
+        if (cell.hasSomeResults && !cell.hasCompleteResults)
+        {
+            QFile cellFile(resultsDir.absoluteFilePath("archive_" + playlist.getCellPlaylistName() + "_" + cell.cellName + ".csv"));
+            if (!cellFile.open(QIODevice::WriteOnly | QIODevice::Append))
+            {
+                qWarning() << summaryFile.errorString();
+                return;
+            }
+            cellFile.write(line.toUtf8());
+            cellFile.close();
+        }
+        else
+        {
+            output.append(line);
+        }
+    }
+    summaryFile.close();
+
+    // Rewrite summary file without those partial lvl2 lines
+    if (!summaryFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        qWarning() << summaryFile.errorString();
+        return;
+    }
+    summaryFile.write(output);
+    summaryFile.close();
+
+    // We have archived the partial results, so those cells don't have any results now
+    for (auto cellName : m_cellResults.keys())
+    {
+        if (m_cellResults[cellName].hasSomeResults && !m_cellResults[cellName].hasCompleteResults)
+        {
+            m_cellResults[cellName].hasSomeResults = false;
+            m_cellResults[cellName].hasCompleteResults = false;
+        }
+    }
+
+    // Record that we loaded the playlist
     isCellPlaylistLoaded = true;
     emit cellPlaylistLoaded(loadedPlaylist);
+
+    // Load any existing results into GUI
+    QVector<cellResultsStatusInfo> infos;
+    for (auto cell : m_cellResults.values())
+    {
+        infos.append(cell);
+    }
+    emit cellResultsUpdated(infos);
 }
 
 void BatlabManager::setAllBatlabChannelsIdle()

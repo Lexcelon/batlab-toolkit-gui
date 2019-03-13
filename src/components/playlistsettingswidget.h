@@ -31,7 +31,7 @@ public slots:
 private:
     QPushButton *newCellPlaylistButton;
     QPushButton *openCellPlaylistButton;
-    QPushButton *saveCellPlaylistButton;
+    QPushButton *saveCellPlaylistButton;  // TODO maybe remove these buttons and rely on File menu
 
     QLabel *cellPlaylistNameLabel;
     QLineEdit *cellPlaylistNameLineEdit;

@@ -19,6 +19,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     batlabManager = new BatlabManager;
     connect(batlabManager, &BatlabManager::batlabInfoUpdated, this, &BatlabMainWindow::redrawBatlabInfo);
     connect(batlabManager, &BatlabManager::cellPlaylistLoaded, this, &BatlabMainWindow::displayLoadedCellPlaylist);
+    connect(batlabManager, &BatlabManager::cellResultsUpdated, this, &BatlabMainWindow::redrawResultsInfo);
     connect(batlabManager, &BatlabManager::error, this, &BatlabMainWindow::showError);
 
     // Setup the UI
@@ -394,6 +395,15 @@ void BatlabMainWindow::openCellPlaylist()
         return;
     }
     // Then actually load the settings
+    if (batlabManager->hasPartialCellResults(playlist))
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Partial Cell Results", "Some cells in this Playlist already have partial results. "
+                                                                    "Those partial results will be archived under archive_ files, and tests for those cells will be restarted. "
+                                                                    "The existing complete results will be kept.",
+                                      QMessageBox::Ok | QMessageBox::Cancel);
+        if (reply == QMessageBox::Cancel) { return; }
+    }
     batlabManager->loadPlaylist(playlist);
 }
 
