@@ -102,42 +102,42 @@ void BatlabPacket::setValue(quint16 value)
 // Represents voltage data as a floating point voltage
 float BatlabPacket::asVoltage()
 {
-    if (std::isnan(getValue())) { return NAN; }
+    if (std::isnan(static_cast<float>(getValue()))) { return NAN; }
     if (getValue() & 0x8000)  // Voltage can be negative
     {
-        setValue(-0x10000 + getValue());
+        setValue(static_cast<quint16>(-0x10000 + getValue()));
     }
-    return getValue() * 4.5 / pow(2, 15);
+    return getValue() * 4.5f / powf(2, 15);
 }
 
 // Represents vss data as a floating point voltage
 float BatlabPacket::asVcc()
 {
-    return pow(2, 15) * 4.096 / getValue();
+    return powf(2, 15) * 4.096f / getValue();
 }
 
 // Represents frequency data in Hz
 float BatlabPacket::asFreq()
 {
-    return getValue() * (10000.0 / 256.0);
+    return getValue() * (10000.0f / 256.0f);
 }
 
 // Represents register current to floating point Amps
 float BatlabPacket::asIOff()
 {
-    return getValue() / 128.0;
+    return getValue() / 128.0f;
 }
 
 // Represents current setpoint as floating point Amps
 float BatlabPacket::asSetPoint()
 {
-    return getValue() / 128.0;
+    return getValue() / 128.0f;
 }
 
 // Represents magdiv register as Ipp
 float BatlabPacket::asMagdiv()
 {
-    return 2.0 / pow(2, getValue());
+    return 2.0f / powf(2, getValue());
 }
 
 QString BatlabPacket::asMode()
@@ -170,14 +170,14 @@ float BatlabPacket::asTemperatureF(QVector<int> RList, QVector<int> BList)
     float T;
     try
     {
-        int Rdiv = RList[(int)getNamespace()];
-        float R = Rdiv / ((pow(2, 15) / getValue()) - 1);
-        float To = 25 + 273.15;
+        int Rdiv = RList[static_cast<int>(getNamespace())];
+        float R = Rdiv / ((powf(2, 15) / getValue()) - 1);
+        float To = 25 + 273.15f;
         float Ro = 10000;
-        int B = BList[(int)getNamespace()];  // 3380
+        int B = BList[static_cast<int>(getNamespace())];  // 3380
         float Tinv = (1 / To) + (log(R / Ro) / B);
-        T = (1 / Tinv) - 273.15;
-        T = (T * 1.8) + 32;
+        T = (1 / Tinv) - 273.15f;
+        T = (T * 1.8f) + 32;
     }
     catch (...)
     {
@@ -194,13 +194,13 @@ float BatlabPacket::asTemperatureC(QVector<int> RList, QVector<int> BList)
     float T;
     try
     {
-        int Rdiv = RList[(int)getNamespace()];
-        float R = Rdiv / ((pow(2, 15) / getValue()) - 1);
-        float To = 25 + 273.15;
+        int Rdiv = RList[static_cast<int>(getNamespace())];
+        float R = Rdiv / ((powf(2, 15) / getValue()) - 1);
+        float To = 25 + 273.15f;
         float Ro = 10000;
-        int B = BList[(int)getNamespace()];  // 3380
+        int B = BList[static_cast<int>(getNamespace())];  // 3380
         float Tinv = (1 / To) + (log(R / Ro) / B);
-        T = (1 / Tinv) - 273.15;
+        T = (1 / Tinv) - 273.15f;
     }
     catch (...)
     {
@@ -212,12 +212,12 @@ float BatlabPacket::asTemperatureC(QVector<int> RList, QVector<int> BList)
 // Represents current measurement as float current in Amps
 float BatlabPacket::asCurrent()
 {
-    if (std::isnan(getValue())) { return NAN; }
+    if (std::isnan(static_cast<float>(getValue()))) { return NAN; }
     if (getValue() & 0x8000)  // Voltage can be negative
     {
-        setValue(-0x10000 + getValue());
+        setValue(static_cast<quint16>(-0x10000 + getValue()));
     }
-    return getValue() * 4.096 / pow(2, 15);
+    return getValue() * 4.096f / powf(2, 15);
 }
 
 //def print_packet(self):

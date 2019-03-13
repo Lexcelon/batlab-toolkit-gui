@@ -2,30 +2,24 @@
 #define CHANNEL_H
 
 #include <QObject>
-#include <QStateMachine>
 
-class channel : public QObject
+#include "batlablib.h"
+
+class Batlab;
+
+class Channel : public QObject
 {
     Q_OBJECT
 public:
-    explicit channel(QObject *parent = nullptr);
+    explicit Channel(Batlab *batlab, int slot, QObject *parent = nullptr);
+    channelStatusInfo info;
 
 signals:
 
 public slots:
 
 private:
-    QStateMachine channelStateMachine;
-    QState* s_unknown;
-    QState* s_no_cell;
-    QState* s_backwards;
-    QState* s_idle;
-    QState* s_stopped;
-
-    QState* s_current_flowing;
-    QState* s_charge;
-    QState* s_discharge;
-    QState* s_impedance;
+    Batlab *m_batlab;
 };
 
 #endif // CHANNEL_H

@@ -1,26 +1,27 @@
 #include "channel.h"
 
-channel::channel(QObject *parent) : QObject(parent)
+Channel::Channel(Batlab *batlab, int slot, QObject *parent) : QObject(parent)
 {
-    QState* s_unknown = new QState();
-    QState* s_no_cell = new QState();
-    QState* s_backwards = new QState();
-    QState* s_idle = new QState();
-    QState* s_stopped = new QState();
+    m_batlab = batlab;
+    info.slot = slot;
 
-    QState* s_current_flowing = new QState();
-    QState* s_charge = new QState(s_current_flowing);
-    QState* s_discharge = new QState(s_current_flowing);
-    QState* s_impedance = new QState(s_current_flowing);
-    s_current_flowing->setInitialState(s_charge);
+    info.cellName = "";
+    info.testInProgress = false;
+    info.preChargeComplete = false;
+    info.preChargeError = false;
+    info.numWarmupCycles = -1;
+    info.numWarmupCyclesCompleted = -1;
+    info.warmupCyclesError = false;
+    info.numMeasurementCycles = -1;
+    info.numMeasurementCyclesCompleted = -1;
+    info.measurementCyclesError = false;
+    info.storageDischarge = false;
+    info.storageDischargeComplete = false;
+    info.storageDischargeError = false;
+    info.tempCalibB = -1;
+    info.tempCalibR = -1;
 
-    channelStateMachine.addState(s_unknown);
-    channelStateMachine.addState(s_no_cell);
-    channelStateMachine.addState(s_backwards);
-    channelStateMachine.addState(s_idle);
-    channelStateMachine.addState(s_stopped);
-    channelStateMachine.addState(s_current_flowing);
-
-    channelStateMachine.setInitialState(s_unknown);
-    channelStateMachine.start();
+//#TS_IDLE,TS_CHARGE,TS_PRECHARGE,TS_DISCHARGE,TS_CHARGEREST,TS_DISCHARGEREST,TS_POSTDISCHARGE
+//self.test_state = TS_IDLE
+//        self.state = 'IDLE'
 }

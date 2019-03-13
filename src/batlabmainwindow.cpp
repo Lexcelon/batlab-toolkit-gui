@@ -19,6 +19,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     batlabManager = new BatlabManager;
     connect(batlabManager, &BatlabManager::batlabInfoUpdated, this, &BatlabMainWindow::redrawBatlabInfo);
     connect(batlabManager, &BatlabManager::cellPlaylistLoaded, this, &BatlabMainWindow::displayLoadedCellPlaylist);
+    connect(batlabManager, &BatlabManager::cellResultsUpdated, this, &BatlabMainWindow::redrawResultsInfo);
     connect(batlabManager, &BatlabManager::error, this, &BatlabMainWindow::showError);
 
     // Setup the UI
@@ -109,6 +110,8 @@ void BatlabMainWindow::initializeMainWindowUI()
     cellPlaylistNotLoadedWidget->setLayout(cellPlaylistNotLoadedLayout);
 
     cellPlaylistLoadedWidget = new PlaylistSettingsWidget;
+    connect(cellPlaylistLoadedWidget, &PlaylistSettingsWidget::newPlaylist, this, &BatlabMainWindow::showNewCellPlaylistWizard);
+    connect(cellPlaylistLoadedWidget, &PlaylistSettingsWidget::openPlaylist, this, &BatlabMainWindow::openCellPlaylist);
 
     cellPlaylistStackedWidget = new QStackedWidget;
     cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);
@@ -223,7 +226,17 @@ void BatlabMainWindow::displayLoadedCellPlaylist(CellPlaylist playlist)
     logViewButton->setEnabled(true);
     resultsButton->setEnabled(true);
 
-    startTestsButton->setEnabled(true);  // LEFT OFF (not here) connect new, open, save buttons
+    startTestsButton->setEnabled(true);
+}
+
+void BatlabMainWindow::saveCellPlaylist()
+{
+    // TODO
+}
+
+void BatlabMainWindow::saveCellPlaylistAs()
+{
+    // TODO
 }
 
 void BatlabMainWindow::savelogView()
@@ -314,6 +327,16 @@ void BatlabMainWindow::createActions()
     openCellPlaylistAct->setStatusTip(tr("Open an existing cell playlist"));
     connect(openCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::openCellPlaylist);
 
+    saveCellPlaylistAct = new QAction(tr("&Save Cell Playlist"), this);
+    saveCellPlaylistAct->setShortcuts(QKeySequence::Save);
+    saveCellPlaylistAct->setStatusTip(tr("Save the loaded cell playlist"));
+    connect(saveCellPlaylistAct, &QAction::triggered, this, &BatlabMainWindow::saveCellPlaylist);
+
+    saveCellPlaylistAsAct = new QAction(tr("&Save Cell Playlist As"), this);
+    saveCellPlaylistAsAct->setShortcuts(QKeySequence::SaveAs);
+    saveCellPlaylistAsAct->setStatusTip(tr("Save the loaded cell playlist As"));
+    connect(saveCellPlaylistAsAct, &QAction::triggered, this, &BatlabMainWindow::saveCellPlaylistAs);
+
     exitBatlabToolkitGUIAct = new QAction(tr("Exit"), this);
     exitBatlabToolkitGUIAct->setShortcuts(QKeySequence::Close);
     exitBatlabToolkitGUIAct->setStatusTip(tr("Close Batlab Toolkit GUI"));
@@ -343,6 +366,9 @@ void BatlabMainWindow::createMenus()
     fileMenu->addAction(newCellPlaylistAct);
     fileMenu->addAction(openCellPlaylistAct);
     fileMenu->addSeparator();
+    fileMenu->addAction(saveCellPlaylistAct);
+    fileMenu->addAction(saveCellPlaylistAsAct);
+    fileMenu->addSeparator();
     fileMenu->addAction(exitBatlabToolkitGUIAct);
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
@@ -369,6 +395,15 @@ void BatlabMainWindow::openCellPlaylist()
         return;
     }
     // Then actually load the settings
+    if (batlabManager->hasPartialCellResults(playlist))
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Partial Cell Results", "Some cells in this Playlist already have partial results. "
+                                                                    "Those partial results will be archived under archive_ files, and tests for those cells will be restarted. "
+                                                                    "The existing complete results will be kept.",
+                                      QMessageBox::Ok | QMessageBox::Cancel);
+        if (reply == QMessageBox::Cancel) { return; }
+    }
     batlabManager->loadPlaylist(playlist);
 }
 

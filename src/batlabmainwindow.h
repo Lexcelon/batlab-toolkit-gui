@@ -32,7 +32,7 @@ class BatlabMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit BatlabMainWindow(QWidget *parent = 0);
+    explicit BatlabMainWindow(QWidget *parent = nullptr);
     ~BatlabMainWindow();
 
 public slots:
@@ -70,6 +70,8 @@ private:
 
     QAction *newCellPlaylistAct;
     QAction *openCellPlaylistAct;
+    QAction *saveCellPlaylistAct;
+    QAction *saveCellPlaylistAsAct;
     QAction *exitBatlabToolkitGUIAct;
 
     QAction *debugBatlabAct;
@@ -127,6 +129,8 @@ private:
 
 private slots:
     void openCellPlaylist();
+    void saveCellPlaylist();
+    void saveCellPlaylistAs();
     void exitBatlabToolkitGUI();
 
     void debugBatlab();

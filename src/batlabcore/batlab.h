@@ -21,7 +21,7 @@ class Batlab : public QObject
 {
     Q_OBJECT
 public:
-    Batlab(QString portName, QObject *parent = 0);
+    Batlab(QString portName, QObject *parent = nullptr);
     ~Batlab();
 
     void setAllIdle();
@@ -39,7 +39,7 @@ public slots:
     void handleRegisterWriteResponse(QVector<BatlabPacket> response);
 
     void initiateFirmwareFlash(QString firmwareFilePath);
-    void handleFirmwareFlashResponse(QVector<BatlabPacket> response);
+    void handleFirmwareFlashResponse();
     void updateFirmwareFlashProgress(int packetsRemaining);
 
     QString getPortName() { return m_info.portName; }
@@ -63,12 +63,12 @@ public slots:
     void handleInitBatlabDeviceResponse(QVector<BatlabPacket> response);
 
     void setWatchdogTimer();
-    void handleSetWatchdogTimerResponse(QVector<BatlabPacket> response);
 
 private slots:
 
 private:
     batlabStatusInfo m_info;
+    Channel *m_channels[4];
 
     BatlabCommsManager* m_commsManager;
 };
