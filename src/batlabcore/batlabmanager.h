@@ -40,6 +40,7 @@ signals:
     void cellPlaylistUpdated(CellPlaylist playlist);
     void cellResultsUpdated(QVector<cellResultsStatusInfo> infos);
     void error(QString e);
+    void notify(QString title, QString text);
 
 public slots:
     void updateConnectedBatlabs();
@@ -53,8 +54,12 @@ public slots:
     void processFirmwareDownloadError();
     void setAllBatlabChannelsIdle();
 
+    void assignRemainingCellsToOpenChannels();
+    void findBatlabForCell(cellResultsStatusInfo cell);
+
     void startTests();
     void stopTests();
+    bool testsInProgress();
 
     void initializeNetworkAccessManager();
     void requestAvailableFirmwareVersions();
@@ -67,7 +72,6 @@ public slots:
 
 private:
     bool isCellPlaylistLoaded;
-    bool testsInProgress;
 
     CellPlaylist loadedPlaylist;
     QMap<QString, cellResultsStatusInfo> m_cellResults;

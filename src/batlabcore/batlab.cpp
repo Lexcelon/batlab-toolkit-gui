@@ -34,6 +34,18 @@ void Batlab::updateFirmwareFlashProgress(int packetsRemaining)
     emit infoUpdated();
 }
 
+bool Batlab::testsInProgress()
+{
+    for (auto channel : m_channels)
+    {
+        if (channel->testInProgress())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Batlab::handleSerialPacketBundleSendFailed(batlabPacketBundle bundle)
 {
     if (bundle.callback == "handleVerifyBatlabDeviceResponse")
@@ -60,7 +72,11 @@ void Batlab::handleSerialPacketBundleSendFailed(batlabPacketBundle bundle)
 
 void Batlab::handleSerialResponseBundleReady(batlabPacketBundle bundle)
 {
-    if (bundle.callback == "handleVerifyBatlabDeviceResponse")
+    if (bundle.channel != -1)
+    {
+        m_channels[bundle.channel]->handleSerialResponseBundleReady(bundle);
+    }
+    else if (bundle.callback == "handleVerifyBatlabDeviceResponse")
     {
         handleVerifyBatlabDeviceResponse(bundle.packets);
     }
@@ -117,6 +133,11 @@ void Batlab::registerWrite(int ns, int address, int value)
     packetBundle.callback = "handleRegisterWriteResponse";
     packetBundle.channel = -1;
     m_commsManager->sendPacketBundle(packetBundle);
+}
+
+void Batlab::sendPacketBundle(batlabPacketBundle bundle)
+{
+    m_commsManager->sendPacketBundle(bundle);
 }
 
 void Batlab::initBatlabDevice()
@@ -195,6 +216,11 @@ void Batlab::setWatchdogTimer()
     m_commsManager->sendPacketBundle(packetBundle);
 }
 
+bool Batlab::inBootloader()
+{
+    return m_info.inBootloader;
+}
+
 void Batlab::handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response)
 {
     m_info.confirmedBatlabDevice = true;
@@ -248,6 +274,11 @@ void Batlab::periodicCheck()
     packetBundle.callback = "handlePeriodicCheckResponse";
     packetBundle.channel = -1;
     m_commsManager->sendPacketBundle(packetBundle);
+}
+
+Channel *Batlab::getChannel(int slot)
+{
+    return m_channels[slot];
 }
 
 void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response)

@@ -5,7 +5,6 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent)
     qRegisterMetaType<QVector<uchar>>("QVector<uchar>");
 
     isCellPlaylistLoaded = false;
-    testsInProgress = false;
 
     QTimer *updateConnectedBatlabsTimer = new QTimer(this);
     connect(updateConnectedBatlabsTimer, &QTimer::timeout, this, &BatlabManager::updateConnectedBatlabs);
@@ -41,17 +40,49 @@ void BatlabManager::startTests()
         }
     }
 
-    // TODO actually run the tests
-    // Start with the list of cell names in the playlist
-    // Filter out those with lvl3 results already
-    // For each cell remaining, find the first available channel and ask user if the cell is ready
-    // Or just give a list of all cells and where they should be in their respective channels
+    // TODO improve this so that cells can already be in place or user can adjust where they go
+    emit notify("Placing Cells",
+                "When tests are in progress, you will need to place specific cells in their assigned Batlab channel.\n\n"
+                "When a channel is free and you should place a cell there, this information will be visible in either the \"Batlabs\" or \"Results\" view.");
+
+    assignRemainingCellsToOpenChannels();
+    // TODO start test mode on all channels that will be running tests
+    // TODO at the end of a channel test, assignremainingcellstoopenchannels again and then shut down channel if no more cells
+    // TODO find everywhere that is tracking testsInProgress state and make sure the updates propagate
 
 }
 
 void BatlabManager::stopTests()
 {
     // TODO
+}
+
+void BatlabManager::assignRemainingCellsToOpenChannels()
+{
+    for (auto cellResult : m_cellResults.values())
+    {
+        if (cellResult.batlabSerial == -1)
+        {
+            findBatlabForCell(cellResult);
+        }
+    }
+    emit cellResultsUpdated(m_cellResults.values().toVector());
+}
+
+void BatlabManager::findBatlabForCell(cellResultsStatusInfo cell)
+{
+    for (auto batlab : connectedBatlabsByPortName.values())
+    {
+        for (int channel = 0; channel < 4; channel++)
+        {
+            if (batlab->getChannel(channel)->mode() == MODE_NO_CELL)
+            {
+                m_cellResults[cell.cellName].batlabSerial = batlab->getSerialNumber();
+                m_cellResults[cell.cellName].channel = channel;
+                return;
+            }
+        }
+    }
 }
 
 bool BatlabManager::hasPartialCellResults(CellPlaylist playlist)
@@ -140,6 +171,8 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist)
             m_cellResults[name].hasSomeResults = true;
             if (values[11] == "SUMMARY")
             {
+                m_cellResults[name].batlabSerial = values[1].toInt();
+                m_cellResults[name].channel = values[2].toInt();
                 m_cellResults[name].hasCompleteResults = true;
                 m_cellResults[name].capacity = values[20].toFloat();
                 m_cellResults[name].capacityRange = values[21].toFloat();
@@ -356,6 +389,15 @@ QVector<batlabStatusInfo> BatlabManager::getBatlabInfos()
     return infos;
 }
 
+bool BatlabManager::testsInProgress()
+{
+    for (auto batlab : connectedBatlabsByPortName.values())
+    {
+        if (batlab->testsInProgress()) { return true; }
+    }
+    return false;
+}
+
 QVector<QString> BatlabManager::getFirmwareVersions()
 {
     return availableFirmwareVersionToUrl.keys().toVector();
@@ -375,7 +417,7 @@ void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address,
 
 void BatlabManager::processFirmwareFlashRequest(int serial, QString firmwareVersion)
 {
-    if (testsInProgress)
+    if (testsInProgress())
     {
         // TODO grey out firmware flash button when tests are in progress
         qWarning() << "Cannot flash firmware while tests are in progress.";

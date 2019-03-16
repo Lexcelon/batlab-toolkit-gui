@@ -167,14 +167,17 @@ QString BatlabPacket::asErr()
 // Blist: 4 list of 'B' calibration values needed to interpret temp
 float BatlabPacket::asTemperatureF(QVector<int> RList, QVector<int> BList)
 {
+    return asTemperatureF(RList[static_cast<int>(getNamespace())], BList[static_cast<int>(getNamespace())]);
+}
+
+float BatlabPacket::asTemperatureF(int Rdiv, int B)
+{
     float T;
     try
     {
-        int Rdiv = RList[static_cast<int>(getNamespace())];
         float R = Rdiv / ((powf(2, 15) / getValue()) - 1);
         float To = 25 + 273.15f;
         float Ro = 10000;
-        int B = BList[static_cast<int>(getNamespace())];  // 3380
         float Tinv = (1 / To) + (log(R / Ro) / B);
         T = (1 / Tinv) - 273.15f;
         T = (T * 1.8f) + 32;
@@ -191,14 +194,17 @@ float BatlabPacket::asTemperatureF(QVector<int> RList, QVector<int> BList)
 // Blist: 4 list of 'B' calibration values needed to interpret temp
 float BatlabPacket::asTemperatureC(QVector<int> RList, QVector<int> BList)
 {
+    return asTemperatureC(RList[static_cast<int>(getNamespace())], BList[static_cast<int>(getNamespace())]);
+}
+
+float BatlabPacket::asTemperatureC(int Rdiv, int B)
+{
     float T;
     try
     {
-        int Rdiv = RList[static_cast<int>(getNamespace())];
         float R = Rdiv / ((powf(2, 15) / getValue()) - 1);
         float To = 25 + 273.15f;
         float Ro = 10000;
-        int B = BList[static_cast<int>(getNamespace())];  // 3380
         float Tinv = (1 / To) + (log(R / Ro) / B);
         T = (1 / Tinv) - 273.15f;
     }

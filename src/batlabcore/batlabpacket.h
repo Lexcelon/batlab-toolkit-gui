@@ -42,7 +42,9 @@ public:
     float asMagdiv();
     QString asMode();
     QString asErr();
+    float asTemperatureF(int Rdiv, int B);
     float asTemperatureF(QVector<int> RList, QVector<int> BList);
+    float asTemperatureC(int Rdiv, int B);
     float asTemperatureC(QVector<int> RList, QVector<int> BList);
     float asCurrent();
 

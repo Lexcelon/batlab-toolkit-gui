@@ -303,5 +303,3 @@ void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist)
     storageDischargeVoltageSpinBox->setValue(playlist.getStorageDischargeVoltage());
     acceptableCellImpedanceThresholdSpinBox->setValue(playlist.getAcceptableImpedanceThreshold());
 }
-
-// TODO load existing results and display them, though maybe that should wait until after tests. consult notebook

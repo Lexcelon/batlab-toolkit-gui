@@ -37,7 +37,7 @@ ResultsWidget::ResultsWidget(QVector<cellResultsStatusInfo> infos, QFrame *paren
     // Create the Table Widget
     resultsTableWidget = new QTableWidget;
     resultsTableWidget->setRowCount(infos.length());
-    resultsTableWidget->setColumnCount(8);
+    resultsTableWidget->setColumnCount(6);
 
     // Create the Table Header
     resultsTableWidget->setHorizontalHeaderItem(0,  new QTableWidgetItem(tr("Test Status")));
@@ -62,28 +62,41 @@ ResultsWidget::ResultsWidget(QVector<cellResultsStatusInfo> infos, QFrame *paren
     for (int i = 0; i < infos.length(); i++) {
         resultsTableWidget->setVerticalHeaderItem(i,  new QTableWidgetItem(infos[i].cellName));
 
-        // Add Test Phase
+        // Tests currently running
         if (infos[i].testInProgress && !infos[i].hasCompleteResults) {
             QTableWidgetItem *inProgressItem = new QTableWidgetItem(tr("In Progress"));
             inProgressItem->setBackgroundColor(Qt::yellow);
             resultsTableWidget->setItem(i, 0, inProgressItem);
         }
-        else if (!infos[i].testInProgress && !infos[i].hasCompleteResults) {
+        // Cell not yet assigned to Batlab
+        else if (!infos[i].testInProgress && !infos[i].hasCompleteResults && infos[i].batlabSerial == -1) {
             QTableWidgetItem *notStartedItem = new QTableWidgetItem(tr("Not Started"));
-            notStartedItem->setBackgroundColor(Qt::red);
+            notStartedItem->setBackgroundColor(Qt::darkGray);
             resultsTableWidget->setItem(i, 0, notStartedItem);
         }
+        // Cell waiting to be put into Batlab
+        else if (!infos[i].testInProgress && !infos[i].hasCompleteResults && infos[i].batlabSerial != -1) {
+            QTableWidgetItem *waitingForPlacementItem = new QTableWidgetItem(tr("Please place cell in Batlab %1, Channel %2")
+                                                                             .arg(QString::number(infos[i].batlabSerial))
+                                                                             .arg(QString::number(infos[i].channel)));
+            waitingForPlacementItem->setBackgroundColor(Qt::lightGray);
+            waitingForPlacementItem->setTextAlignment(Qt::AlignCenter);
+            resultsTableWidget->setSpan(i, 0, 1, 6);
+            resultsTableWidget->setItem(i, 0, waitingForPlacementItem);
+        }
+        // Results complete for this cell
         else {
             QTableWidgetItem *completedItem = new QTableWidgetItem(tr("Completed"));
             completedItem->setBackgroundColor(Qt::cyan);
             resultsTableWidget->setItem(i, 0, completedItem);
+            resultsTableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(static_cast<double>(infos[i].capacity))));
+            resultsTableWidget->setItem(i, 2, new QTableWidgetItem(QString::number(static_cast<double>(infos[i].capacityRange))));
+            resultsTableWidget->setItem(i, 3, new QTableWidgetItem(QString::number(static_cast<double>(infos[i].impedance))));
+            resultsTableWidget->setItem(i, 4, new QTableWidgetItem(QString::number(static_cast<double>(infos[i].avgVoltage))));
+            resultsTableWidget->setItem(i, 5, new QTableWidgetItem(QString::number(static_cast<double>(infos[i].avgCurrent))));
         }
 
-        resultsTableWidget->setItem(i, 1, new QTableWidgetItem(infos[i].capacity == -1 ? "--" : QString::number(infos[i].capacity)));
-        resultsTableWidget->setItem(i, 2, new QTableWidgetItem(infos[i].capacityRange == -1 ? "--" : QString::number(infos[i].capacityRange)));
-        resultsTableWidget->setItem(i, 3, new QTableWidgetItem(infos[i].impedance == -1 ? "--" : QString::number(infos[i].impedance)));
-        resultsTableWidget->setItem(i, 4, new QTableWidgetItem(infos[i].avgVoltage == -1 ? "--" : QString::number(infos[i].avgVoltage)));
-        resultsTableWidget->setItem(i, 5, new QTableWidgetItem(infos[i].avgCurrent == -1 ? "--" : QString::number(infos[i].avgCurrent)));
+
     }
 
     resultsLayout->addLayout(resultsButtonLayout);

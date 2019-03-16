@@ -12,9 +12,14 @@ cellResultsStatusInfo BatlabLib::createInitializedCellResultsStatusInfo() {
     cellResultsStatusInfo newCellResult;
 
     newCellResult.cellName = "";
-    newCellResult.testInProgress = false;
+
     newCellResult.hasSomeResults = false;
     newCellResult.hasCompleteResults = false;
+
+    newCellResult.testInProgress = false;
+    newCellResult.batlabSerial = -1;
+    newCellResult.channel = -1;
+
     newCellResult.capacity = -1;
     newCellResult.capacityRange = -1;
     newCellResult.impedance = -1;

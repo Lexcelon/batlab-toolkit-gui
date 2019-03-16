@@ -101,20 +101,7 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFr
 }
 
 void BatlabWidget::updateFirmware() {
-    // TODO This message box is causing seg faults, going to just disable and can figure it out later if we want the box
-//    QMessageBox messageBox(this);
-//    messageBox.setWindowTitle(tr("Firmware Update"));
-//    messageBox.setText(tr("The firmware on Batlab %1 will be updated from v%2.0 to v%3.0.\n\n"
-//                          "Please do not disconnect your Batlab during the update."
-//                          "This process can take a few minutes.")
-//                       .arg(m_info.serialNumberComplete)
-//                       .arg(m_info.firmwareVersion)
-//                       .arg(m_latestFirmwareVersion));
-//    messageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-//    messageBox.setDefaultButton(QMessageBox::Ok);
-//    int ret = messageBox.exec();
-//    if (ret == QMessageBox::Ok)
-//    {
-        emit firmwareUpdateRequested(m_info.serialNumberComplete, "v" + QString::number(m_latestFirmwareVersion) + ".0");
-//    }
+    emit firmwareUpdateRequested(m_info.serialNumberComplete,
+                                 "v" + QString::number(m_latestFirmwareVersion) + ".0",
+                                 "v" + QString::number(m_info.firmwareVersion) + ".0");
 }
