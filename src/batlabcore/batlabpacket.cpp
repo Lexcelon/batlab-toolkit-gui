@@ -67,36 +67,37 @@ void BatlabPacket::debug()
 }
 
 uchar BatlabPacket::getStartByte() { return m_startByte; }
-void BatlabPacket::setStartByte(uchar startByte) { m_startByte = startByte; }
+BatlabPacket BatlabPacket::setStartByte(uchar startByte) { m_startByte = startByte; return *this; }
 
 uchar BatlabPacket::getNamespace() { return m_nameSpace; }
-void BatlabPacket::setNamespace(uchar ns) { m_nameSpace = ns; }
+BatlabPacket BatlabPacket::setNamespace(uchar ns) { m_nameSpace = ns; return *this; }
 
 uchar BatlabPacket::getAddress() { return m_address; }
-void BatlabPacket::setAddress(uchar address) { m_address = address; }
+BatlabPacket BatlabPacket::setAddress(uchar address) { m_address = address; return *this; }
 
 uchar BatlabPacket::getPayloadLowByte() { return m_payloadLowByte; }
-void BatlabPacket::setPayloadLowByte(uchar lowByte) { m_payloadLowByte = lowByte; }
+BatlabPacket BatlabPacket::setPayloadLowByte(uchar lowByte) { m_payloadLowByte = lowByte; return *this; }
 
 uchar BatlabPacket::getPayloadHighByte() { return m_payloadHighByte; }
-void BatlabPacket::setPayloadHighByte(uchar highByte) { m_payloadHighByte = highByte; }
+BatlabPacket BatlabPacket::setPayloadHighByte(uchar highByte) { m_payloadHighByte = highByte; return *this; }
 
 int BatlabPacket::getWriteTimeout_ms() { return m_writeTimeout_ms; }
-void BatlabPacket::setWriteTimeout_ms(int writeTimeout_ms) { m_writeTimeout_ms = writeTimeout_ms; }
+BatlabPacket BatlabPacket::setWriteTimeout_ms(int writeTimeout_ms) { m_writeTimeout_ms = writeTimeout_ms; return *this; }
 
 int BatlabPacket::getReadTimeout_ms() { return m_readTimeout_ms; }
 int BatlabPacket::getSleepAfterTransaction_ms() { return m_sleepAfterTransaction_ms; }
 
-void BatlabPacket::setSleepAfterTransaction_ms(int ms) { m_sleepAfterTransaction_ms = ms; }
+BatlabPacket BatlabPacket::setSleepAfterTransaction_ms(int ms) { m_sleepAfterTransaction_ms = ms; return *this; }
 bool BatlabPacket::getReadVerify() { return m_readVerify; }
 
 int BatlabPacket::getRetries() { return m_retries; }
 
 quint16 BatlabPacket::getValue() { return m_payloadLowByte + m_payloadHighByte*256; }
-void BatlabPacket::setValue(quint16 value)
+BatlabPacket BatlabPacket::setValue(quint16 value)
 {
     m_payloadHighByte = value >> 8;
     m_payloadLowByte = value & 0xFF;
+    return *this;
 }
 
 // Represents voltage data as a floating point voltage

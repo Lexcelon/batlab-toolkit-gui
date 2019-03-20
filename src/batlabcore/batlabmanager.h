@@ -69,11 +69,12 @@ public slots:
 
     void loadPlaylist(CellPlaylist playlist);
     bool hasPartialCellResults(CellPlaylist playlist);
+    CellPlaylist loadedPlaylist();
 
 private:
     bool isCellPlaylistLoaded;
 
-    CellPlaylist loadedPlaylist;
+    CellPlaylist m_loadedPlaylist;
     QMap<QString, cellResultsStatusInfo> m_cellResults;
 
     QMap<QString, Batlab*> candidateBatlabsByPortName;

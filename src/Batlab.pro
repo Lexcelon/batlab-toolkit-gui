@@ -52,7 +52,8 @@ SOURCES += main.cpp\
     batlabcore/channel.cpp \
     batlabcore/batlabcommsmanager.cpp \
     batlabcore/batlabpacket.cpp \
-    components/playlistsettingswidget.cpp
+    components/playlistsettingswidget.cpp \
+    batlabcore/encoder.cpp
 
 HEADERS  += \
     dialogs/batlabdebugdialog/batlabdebugdialog.h \
@@ -85,7 +86,8 @@ HEADERS  += \
     batlabcore/channel.h \
     batlabcore/batlabcommsmanager.h \
     batlabcore/batlabpacket.h \
-    components/playlistsettingswidget.h
+    components/playlistsettingswidget.h \
+    batlabcore/encoder.h
 
 FORMS    += \
     testwindow.ui \

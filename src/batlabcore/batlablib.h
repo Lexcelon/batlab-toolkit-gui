@@ -170,6 +170,24 @@ struct batlabSettings {
     double dischargeRate;
     double sineWaveFrequency;
     int sineWaveMagnitude;
+
+    bool enableConstantVoltage;
+    double constantVoltageSensitivity;
+    int constantVoltageStepSize;
+
+    bool enableTrickle;
+    double trickleDischargeEngageLimit;
+    double trickleChargeEngageLimit;
+    double trickleChargeRate;
+    double trickleDischargeRate;
+
+    bool enablePulse;
+    double pulseDischargeOffTime;
+    double pulseDischargeOnTime;
+    double pulseChargeOffTime;
+    double pulseChargeOnTime;
+    double pulseChargeOffRate;
+    double pulseDischargeOffRate;
 };
 
 #define DEFAULT_WRITE_TIMEOUT           500

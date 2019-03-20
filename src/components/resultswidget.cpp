@@ -111,8 +111,7 @@ void ResultsWidget::showSelectCells() {
     selectCellsButton->setText(tr("Cancel"));
 
     // Resize the Selection Column
-    resultsTableWidget->horizontalHeader()->setSectionResizeMode(
-        8, QHeaderView::Fixed);
+    resultsTableWidget->horizontalHeader()->setSectionResizeMode(8, QHeaderView::Fixed);
     resultsTableWidget->horizontalHeader()->resizeSection(8, 30);
     resultsTableWidget->setHorizontalHeaderItem(8,  new QTableWidgetItem(tr("X")));
 

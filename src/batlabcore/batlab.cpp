@@ -1,4 +1,5 @@
 #include "batlab.h"
+#include "batlabmanager.h"
 
 Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
 {
@@ -18,7 +19,7 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent)
     m_info.firmwareBytesRemaining = -1;
     for (int i = 0; i < 4; i++)
     {
-        m_channels[i] = new Channel(this, i);
+        m_channels[i] = new Channel(i, this);
     }
 
     verifyBatlabDevice();
@@ -44,6 +45,11 @@ bool Batlab::testsInProgress()
         }
     }
     return false;
+}
+
+CellPlaylist Batlab::playlist()
+{
+    return dynamic_cast<BatlabManager*>(parent())->loadedPlaylist();
 }
 
 void Batlab::handleSerialPacketBundleSendFailed(batlabPacketBundle bundle)
@@ -284,7 +290,7 @@ Channel *Batlab::getChannel(int slot)
 void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response)
 {
     int responseCounter = 0;
-    responseCounter += 1;  // Skip watchdog return value
+    responseCounter++;  // Skip watchdog return value
 
     m_info.serialNumberRegister = static_cast<qint16>(response[responseCounter++].getValue());
     m_info.deviceIdRegister = static_cast<qint16>(response[responseCounter++].getValue());

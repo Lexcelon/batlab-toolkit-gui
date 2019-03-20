@@ -38,6 +38,14 @@ void BatlabManager::startTests()
             emit error(tr("All Batlabs must have external power connected in order to start tests."));
             return;
         }
+        for (int slot = 0; slot < 4; slot++)
+        {
+            if (batlab->getChannel(slot)->mode() != MODE_NO_CELL)
+            {
+                emit error(tr("Please start tests with all cells removed from the Batlabs. Cells will be placed in order as the tests progress."));
+                return;
+            }
+        }
     }
 
     // TODO improve this so that cells can already be in place or user can adjust where they go
@@ -45,16 +53,20 @@ void BatlabManager::startTests()
                 "When tests are in progress, you will need to place specific cells in their assigned Batlab channel.\n\n"
                 "When a channel is free and you should place a cell there, this information will be visible in either the \"Batlabs\" or \"Results\" view.");
 
+    // This will automatically start tests on those channels
     assignRemainingCellsToOpenChannels();
-    // TODO start test mode on all channels that will be running tests
-    // TODO at the end of a channel test, assignremainingcellstoopenchannels again and then shut down channel if no more cells
-    // TODO find everywhere that is tracking testsInProgress state and make sure the updates propagate
 
+    // TODO at the end of a channel test, assignremainingcellstoopenchannels again and then shut down channel if no more cells
 }
 
 void BatlabManager::stopTests()
 {
     // TODO
+}
+
+CellPlaylist BatlabManager::loadedPlaylist()
+{
+    return m_loadedPlaylist;
 }
 
 void BatlabManager::assignRemainingCellsToOpenChannels()
@@ -79,6 +91,8 @@ void BatlabManager::findBatlabForCell(cellResultsStatusInfo cell)
             {
                 m_cellResults[cell.cellName].batlabSerial = batlab->getSerialNumber();
                 m_cellResults[cell.cellName].channel = channel;
+                batlab->getChannel(channel)->info.cellName = cell.cellName;
+                batlab->getChannel(channel)->startTest();
                 return;
             }
         }
@@ -136,7 +150,7 @@ bool BatlabManager::hasPartialCellResults(CellPlaylist playlist)
 // If you want to know in advance if that will happen, call hasIncompleteCellResults().
 void BatlabManager::loadPlaylist(CellPlaylist playlist)
 {
-    loadedPlaylist = playlist;
+    m_loadedPlaylist = playlist;
 
     m_cellResults.clear();
     QDir resultsDir(playlist.getPlaylistOutputDirectory());
@@ -247,7 +261,7 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist)
 
     // Record that we loaded the playlist
     isCellPlaylistLoaded = true;
-    emit cellPlaylistLoaded(loadedPlaylist);
+    emit cellPlaylistLoaded(m_loadedPlaylist);
 
     // Load any existing results into GUI
     QVector<cellResultsStatusInfo> infos;
@@ -327,7 +341,7 @@ void BatlabManager::updateConnectedBatlabs()
 
 void BatlabManager::addNewBatlab(QString portName)
 {
-    Batlab *batlab = new Batlab(portName);
+    Batlab *batlab = new Batlab(portName, this);
     connect(batlab, &Batlab::infoUpdated, this, &BatlabManager::processUpdatedBatlabInfo);
     connectedBatlabsByPortName[portName] = batlab;
     processUpdatedBatlabInfo();

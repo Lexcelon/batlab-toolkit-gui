@@ -16,6 +16,7 @@
 #include "batlablib.h"
 #include "channel.h"
 #include "batlabcommsmanager.h"
+#include "cellplaylist.h"
 
 class Batlab : public QObject
 {
@@ -69,6 +70,8 @@ public slots:
     void setWatchdogTimer();
 
     Channel *getChannel(int slot);
+
+    CellPlaylist playlist();
 
 private slots:
 
