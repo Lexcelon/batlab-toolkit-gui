@@ -76,6 +76,7 @@ public:
     bool getEnableConstantVoltage() { return playlistBatlabSettings.enableConstantVoltage; }  // TODO add trickle, constant voltage, pulse to UI and to file read/write and checks
     void setEnableConstantVoltage(bool b) { playlistBatlabSettings.enableConstantVoltage = b; }
     double getConstantVoltageSensitivity() { return playlistBatlabSettings.constantVoltageSensitivity; }
+    int getConstantVoltageStepSize() { return playlistBatlabSettings.constantVoltageStepSize; }
 
     bool getEnablePulse() { return playlistBatlabSettings.enablePulse; }
     void setEnablePulse(bool b) { playlistBatlabSettings.enablePulse = b; }

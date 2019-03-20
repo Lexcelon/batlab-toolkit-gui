@@ -35,6 +35,7 @@ Channel::Channel(int slot, QObject *parent) : QObject(parent)
     m_current_count = 0;
     m_current_avg = 0;
     m_current_prev = 0;
+    m_current_setpoint = 256;
 
     m_vcc = 5.0;
 
@@ -129,41 +130,41 @@ void Channel::stateMachine()
             else if (m_z_avg < 0.01f) { std_impedance = 0.01f / 128.0f; }
             else { std_impedance = m_z_avg / 128.0f; }
             std_impedance = std_impedance * static_cast<float>(playlist().getConstantVoltageSensitivity());
-//            if LEFT OFF, also figure out why getting 2 response packets when expecting 1 when charging
+//          LEFT OFF figure out why getting 2 response packets when expecting 1 when charging
+            // If voltage is getting close to the cutoff point and current is flowing at greater than a trickle
+            if (m_voltage_prev > (static_cast<float>(playlist().getHighVoltageCutoff()) - (static_cast<float>(m_current_setpoint) * std_impedance))
+                    && m_current_setpoint > playlist().getConstantVoltageStepSize())
+            {
+                // Scale down by 1/32th (default) of an amp
+                packets.append(BatlabPacket(info.slot, CURRENT_SETPOINT, static_cast<quint16>(m_current_setpoint - playlist().getConstantVoltageStepSize())));
+            }
         }
 
-//                    elif self.settings.constant_voltage_enable == True: # handle constant voltage charge
-//                        stdimpedance = 0.050 / 128.0
-//                        try:
-//                            stdimpedance = self.zavg / 128.0
-//                            if(self.zavg > 0.5):
-//                                stdimpedance = 0.5 / 128.0
-//                            if(self.zavg < 0.01):
-//                                stdimpedance = 0.01 / 128.0
-//                            if(self.zavg == 0 or math.isnan(self.zavg)):
-//                                stdimpedance = 0.050 / 128.0
-//                        except:
-//                            stdimpedance = 0.050 / 128.0
-//                        stdimpedance = stdimpedance * self.settings.constant_voltage_sensitivity
-//                        if v > (self.settings.high_volt_cutoff - (self.bat.setpoints[self.slot] * stdimpedance)) and self.bat.setpoints[self.slot] > self.settings.constant_voltage_stepsize: # if voltage is getting close to the cutoff point and current is flowing at greater than a trickle
-//                            self.bat.write_verify(self.slot,CURRENT_SETPOINT,self.bat.setpoints[self.slot] - self.settings.constant_voltage_stepsize ) # scale down by 1/32th of an amp
-
-//                    if mode == MODE_STOPPED:
-//                        self.log_lvl2("PRECHARGE")
-//                        self.test_state = TS_CHARGEREST
-//                        self.rest_time = datetime.datetime.now()
-//                        # We should rarely hit this condition - it means you don't want to make any testing cycles, just charge up and stop, or charge up and equalize
-//                        if self.current_cycle >= (self.settings.num_meas_cyc + self.settings.num_warm_up_cyc):
-//                            if self.settings.bool_storage_dischrg:
-//                                self.test_state = TS_POSTDISCHARGE
-//                                self.bat.write_verify(self.slot,CURRENT_SETPOINT,batlab.encoder.Encoder(self.settings.dischrg_rate).assetpoint())
-//                                self.bat.write(self.slot,MODE,MODE_DISCHARGE)
-//                            else:
-//                                self.test_state = TS_IDLE
-//        print('Test Completed: Batlab',self.bat.sn,', Channel',self.slot)
+        if (m_mode == MODE_STOPPED)
+        {
+            // self.log_lvl2("PRECHARGE") TODO
+            m_test_state = TS_CHARGEREST;
+            m_rest_time = std::time(nullptr);
+            // We should rarely hit this condition - it means you don't want to make any testing cycles, just charge up and stop, or charge up and equalize
+            if (m_current_cycle >= (playlist().getNumWarmupCycles() + playlist().getNumMeasurementCycles()))
+            {
+                if (playlist().getStorageDischarge())
+                {
+                    m_test_state = TS_POSTDISCHARGE;
+                    packets.append(BatlabPacket(info.slot, CURRENT_SETPOINT, Encoder(playlist().getDischargeRate()).asSetpoint()));
+                    packets.append(BatlabPacket(info.slot, MODE, MODE_DISCHARGE));
+                }
+                else
+                {
+                    m_test_state = TS_IDLE;
+//                    completeTest(); TODO
+                }
+            }
+        }
     }
     else if (m_test_state == TS_CHARGEREST)
     {
+//        if (std::time(nullptr) )
 //        if (datetime.datetime.now() - self.rest_time).total_seconds() > self.settings.rest_time:
 //                        self.log_lvl2("CHARGEREST")
 //                        self.test_state = TS_DISCHARGE
@@ -374,8 +375,6 @@ void Channel::handleStartTestResponse(QVector<BatlabPacket> response)
 
     // Control variables for trickle charge/discharge at voltage limits
     m_trickle_engaged = false;
-
-    stateMachine();
 }
 
 void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response)
@@ -383,8 +382,9 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response)
     int responseCounter = 0;
 
     m_mode = static_cast<ChannelMode>(response[responseCounter++].getValue());
+    m_current_setpoint = response[responseCounter++].getValue();
 
-    if (response.length() == 1) { return; }
+    if (response.length() == 2) { return; }
 
     float voltage = response[responseCounter++].asVoltage();
     float current = response[responseCounter++].asCurrent();
@@ -501,6 +501,7 @@ void Channel::periodicCheck()
 
     QVector<BatlabPacket> checkPackets;
     checkPackets.append(BatlabPacket(info.slot, cellNamespace::MODE));
+    checkPackets.append(BatlabPacket(info.slot, cellNamespace::CURRENT_SETPOINT));
 
     if (m_test_state != TS_IDLE)
     {
