@@ -17,7 +17,7 @@ public:
     explicit BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion, QFrame *parent = nullptr);
 
 signals:
-    void firmwareUpdateRequested(int serial, QString firmwareVersion);
+    void firmwareUpdateRequested(int serial, QString firmwareVersion, QString previousFirmwareVersion);
 
 public slots:
     void updateFirmware();

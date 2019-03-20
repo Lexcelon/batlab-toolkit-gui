@@ -72,6 +72,18 @@ public:
     QString getPlaylistSaveFilename();
     bool setCellNames(QVector<QString> names);
     QVector<QString> getCellNames();
+
+    bool getEnableConstantVoltage() { return playlistBatlabSettings.enableConstantVoltage; }  // TODO add trickle, constant voltage, pulse to UI and to file read/write and checks
+    void setEnableConstantVoltage(bool b) { playlistBatlabSettings.enableConstantVoltage = b; }
+    double getConstantVoltageSensitivity() { return playlistBatlabSettings.constantVoltageSensitivity; }
+
+    bool getEnablePulse() { return playlistBatlabSettings.enablePulse; }
+    void setEnablePulse(bool b) { playlistBatlabSettings.enablePulse = b; }
+
+    bool getEnableTrickle() { return playlistBatlabSettings.enableTrickle; }
+    void setEnableTrickle(bool b) { playlistBatlabSettings.enableTrickle = b; }
+    double getTrickleChargeEngageLimit() { return playlistBatlabSettings.trickleChargeEngageLimit; }
+    double getTrickleChargeRate() { return playlistBatlabSettings.trickleChargeRate; }
     
 private:
     QString cellPlaylistName;
@@ -231,12 +243,12 @@ private:
 #define REST_PERIOD_MAX                                     3600.0
 
 // Unit: Boolean
-//#define ENABLE_TRICKLE_FIELDSTR                             "enableTrickle"
-//#define ENABLE_TRICKLE_DEFAULT                              false
+#define ENABLE_TRICKLE_FIELDSTR                             "enableTrickle"
+#define ENABLE_TRICKLE_DEFAULT                              false
 
 // Unit: Boolean
-//#define ENABLE_PULSE_FIELDSTR                               "enablePulse"
-//#define ENABLE_PULSE_DEFAULT                                false
+#define ENABLE_PULSE_FIELDSTR                               "enablePulse"
+#define ENABLE_PULSE_DEFAULT                                false
 
 // Unit: Boolean
 #define INDIVIDUAL_CELL_LOGS_FIELDSTR                       "individualCellLogs"
@@ -250,5 +262,7 @@ private:
 #define PLAYLIST_SAVE_FILENAME_FIELDSTR                     "playlistSaveFilename"
 
 #define BATLAB_SETTINGS_FIELDSTR                            "batlabSettings"
+
+#define ENABLE_CONSTANT_VOLTAGE_FIELDSTR                    "enableConstantVoltage"
 
 #endif // CELLPLAYLIST_H

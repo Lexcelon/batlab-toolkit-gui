@@ -84,7 +84,6 @@ enum unitNamespace {
 };
 
 #define WATCHDOG_TIMER_RESET    255
-#define SET_WATCHDOG_TIMER      0x0004
 
 enum bootloaderNamespace
 {
@@ -146,8 +145,10 @@ struct cellResultsStatusInfo {
 
     bool hasSomeResults;
     bool hasCompleteResults;
+
     bool testInProgress;
     int batlabSerial;
+    int channel;
 
     float capacity;
     float capacityRange;
@@ -169,6 +170,24 @@ struct batlabSettings {
     double dischargeRate;
     double sineWaveFrequency;
     int sineWaveMagnitude;
+
+    bool enableConstantVoltage;
+    double constantVoltageSensitivity;
+    int constantVoltageStepSize;
+
+    bool enableTrickle;
+    double trickleDischargeEngageLimit;
+    double trickleChargeEngageLimit;
+    double trickleChargeRate;
+    double trickleDischargeRate;
+
+    bool enablePulse;
+    double pulseDischargeOffTime;
+    double pulseDischargeOnTime;
+    double pulseChargeOffTime;
+    double pulseChargeOnTime;
+    double pulseChargeOffRate;
+    double pulseDischargeOffRate;
 };
 
 #define DEFAULT_WRITE_TIMEOUT           500
@@ -225,19 +244,40 @@ namespace BatlabLib
 #define ERR_BACKWARDS          0x0040
 #define ERR_NO_CELL            0x0080
 #define ERR_NO_PSU             0x0100
+// ERR_LIST = ['ERR_VOLTAGE_LIMIT_CHG','ERR_VOLTAGE_LIMIT_DCHG','ERR_CURRENT_LIMIT_CHG','ERR_CURRENT_LIMIT_DCHG','ERR_TEMP_LIMIT_CHG','ERR_TEMP_LIMIT_DCHG','ERR_BACKWARDS','ERR_NO_CELL','ERR_NO_PSU','','','ERR_LOW_VCC']
 
 #define SET_TRIM_OUTPUT        0x0001
 #define SET_VCC_COMPENSATION   0x0002
+#define SET_WATCHDOG_TIMER     0x0004
+#define SET_CH0_HI_RES         0x0010
+#define SET_NO_PSU_DCHG_ENABLE 0x0008
 #define SET_DEBUG              0x8000
 
 //Mode register codes
-#define MODE_NO_CELL           0x0000
-#define MODE_BACKWARDS         0x0001
-#define MODE_IDLE              0x0002
-#define MODE_CHARGE            0x0003
-#define MODE_DISCHARGE         0x0004
-#define MODE_IMPEDANCE         0x0005
-#define MODE_STOPPED           0x0006
+enum ChannelMode
+{
+    MODE_NO_CELL = 0x0000,
+    MODE_BACKWARDS,
+    MODE_IDLE,
+    MODE_CHARGE,
+    MODE_DISCHARGE,
+    MODE_IMPEDANCE,
+    MODE_STOPPED
+};
+// MODE_LIST = ['MODE_NO_CELL','MODE_BACKWARDS','MODE_IDLE','MODE_CHARGE','MODE_DISCHARGE','MODE_IMPEDANCE','MODE_STOPPED']
+
+// Test states
+enum TestState
+{
+    TS_IDLE = 0x0000,
+    TS_CHARGE,
+    TS_PRECHARGE,
+    TS_DISCHARGE,
+    TS_CHARGEREST,
+    TS_DISCHARGEREST,
+    TS_POSTDISCHARGE
+};
+// l_test_state= ["IDLE","CHARGE","PRECHARGE","DISCHARGE","CHARGEREST","DISCHARGEREST","POSTDISCHARGE"]
 
 // Firmware
 #define FIRMWARE_FILE_SIZE         15360

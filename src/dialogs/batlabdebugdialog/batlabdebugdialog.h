@@ -7,8 +7,6 @@
 #include "batlabcore/batlab.h"
 #include "components/hexspinbox.h"
 
-// TODO review this implementation
-
 namespace Ui {
 class debugDialog;
 }
@@ -32,7 +30,7 @@ public slots:
 signals:
     void registerReadRequested(int serialNumber, int name_space, int address);
     void registerWriteRequested(int serialNumber, int name_space, int address, int value);
-    void firmwareFlashRequested(int serialNumber, QString firmwareVersion);
+    void firmwareFlashRequested(int serialNumber, QString firmwareVersion, QString previousFirmwareVersion);
 
 private:
     Ui::debugDialog *ui;

@@ -14,23 +14,23 @@ public:
     explicit BatlabPacket(int batlabNamespace, int batlabRegister, uchar payloadLowByte, uchar payloadHighByte);  // Write packet
 
     quint16 getValue();
-    void setValue(quint16 value);
+    BatlabPacket setValue(quint16 value);
 
     uchar getStartByte();
-    void setStartByte(uchar startByte);
+    BatlabPacket setStartByte(uchar startByte);
     uchar getNamespace();
-    void setNamespace(uchar ns);
+    BatlabPacket setNamespace(uchar ns);
     uchar getAddress();
-    void setAddress(uchar address);
+    BatlabPacket setAddress(uchar address);
     uchar getPayloadLowByte();
-    void setPayloadLowByte(uchar lowByte);
+    BatlabPacket setPayloadLowByte(uchar lowByte);
     uchar getPayloadHighByte();
-    void setPayloadHighByte(uchar highByte);
+    BatlabPacket setPayloadHighByte(uchar highByte);
     int getWriteTimeout_ms();
-    void setWriteTimeout_ms(int writeTimeout_ms);
+    BatlabPacket setWriteTimeout_ms(int writeTimeout_ms);
     int getReadTimeout_ms();
     int getSleepAfterTransaction_ms();
-    void setSleepAfterTransaction_ms(int ms);
+    BatlabPacket setSleepAfterTransaction_ms(int ms);
     bool getReadVerify();
     int getRetries();
 
@@ -42,7 +42,9 @@ public:
     float asMagdiv();
     QString asMode();
     QString asErr();
+    float asTemperatureF(int Rdiv, int B);
     float asTemperatureF(QVector<int> RList, QVector<int> BList);
+    float asTemperatureC(int Rdiv, int B);
     float asTemperatureC(QVector<int> RList, QVector<int> BList);
     float asCurrent();
 

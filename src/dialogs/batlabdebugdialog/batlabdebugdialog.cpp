@@ -7,8 +7,6 @@ BatlabDebugDialog::BatlabDebugDialog(QWidget *parent, QVector<batlabStatusInfo> 
 {
     ui->setupUi(this);
 
-    // TODO and use qint16 and qint8 instead of int
-
     QLabel* registerReadNamespaceLabel = new QLabel(tr("Namespace:"));
     registerReadNamespaceSpinbox = new HexSpinBox(true);
     registerReadNamespaceSpinbox->setMaximum(0xFF);
@@ -107,6 +105,6 @@ void BatlabDebugDialog::processRegisterWriteClick() {
 
 void BatlabDebugDialog::processFirmwareFlashClick()
 {
-    emit firmwareFlashRequested(ui->selectBatlabComboBox->currentText().toInt(), flashFirmwareComboBox->currentText());
+    emit firmwareFlashRequested(ui->selectBatlabComboBox->currentText().toInt(), flashFirmwareComboBox->currentText(), "the existing version");
     done(QDialog::Accepted);  // Firmware flashing makes things goofy so it is best that they reopen this dialog if they want later
 }

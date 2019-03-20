@@ -16,6 +16,7 @@
 #include "batlablib.h"
 #include "channel.h"
 #include "batlabcommsmanager.h"
+#include "cellplaylist.h"
 
 class Batlab : public QObject
 {
@@ -25,6 +26,7 @@ public:
     ~Batlab();
 
     void setAllIdle();
+    bool testsInProgress();
 
 signals:
     void batlabDisconnected(QString);
@@ -33,6 +35,8 @@ signals:
     void error(const QString &s);
 
 public slots:
+    void sendPacketBundle(batlabPacketBundle bundle);
+
     void registerRead(int ns, int address);
     void handleRegisterReadResponse(QVector<BatlabPacket> response);
     void registerWrite(int ns, int address, int value);
@@ -43,7 +47,7 @@ public slots:
     void updateFirmwareFlashProgress(int packetsRemaining);
 
     QString getPortName() { return m_info.portName; }
-    int getSerialNumber() { return m_info.serialNumberRegister; }
+    int getSerialNumber() { return m_info.serialNumberComplete; }
     bool getExternalPowerConnected() { return m_info.externalPowerConnected; }
     int getFirmwareVersion() { return m_info.firmwareVersion; }
     batlabStatusInfo getInfo();
@@ -55,6 +59,7 @@ public slots:
     void handlePeriodicCheckResponse(QVector<BatlabPacket> response);
 
     bool hasReceivedValidResponse();
+    bool inBootloader();
 
     void verifyBatlabDevice();
     void handleVerifyBatlabDeviceResponse(QVector<BatlabPacket> response);
@@ -63,6 +68,10 @@ public slots:
     void handleInitBatlabDeviceResponse(QVector<BatlabPacket> response);
 
     void setWatchdogTimer();
+
+    Channel *getChannel(int slot);
+
+    CellPlaylist playlist();
 
 private slots:
 

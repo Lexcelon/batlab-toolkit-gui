@@ -67,36 +67,37 @@ void BatlabPacket::debug()
 }
 
 uchar BatlabPacket::getStartByte() { return m_startByte; }
-void BatlabPacket::setStartByte(uchar startByte) { m_startByte = startByte; }
+BatlabPacket BatlabPacket::setStartByte(uchar startByte) { m_startByte = startByte; return *this; }
 
 uchar BatlabPacket::getNamespace() { return m_nameSpace; }
-void BatlabPacket::setNamespace(uchar ns) { m_nameSpace = ns; }
+BatlabPacket BatlabPacket::setNamespace(uchar ns) { m_nameSpace = ns; return *this; }
 
 uchar BatlabPacket::getAddress() { return m_address; }
-void BatlabPacket::setAddress(uchar address) { m_address = address; }
+BatlabPacket BatlabPacket::setAddress(uchar address) { m_address = address; return *this; }
 
 uchar BatlabPacket::getPayloadLowByte() { return m_payloadLowByte; }
-void BatlabPacket::setPayloadLowByte(uchar lowByte) { m_payloadLowByte = lowByte; }
+BatlabPacket BatlabPacket::setPayloadLowByte(uchar lowByte) { m_payloadLowByte = lowByte; return *this; }
 
 uchar BatlabPacket::getPayloadHighByte() { return m_payloadHighByte; }
-void BatlabPacket::setPayloadHighByte(uchar highByte) { m_payloadHighByte = highByte; }
+BatlabPacket BatlabPacket::setPayloadHighByte(uchar highByte) { m_payloadHighByte = highByte; return *this; }
 
 int BatlabPacket::getWriteTimeout_ms() { return m_writeTimeout_ms; }
-void BatlabPacket::setWriteTimeout_ms(int writeTimeout_ms) { m_writeTimeout_ms = writeTimeout_ms; }
+BatlabPacket BatlabPacket::setWriteTimeout_ms(int writeTimeout_ms) { m_writeTimeout_ms = writeTimeout_ms; return *this; }
 
 int BatlabPacket::getReadTimeout_ms() { return m_readTimeout_ms; }
 int BatlabPacket::getSleepAfterTransaction_ms() { return m_sleepAfterTransaction_ms; }
 
-void BatlabPacket::setSleepAfterTransaction_ms(int ms) { m_sleepAfterTransaction_ms = ms; }
+BatlabPacket BatlabPacket::setSleepAfterTransaction_ms(int ms) { m_sleepAfterTransaction_ms = ms; return *this; }
 bool BatlabPacket::getReadVerify() { return m_readVerify; }
 
 int BatlabPacket::getRetries() { return m_retries; }
 
 quint16 BatlabPacket::getValue() { return m_payloadLowByte + m_payloadHighByte*256; }
-void BatlabPacket::setValue(quint16 value)
+BatlabPacket BatlabPacket::setValue(quint16 value)
 {
     m_payloadHighByte = value >> 8;
     m_payloadLowByte = value & 0xFF;
+    return *this;
 }
 
 // Represents voltage data as a floating point voltage
@@ -167,14 +168,17 @@ QString BatlabPacket::asErr()
 // Blist: 4 list of 'B' calibration values needed to interpret temp
 float BatlabPacket::asTemperatureF(QVector<int> RList, QVector<int> BList)
 {
+    return asTemperatureF(RList[static_cast<int>(getNamespace())], BList[static_cast<int>(getNamespace())]);
+}
+
+float BatlabPacket::asTemperatureF(int Rdiv, int B)
+{
     float T;
     try
     {
-        int Rdiv = RList[static_cast<int>(getNamespace())];
         float R = Rdiv / ((powf(2, 15) / getValue()) - 1);
         float To = 25 + 273.15f;
         float Ro = 10000;
-        int B = BList[static_cast<int>(getNamespace())];  // 3380
         float Tinv = (1 / To) + (log(R / Ro) / B);
         T = (1 / Tinv) - 273.15f;
         T = (T * 1.8f) + 32;
@@ -191,14 +195,17 @@ float BatlabPacket::asTemperatureF(QVector<int> RList, QVector<int> BList)
 // Blist: 4 list of 'B' calibration values needed to interpret temp
 float BatlabPacket::asTemperatureC(QVector<int> RList, QVector<int> BList)
 {
+    return asTemperatureC(RList[static_cast<int>(getNamespace())], BList[static_cast<int>(getNamespace())]);
+}
+
+float BatlabPacket::asTemperatureC(int Rdiv, int B)
+{
     float T;
     try
     {
-        int Rdiv = RList[static_cast<int>(getNamespace())];
         float R = Rdiv / ((powf(2, 15) / getValue()) - 1);
         float To = 25 + 273.15f;
         float Ro = 10000;
-        int B = BList[static_cast<int>(getNamespace())];  // 3380
         float Tinv = (1 / To) + (log(R / Ro) / B);
         T = (1 / Tinv) - 273.15f;
     }

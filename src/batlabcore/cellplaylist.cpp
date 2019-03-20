@@ -30,6 +30,24 @@ CellPlaylist::CellPlaylist()
     playlistBatlabSettings.dischargeRate = DISCHARGE_RATE_DEFAULT;
     playlistBatlabSettings.sineWaveFrequency = SINE_WAVE_FREQUENCY_DEFAULT;
     playlistBatlabSettings.sineWaveMagnitude = SINE_WAVE_MAGNITUDE_DEFAULT;
+
+    playlistBatlabSettings.enableConstantVoltage = false;
+    playlistBatlabSettings.constantVoltageStepSize = 8;
+    playlistBatlabSettings.constantVoltageSensitivity = 1;
+
+    playlistBatlabSettings.enableTrickle = false;
+    playlistBatlabSettings.trickleDischargeEngageLimit = 4.1;
+    playlistBatlabSettings.trickleChargeEngageLimit = 2.8;
+    playlistBatlabSettings.trickleChargeRate = 0.5;
+    playlistBatlabSettings.trickleDischargeRate = 0.5;
+
+    playlistBatlabSettings.enablePulse = false;
+    playlistBatlabSettings.pulseDischargeOffTime = 10;
+    playlistBatlabSettings.pulseDischargeOnTime = 60;
+    playlistBatlabSettings.pulseChargeOffTime = 10;
+    playlistBatlabSettings.pulseChargeOnTime = 60;
+    playlistBatlabSettings.pulseChargeOffRate = 0;
+    playlistBatlabSettings.pulseDischargeOffRate = 0;
 }
 
 bool CellPlaylist::write(QString filename)
@@ -83,6 +101,8 @@ bool CellPlaylist::write(QString filename)
 
     playlistJson[PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR] = playlistOutputDirectory;
     playlistJson[PLAYLIST_SAVE_FILENAME_FIELDSTR] = playlistSaveFilename;
+
+    batlabSettingsJson[ENABLE_CONSTANT_VOLTAGE_FIELDSTR] = playlistBatlabSettings.enableConstantVoltage;
 
     playlistJson[BATLAB_SETTINGS_FIELDSTR] = batlabSettingsJson;
 
@@ -152,6 +172,7 @@ bool CellPlaylist::load(QString filename)
     if(jsonObject.contains(IMPEDANCE_REPORTING_PERIOD_FIELDSTR)) { setImpedanceReportingPeriod(jsonObject[IMPEDANCE_REPORTING_PERIOD_FIELDSTR].toDouble()); }
     if(batlabSettingsJsonObject.contains(SINE_WAVE_FREQUENCY_FIELDSTR)) { setSineWaveFrequency(batlabSettingsJsonObject[SINE_WAVE_FREQUENCY_FIELDSTR].toDouble()); }
     if(batlabSettingsJsonObject.contains(SINE_WAVE_MAGNITUDE_FIELDSTR)) { setSineWaveMagnitude(batlabSettingsJsonObject[SINE_WAVE_MAGNITUDE_FIELDSTR].toInt()); }
+    if(batlabSettingsJsonObject.contains(ENABLE_CONSTANT_VOLTAGE_FIELDSTR)) { setEnableConstantVoltage(batlabSettingsJsonObject[ENABLE_CONSTANT_VOLTAGE_FIELDSTR].toBool()); }
     if(jsonObject.contains(INDIVIDUAL_CELL_LOGS_FIELDSTR)) { setIndividualCellLogs(jsonObject[INDIVIDUAL_CELL_LOGS_FIELDSTR].toBool()); }
     if(jsonObject.contains(CELL_LOG_TIMESTAMPS_FIELDSTR)) { setCellLogTimestamps(jsonObject[CELL_LOG_TIMESTAMPS_FIELDSTR].toBool()); }
     if(jsonObject.contains(PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR)) { setPlaylistOutputDirectory(jsonObject[PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR].toString()); }

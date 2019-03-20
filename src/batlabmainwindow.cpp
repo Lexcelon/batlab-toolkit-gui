@@ -21,6 +21,7 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) :
     connect(batlabManager, &BatlabManager::cellPlaylistLoaded, this, &BatlabMainWindow::displayLoadedCellPlaylist);
     connect(batlabManager, &BatlabManager::cellResultsUpdated, this, &BatlabMainWindow::redrawResultsInfo);
     connect(batlabManager, &BatlabManager::error, this, &BatlabMainWindow::showError);
+    connect(batlabManager, &BatlabManager::notify, this, &BatlabMainWindow::showNotification);
 
     // Setup the UI
     initializeMainWindowUI();
@@ -299,7 +300,7 @@ void BatlabMainWindow::redrawBatlabInfo(QVector<batlabStatusInfo> infos, int lat
     for (int i = 0; i < infos.size(); i++) {
         BatlabWidget *batlabWidget = new BatlabWidget(infos[i], latestFirmwareVersion);
         batlabsTabLayout->addWidget(batlabWidget);
-        connect(batlabWidget, &BatlabWidget::firmwareUpdateRequested, batlabManager, &BatlabManager::processFirmwareFlashRequest);
+        connect(batlabWidget, &BatlabWidget::firmwareUpdateRequested, this, &BatlabMainWindow::processFirmwareFlashRequest);
     }
 
     batlabsTabLayout->addStretch();
@@ -660,8 +661,20 @@ void BatlabMainWindow::processRegisterWriteRequest(int serial, int ns, int addre
     batlabManager->processRegisterWriteRequest(serial, ns, address, value);
 }
 
-void BatlabMainWindow::processFirmwareFlashRequest(int serial, QString firmwareVersion)
+void BatlabMainWindow::processFirmwareFlashRequest(int serial, QString firmwareVersion, QString previousFirmwareVersion)
 {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this,
+                                  "Firmware Update",
+                                  tr("The firmware on Batlab %1 will be updated from %2 to %3.\n\n"
+                                     "Please do not disconnect your Batlab during the update. "
+                                     "This process can take a few minutes.")
+                                  .arg(serial)
+                                  .arg(previousFirmwareVersion)
+                                  .arg(firmwareVersion),
+                                  QMessageBox::Ok | QMessageBox::Cancel);
+    if (reply == QMessageBox::Cancel) { return; }
+
     mainStackedWidget->setCurrentWidget(batlabsTabWidget);
     cellPlaylistButton->setEnabled(true);
     batlabsButton->setEnabled(false);
@@ -673,4 +686,9 @@ void BatlabMainWindow::processFirmwareFlashRequest(int serial, QString firmwareV
 void BatlabMainWindow::showError(QString e)
 {
     QMessageBox::warning(this, "Error", e);
+}
+
+void BatlabMainWindow::showNotification(QString title, QString text)
+{
+    QMessageBox::information(this, title, text);
 }
