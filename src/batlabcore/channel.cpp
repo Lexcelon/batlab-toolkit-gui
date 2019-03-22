@@ -64,6 +64,13 @@ void Channel::startTimer() {
 void Channel::handleSerialResponseBundleReady(batlabPacketBundle bundle) {
   if (bundle.callback == "handleChannelPeriodicCheckResponse") {
     handlePeriodicCheckResponse(bundle.packets);
+  } else if (bundle.callback == "handleCurrentCompensateResponse") {
+    handleCurrentCompensateResponse();
+  } else if (bundle.callback == "handleStartTestResponse") {
+    handleStartTestResponse(bundle.packets);
+  } else {
+    qWarning() << tr("%1 not implemented in Channel implementation")
+                      .arg(bundle.callback);
   }
 }
 
@@ -157,8 +164,6 @@ void Channel::stateMachine() {
           static_cast<float>(playlist().getConstantVoltageSensitivity());
       // LEFT OFF figure out why getting 2 response packets when
       // expecting 1 when charging
-
-      // LEFT OFF current compensation in channel
 
       // If voltage is getting close to the cutoff point and current is flowing
       // at greater than a trickle
@@ -489,11 +494,26 @@ void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
   m_trickle_engaged = false;
 }
 
+void Channel::currentCompensate(quint16 op_raw, quint16 sp_raw) {
+  m_sp_raw = sp_raw;
+  QVector<BatlabPacket> packets;
+  packets.append(BatlabPacket(info.slot, CURRENT_SETPOINT, op_raw));
+  batlabPacketBundle packetBundle;
+  packetBundle.packets = packets;
+  packetBundle.callback = "handleCurrentCompensateResponse";
+  packetBundle.channel = info.slot;
+  batlab()->sendPacketBundle(packetBundle);
+}
+
+void Channel::handleCurrentCompensateResponse() {
+  m_current_setpoint = m_sp_raw;
+}
+
 void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   int responseCounter = 0;
 
   m_mode = static_cast<ChannelMode>(response[responseCounter++].getValue());
-  m_current_setpoint = response[responseCounter++].getValue();
+  auto p = response[responseCounter++];
 
   if (response.length() == 2) {
     return;
@@ -503,6 +523,39 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   float current = response[responseCounter++].asCurrent();
   float temperature = response[responseCounter++].asTemperatureC(
       info.tempCalibR, info.tempCalibB);
+
+  // Patch for current compensation problem in firmware versions <= 3.
+  // Fix is to move the current compensation control loop to software and turn
+  // it off in hardware.
+  auto op_raw = p.getValue();       // Actual operating point
+  auto sp_raw = m_current_setpoint; // Current setpoint
+  auto sp = sp_raw / 128.0;
+  if (m_mode == MODE_CHARGE || m_mode == MODE_DISCHARGE) {
+    if (current > 0 && (sp >= 0.35 || current < 0.37f)) {
+      if (current < (static_cast<float>(sp) - 0.01f)) {
+        op_raw++;
+      } else if (current > (static_cast<float>(sp) + 0.01f)) {
+        op_raw--;
+      }
+    }
+    if (current > 4.02f) {
+      op_raw--;
+    }
+    if (sp > 4.5) {
+      op_raw = 575;
+    }
+    if (op_raw < playlist().getConstantVoltageStepSize() &&
+        sp_raw > 0) { // Make sure that some amount of trickle current is
+                      // flowing even if our setpoint is close to 0
+      op_raw = static_cast<quint16>(playlist().getConstantVoltageStepSize());
+    }
+    if (op_raw > 575 &&
+        sp_raw <= 575) { // If for some reason we read a garbage op_raw, then
+                         // don't make that our new setpoint
+      op_raw = sp_raw;
+    }
+    currentCompensate(op_raw, sp_raw);
+  }
 
   float charge;
   auto set = response[responseCounter++].getValue();

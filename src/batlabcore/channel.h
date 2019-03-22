@@ -66,6 +66,8 @@ private:
 
   int m_current_cycle;
 
+  quint16 m_sp_raw;
+
   std::chrono::time_point<std::chrono::system_clock> m_pulse_discharge_on_time;
   std::chrono::time_point<std::chrono::system_clock> m_pulse_discharge_off_time;
   std::chrono::time_point<std::chrono::system_clock> m_pulse_charge_on_time;
@@ -79,6 +81,9 @@ private:
   void handleStartTestResponse(QVector<BatlabPacket> response);
   void stateMachine();
   void startTimer();
+
+  void currentCompensate(quint16 op_raw, quint16 sp_raw);
+  void handleCurrentCompensateResponse();
 
   Batlab *batlab();
   CellPlaylist playlist();

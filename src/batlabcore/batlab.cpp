@@ -188,7 +188,9 @@ void Batlab::handleInitBatlabDeviceResponse(QVector<BatlabPacket> response) {
   for (int i = 0; i < 4; i++) {
     m_channels[i]->info.tempCalibB = response[responseCounter++].getValue();
   }
-  responseCounter += 4; // Skip current setpoint (presently unused)
+  for (int i = 0; i < 4; i++) {
+    m_channels[i]->setInternalSetpoint(response[responseCounter++].getValue());
+  }
   m_info.serialNumberRegister =
       static_cast<qint16>(response[responseCounter++].getValue());
   m_info.deviceIdRegister =
