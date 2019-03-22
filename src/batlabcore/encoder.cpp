@@ -43,7 +43,7 @@ uint16_t Encoder::asCurrent()
 
 uint16_t Encoder::asChargeL()
 {
-    return static_cast<uint16_t>(static_cast<uint32_t>((m_data * 9.765625 / 4.096 / 6) * pow(2, 15)) & 0xFF);
+    return static_cast<uint16_t>(static_cast<uint32_t>((m_data * 9.765625 / 4.096 / 6) * pow(2, 15)) & 0xFFFF);
 }
 
 uint16_t Encoder::asChargeH()
