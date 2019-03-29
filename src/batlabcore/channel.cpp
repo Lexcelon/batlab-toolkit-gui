@@ -68,6 +68,8 @@ void Channel::handleSerialResponseBundleReady(batlabPacketBundle bundle) {
     handleCurrentCompensateResponse();
   } else if (bundle.callback == "handleStartTestResponse") {
     handleStartTestResponse(bundle.packets);
+  } else if (bundle.callback == "handleStateMachineResponse") {
+    // No need to do anything
   } else {
     qWarning() << tr("%1 not implemented in Channel implementation")
                       .arg(bundle.callback);
@@ -162,9 +164,6 @@ void Channel::stateMachine() {
       std_impedance =
           std_impedance *
           static_cast<float>(playlist().getConstantVoltageSensitivity());
-      // LEFT OFF figure out why getting 2 response packets when
-      // expecting 1 when charging
-
       // If voltage is getting close to the cutoff point and current is flowing
       // at greater than a trickle
       if (m_voltage_prev >

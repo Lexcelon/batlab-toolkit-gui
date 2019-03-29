@@ -8,6 +8,7 @@ BatlabCommsManager::BatlabCommsManager(QString portName, QObject *parent)
   m_serialWaiting = false;
   m_readWriteTimer.setSingleShot(true);
   m_sleepAfterTransactionTimer.setSingleShot(true);
+  m_currentPacket = BatlabPacket();
   m_retries = 0;
 
   if (!m_serialPort->open(QIODevice::ReadWrite)) {
@@ -42,8 +43,10 @@ void BatlabCommsManager::debug() {
 BatlabCommsManager::~BatlabCommsManager() { delete m_serialPort; }
 
 void BatlabCommsManager::sendPacketBundle(batlabPacketBundle bundle) {
-  m_packetBundleQueue.append(bundle);
-  processSerialQueue();
+  if (bundle.packets.size() > 0) {
+    m_packetBundleQueue.append(bundle);
+    processSerialQueue();
+  }
 }
 
 void BatlabCommsManager::processSerialQueue() {
@@ -59,6 +62,7 @@ void BatlabCommsManager::processSerialQueue() {
       if (m_currentResponseBundle.packets.size() == m_currentPacketBundleSize) {
         batlabPacketBundle emitBundle = m_currentResponseBundle;
         m_currentResponseBundle.packets.clear();
+        m_currentPacket = BatlabPacket();
         emit responseBundleReady(emitBundle);
       } else {
         qWarning() << tr("Expected %1 response packets on port %2 but received "
@@ -91,11 +95,13 @@ void BatlabCommsManager::fail() {
   batlabPacketBundle emitBundle = m_currentResponseBundle;
   m_currentPacketBundle.packets.clear();
   m_currentResponseBundle.packets.clear();
+  m_currentPacketBundleSize = 0;
   m_serialWaiting = false;
   m_readWriteTimer.stop();
   m_sleepAfterTransactionTimer.stop();
   m_responseData.clear();
   m_retries = 0;
+  m_currentPacket = BatlabPacket();
   emit packetBundleSendFailed(emitBundle);
 }
 
@@ -182,11 +188,11 @@ void BatlabCommsManager::handleReadyRead() {
     // Read the stuff
     BatlabPacket responsePacket = m_currentPacket;
 
-    responsePacket.setStartByte(m_responseData[0]);
-    responsePacket.setNamespace(m_responseData[1]);
-    responsePacket.setAddress(m_responseData[2]);
-    responsePacket.setPayloadLowByte(m_responseData[3]);
-    responsePacket.setPayloadHighByte(m_responseData[4]);
+    responsePacket.setStartByte(static_cast<uchar>(m_responseData[0]));
+    responsePacket.setNamespace(static_cast<uchar>(m_responseData[1]));
+    responsePacket.setAddress(static_cast<uchar>(m_responseData[2]));
+    responsePacket.setPayloadLowByte(static_cast<uchar>(m_responseData[3]));
+    responsePacket.setPayloadHighByte(static_cast<uchar>(m_responseData[4]));
 
     if (responsePacket.getStartByte() != m_currentPacket.getStartByte() ||
         responsePacket.getNamespace() != m_currentPacket.getNamespace() ||
@@ -195,14 +201,13 @@ void BatlabCommsManager::handleReadyRead() {
                        "attempt %1 of %2.")
                         .arg(m_retries)
                         .arg(DEFAULT_SERIAL_RETRIES);
-      responsePacket.debug();
-      m_currentPacket.debug();
       attemptWriteCurrentPacket();
       return;
     }
 
     m_serialWaiting = false;
     m_responseData.clear();
+    m_currentPacket = BatlabPacket();
     m_currentResponseBundle.packets.append(responsePacket);
     m_retries = 0;
 
