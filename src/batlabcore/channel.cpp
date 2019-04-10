@@ -68,8 +68,12 @@ void Channel::handleSerialResponseBundleReady(batlabPacketBundle bundle) {
     handleCurrentCompensateResponse();
   } else if (bundle.callback == "handleStartTestResponse") {
     handleStartTestResponse(bundle.packets);
+  } else if (bundle.callback == "handleImpedanceResponse") {
+    handleImpedanceResponse(bundle.packets);
   } else if (bundle.callback == "handleStateMachineResponse") {
     // No need to do anything
+  } else if (bundle.callback == "handleSetModeResponse") {
+    handleSetModeResponse(bundle.packets);
   } else {
     qWarning() << tr("%1 not implemented in Channel implementation")
                       .arg(bundle.callback);
@@ -450,6 +454,7 @@ void Channel::stateMachine() {
 void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
   // Initialize the control variables
   m_start_time = std::chrono::system_clock::now();
+  m_last_lvl1_time = std::chrono::system_clock::now();
   m_last_lvl2_time = std::chrono::system_clock::now();
   m_last_impedance_time = std::chrono::system_clock::now();
   m_rest_time = std::chrono::system_clock::now();
@@ -633,32 +638,26 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   }
   m_delta_t = temperature - m_temperature0;
 
-  //      # log the results TODO
-  //      if (ts - self.last_lvl1_time).total_seconds() >
-  //      self.settings.reporting_period:
-  //          self.last_lvl1_time = datetime.datetime.now()
-  //          if (ts - self.last_impedance_time).total_seconds() >
-  //          self.settings.impedance_period and
-  //          self.settings.impedance_period > 0 and self.trickle_engaged ==
-  //          False:
-  //              z = self.bat.impedance(self.slot)
-  //              if math.isnan(z):
-  //                  z = self.zavg
-  //                  print("error in impedance measurement...using previous
-  //                  result")
-  //              self.last_impedance_time = datetime.datetime.now()
-  //              self.zcnt += 1
-  //              self.zavg += (z - self.zavg) / self.zcnt
-  //              logstr = str(self.name) + ',' + str(self.bat.sn) + ',' +
-  //              str(self.slot) + ',' + str(ts) + ',' +
-  //              '{:.4f}'.format(self.vprev) + ',' +
-  //              '{:.4f}'.format(self.iprev) + ',' + '{:.4f}'.format(t) + ','
-  //              +
-  //              '{:.4f}'.format(z) + ',' + '{:.4f}'.format(e) + ',' +
-  //              '{:.4f}'.format(q) + ',' + state + ',,,,,,,' + ',,' +
-  //              '{:.4f}'.format(self.vcc) + ',' + str(op_raw) + ',' +
-  //              str(sp_raw) + ',' + str(dty)
-  //          else:
+  if (std::chrono::duration_cast<std::chrono::seconds>(m_ts - m_last_lvl1_time)
+          .count() > playlist().getReportingPeriod()) {
+    m_last_lvl1_time = std::chrono::system_clock::now();
+    if (std::chrono::duration_cast<std::chrono::seconds>(m_ts -
+                                                         m_last_impedance_time)
+                .count() > playlist().getImpedanceReportingPeriod() &&
+        playlist().getImpedanceReportingPeriod() > 0 && !m_trickle_engaged) {
+    }
+    impedance();
+  }
+  QString logstr = "";
+  logstr +=
+      info.cellName + "," + QString::number(batlab()->getSerialNumber()) + ",";
+  logstr += QString::number(info.slot) + ",";
+  logstr += QDateTime::fromTime_t(
+                static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
+                .toString("MM/dd/yyyy hh:mm:ss AP") +
+            ",";
+  logstr += QString("%1").arg(static_cast<double>(voltage), 4) + ",";
+  logLvl1(logstr);
   //              logstr = str(self.name) + ',' + str(self.bat.sn) + ',' +
   //              str(self.slot) + ',' + str(ts) + ',' + '{:.4f}'.format(v) +
   //              ',' + '{:.4f}'.format(i) + ',' + '{:.4f}'.format(t) + ',,' +
@@ -675,6 +674,122 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
 
   // Run the test state machine - decides what to do next
   stateMachine();
+}
+
+void Channel::logLvl1(QString logstr) {
+  QDir resultsDir(playlist().getPlaylistOutputDirectory());
+  QFile cellFile(resultsDir.absoluteFilePath(playlist().getCellPlaylistName() +
+                                             "_" + info.cellName + ".csv"));
+  if (!resultsDir.exists()) {
+    resultsDir.mkpath(resultsDir.path());
+  }
+  if (!cellFile.exists()) {
+    if (!cellFile.open(QIODevice::WriteOnly)) {
+      qWarning() << "Unable to create cell results file";
+      return;
+    }
+    cellFile.write(QString("\"" + playlist().toJson().replace("\"", "\"\"") +
+                           "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
+                       .toUtf8());
+    cellFile.write(
+        "Cell Name,Batlab SN,Channel,Timestamp (s),Voltage (V),Current "
+        "(A),Temperature (C),Impedance (Ohm),Energy (J),Charge (Coulombs),Test "
+        "State,Test Type,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
+        "Impedance (Ohm),delta Temperature (C),Avg Current (A),Avg "
+        "Voltage,Runtime (s),VCC "
+        "(V),Capacity,CapacityRange,ColoumbicEfficiency,Impedance,AvgVoltage,"
+        "AvgCurrent\n");
+    cellFile.close();
+  }
+  if (!cellFile.open(QIODevice::Append)) {
+    qWarning() << "Unable to open cell results file";
+    return;
+  }
+  cellFile.write(logstr.toUtf8());
+}
+
+void Channel::logLvl2(QString type) {
+  // TODO
+}
+
+void Channel::logImpedance(QString logstr) {
+  // TODO
+}
+
+void Channel::handleLogLvl2Response(QVector<BatlabPacket> response) {
+  // TODO
+}
+
+void Channel::impedance() {
+  QVector<BatlabPacket> packets;
+
+  packets.append(BatlabPacket(info.slot, MODE).setSleepAfterTransaction_ms(10));
+  packets.append(BatlabPacket(info.slot, MODE, MODE_IMPEDANCE)
+                     .setSleepAfterTransaction_ms(2000));
+  packets.append(BatlabPacket(UNIT, unitNamespace::LOCK, LOCK_LOCKED));
+  packets.append(BatlabPacket(info.slot, CURRENT_PP));
+  packets.append(BatlabPacket(info.slot, VOLTAGE_PP));
+  packets.append(BatlabPacket(UNIT, unitNamespace::LOCK, LOCK_UNLOCKED));
+
+  batlabPacketBundle packetBundle;
+  packetBundle.packets = packets;
+  packetBundle.callback = "handleImpedanceResponse";
+  packetBundle.channel = info.slot;
+  batlab()->sendPacketBundle(packetBundle);
+}
+
+void Channel::handleImpedanceResponse(QVector<BatlabPacket> response) {
+  int responseCounter = 0;
+  auto mode = response[responseCounter++];
+  responseCounter++; // Write impedance mode
+  responseCounter++; // Lock
+  auto imag = response[responseCounter++].asCurrent();
+  auto vmag = response[responseCounter++].asVoltage();
+  responseCounter++; // Unlock
+
+  setMode(mode.getValue());
+
+  auto z = 0.0f;
+  if (std::isnan(imag) || std::isnan(vmag)) {
+    z = NAN;
+  } else if (imag < 0.000001f) {
+    z = 0;
+  } else {
+    z = vmag / imag;
+  }
+
+  if (std::isnan(z)) {
+    z = m_z_avg;
+    qWarning() << "Error in impedance measurement... using previous result";
+  }
+  m_last_impedance_time = std::chrono::system_clock::now();
+  m_z_count++;
+  m_z_avg = (z - m_z_avg) / m_z_count;
+  // TODO log impedance here
+}
+
+// Set the mode and then the response will check that it actually got set and
+// keep trying until it does
+void Channel::setMode(int mode) {
+  m_set_mode = mode;
+
+  QVector<BatlabPacket> packets;
+
+  packets.append(BatlabPacket(info.slot, MODE, static_cast<uint16_t>(mode))
+                     .setSleepAfterTransaction_ms(10));
+  packets.append(BatlabPacket(info.slot, MODE));
+
+  batlabPacketBundle packetBundle;
+  packetBundle.packets = packets;
+  packetBundle.callback = "handleSetModeResponse";
+  packetBundle.channel = info.slot;
+  batlab()->sendPacketBundle(packetBundle);
+}
+
+void Channel::handleSetModeResponse(QVector<BatlabPacket> response) {
+  if (response[1].asMode() != m_set_mode) {
+    setMode(m_set_mode);
+  }
 }
 
 void Channel::periodicCheck() {

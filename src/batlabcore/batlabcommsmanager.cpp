@@ -65,20 +65,29 @@ void BatlabCommsManager::processSerialQueue() {
         m_currentPacket = BatlabPacket();
         emit responseBundleReady(emitBundle);
       } else {
-        qWarning() << tr("Expected %1 response packets on port %2 but received "
-                         "%3 instead")
-                          .arg(m_currentPacketBundleSize)
-                          .arg(m_serialPort->portName())
-                          .arg(m_currentResponseBundle.packets.size());
-        for (auto packet : m_currentResponseBundle.packets) {
-          packet.debug();
-        }
-        fail();
+        //        qWarning() << tr("Expected %1 response packets on port %2 but
+        //        received "
+        //                         "%3 instead using %4 function")
+        //                          .arg(m_currentPacketBundleSize)
+        //                          .arg(m_serialPort->portName())
+        //                          .arg(m_currentResponseBundle.packets.size())
+        //                          .arg(m_currentPacketBundle.callback);
+        //        for (auto packet : m_currentPacketBundleCopy.packets) {
+        //          packet.debug();
+        //        }
+        //        for (auto packet : m_currentResponseBundle.packets) {
+        //          packet.debug();
+        //        }
+        //        fail();
+
+        // LEFT OFF go through response packets and match them to requested
+        // packets
       }
     }
     // If we have another bundle to deal with
     if (!m_packetBundleQueue.empty()) {
       m_currentPacketBundle = m_packetBundleQueue.dequeue();
+      m_currentPacketBundleCopy = m_currentPacketBundle;
       m_currentPacketBundleSize = m_currentPacketBundle.packets.size();
       m_currentResponseBundle.packets.clear();
       m_currentResponseBundle.callback = m_currentPacketBundle.callback;
@@ -182,7 +191,7 @@ void BatlabCommsManager::handleBytesWritten(qint64 bytes) {
 void BatlabCommsManager::handleReadyRead() {
   m_responseData.append(m_serialPort->readAll());
 
-  if (m_responseData.size() == 5) {
+  if (m_responseData.size() == 5 && m_serialWaiting == true) {
     m_readWriteTimer.stop();
 
     // Read the stuff

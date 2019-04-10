@@ -16,6 +16,7 @@ public:
 
   bool write(QString filename);
   bool load(QString filename);
+  QString toJson();
 
   bool setCellPlaylistName(QString str);
   QString getCellPlaylistName();
