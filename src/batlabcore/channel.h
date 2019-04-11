@@ -27,6 +27,7 @@ signals:
 public slots:
   void startTest();
   void abortTest();
+  void completeTest();
   void handleSerialResponseBundleReady(batlabPacketBundle bundle);
   void setInternalSetpoint(quint16 val) { m_current_setpoint = val; }
   void impedance();
@@ -36,7 +37,6 @@ public slots:
   void logLvl1(QString logstr);
   void logLvl2(QString type);
   void handleLogLvl2Response(QVector<BatlabPacket> response);
-  void logImpedance(QString logstr);
 
 private:
   QTimer *m_channelPeriodicCheckTimer;

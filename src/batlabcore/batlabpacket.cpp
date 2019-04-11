@@ -216,13 +216,18 @@ float BatlabPacket::asTemperatureC(int Rdiv, int B) {
 // Represents current measurement as float current in Amps
 float BatlabPacket::asCurrent() {
   if (std::isnan(static_cast<float>(getValue()))) {
+    qDebug() << "NAN";
     return NAN;
   }
   if (getValue() & 0x8000) // Voltage can be negative
   {
+    qDebug() << "negative";
     setValue(static_cast<quint16>(-0x10000 + getValue()));
   }
-  return getValue() * 4.096f / powf(2, 15);
+  float current = getValue() * 4.096f / powf(2, 15);
+  qDebug() << QString::number(getValue());
+  qDebug() << QString::number(current);
+  return current;
 }
 
 // def print_packet(self):
