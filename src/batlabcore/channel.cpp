@@ -657,20 +657,16 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
                 .toString("MM/dd/yyyy hh:mm:ss AP") +
             ",";
   logstr += QString("%1").arg(static_cast<double>(voltage), 4) + ",";
+  logstr += QString("%1").arg(static_cast<double>(current), 4) + ",";
+  logstr += QString("%1").arg(static_cast<double>(temperature), 4) + ",,";
+  logstr += QString("%1").arg(static_cast<double>(m_e), 4) + ",";
+  logstr += QString("%1").arg(static_cast<double>(charge), 4) + ",";
+  logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,";
+  logstr += QString("%1").arg(static_cast<double>(m_vcc), 4) + ",";
+  logstr += QString("%1").arg(op_raw) + ",";
+  logstr += QString("%1").arg(sp_raw) + ",";
+  logstr += QString("%1").arg(duty) + "\n";
   logLvl1(logstr);
-  //              logstr = str(self.name) + ',' + str(self.bat.sn) + ',' +
-  //              str(self.slot) + ',' + str(ts) + ',' + '{:.4f}'.format(v) +
-  //              ',' + '{:.4f}'.format(i) + ',' + '{:.4f}'.format(t) + ',,' +
-  //              '{:.4f}'.format(e) + ',' + '{:.4f}'.format(q) + ',' + state
-  //              +
-  //              ',,,,,,,' + ',,' + '{:.4f}'.format(self.vcc) + ',' +
-  //              str(op_raw) + ',' + str(sp_raw) + ',' + str(dty)
-
-  //          if self.settings.individual_cell_logs == 0:
-  //              self.bat.logger.log(logstr,self.settings.logfile)
-  //          else:
-  //              self.bat.logger.log(logstr,self.settings.cell_logfile +
-  //              self.name + '.csv')
 
   // Run the test state machine - decides what to do next
   stateMachine();

@@ -17,6 +17,8 @@
 
 #include "version.h"
 
+extern QVector<QString> L_TEST_STATE;
+
 enum batlabNamespaces {
   CHANNEL0 = 0x00,
   CHANNEL1 = 0x01,
@@ -279,8 +281,6 @@ enum TestState {
   TS_DISCHARGEREST,
   TS_POSTDISCHARGE
 };
-// l_test_state=
-// ["IDLE","CHARGE","PRECHARGE","DISCHARGE","CHARGEREST","DISCHARGEREST","POSTDISCHARGE"]
 
 // Firmware
 #define FIRMWARE_FILE_SIZE 15360
