@@ -1,11 +1,7 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
-#include "time.h"
 #include <ctime>
-#include <iomanip>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include <QObject>
 #include <QTimer>

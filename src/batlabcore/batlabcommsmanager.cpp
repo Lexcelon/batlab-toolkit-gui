@@ -65,23 +65,39 @@ void BatlabCommsManager::processSerialQueue() {
         m_currentPacket = BatlabPacket();
         emit responseBundleReady(emitBundle);
       } else {
-        //        qWarning() << tr("Expected %1 response packets on port %2 but
-        //        received "
-        //                         "%3 instead using %4 function")
-        //                          .arg(m_currentPacketBundleSize)
-        //                          .arg(m_serialPort->portName())
-        //                          .arg(m_currentResponseBundle.packets.size())
-        //                          .arg(m_currentPacketBundle.callback);
-        //        for (auto packet : m_currentPacketBundleCopy.packets) {
-        //          packet.debug();
-        //        }
-        //        for (auto packet : m_currentResponseBundle.packets) {
-        //          packet.debug();
-        //        }
-        //        fail();
-
-        // LEFT OFF go through response packets and match them to requested
-        // packets
+        int responsePacketIdx = 0;
+        for (int expectedPacketIdx = 0;
+             expectedPacketIdx < m_currentPacketBundleCopy.packets.size();
+             expectedPacketIdx++) {
+          auto expectedPacket =
+              m_currentPacketBundleCopy.packets[expectedPacketIdx];
+          if (responsePacketIdx < m_currentResponseBundle.packets.size()) {
+            auto responsePacket =
+                m_currentResponseBundle.packets[responsePacketIdx];
+            if (responsePacket.getStartByte() !=
+                    expectedPacket.getStartByte() ||
+                responsePacket.getNamespace() !=
+                    expectedPacket.getNamespace() ||
+                responsePacket.getAddress() != expectedPacket.getAddress()) {
+              m_currentResponseBundle.packets.remove(responsePacketIdx);
+              expectedPacketIdx--;
+            } else {
+              responsePacketIdx++;
+            }
+          }
+        }
+        if (m_currentResponseBundle.packets.size() ==
+            m_currentPacketBundleSize) {
+          batlabPacketBundle emitBundle = m_currentResponseBundle;
+          m_currentResponseBundle.packets.clear();
+          m_currentPacket = BatlabPacket();
+          emit responseBundleReady(emitBundle);
+        } else {
+          qWarning() << tr("Now have %1 packets when expected %2")
+                            .arg(m_currentResponseBundle.packets.size())
+                            .arg(m_currentPacketBundleSize);
+          fail();
+        }
       }
     }
     // If we have another bundle to deal with
@@ -206,10 +222,10 @@ void BatlabCommsManager::handleReadyRead() {
     if (responsePacket.getStartByte() != m_currentPacket.getStartByte() ||
         responsePacket.getNamespace() != m_currentPacket.getNamespace() ||
         responsePacket.getAddress() != m_currentPacket.getAddress()) {
-      qWarning() << tr("Response packet did not match command packet on "
-                       "attempt %1 of %2.")
-                        .arg(m_retries)
-                        .arg(DEFAULT_SERIAL_RETRIES);
+      qDebug() << tr("Response packet did not match command packet on "
+                     "attempt %1 of %2.")
+                      .arg(m_retries)
+                      .arg(DEFAULT_SERIAL_RETRIES);
       attemptWriteCurrentPacket();
       return;
     }
@@ -252,7 +268,7 @@ void BatlabCommsManager::handleError(
 
 void BatlabCommsManager::handleTimeout() {
   m_responseData.clear();
-  qWarning()
+  qDebug()
       << tr("Operation timed out for port %1 on attempt %2 of %3, error: %4")
              .arg(m_serialPort->portName())
              .arg(m_retries)
