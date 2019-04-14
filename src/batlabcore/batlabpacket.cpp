@@ -225,8 +225,6 @@ float BatlabPacket::asCurrent() {
     setValue(static_cast<quint16>(-0x10000 + getValue()));
   }
   float current = getValue() * 4.096f / powf(2, 15);
-  qDebug() << QString::number(getValue());
-  qDebug() << QString::number(current);
   return current;
 }
 

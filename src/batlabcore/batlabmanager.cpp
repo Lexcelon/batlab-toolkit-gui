@@ -82,7 +82,8 @@ void BatlabManager::assignRemainingCellsToOpenChannels() {
 void BatlabManager::findBatlabForCell(cellResultsStatusInfo cell) {
   for (auto batlab : connectedBatlabsByPortName.values()) {
     for (int channel = 0; channel < 4; channel++) {
-      if (batlab->getChannel(channel)->mode() == MODE_NO_CELL) {
+      if (batlab->getChannel(channel)->mode() == MODE_NO_CELL &&
+          batlab->getChannel(channel)->info.cellName == "") {
         m_cellResults[cell.cellName].batlabSerial = batlab->getSerialNumber();
         m_cellResults[cell.cellName].channel = channel;
         batlab->getChannel(channel)->info.cellName = cell.cellName;

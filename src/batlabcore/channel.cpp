@@ -74,6 +74,8 @@ void Channel::handleSerialResponseBundleReady(batlabPacketBundle bundle) {
     // No need to do anything
   } else if (bundle.callback == "handleSetModeResponse") {
     handleSetModeResponse(bundle.packets);
+  } else if (bundle.callback == "handleLogLvl2Response") {
+    handleLogLvl2Response(bundle.packets);
   } else {
     qWarning() << tr("%1 not implemented in Channel implementation")
                       .arg(bundle.callback);
@@ -647,10 +649,9 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
         playlist().getImpedanceReportingPeriod() > 0 && !m_trickle_engaged) {
     }
     //    impedance(); // LEFT OFF turn on impedance
-    // LEFT OFF current measurement 0
-    // LEFT OFF cell placement
     // LEFT OFF update GUI when test changes
     // LEFT OFF complete test
+    // LEFT OFF current seems quite low
   }
   QString logstr = "";
   logstr +=
