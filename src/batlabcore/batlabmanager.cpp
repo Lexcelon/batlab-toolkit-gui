@@ -247,11 +247,7 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
   emit cellPlaylistLoaded(m_loadedPlaylist);
 
   // Load any existing results into GUI
-  QVector<cellResultsStatusInfo> infos;
-  for (auto cell : m_cellResults.values()) {
-    infos.append(cell);
-  }
-  emit cellResultsUpdated(infos);
+  processCellResultsUpdated();
 }
 
 void BatlabManager::setAllBatlabChannelsIdle() {
@@ -327,8 +323,19 @@ void BatlabManager::addNewBatlab(QString portName) {
   Batlab *batlab = new Batlab(portName, this);
   connect(batlab, &Batlab::infoUpdated, this,
           &BatlabManager::processUpdatedBatlabInfo);
+  connect(batlab, &Batlab::cellResultsUpdated, this,
+          &BatlabManager::processCellResultsUpdated);
   connectedBatlabsByPortName[portName] = batlab;
   processUpdatedBatlabInfo();
+}
+
+void BatlabManager::processCellResultsUpdated() {
+  // LEFT OFF actually get these values from the cells
+  QVector<cellResultsStatusInfo> infos;
+  for (auto cell : m_cellResults.values()) {
+    infos.append(cell);
+  }
+  emit cellResultsUpdated(infos);
 }
 
 void BatlabManager::removeBatlab(QString portName) {

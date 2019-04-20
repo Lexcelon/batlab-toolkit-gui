@@ -23,6 +23,7 @@ public:
   ChannelMode mode() { return m_mode; }
 
 signals:
+  void resultsUpdated();
 
 public slots:
   void startTest();

@@ -225,6 +225,10 @@ void Channel::stateMachine() {
       packets.append(BatlabPacket(info.slot, MODE, MODE_DISCHARGE)
                          .setSleepAfterTransaction_ms(10));
       m_current_cycle++;
+      info.numWarmupCyclesCompleted =
+          std::min(m_current_cycle, info.numWarmupCycles);
+      info.numMeasurementCyclesCompleted =
+          std::max(0, m_current_cycle - info.numWarmupCycles);
     }
   } else if (m_test_state == TS_DISCHARGE && info.cellName != "") {
     // Handle feature to end test after certain amount of time
@@ -451,6 +455,7 @@ void Channel::stateMachine() {
   packetBundle.callback = "handleStateMachineResponse";
   packetBundle.channel = info.slot;
   batlab()->sendPacketBundle(packetBundle);
+  emit resultsUpdated();
 }
 
 void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
@@ -653,25 +658,27 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
     // LEFT OFF complete test
     // LEFT OFF current seems quite low
   }
-  QString logstr = "";
-  logstr +=
-      info.cellName + "," + QString::number(batlab()->getSerialNumber()) + ",";
-  logstr += QString::number(info.slot) + ",";
-  logstr += QDateTime::fromTime_t(
-                static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
-                .toString("MM/dd/yyyy hh:mm:ss AP") +
-            ",";
-  logstr += QString::number(static_cast<double>(voltage), 'f', 4) + ",";
-  logstr += QString::number(static_cast<double>(current), 'f', 4) + ",";
-  logstr += QString::number(static_cast<double>(temperature), 'f', 4) + ",,";
-  logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
-  logstr += QString::number(static_cast<double>(charge), 'f', 4) + ",";
-  logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,";
-  logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",";
-  logstr += QString::number(op_raw) + ",";
-  logstr += QString::number(sp_raw) + ",";
-  logstr += QString::number(duty) + "\n";
-  logLvl1(logstr);
+  if (m_mode != MODE_NO_CELL && m_mode != MODE_BACKWARDS) {
+    QString logstr = "";
+    logstr += info.cellName + "," +
+              QString::number(batlab()->getSerialNumber()) + ",";
+    logstr += QString::number(info.slot) + ",";
+    logstr += QDateTime::fromTime_t(
+                  static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
+                  .toString("MM/dd/yyyy hh:mm:ss AP") +
+              ",";
+    logstr += QString::number(static_cast<double>(voltage), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(current), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(temperature), 'f', 4) + ",,";
+    logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(charge), 'f', 4) + ",";
+    logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,";
+    logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",";
+    logstr += QString::number(op_raw) + ",";
+    logstr += QString::number(sp_raw) + ",";
+    logstr += QString::number(duty) + "\n";
+    logLvl1(logstr);
+  }
 
   // Run the test state machine - decides what to do next
   stateMachine();
