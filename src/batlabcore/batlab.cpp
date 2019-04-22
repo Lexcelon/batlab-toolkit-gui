@@ -21,6 +21,8 @@ Batlab::Batlab(QString portName, QObject *parent) : QObject(parent) {
   m_info.firmwareBytesRemaining = -1;
   for (int i = 0; i < 4; i++) {
     m_channels[i] = new Channel(i, this);
+    connect(m_channels[i], &Channel::resultsUpdated, this,
+            &Batlab::cellResultsUpdated);
   }
 
   verifyBatlabDevice();

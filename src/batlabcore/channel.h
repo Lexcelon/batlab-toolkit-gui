@@ -1,7 +1,7 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
-#include "ctime"
+#include <ctime>
 
 #include <QObject>
 #include <QTimer>
@@ -23,12 +23,21 @@ public:
   ChannelMode mode() { return m_mode; }
 
 signals:
+  void resultsUpdated();
 
 public slots:
   void startTest();
   void abortTest();
+  void completeTest();
   void handleSerialResponseBundleReady(batlabPacketBundle bundle);
   void setInternalSetpoint(quint16 val) { m_current_setpoint = val; }
+  void impedance();
+  void handleImpedanceResponse(QVector<BatlabPacket> response);
+  void setMode(int mode);
+  void handleSetModeResponse(QVector<BatlabPacket> response);
+  void logLvl1(QString logstr);
+  void logLvl2(QString type);
+  void handleLogLvl2Response(QVector<BatlabPacket> response);
 
 private:
   QTimer *m_channelPeriodicCheckTimer;
@@ -38,6 +47,7 @@ private:
 
   std::chrono::time_point<std::chrono::system_clock> m_ts;
   std::chrono::time_point<std::chrono::system_clock> m_start_time;
+  std::chrono::time_point<std::chrono::system_clock> m_last_lvl1_time;
   std::chrono::time_point<std::chrono::system_clock> m_last_lvl2_time;
   std::chrono::time_point<std::chrono::system_clock> m_last_impedance_time;
   std::chrono::time_point<std::chrono::system_clock> m_rest_time;
@@ -75,6 +85,8 @@ private:
   bool m_pulse_state;
 
   bool m_trickle_engaged;
+
+  int m_set_mode;
 
   void periodicCheck();
   void handlePeriodicCheckResponse(QVector<BatlabPacket> response);

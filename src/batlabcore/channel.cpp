@@ -68,6 +68,14 @@ void Channel::handleSerialResponseBundleReady(batlabPacketBundle bundle) {
     handleCurrentCompensateResponse();
   } else if (bundle.callback == "handleStartTestResponse") {
     handleStartTestResponse(bundle.packets);
+  } else if (bundle.callback == "handleImpedanceResponse") {
+    handleImpedanceResponse(bundle.packets);
+  } else if (bundle.callback == "handleStateMachineResponse") {
+    // No need to do anything
+  } else if (bundle.callback == "handleSetModeResponse") {
+    handleSetModeResponse(bundle.packets);
+  } else if (bundle.callback == "handleLogLvl2Response") {
+    handleLogLvl2Response(bundle.packets);
   } else {
     qWarning() << tr("%1 not implemented in Channel implementation")
                       .arg(bundle.callback);
@@ -130,6 +138,7 @@ void Channel::stateMachine() {
   QVector<BatlabPacket> packets;
   if (m_test_state == TS_PRECHARGE && info.cellName != "") {
     if (m_mode == MODE_IDLE) {
+      info.testInProgress = true;
       packets.append(BatlabPacket(info.slot, CURRENT_SETPOINT, 0));
       packets.append(BatlabPacket(info.slot, MODE, MODE_CHARGE)
                          .setSleepAfterTransaction_ms(10));
@@ -162,9 +171,6 @@ void Channel::stateMachine() {
       std_impedance =
           std_impedance *
           static_cast<float>(playlist().getConstantVoltageSensitivity());
-      // LEFT OFF figure out why getting 2 response packets when
-      // expecting 1 when charging
-
       // If voltage is getting close to the cutoff point and current is flowing
       // at greater than a trickle
       if (m_voltage_prev >
@@ -180,7 +186,8 @@ void Channel::stateMachine() {
     }
 
     if (m_mode == MODE_STOPPED) {
-      // self.log_lvl2("PRECHARGE") TODO
+      info.preChargeComplete = true;
+      logLvl2("PRECHARGE");
       m_test_state = TS_CHARGEREST;
       m_rest_time = std::chrono::system_clock::now();
       // We should rarely hit this condition - it means you don't want to make
@@ -196,7 +203,7 @@ void Channel::stateMachine() {
                              .setSleepAfterTransaction_ms(10));
         } else {
           m_test_state = TS_IDLE;
-          // completeTest(); TODO
+          completeTest();
         }
       }
     }
@@ -205,7 +212,7 @@ void Channel::stateMachine() {
         std::chrono::system_clock::now();
     std::chrono::duration<double> difference = now - m_rest_time;
     if (difference.count() > playlist().getRestPeriod()) {
-      // self.log_lvl2("CHARGEREST") TODO
+      logLvl2("CHARGEREST");
       m_test_state = TS_DISCHARGE;
 
       // Reset pulse discharge variables
@@ -220,6 +227,10 @@ void Channel::stateMachine() {
       packets.append(BatlabPacket(info.slot, MODE, MODE_DISCHARGE)
                          .setSleepAfterTransaction_ms(10));
       m_current_cycle++;
+      info.numWarmupCyclesCompleted =
+          std::min(m_current_cycle, info.numWarmupCycles);
+      info.numMeasurementCyclesCompleted =
+          std::max(0, m_current_cycle - info.numWarmupCycles);
     }
   } else if (m_test_state == TS_DISCHARGE && info.cellName != "") {
     // Handle feature to end test after certain amount of time
@@ -308,7 +319,7 @@ void Channel::stateMachine() {
       }
     }
     if (m_mode == MODE_STOPPED) {
-      // self.log_lvl2("DISCHARGE") TODO
+      logLvl2("DISCHARGE");
       m_test_state = TS_DISCHARGEREST;
       m_rest_time = std::chrono::system_clock::now();
     }
@@ -317,7 +328,7 @@ void Channel::stateMachine() {
         std::chrono::system_clock::now();
     std::chrono::duration<double> difference = now - m_rest_time;
     if (difference.count() > playlist().getRestPeriod()) {
-      // self.log_lvl2("DISCHARGEREST") TODO
+      logLvl2("DISCHARGEREST");
       m_test_state = TS_CHARGE;
 
       // Reset pulse discharge variables
@@ -410,7 +421,7 @@ void Channel::stateMachine() {
       }
     }
     if (m_mode == MODE_STOPPED) {
-      // self.log_lvl2("CHARGE") TODO
+      logLvl2("CHARGE");
       m_test_state = TS_CHARGEREST;
       m_rest_time = std::chrono::system_clock::now();
       if (m_current_cycle >= (playlist().getNumWarmupCycles() +
@@ -424,7 +435,7 @@ void Channel::stateMachine() {
                              .setSleepAfterTransaction_ms(10));
         } else {
           m_test_state = TS_IDLE;
-          // completeTest(); TODO
+          completeTest();
         }
       }
     }
@@ -432,11 +443,11 @@ void Channel::stateMachine() {
     if (m_mode == MODE_STOPPED ||
         m_voltage_prev <
             static_cast<float>(playlist().getStorageDischargeVoltage())) {
-      // self.log_lvl2("POSTDISCHARGE") TODO
+      logLvl2("POSTDISCHARGE");
       packets.append(BatlabPacket(info.slot, MODE, MODE_IDLE)
                          .setSleepAfterTransaction_ms(10));
       m_test_state = TS_IDLE;
-      // completeTest(); TODO
+      completeTest();
     }
   } else {
     qWarning() << tr("Test state %1 not implemented").arg(m_test_state);
@@ -446,11 +457,13 @@ void Channel::stateMachine() {
   packetBundle.callback = "handleStateMachineResponse";
   packetBundle.channel = info.slot;
   batlab()->sendPacketBundle(packetBundle);
+  emit resultsUpdated();
 }
 
 void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
   // Initialize the control variables
   m_start_time = std::chrono::system_clock::now();
+  m_last_lvl1_time = std::chrono::system_clock::now();
   m_last_lvl2_time = std::chrono::system_clock::now();
   m_last_impedance_time = std::chrono::system_clock::now();
   m_rest_time = std::chrono::system_clock::now();
@@ -492,6 +505,8 @@ void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
 
   // Control variables for trickle charge/discharge at voltage limits
   m_trickle_engaged = false;
+
+  emit resultsUpdated();
 }
 
 void Channel::currentCompensate(quint16 op_raw, quint16 sp_raw) {
@@ -634,48 +649,238 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   }
   m_delta_t = temperature - m_temperature0;
 
-  //      # log the results TODO
-  //      if (ts - self.last_lvl1_time).total_seconds() >
-  //      self.settings.reporting_period:
-  //          self.last_lvl1_time = datetime.datetime.now()
-  //          if (ts - self.last_impedance_time).total_seconds() >
-  //          self.settings.impedance_period and
-  //          self.settings.impedance_period > 0 and self.trickle_engaged ==
-  //          False:
-  //              z = self.bat.impedance(self.slot)
-  //              if math.isnan(z):
-  //                  z = self.zavg
-  //                  print("error in impedance measurement...using previous
-  //                  result")
-  //              self.last_impedance_time = datetime.datetime.now()
-  //              self.zcnt += 1
-  //              self.zavg += (z - self.zavg) / self.zcnt
-  //              logstr = str(self.name) + ',' + str(self.bat.sn) + ',' +
-  //              str(self.slot) + ',' + str(ts) + ',' +
-  //              '{:.4f}'.format(self.vprev) + ',' +
-  //              '{:.4f}'.format(self.iprev) + ',' + '{:.4f}'.format(t) + ','
-  //              +
-  //              '{:.4f}'.format(z) + ',' + '{:.4f}'.format(e) + ',' +
-  //              '{:.4f}'.format(q) + ',' + state + ',,,,,,,' + ',,' +
-  //              '{:.4f}'.format(self.vcc) + ',' + str(op_raw) + ',' +
-  //              str(sp_raw) + ',' + str(dty)
-  //          else:
-  //              logstr = str(self.name) + ',' + str(self.bat.sn) + ',' +
-  //              str(self.slot) + ',' + str(ts) + ',' + '{:.4f}'.format(v) +
-  //              ',' + '{:.4f}'.format(i) + ',' + '{:.4f}'.format(t) + ',,' +
-  //              '{:.4f}'.format(e) + ',' + '{:.4f}'.format(q) + ',' + state
-  //              +
-  //              ',,,,,,,' + ',,' + '{:.4f}'.format(self.vcc) + ',' +
-  //              str(op_raw) + ',' + str(sp_raw) + ',' + str(dty)
-
-  //          if self.settings.individual_cell_logs == 0:
-  //              self.bat.logger.log(logstr,self.settings.logfile)
-  //          else:
-  //              self.bat.logger.log(logstr,self.settings.cell_logfile +
-  //              self.name + '.csv')
+  if (std::chrono::duration_cast<std::chrono::seconds>(m_ts - m_last_lvl1_time)
+          .count() > playlist().getReportingPeriod()) {
+    m_last_lvl1_time = std::chrono::system_clock::now();
+    if (std::chrono::duration_cast<std::chrono::seconds>(m_ts -
+                                                         m_last_impedance_time)
+                .count() > playlist().getImpedanceReportingPeriod() &&
+        playlist().getImpedanceReportingPeriod() > 0 && !m_trickle_engaged) {
+    }
+    //    impedance(); // LEFT OFF turn on impedance
+    // LEFT OFF update GUI when test changes
+    // LEFT OFF complete test
+    // LEFT OFF current seems quite low
+  }
+  if (m_mode != MODE_NO_CELL && m_mode != MODE_BACKWARDS) {
+    QString logstr = "";
+    logstr += info.cellName + "," +
+              QString::number(batlab()->getSerialNumber()) + ",";
+    logstr += QString::number(info.slot) + ",";
+    logstr += QDateTime::fromTime_t(
+                  static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
+                  .toString("MM/dd/yyyy hh:mm:ss AP") +
+              ",";
+    logstr += QString::number(static_cast<double>(voltage), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(current), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(temperature), 'f', 4) + ",,";
+    logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(charge), 'f', 4) + ",";
+    logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,";
+    logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",";
+    logstr += QString::number(op_raw) + ",";
+    logstr += QString::number(sp_raw) + ",";
+    logstr += QString::number(duty) + "\n";
+    logLvl1(logstr);
+  }
 
   // Run the test state machine - decides what to do next
   stateMachine();
+}
+
+void Channel::logLvl1(QString logstr) {
+  QDir resultsDir(playlist().getPlaylistOutputDirectory());
+  QFile cellFile(resultsDir.absoluteFilePath(playlist().getCellPlaylistName() +
+                                             "_" + info.cellName + ".csv"));
+  if (!resultsDir.exists()) {
+    resultsDir.mkpath(resultsDir.path());
+  }
+  if (!cellFile.exists()) {
+    if (!cellFile.open(QIODevice::WriteOnly)) {
+      qWarning() << "Unable to create cell results file";
+      return;
+    }
+    cellFile.write(QString("\"" + playlist().toJson().replace("\"", "\"\"") +
+                           "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
+                       .toUtf8());
+    cellFile.write(
+        "Cell Name,Batlab SN,Channel,Timestamp (s),Voltage (V),Current "
+        "(A),Temperature (C),Impedance (Ohm),Energy (J),Charge (Coulombs),Test "
+        "State,Test Type,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
+        "Impedance (Ohm),delta Temperature (C),Avg Current (A),Avg "
+        "Voltage,Runtime (s),VCC "
+        "(V),Capacity,CapacityRange,ColoumbicEfficiency,Impedance,AvgVoltage,"
+        "AvgCurrent\n");
+    cellFile.close();
+  }
+  if (!cellFile.open(QIODevice::Append)) {
+    qWarning() << "Unable to open cell results file";
+    return;
+  }
+  cellFile.write(logstr.toUtf8());
+}
+
+void Channel::logLvl2(QString type) {
+  QDir resultsDir(playlist().getPlaylistOutputDirectory());
+  QFile cellFile(
+      resultsDir.absoluteFilePath(playlist().getCellPlaylistName() + ".csv"));
+  if (!resultsDir.exists()) {
+    resultsDir.mkpath(resultsDir.path());
+  }
+  if (!cellFile.exists()) {
+    if (!cellFile.open(QIODevice::WriteOnly)) {
+      qWarning() << "Unable to create cell results file";
+      return;
+    }
+    cellFile.write(QString("\"" + playlist().toJson().replace("\"", "\"\"") +
+                           "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
+                       .toUtf8());
+    cellFile.write(
+        "Cell Name,Batlab SN,Channel,Timestamp (s),Voltage (V),Current "
+        "(A),Temperature (C),Impedance (Ohm),Energy (J),Charge (Coulombs),Test "
+        "State,Test Type,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
+        "Impedance (Ohm),delta Temperature (C),Avg Current (A),Avg "
+        "Voltage,Runtime (s),VCC "
+        "(V),Capacity,CapacityRange,ColoumbicEfficiency,Impedance,AvgVoltage,"
+        "AvgCurrent\n");
+    cellFile.close();
+  }
+  if (!cellFile.open(QIODevice::Append)) {
+    qWarning() << "Unable to open cell results file";
+    return;
+  }
+
+  QString state = L_TEST_STATE[m_test_state];
+  std::chrono::duration<double> runtime =
+      std::chrono::system_clock::now() - m_last_lvl2_time;
+  m_last_lvl2_time = std::chrono::system_clock::now();
+
+  QString logstr = "";
+  logstr +=
+      info.cellName + "," + QString::number(batlab()->getSerialNumber()) + ",";
+  logstr += QString::number(info.slot) + ",";
+  logstr += QDateTime::fromTime_t(
+                static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
+                .toString("MM/dd/yyyy hh:mm:ss AP") +
+            ",,,,,,,,";
+  logstr += type + ",";
+  logstr += QString::number(static_cast<double>(m_q), 'f', 4) + ",";
+  logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
+  logstr += QString::number(static_cast<double>(m_z_avg), 'f', 4) + ",";
+  logstr += QString::number(static_cast<double>(m_delta_t), 'f', 4) + ",";
+  logstr += QString::number(static_cast<double>(m_current_avg), 'f', 4) + ",";
+  logstr += QString::number(static_cast<double>(m_voltage_avg), 'f', 4) + ",";
+  logstr +=
+      QString::number(static_cast<double>(runtime.count()), 'f', 4) + ",\n";
+  cellFile.write(logstr.toUtf8());
+
+  m_voltage_count = 0;
+  m_current_count = 0;
+  m_z_count = 0;
+
+  QVector<BatlabPacket> packets;
+
+  packets.append(BatlabPacket(info.slot, TEMPERATURE));
+  // Writing to CHARGEH automatically clears CHARGEL
+  packets.append(
+      BatlabPacket(info.slot, CHARGEH, 0).setSleepAfterTransaction_ms(2000));
+
+  batlabPacketBundle packetBundle;
+  packetBundle.packets = packets;
+  packetBundle.callback = "handleLogLvl2Response";
+  packetBundle.channel = info.slot;
+  batlab()->sendPacketBundle(packetBundle);
+}
+
+void Channel::handleLogLvl2Response(QVector<BatlabPacket> response) {
+  m_temperature0 = response[0].asTemperatureC(info.tempCalibR, info.tempCalibB);
+}
+
+void Channel::completeTest() {
+  // TODO
+}
+
+void Channel::impedance() {
+  QVector<BatlabPacket> packets;
+
+  packets.append(BatlabPacket(info.slot, MODE).setSleepAfterTransaction_ms(10));
+  packets.append(BatlabPacket(info.slot, MODE, MODE_IMPEDANCE)
+                     .setSleepAfterTransaction_ms(2000));
+  packets.append(BatlabPacket(UNIT, unitNamespace::LOCK, LOCK_LOCKED));
+  packets.append(BatlabPacket(info.slot, CURRENT_PP));
+  packets.append(BatlabPacket(info.slot, VOLTAGE_PP));
+  packets.append(BatlabPacket(UNIT, unitNamespace::LOCK, LOCK_UNLOCKED));
+
+  batlabPacketBundle packetBundle;
+  packetBundle.packets = packets;
+  packetBundle.callback = "handleImpedanceResponse";
+  packetBundle.channel = info.slot;
+  batlab()->sendPacketBundle(packetBundle);
+}
+
+void Channel::handleImpedanceResponse(QVector<BatlabPacket> response) {
+  int responseCounter = 0;
+  auto mode = response[responseCounter++];
+  responseCounter++; // Write impedance mode
+  responseCounter++; // Lock
+  auto imag = response[responseCounter++].asCurrent();
+  auto vmag = response[responseCounter++].asVoltage();
+  responseCounter++; // Unlock
+
+  setMode(mode.getValue());
+
+  auto z = 0.0f;
+  if (std::isnan(imag) || std::isnan(vmag)) {
+    z = NAN;
+  } else if (imag < 0.000001f) {
+    z = 0;
+  } else {
+    z = vmag / imag;
+  }
+
+  if (std::isnan(z)) {
+    z = m_z_avg;
+    qWarning() << "Error in impedance measurement... using previous result";
+  }
+  m_last_impedance_time = std::chrono::system_clock::now();
+  m_z_count++;
+  m_z_avg = (z - m_z_avg) / m_z_count;
+
+  QString logstr = "";
+  logstr +=
+      info.cellName + "," + QString::number(batlab()->getSerialNumber()) + ",";
+  logstr += QString::number(info.slot) + ",";
+  logstr += QDateTime::fromTime_t(
+                static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
+                .toString("MM/dd/yyyy hh:mm:ss AP") +
+            ",";
+  logstr += ",,," + QString("%1").arg(static_cast<double>(z), 4) + ",,,";
+  logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,,,,\n";
+  logLvl1(logstr);
+}
+
+// Set the mode and then the response will check that it actually got set and
+// keep trying until it does
+void Channel::setMode(int mode) {
+  m_set_mode = mode;
+
+  QVector<BatlabPacket> packets;
+
+  packets.append(BatlabPacket(info.slot, MODE, static_cast<uint16_t>(mode))
+                     .setSleepAfterTransaction_ms(10));
+  packets.append(BatlabPacket(info.slot, MODE));
+
+  batlabPacketBundle packetBundle;
+  packetBundle.packets = packets;
+  packetBundle.callback = "handleSetModeResponse";
+  packetBundle.channel = info.slot;
+  batlab()->sendPacketBundle(packetBundle);
+}
+
+void Channel::handleSetModeResponse(QVector<BatlabPacket> response) {
+  if (response[1].asMode() != m_set_mode) {
+    setMode(m_set_mode);
+  }
 }
 
 void Channel::periodicCheck() {
