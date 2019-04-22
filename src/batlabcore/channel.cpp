@@ -138,6 +138,7 @@ void Channel::stateMachine() {
   QVector<BatlabPacket> packets;
   if (m_test_state == TS_PRECHARGE && info.cellName != "") {
     if (m_mode == MODE_IDLE) {
+      info.testInProgress = true;
       packets.append(BatlabPacket(info.slot, CURRENT_SETPOINT, 0));
       packets.append(BatlabPacket(info.slot, MODE, MODE_CHARGE)
                          .setSleepAfterTransaction_ms(10));
@@ -185,6 +186,7 @@ void Channel::stateMachine() {
     }
 
     if (m_mode == MODE_STOPPED) {
+      info.preChargeComplete = true;
       logLvl2("PRECHARGE");
       m_test_state = TS_CHARGEREST;
       m_rest_time = std::chrono::system_clock::now();
@@ -503,6 +505,8 @@ void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
 
   // Control variables for trickle charge/discharge at voltage limits
   m_trickle_engaged = false;
+
+  emit resultsUpdated();
 }
 
 void Channel::currentCompensate(quint16 op_raw, quint16 sp_raw) {

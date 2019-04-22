@@ -330,7 +330,17 @@ void BatlabManager::addNewBatlab(QString portName) {
 }
 
 void BatlabManager::processCellResultsUpdated() {
-  // LEFT OFF actually get these values from the cells
+  for (auto batlab : connectedBatlabsByPortName.values()) {
+    for (int i = 0; i < 4; i++) {
+      auto channelInfo = batlab->getChannel(i)->info;
+      if (channelInfo.cellName != "") {
+        m_cellResults[channelInfo.cellName].testInProgress =
+            channelInfo.testInProgress;
+        // TODO figure out if tests are done and then show results
+      }
+    }
+  }
+
   QVector<cellResultsStatusInfo> infos;
   for (auto cell : m_cellResults.values()) {
     infos.append(cell);
