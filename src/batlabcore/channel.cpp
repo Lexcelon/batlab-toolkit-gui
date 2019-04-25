@@ -658,7 +658,6 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
         playlist().getImpedanceReportingPeriod() > 0 && !m_trickle_engaged) {
     }
     //    impedance(); // LEFT OFF turn on impedance
-    // LEFT OFF update GUI when test changes
     // LEFT OFF complete test
     // LEFT OFF current seems quite low
   }
