@@ -55,7 +55,9 @@ void BatlabManager::startTests() {
               "cells in their assigned Batlab channel.\n\n"
               "When a channel is free and you should place a cell there, this "
               "information will be visible in either the \"Batlabs\" or "
-              "\"Results\" view.");
+              "\"Results\" view.\n\n"
+              "When a cell has been placed in its channel, the test will "
+              "automatically start running on that cell.");
 
   // This will automatically start tests on those channels
   assignRemainingCellsToOpenChannels();
