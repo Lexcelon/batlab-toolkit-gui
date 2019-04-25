@@ -126,6 +126,11 @@ void Channel::startTest() {
   startTestPackets.append(BatlabPacket(info.slot, TEMPERATURE));
 
   m_test_state = TS_PRECHARGE;
+  info.numWarmupCycles = playlist().getNumWarmupCycles();
+  info.numWarmupCyclesCompleted = 0;
+  info.numMeasurementCycles = playlist().getNumMeasurementCycles();
+  info.numMeasurementCyclesCompleted = 0;
+  info.storageDischarge = playlist().getStorageDischarge();
 
   batlabPacketBundle packetBundle;
   packetBundle.packets = startTestPackets;
