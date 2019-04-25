@@ -33,7 +33,7 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   QVBoxLayout *groupBoxLayout = new QVBoxLayout;
   groupBoxLayout->addWidget(lipoRadioButton);
   groupBoxLayout->addWidget(ironPhosphateRadioButton);
-  //  groupBoxLayout->addWidget(otherRadioButton);  // Removed for now
+  groupBoxLayout->addWidget(otherRadioButton);
   selectChemistryBox->setLayout(groupBoxLayout);
   connect(lipoRadioButton, &QRadioButton::toggled, this,
           &PlaylistSettingsWidget::updateBoundsBasedOnChemistryType);

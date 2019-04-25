@@ -95,7 +95,7 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent) {
   QVBoxLayout *groupBoxLayout = new QVBoxLayout;
   groupBoxLayout->addWidget(lipoRadioButton);
   groupBoxLayout->addWidget(ironPhosphateRadioButton);
-  //  groupBoxLayout->addWidget(otherRadioButton);  // Removed option for now
+  groupBoxLayout->addWidget(otherRadioButton);
   selectChemistryBox->setLayout(groupBoxLayout);
 
   sameTypeLabel = new QLabel(
