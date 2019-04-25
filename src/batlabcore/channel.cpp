@@ -126,6 +126,11 @@ void Channel::startTest() {
   startTestPackets.append(BatlabPacket(info.slot, TEMPERATURE));
 
   m_test_state = TS_PRECHARGE;
+  info.numWarmupCycles = playlist().getNumWarmupCycles();
+  info.numWarmupCyclesCompleted = 0;
+  info.numMeasurementCycles = playlist().getNumMeasurementCycles();
+  info.numMeasurementCyclesCompleted = 0;
+  info.storageDischarge = playlist().getStorageDischarge();
 
   batlabPacketBundle packetBundle;
   packetBundle.packets = startTestPackets;
@@ -658,7 +663,6 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
         playlist().getImpedanceReportingPeriod() > 0 && !m_trickle_engaged) {
     }
     //    impedance(); // LEFT OFF turn on impedance
-    // LEFT OFF update GUI when test changes
     // LEFT OFF complete test
     // LEFT OFF current seems quite low
   }
