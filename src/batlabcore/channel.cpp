@@ -726,20 +726,20 @@ void Channel::logLvl1(QString logstr) {
 
 void Channel::logLvl2(QString type) {
   QDir resultsDir(playlist().getPlaylistOutputDirectory());
-  QFile cellFile(
+  QFile summaryFile(
       resultsDir.absoluteFilePath(playlist().getCellPlaylistName() + ".csv"));
   if (!resultsDir.exists()) {
     resultsDir.mkpath(resultsDir.path());
   }
-  if (!cellFile.exists()) {
-    if (!cellFile.open(QIODevice::WriteOnly)) {
-      qWarning() << "Unable to create cell results file";
+  if (!summaryFile.exists()) {
+    if (!summaryFile.open(QIODevice::WriteOnly)) {
+      qWarning() << "Unable to create summary results file";
       return;
     }
-    cellFile.write(QString("\"" + playlist().toJson().replace("\"", "\"\"") +
-                           "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
-                       .toUtf8());
-    cellFile.write(
+    summaryFile.write(QString("\"" + playlist().toJson().replace("\"", "\"\"") +
+                              "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
+                          .toUtf8());
+    summaryFile.write(
         "Cell Name,Batlab SN,Channel,Timestamp (s),Voltage (V),Current "
         "(A),Temperature (C),Impedance (Ohm),Energy (J),Charge (Coulombs),Test "
         "State,Test Type,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
@@ -747,10 +747,10 @@ void Channel::logLvl2(QString type) {
         "Voltage,Runtime (s),VCC "
         "(V),Capacity,CapacityRange,ColoumbicEfficiency,Impedance,AvgVoltage,"
         "AvgCurrent\n");
-    cellFile.close();
+    summaryFile.close();
   }
-  if (!cellFile.open(QIODevice::Append)) {
-    qWarning() << "Unable to open cell results file";
+  if (!summaryFile.open(QIODevice::Append)) {
+    qWarning() << "Unable to open summary results file";
     return;
   }
 
@@ -776,7 +776,7 @@ void Channel::logLvl2(QString type) {
   logstr += QString::number(static_cast<double>(m_voltage_avg), 'f', 4) + ",";
   logstr +=
       QString::number(static_cast<double>(runtime.count()), 'f', 4) + ",\n";
-  cellFile.write(logstr.toUtf8());
+  summaryFile.write(logstr.toUtf8());
 
   m_voltage_count = 0;
   m_current_count = 0;

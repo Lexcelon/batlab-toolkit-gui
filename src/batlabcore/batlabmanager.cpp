@@ -116,7 +116,9 @@ bool BatlabManager::hasPartialCellResults(CellPlaylist playlist) {
       qWarning() << summaryFile.errorString();
       return true;
     }
-    QByteArray json = summaryFile.readLine();
+    QByteArray json =
+        summaryFile
+            .readLine(); // LEFT OFF the header is written as multiple lines
     QByteArray headers = summaryFile.readLine();
     while (!summaryFile.atEnd()) {
       QString line = summaryFile.readLine();
