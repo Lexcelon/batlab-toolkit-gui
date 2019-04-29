@@ -153,7 +153,6 @@ struct cellResultsStatusInfo {
 
   float capacity;
   float capacityRange;
-  // float coloumbicEfficiency;  // TODO handle old files that have this value
   float impedance;
   float avgCurrent;
   float avgVoltage;

@@ -48,8 +48,6 @@ void BatlabManager::startTests() {
     }
   }
 
-  // TODO improve this so that cells can already be in place or user can adjust
-  // where they go
   emit notify("Placing Cells",
               "When tests are in progress, you will need to place specific "
               "cells in their assigned Batlab channel.\n\n"
