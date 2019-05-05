@@ -662,9 +662,7 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
                 .count() > playlist().getImpedanceReportingPeriod() &&
         playlist().getImpedanceReportingPeriod() > 0 && !m_trickle_engaged) {
     }
-    //    impedance(); // LEFT OFF turn on impedance
-    // LEFT OFF complete test
-    // LEFT OFF current seems quite low
+    //    impedance();
   }
   if (m_mode != MODE_NO_CELL && m_mode != MODE_BACKWARDS) {
     QString logstr = "";

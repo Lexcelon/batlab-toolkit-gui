@@ -114,12 +114,15 @@ bool BatlabManager::hasPartialCellResults(CellPlaylist playlist) {
       qWarning() << summaryFile.errorString();
       return true;
     }
-    QByteArray json =
-        summaryFile
-            .readLine(); // LEFT OFF the header is written as multiple lines
-    QByteArray headers = summaryFile.readLine();
-    while (!summaryFile.atEnd()) {
-      QString line = summaryFile.readLine();
+    QByteArray output;
+    QString line;
+    while (!line.startsWith("Cell Name") &&
+           !summaryFile.atEnd()) { // JSON and headers
+      line = summaryFile.readLine();
+      output.append(line);
+    }
+    while (!summaryFile.atEnd()) { // Data
+      line = summaryFile.readLine();
       auto values = QString(line).remove('"').split(',');
       auto name = values[0];
       cellResults[name].hasSomeResults = true;
@@ -164,11 +167,19 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
       qWarning() << summaryFile.errorString();
       return;
     }
-    QByteArray json = summaryFile.readLine();
-    QByteArray headers = summaryFile.readLine();
+    QByteArray output;
+    QString line;
+    while (!line.startsWith("Cell Name") &&
+           !summaryFile.atEnd()) { // JSON and headers
+      line = summaryFile.readLine();
+      output.append(line);
+    }
     while (!summaryFile.atEnd()) {
-      QString line = summaryFile.readLine();
+      line = summaryFile.readLine();
       auto values = QString(line).remove('"').split(',');
+      if (values.length() < 25) {
+        continue;
+      }
       auto name = values[0];
       m_cellResults[name].hasSomeResults = true;
       if (values[11] == "SUMMARY") {
@@ -202,10 +213,15 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
       qWarning() << summaryFile.errorString();
       return;
     }
-    QByteArray output = summaryFile.readLine(); // JSON
-    output.append(summaryFile.readLine());      // Headers
-    while (!summaryFile.atEnd()) {
-      QString line = summaryFile.readLine();
+    QByteArray output;
+    QString line;
+    while (!line.startsWith("Cell Name") &&
+           !summaryFile.atEnd()) { // JSON and headers
+      line = summaryFile.readLine();
+      output.append(line);
+    }
+    while (!summaryFile.atEnd()) { // Data
+      line = summaryFile.readLine();
       auto values = QString(line).remove('"').split(',');
       auto name = values[0];
       auto cell = m_cellResults[name];
