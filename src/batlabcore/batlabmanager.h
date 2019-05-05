@@ -40,6 +40,7 @@ signals:
   void cellResultsUpdated(QVector<cellResultsStatusInfo> infos);
   void error(QString e);
   void notify(QString title, QString text);
+  void testsInProgressState(bool testsInProgress);
 
 public slots:
   void updateConnectedBatlabs();

@@ -62,10 +62,14 @@ void BatlabManager::startTests() {
 
   // TODO at the end of a channel test, assignremainingcellstoopenchannels again
   // and then shut down channel if no more cells
+
+  emit testsInProgressState(true);
 }
 
 void BatlabManager::stopTests() {
   // TODO
+
+  emit testsInProgressState(false);
 }
 
 CellPlaylist BatlabManager::loadedPlaylist() { return m_loadedPlaylist; }
