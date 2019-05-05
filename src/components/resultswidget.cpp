@@ -220,7 +220,7 @@ void ResultsWidget::resetCellData() {
 
     if (reply == QMessageBox::Yes) {
 
-      // TODO: Reset the Cell Data using the list of Cell Names in cellsToReset
+      // Reset the Cell Data using the list of Cell Names in cellsToReset
 
       hideSelectCells();
     }

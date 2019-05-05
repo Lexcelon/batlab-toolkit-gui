@@ -29,7 +29,6 @@ NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent)
 
   addPage(new FinishPlaylistPage);
 
-  // TODO set this to good size once wizard implementation complete
   this->setMinimumSize(500, 650);
 
   setWindowTitle(tr("New Cell Playlist"));
