@@ -1,105 +1,105 @@
 #ifndef PLAYLISTSETTINGSWIDGET_H
 #define PLAYLISTSETTINGSWIDGET_H
 
-#include <QWidget>
+#include <QCheckBox>
 #include <QGroupBox>
-#include <QRadioButton>
 #include <QLabel>
 #include <QLineEdit>
-#include <QCheckBox>
 #include <QListWidget>
+#include <QRadioButton>
+#include <QWidget>
 
 #include "batlabcore/cellplaylist.h"
 
-class PlaylistSettingsWidget : public QWidget
-{
-    Q_OBJECT
+class PlaylistSettingsWidget : public QWidget {
+  Q_OBJECT
 public:
-    explicit PlaylistSettingsWidget(QWidget *parent = nullptr);
-    void updateBoundsBasedOnChemistryType();
-    void enableOrDisableStorageDischargeField();
-    void updateDynamicFieldBounds();
-    void loadPlaylist(CellPlaylist playlist);
+  explicit PlaylistSettingsWidget(QWidget *parent = nullptr);
+  void updateBoundsBasedOnChemistryType();
+  void enableOrDisableStorageDischargeField();
+  void updateDynamicFieldBounds();
+  void loadPlaylist(CellPlaylist playlist);
 
 signals:
-    void newPlaylist();
-    void openPlaylist();
-    void savePlaylist();
+  void newPlaylist();
+  void openPlaylist();
+  void savePlaylist();
 
 public slots:
 
 private:
-    QPushButton *newCellPlaylistButton;
-    QPushButton *openCellPlaylistButton;
-    QPushButton *saveCellPlaylistButton;  // TODO maybe remove these buttons and rely on File menu
+  QPushButton *newCellPlaylistButton;
+  QPushButton *openCellPlaylistButton;
+  QPushButton *saveCellPlaylistButton; // TODO maybe remove these buttons and
+                                       // rely on File menu
 
-    QLabel *cellPlaylistNameLabel;
-    QLineEdit *cellPlaylistNameLineEdit;
+  QLabel *cellPlaylistNameLabel;
+  QLineEdit *cellPlaylistNameLineEdit;
 
-    QGroupBox *selectChemistryBox;
-    QRadioButton *lipoRadioButton;
-    QRadioButton *ironPhosphateRadioButton;
-    QRadioButton *otherRadioButton;
-    QLabel *sameTypeLabel;
+  QGroupBox *selectChemistryBox;
+  QRadioButton *lipoRadioButton;
+  QRadioButton *ironPhosphateRadioButton;
+  QRadioButton *otherRadioButton;
+  QLabel *sameTypeLabel;
 
-    QLabel *cellNamesListLabel;
-    QListWidget *cellNamesListWidget;
+  QLabel *cellNamesListLabel;
+  QListWidget *cellNamesListWidget;
 
-    QLabel *numWarmupCyclesLabel;
-    QSpinBox *numWarmupCyclesSpinBox;
+  QLabel *numWarmupCyclesLabel;
+  QSpinBox *numWarmupCyclesSpinBox;
 
-    QLabel *numMeasurementCyclesLabel;
-    QSpinBox *numMeasurementCyclesSpinBox;
+  QLabel *numMeasurementCyclesLabel;
+  QSpinBox *numMeasurementCyclesSpinBox;
 
-    QCheckBox *storageDischargeCheckBox;
+  QCheckBox *storageDischargeCheckBox;
 
-    QLabel *restPeriodLabel;
-    QDoubleSpinBox *restPeriodSpinBox;
-    QLabel *restPeriodUnit;
+  QLabel *restPeriodLabel;
+  QDoubleSpinBox *restPeriodSpinBox;
+  QLabel *restPeriodUnit;
 
-    QLabel *highVoltageCutoffLabel;
-    QDoubleSpinBox *highVoltageCutoffSpinBox;
-    QLabel *highVoltageCutoffUnit;
+  QLabel *highVoltageCutoffLabel;
+  QDoubleSpinBox *highVoltageCutoffSpinBox;
+  QLabel *highVoltageCutoffUnit;
 
-    QLabel *lowVoltageCutoffLabel;
-    QDoubleSpinBox *lowVoltageCutoffSpinBox;
-    QLabel *lowVoltageCutoffUnit;
+  QLabel *lowVoltageCutoffLabel;
+  QDoubleSpinBox *lowVoltageCutoffSpinBox;
+  QLabel *lowVoltageCutoffUnit;
 
-    QLabel *chargeTemperatureCutoffLabel;
-    QDoubleSpinBox *chargeTemperatureCutoffSpinBox;
-    QLabel *chargeTemperatureCutoffUnit;
+  QLabel *chargeTemperatureCutoffLabel;
+  QDoubleSpinBox *chargeTemperatureCutoffSpinBox;
+  QLabel *chargeTemperatureCutoffUnit;
 
-    QLabel *dischargeTemperatureCutoffLabel;
-    QDoubleSpinBox *dischargeTemperatureCutoffSpinBox;
-    QLabel *dischargeTemperatureCutoffUnit;
+  QLabel *dischargeTemperatureCutoffLabel;
+  QDoubleSpinBox *dischargeTemperatureCutoffSpinBox;
+  QLabel *dischargeTemperatureCutoffUnit;
 
-    QLabel *chargeCurrentSafetyCutoffLabel;
-    QDoubleSpinBox *chargeCurrentSafetyCutoffSpinBox;
-    QLabel *chargeCurrentSafetyCutoffUnit;
+  QLabel *chargeCurrentSafetyCutoffLabel;
+  QDoubleSpinBox *chargeCurrentSafetyCutoffSpinBox;
+  QLabel *chargeCurrentSafetyCutoffUnit;
 
-    QLabel *dischargeCurrentSafetyCutoffLabel;
-    QDoubleSpinBox *dischargeCurrentSafetyCutoffSpinBox;
-    QLabel *dischargeCurrentSafetyCutoffUnit;
+  QLabel *dischargeCurrentSafetyCutoffLabel;
+  QDoubleSpinBox *dischargeCurrentSafetyCutoffSpinBox;
+  QLabel *dischargeCurrentSafetyCutoffUnit;
 
-    QLabel *prechargeRateLabel;
-    QDoubleSpinBox *prechargeRateSpinBox;
-    QLabel *prechargeRateUnit;
+  QLabel *prechargeRateLabel;
+  QDoubleSpinBox *prechargeRateSpinBox;
+  QLabel *prechargeRateUnit;
 
-    QLabel *chargeRateLabel;
-    QDoubleSpinBox *chargeRateSpinBox;
-    QLabel *chargeRateUnit;
+  QLabel *chargeRateLabel;
+  QDoubleSpinBox *chargeRateSpinBox;
+  QLabel *chargeRateUnit;
 
-    QLabel *dischargeRateLabel;
-    QDoubleSpinBox *dischargeRateSpinBox;
-    QLabel *dischargeRateUnit;
+  QLabel *dischargeRateLabel;
+  QDoubleSpinBox *dischargeRateSpinBox;
+  QLabel *dischargeRateUnit;
 
-    QLabel *storageDischargeVoltageLabel;
-    QDoubleSpinBox *storageDischargeVoltageSpinBox;
-    QLabel *storageDischargeVoltageUnit;
+  QLabel *storageDischargeVoltageLabel;
+  QDoubleSpinBox *storageDischargeVoltageSpinBox;
+  QLabel *storageDischargeVoltageUnit;
 
-    QLabel *acceptableCellImpedanceThresholdLabel;
-    QDoubleSpinBox *acceptableCellImpedanceThresholdSpinBox;
-    QLabel *acceptableCellImpedanceThresholdUnit;
+  QLabel *acceptableCellImpedanceThresholdLabel;
+  QDoubleSpinBox *acceptableCellImpedanceThresholdSpinBox;
+  QLabel *acceptableCellImpedanceThresholdUnit;
 };
 
 #endif // PLAYLISTSETTINGSWIDGET_H
