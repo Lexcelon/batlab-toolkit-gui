@@ -64,12 +64,16 @@ void BatlabManager::startTests() {
   // and then shut down channel if no more cells
 
   emit testsInProgressState(true);
+  // Trigger redraw of Batlabs to disable firmware upgrade button
+  processUpdatedBatlabInfo();
 }
 
 void BatlabManager::stopTests() {
   // TODO
 
   emit testsInProgressState(false);
+  // Trigger redraw of Batlabs to enable firmware upgrade button
+  processUpdatedBatlabInfo();
 }
 
 CellPlaylist BatlabManager::loadedPlaylist() { return m_loadedPlaylist; }

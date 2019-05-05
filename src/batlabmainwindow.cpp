@@ -318,8 +318,8 @@ void BatlabMainWindow::redrawBatlabInfo(QVector<batlabStatusInfo> infos,
   clearLayout(batlabsTabLayout, true);
 
   for (int i = 0; i < infos.size(); i++) {
-    BatlabWidget *batlabWidget =
-        new BatlabWidget(infos[i], latestFirmwareVersion);
+    BatlabWidget *batlabWidget = new BatlabWidget(
+        infos[i], latestFirmwareVersion, batlabManager->testsInProgress());
     batlabsTabLayout->addWidget(batlabWidget);
     connect(batlabWidget, &BatlabWidget::firmwareUpdateRequested, this,
             &BatlabMainWindow::processFirmwareFlashRequest);
