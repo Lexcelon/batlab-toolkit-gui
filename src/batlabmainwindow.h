@@ -61,7 +61,6 @@ private:
   void closeEvent(QCloseEvent *event);
 
   BatlabManager *batlabManager;
-  PlaylistSettingsWidget *playlistSettingsWidget;
 
   BatlabDebugDialog *batlabDebugDialog = nullptr;
 

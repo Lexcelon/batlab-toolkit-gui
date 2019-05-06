@@ -8,10 +8,6 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   openCellPlaylistButton = new QPushButton(tr("Open"));
   connect(openCellPlaylistButton, &QPushButton::clicked, this,
           &PlaylistSettingsWidget::openPlaylist);
-  saveCellPlaylistButton = new QPushButton(tr("Save"));
-  connect(saveCellPlaylistButton, &QPushButton::clicked, this,
-          &PlaylistSettingsWidget::savePlaylist);
-  saveCellPlaylistButton->setEnabled(false);
 
   cellPlaylistNameLabel = new QLabel(tr("Playlist name:"));
   cellPlaylistNameLineEdit = new QLineEdit;
@@ -253,7 +249,6 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   QVBoxLayout *manageLayout = new QVBoxLayout;
   manageLayout->addWidget(newCellPlaylistButton);
   manageLayout->addWidget(openCellPlaylistButton);
-  manageLayout->addWidget(saveCellPlaylistButton);
   manageLayout->addStretch();
 
   QGridLayout *setupLayout = new QGridLayout;

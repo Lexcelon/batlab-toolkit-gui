@@ -716,11 +716,9 @@ void BatlabMainWindow::showNotification(QString title, QString text) {
 }
 
 void BatlabMainWindow::processTestsInProgressState(bool testsInProgress) {
-  if (testsInProgress) {
-    startTestsButton->setEnabled(false);
-    stopTestsButton->setEnabled(true);
-  } else {
-    startTestsButton->setEnabled(true);
-    stopTestsButton->setEnabled(false);
-  }
+  startTestsButton->setEnabled(!testsInProgress);
+  stopTestsButton->setEnabled(testsInProgress);
+  cellPlaylistLoadedWidget->setEnabled(!testsInProgress);
+  newCellPlaylistAct->setEnabled(!testsInProgress);
+  openCellPlaylistAct->setEnabled(!testsInProgress);
 }
