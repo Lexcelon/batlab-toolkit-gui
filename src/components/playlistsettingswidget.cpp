@@ -20,6 +20,8 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   QValidator *cellPlaylistNameValidator =
       new QRegExpValidator(cellPlaylistNameRx);
   cellPlaylistNameLineEdit->setValidator(cellPlaylistNameValidator);
+  connect(cellPlaylistNameLineEdit, &QLineEdit::textChanged, this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   selectChemistryBox = new QGroupBox(tr("Cell chemistry type"));
   lipoRadioButton = new QRadioButton(
@@ -41,6 +43,12 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
           &PlaylistSettingsWidget::updateBoundsBasedOnChemistryType);
   connect(otherRadioButton, &QRadioButton::toggled, this,
           &PlaylistSettingsWidget::updateBoundsBasedOnChemistryType);
+  connect(lipoRadioButton, &QRadioButton::toggled, this,
+          &PlaylistSettingsWidget::updatePlaylist);
+  connect(ironPhosphateRadioButton, &QRadioButton::toggled, this,
+          &PlaylistSettingsWidget::updatePlaylist);
+  connect(otherRadioButton, &QRadioButton::toggled, this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   sameTypeLabel = new QLabel(
       tr("Please note that all cells in a playlist must be of the same type."));
@@ -48,24 +56,33 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
 
   cellNamesListLabel = new QLabel(tr("Cell names:"));
   cellNamesListWidget = new QListWidget(this);
+  connect(cellNamesListWidget, &QListWidget::itemChanged, this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   numWarmupCyclesLabel = new QLabel(tr("Number of warmup cycles:"));
   numWarmupCyclesSpinBox = new QSpinBox;
   numWarmupCyclesSpinBox->setMinimum(NUM_WARMUP_CYCLES_MIN);
   numWarmupCyclesSpinBox->setMaximum(NUM_WARMUP_CYCLES_MAX);
   numWarmupCyclesSpinBox->setValue(NUM_WARMUP_CYCLES_DEFAULT);
+  connect(numWarmupCyclesSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, &PlaylistSettingsWidget::updatePlaylist);
 
   numMeasurementCyclesLabel = new QLabel(tr("Number of measurement cycles:"));
   numMeasurementCyclesSpinBox = new QSpinBox;
   numMeasurementCyclesSpinBox->setMinimum(NUM_MEASUREMENT_CYCLES_MIN);
   numMeasurementCyclesSpinBox->setMaximum(NUM_MEASUREMENT_CYCLES_MAX);
   numMeasurementCyclesSpinBox->setValue(NUM_MEASUREMENT_CYCLES_DEFAULT);
+  connect(numMeasurementCyclesSpinBox,
+          QOverload<int>::of(&QSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   storageDischargeCheckBox =
       new QCheckBox(tr("Discharge to storage voltage after testing"));
   storageDischargeCheckBox->setChecked(STORAGE_DISCHARGE_DEFAULT);
   connect(storageDischargeCheckBox, &QCheckBox::toggled, this,
           &PlaylistSettingsWidget::enableOrDisableStorageDischargeField);
+  connect(storageDischargeCheckBox, &QCheckBox::toggled, this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   restPeriodLabel = new QLabel(tr("Rest period:"));
   restPeriodSpinBox = new QDoubleSpinBox;
@@ -73,6 +90,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   restPeriodSpinBox->setMinimum(REST_PERIOD_MIN);
   restPeriodSpinBox->setMaximum(REST_PERIOD_MAX);
   restPeriodSpinBox->setValue(REST_PERIOD_DEFAULT);
+  connect(restPeriodSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   highVoltageCutoffLabel = new QLabel(tr("High voltage cutoff:"));
   highVoltageCutoffSpinBox = new QDoubleSpinBox;
@@ -85,6 +105,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
           static_cast<void (QDoubleSpinBox::*)(double)>(
               &QDoubleSpinBox::valueChanged),
           this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
+  connect(highVoltageCutoffSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   lowVoltageCutoffLabel = new QLabel(tr("Low voltage cutoff:"));
   lowVoltageCutoffSpinBox = new QDoubleSpinBox;
@@ -93,6 +116,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   lowVoltageCutoffSpinBox->setMinimum(LOW_VOLTAGE_CUTOFF_MIN);
   lowVoltageCutoffSpinBox->setMaximum(LOW_VOLTAGE_CUTOFF_MAX);
   lowVoltageCutoffSpinBox->setValue(LOW_VOLTAGE_CUTOFF_DEFAULT);
+  connect(lowVoltageCutoffSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   chargeTemperatureCutoffLabel = new QLabel(tr("Charge temperature cutoff:"));
   chargeTemperatureCutoffSpinBox = new QDoubleSpinBox;
@@ -100,6 +126,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   chargeTemperatureCutoffSpinBox->setMinimum(CHARGE_TEMP_CUTOFF_MIN);
   chargeTemperatureCutoffSpinBox->setMaximum(CHARGE_TEMP_CUTOFF_MAX);
   chargeTemperatureCutoffSpinBox->setValue(CHARGE_TEMP_CUTOFF_DEFAULT);
+  connect(chargeTemperatureCutoffSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   dischargeTemperatureCutoffLabel =
       new QLabel(tr("Discharge temperature cutoff:"));
@@ -108,6 +137,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   dischargeTemperatureCutoffSpinBox->setMinimum(DISCHARGE_TEMP_CUTOFF_MIN);
   dischargeTemperatureCutoffSpinBox->setMaximum(DISCHARGE_TEMP_CUTOFF_MAX);
   dischargeTemperatureCutoffSpinBox->setValue(DISCHARGE_TEMP_CUTOFF_DEFAULT);
+  connect(dischargeTemperatureCutoffSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   chargeCurrentSafetyCutoffLabel =
       new QLabel(tr("Charge current safety cutoff:"));
@@ -125,6 +157,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
           static_cast<void (QDoubleSpinBox::*)(double)>(
               &QDoubleSpinBox::valueChanged),
           this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
+  connect(chargeCurrentSafetyCutoffSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   dischargeCurrentSafetyCutoffLabel =
       new QLabel(tr("Discharge current safety cutoff:"));
@@ -142,6 +177,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
           static_cast<void (QDoubleSpinBox::*)(double)>(
               &QDoubleSpinBox::valueChanged),
           this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
+  connect(dischargeCurrentSafetyCutoffSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   prechargeRateLabel = new QLabel(tr("Precharge rate:"));
   prechargeRateSpinBox = new QDoubleSpinBox;
@@ -154,6 +192,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
                                              // not be greater than the charge
                                              // current safety cutoff
   prechargeRateSpinBox->setValue(PRECHARGE_RATE_DEFAULT);
+  connect(prechargeRateSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   chargeRateLabel = new QLabel(tr("Charge rate:"));
   chargeRateSpinBox = new QDoubleSpinBox;
@@ -166,6 +207,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
                                              // not be greater than the charge
                                              // current safety cutoff
   chargeRateSpinBox->setValue(CHARGE_RATE_DEFAULT);
+  connect(chargeRateSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   dischargeRateLabel = new QLabel(tr("Discharge rate:"));
   dischargeRateSpinBox = new QDoubleSpinBox;
@@ -179,6 +223,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
                                                 // discharge current safety
                                                 // cutoff
   dischargeRateSpinBox->setValue(DISCHARGE_RATE_DEFAULT);
+  connect(dischargeRateSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   storageDischargeVoltageLabel = new QLabel(tr("Storage discharge voltage:"));
   storageDischargeVoltageSpinBox = new QDoubleSpinBox;
@@ -189,6 +236,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
       HIGH_VOLTAGE_CUTOFF_DEFAULT); // Max is updated dynamically to not be
                                     // greater than the high voltage cutoff
   storageDischargeVoltageSpinBox->setValue(STORAGE_DISCHARGE_VOLTAGE_DEFAULT);
+  connect(storageDischargeVoltageSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   acceptableCellImpedanceThresholdLabel =
       new QLabel(tr("Acceptable cell impedance threshold:"));
@@ -199,6 +249,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
       ACCEPTABLE_IMPEDANCE_THRESHOLD_MIN, ACCEPTABLE_IMPEDANCE_THRESHOLD_MAX);
   acceptableCellImpedanceThresholdSpinBox->setValue(
       ACCEPTABLE_IMPEDANCE_THRESHOLD_DEFAULT);
+  connect(acceptableCellImpedanceThresholdSpinBox,
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updatePlaylist);
 
   QVBoxLayout *manageLayout = new QVBoxLayout;
   manageLayout->addWidget(newCellPlaylistButton);
@@ -310,6 +363,42 @@ void PlaylistSettingsWidget::updateBoundsBasedOnChemistryType() {
     lowVoltageCutoffSpinBox->setValue(LOW_VOLTAGE_CUTOFF_DEFAULT);
     storageDischargeVoltageSpinBox->setValue(STORAGE_DISCHARGE_VOLTAGE_DEFAULT);
   }
+}
+
+void PlaylistSettingsWidget::updatePlaylist() {
+  CellPlaylist playlist;
+  playlist.setCellPlaylistName(cellPlaylistNameLineEdit->text());
+  if (lipoRadioButton->isChecked()) {
+    playlist.setCellChemistryType(LIPO_CHEMISTRY_FIELDSTR);
+  } else if (ironPhosphateRadioButton->isChecked()) {
+    playlist.setCellChemistryType(IRON_PHOSPHATE_CHEMISTRY_FIELDSTR);
+  } else if (otherRadioButton->isChecked()) {
+    playlist.setCellChemistryType(OTHER_CHEMISTRY_FIELDSTR);
+  }
+  QVector<QString> cellNames;
+  for (int i = 0; i < cellNamesListWidget->count(); i++) {
+    cellNames.append(cellNamesListWidget->item(i)->text());
+  }
+  playlist.setCellNames(cellNames);
+  playlist.setNumWarmupCycles(numWarmupCyclesSpinBox->value());
+  playlist.setNumMeasurementCycles(numMeasurementCyclesSpinBox->value());
+  playlist.setStorageDischarge(storageDischargeCheckBox->isChecked());
+  playlist.setRestPeriod(restPeriodSpinBox->value());
+  playlist.setHighVoltageCutoff(highVoltageCutoffSpinBox->value());
+  playlist.setLowVoltageCutoff(lowVoltageCutoffSpinBox->value());
+  playlist.setChargeTempCutoff(chargeTemperatureCutoffSpinBox->value());
+  playlist.setDischargeTempCutoff(dischargeTemperatureCutoffSpinBox->value());
+  playlist.setChargeCurrentSafetyCutoff(
+      chargeCurrentSafetyCutoffSpinBox->value());
+  playlist.setDischargeCurrentSafetyCutoff(
+      dischargeCurrentSafetyCutoffSpinBox->value());
+  playlist.setPrechargeRate(prechargeRateSpinBox->value());
+  playlist.setChargeRate(chargeRateSpinBox->value());
+  playlist.setDischargeRate(dischargeRateSpinBox->value());
+  playlist.setStorageDischargeVoltage(storageDischargeVoltageSpinBox->value());
+  playlist.setAcceptableImpedanceThreshold(
+      acceptableCellImpedanceThresholdSpinBox->value());
+  emit playlistUpdated(playlist);
 }
 
 void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist) {

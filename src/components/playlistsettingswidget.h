@@ -19,11 +19,13 @@ public:
   void enableOrDisableStorageDischargeField();
   void updateDynamicFieldBounds();
   void loadPlaylist(CellPlaylist playlist);
+  void updatePlaylist();
 
 signals:
   void newPlaylist();
   void openPlaylist();
   void savePlaylist();
+  void playlistUpdated(CellPlaylist playlist);
 
 public slots:
 
