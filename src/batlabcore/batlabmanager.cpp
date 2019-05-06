@@ -208,11 +208,38 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
   // First, rename individual cell files to archive_*
   for (auto cell : m_cellResults.values()) {
     if (cell.hasSomeResults && !cell.hasCompleteResults) {
-      QFile::rename(resultsDir.absoluteFilePath(playlist.getCellPlaylistName() +
-                                                "_" + cell.cellName + ".csv"),
-                    resultsDir.absoluteFilePath("archive_" +
-                                                playlist.getCellPlaylistName() +
-                                                "_" + cell.cellName + ".csv"));
+      QString currentName = resultsDir.absoluteFilePath(
+          playlist.getCellPlaylistName() + "_" + cell.cellName + ".csv");
+      QString archiveName = resultsDir.absoluteFilePath(
+          "archive_" + playlist.getCellPlaylistName() + "_" + cell.cellName +
+          ".csv");
+      QFile currentFile(currentName);
+      QFile archiveFile(archiveName);
+      if (archiveFile.exists()) {
+        if (!currentFile.open(QIODevice::ReadOnly)) {
+          qWarning() << currentFile.errorString();
+          return;
+        }
+        QByteArray output;
+        QString line;
+        while (!line.startsWith("Cell Name") &&
+               !currentFile.atEnd()) { // JSON and headers
+          line = currentFile.readLine();
+        }
+        while (!currentFile.atEnd()) {
+          line = currentFile.readLine();
+          output.append(line);
+        }
+        if (!archiveFile.open(QIODevice::Append)) {
+          qWarning() << archiveFile.errorString();
+          return;
+        }
+        archiveFile.write(output);
+        archiveFile.close();
+        currentFile.remove();
+      } else {
+        QFile::rename(currentName, archiveName);
+      }
     }
   }
   // Next, move lvl2 lines for those cells to their archive_ file
