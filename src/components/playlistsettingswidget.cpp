@@ -102,9 +102,8 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   highVoltageCutoffSpinBox->setMaximum(HIGH_VOLTAGE_CUTOFF_MAX);
   highVoltageCutoffSpinBox->setValue(HIGH_VOLTAGE_CUTOFF_DEFAULT);
   connect(highVoltageCutoffSpinBox,
-          static_cast<void (QDoubleSpinBox::*)(double)>(
-              &QDoubleSpinBox::valueChanged),
-          this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updateDynamicFieldBounds);
   connect(highVoltageCutoffSpinBox,
           QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
           &PlaylistSettingsWidget::updatePlaylist);
@@ -154,9 +153,8 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   chargeCurrentSafetyCutoffSpinBox->setValue(
       CHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT);
   connect(chargeCurrentSafetyCutoffSpinBox,
-          static_cast<void (QDoubleSpinBox::*)(double)>(
-              &QDoubleSpinBox::valueChanged),
-          this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updateDynamicFieldBounds);
   connect(chargeCurrentSafetyCutoffSpinBox,
           QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
           &PlaylistSettingsWidget::updatePlaylist);
@@ -174,9 +172,8 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
   dischargeCurrentSafetyCutoffSpinBox->setValue(
       DISCHARGE_CURRENT_SAFETY_CUTOFF_DEFAULT);
   connect(dischargeCurrentSafetyCutoffSpinBox,
-          static_cast<void (QDoubleSpinBox::*)(double)>(
-              &QDoubleSpinBox::valueChanged),
-          this, &PlaylistSettingsWidget::updateDynamicFieldBounds);
+          QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &PlaylistSettingsWidget::updateDynamicFieldBounds);
   connect(dischargeCurrentSafetyCutoffSpinBox,
           QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
           &PlaylistSettingsWidget::updatePlaylist);
