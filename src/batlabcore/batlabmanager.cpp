@@ -303,6 +303,32 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
   processCellResultsUpdated();
 }
 
+void BatlabManager::updatePlaylist(CellPlaylist playlist) {
+  m_loadedPlaylist.setCellPlaylistName(playlist.getCellPlaylistName());
+  m_loadedPlaylist.setCellChemistryType(playlist.getCellChemistryType());
+  m_loadedPlaylist.setCellNames(playlist.getCellNames());
+  m_loadedPlaylist.setNumWarmupCycles(playlist.getNumWarmupCycles());
+  m_loadedPlaylist.setNumMeasurementCycles(playlist.getNumMeasurementCycles());
+  m_loadedPlaylist.setStorageDischarge(playlist.getStorageDischarge());
+  m_loadedPlaylist.setRestPeriod(playlist.getRestPeriod());
+  m_loadedPlaylist.setHighVoltageCutoff(playlist.getHighVoltageCutoff());
+  m_loadedPlaylist.setLowVoltageCutoff(playlist.getLowVoltageCutoff());
+  m_loadedPlaylist.setChargeTempCutoff(playlist.getChargeTempCutoff());
+  m_loadedPlaylist.setDischargeTempCutoff(playlist.getDischargeTempCutoff());
+  m_loadedPlaylist.setChargeCurrentSafetyCutoff(
+      playlist.getChargeCurrentSafetyCutoff());
+  m_loadedPlaylist.setDischargeCurrentSafetyCutoff(
+      playlist.getDischargeCurrentSafetyCutoff());
+  m_loadedPlaylist.setPrechargeRate(playlist.getPrechargeRate());
+  m_loadedPlaylist.setChargeRate(playlist.getChargeRate());
+  m_loadedPlaylist.setDischargeRate(playlist.getDischargeRate());
+  m_loadedPlaylist.setStorageDischargeVoltage(
+      playlist.getStorageDischargeVoltage());
+  m_loadedPlaylist.setAcceptableImpedanceThreshold(
+      playlist.getAcceptableImpedanceThreshold());
+  // TODO add trickle etc
+}
+
 void BatlabManager::setAllBatlabChannelsIdle() {
   for (auto portName : connectedBatlabsByPortName.keys()) {
     connectedBatlabsByPortName[portName]->setAllIdle();

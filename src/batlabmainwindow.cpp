@@ -132,6 +132,8 @@ void BatlabMainWindow::initializeMainWindowUI() {
           &BatlabMainWindow::showNewCellPlaylistWizard);
   connect(cellPlaylistLoadedWidget, &PlaylistSettingsWidget::openPlaylist, this,
           &BatlabMainWindow::openCellPlaylist);
+  connect(cellPlaylistLoadedWidget, &PlaylistSettingsWidget::playlistUpdated,
+          batlabManager, &BatlabManager::updatePlaylist);
 
   cellPlaylistStackedWidget = new QStackedWidget;
   cellPlaylistStackedWidget->addWidget(cellPlaylistNotLoadedWidget);

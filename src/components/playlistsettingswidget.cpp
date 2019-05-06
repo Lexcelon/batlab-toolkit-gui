@@ -399,6 +399,7 @@ void PlaylistSettingsWidget::updatePlaylist() {
   playlist.setAcceptableImpedanceThreshold(
       acceptableCellImpedanceThresholdSpinBox->value());
   emit playlistUpdated(playlist);
+  // TODO add trickle etc
 }
 
 void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist) {

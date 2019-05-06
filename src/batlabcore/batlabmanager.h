@@ -69,6 +69,7 @@ public slots:
   QString getPortNameFromSerial(int serial);
 
   void loadPlaylist(CellPlaylist playlist);
+  void updatePlaylist(CellPlaylist playlist);
   bool hasPartialCellResults(CellPlaylist playlist);
   CellPlaylist loadedPlaylist();
 
