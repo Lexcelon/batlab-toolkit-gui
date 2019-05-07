@@ -29,6 +29,8 @@ BatlabMainWindow::BatlabMainWindow(QWidget *parent) : QMainWindow(parent) {
           &BatlabMainWindow::showNotification);
   connect(batlabManager, &BatlabManager::testsInProgressState, this,
           &BatlabMainWindow::processTestsInProgressState);
+  connect(batlabManager, &BatlabManager::cellPlaylistEditedState, this,
+          &BatlabMainWindow::processCellPlaylistEditedState);
 
   // Setup the UI
   initializeMainWindowUI();
@@ -255,12 +257,20 @@ void BatlabMainWindow::displayLoadedCellPlaylist(CellPlaylist playlist) {
   startTestsButton->setEnabled(true);
 }
 
-void BatlabMainWindow::saveCellPlaylist() {
-  // TODO
-}
+void BatlabMainWindow::saveCellPlaylist() { batlabManager->savePlaylist(); }
 
 void BatlabMainWindow::saveCellPlaylistAs() {
-  // TODO
+  QString filename = QFileDialog::getSaveFileName(
+      this, tr("Save Playlist"),
+      batlabManager->loadedPlaylist().getPlaylistSaveFilename(),
+      tr("Playlist Files (*.json);;All Files (*)"));
+  if (filename != "") {
+    batlabManager->savePlaylistAs(filename);
+  }
+}
+
+void BatlabMainWindow::processCellPlaylistEditedState(bool edited) {
+  saveCellPlaylistAct->setEnabled(edited);
 }
 
 void BatlabMainWindow::savelogView() {
@@ -355,12 +365,14 @@ void BatlabMainWindow::createActions() {
   saveCellPlaylistAct = new QAction(tr("&Save Cell Playlist"), this);
   saveCellPlaylistAct->setShortcuts(QKeySequence::Save);
   saveCellPlaylistAct->setStatusTip(tr("Save the loaded cell playlist"));
+  saveCellPlaylistAct->setEnabled(false);
   connect(saveCellPlaylistAct, &QAction::triggered, this,
           &BatlabMainWindow::saveCellPlaylist);
 
   saveCellPlaylistAsAct = new QAction(tr("&Save Cell Playlist As"), this);
   saveCellPlaylistAsAct->setShortcuts(QKeySequence::SaveAs);
   saveCellPlaylistAsAct->setStatusTip(tr("Save the loaded cell playlist As"));
+  saveCellPlaylistAsAct->setEnabled(false);
   connect(saveCellPlaylistAsAct, &QAction::triggered, this,
           &BatlabMainWindow::saveCellPlaylistAs);
 
@@ -440,6 +452,8 @@ void BatlabMainWindow::openCellPlaylist() {
     }
   }
   batlabManager->loadPlaylist(playlist);
+  saveCellPlaylistAsAct->setEnabled(true);
+  saveCellPlaylistAct->setEnabled(false);
 }
 
 void BatlabMainWindow::exitBatlabToolkitGUI() { this->close(); }

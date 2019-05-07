@@ -3,7 +3,7 @@
 BatlabManager::BatlabManager(QObject *parent) : QObject(parent) {
   qRegisterMetaType<QVector<uchar>>("QVector<uchar>");
 
-  isCellPlaylistLoaded = false;
+  m_isCellPlaylistLoaded = false;
 
   QTimer *updateConnectedBatlabsTimer = new QTimer(this);
   connect(updateConnectedBatlabsTimer, &QTimer::timeout, this,
@@ -145,6 +145,17 @@ bool BatlabManager::hasPartialCellResults(CellPlaylist playlist) {
     }
   }
   return false;
+}
+
+void BatlabManager::savePlaylist() {
+  m_loadedPlaylist.write(m_loadedPlaylist.getPlaylistSaveFilename());
+  emit cellPlaylistEditedState(false);
+}
+
+void BatlabManager::savePlaylistAs(QString filename) {
+  m_loadedPlaylist.write(filename);
+  m_loadedPlaylist.setPlaylistSaveFilename(filename);
+  emit cellPlaylistEditedState(false);
 }
 
 // This will automatically archive incomplete cell results (move them to
@@ -296,7 +307,7 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
   }
 
   // Record that we loaded the playlist
-  isCellPlaylistLoaded = true;
+  m_isCellPlaylistLoaded = true;
   emit cellPlaylistLoaded(m_loadedPlaylist);
 
   // Load any existing results into GUI
@@ -327,6 +338,8 @@ void BatlabManager::updatePlaylist(CellPlaylist playlist) {
   m_loadedPlaylist.setAcceptableImpedanceThreshold(
       playlist.getAcceptableImpedanceThreshold());
   // TODO add trickle etc
+
+  emit cellPlaylistEditedState(true);
 }
 
 void BatlabManager::setAllBatlabChannelsIdle() {

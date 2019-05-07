@@ -53,6 +53,7 @@ public slots:
   void togglePrintDebugMessages(bool value);
 
   void processTestsInProgressState(bool testsInProgress);
+  void processCellPlaylistEditedState(bool edited);
 
 signals:
   void emitUpdateText(QString);
