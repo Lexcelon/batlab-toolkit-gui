@@ -108,6 +108,8 @@ struct channelStatusInfo {
   QString cellName;
 
   bool testInProgress;
+  float voltage_prev;
+  float current_prev;
 
   bool preChargeComplete;
   bool preChargeError;

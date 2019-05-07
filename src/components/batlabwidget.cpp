@@ -70,12 +70,12 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion,
     QWidget *batlabCellInfoWidget = new QWidget;
     batlabCellInfoLayout = new QGridLayout;
 
-    // TODO if channel does not have anything going on, make it prettier
     for (int i = 0; i < 4; i++) {
       CellTestStatusWidgetList[i] = new CellTestStatusWidget(info.channels[i]);
       QLabel *cellNameLabel =
           new QLabel(tr(info.channels[i].cellName.toStdString().c_str()));
       cellNameLabel->setFixedWidth(50);
+      // LEFT OFF add current and voltage
 
       // Add Batlab Cell Widgets to View Layout
       batlabCellInfoLayout->addWidget(cellNameLabel, i, 0);

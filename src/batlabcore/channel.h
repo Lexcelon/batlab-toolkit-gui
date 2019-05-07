@@ -55,12 +55,10 @@ private:
 
   int m_voltage_count;
   float m_voltage_avg;
-  float m_voltage_prev;
   int m_voltage_error_count;
 
   int m_current_count;
   float m_current_avg;
-  float m_current_prev;
   quint16 m_current_setpoint;
 
   float m_z_avg;

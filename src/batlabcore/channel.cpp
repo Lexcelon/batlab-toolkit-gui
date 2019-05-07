@@ -25,7 +25,7 @@ Channel::Channel(int slot, QObject *parent) : QObject(parent) {
 
   m_voltage_count = 0;
   m_voltage_avg = 0;
-  m_voltage_prev = 0;
+  info.voltage_prev = 0;
   m_voltage_error_count = 0;
 
   m_z_avg = 0;
@@ -33,7 +33,7 @@ Channel::Channel(int slot, QObject *parent) : QObject(parent) {
 
   m_current_count = 0;
   m_current_avg = 0;
-  m_current_prev = 0;
+  info.current_prev = 0;
   m_current_setpoint = 256;
 
   m_vcc = 5.0;
@@ -155,7 +155,7 @@ void Channel::stateMachine() {
     if (playlist().getEnableTrickle() &&
         !playlist().getEnableConstantVoltage()) {
       if (!m_trickle_engaged &&
-          m_voltage_prev >
+          info.voltage_prev >
               static_cast<float>(playlist().getTrickleChargeEngageLimit())) {
         packets.append(BatlabPacket(
             info.slot, CURRENT_SETPOINT,
@@ -178,7 +178,7 @@ void Channel::stateMachine() {
           static_cast<float>(playlist().getConstantVoltageSensitivity());
       // If voltage is getting close to the cutoff point and current is flowing
       // at greater than a trickle
-      if (m_voltage_prev >
+      if (info.voltage_prev >
               (static_cast<float>(playlist().getHighVoltageCutoff()) -
                (static_cast<float>(m_current_setpoint) * std_impedance)) &&
           m_current_setpoint > playlist().getConstantVoltageStepSize()) {
@@ -302,7 +302,7 @@ void Channel::stateMachine() {
       std_impedance =
           std_impedance *
           static_cast<float>(playlist().getConstantVoltageSensitivity());
-      if (m_voltage_prev <
+      if (info.voltage_prev <
               (static_cast<float>(playlist().getLowVoltageCutoff()) +
                (static_cast<float>(m_current_setpoint) * std_impedance)) &&
           m_current_setpoint > playlist().getConstantVoltageStepSize()) {
@@ -314,7 +314,7 @@ void Channel::stateMachine() {
     }
     if (playlist().getEnableTrickle() &&
         !playlist().getEnableConstantVoltage()) {
-      if (m_voltage_prev <
+      if (info.voltage_prev <
               static_cast<float>(playlist().getTrickleDischargeEngageLimit()) &&
           !m_trickle_engaged) {
         packets.append(BatlabPacket(
@@ -404,7 +404,7 @@ void Channel::stateMachine() {
       std_impedance =
           std_impedance *
           static_cast<float>(playlist().getConstantVoltageSensitivity());
-      if (m_voltage_prev >
+      if (info.voltage_prev >
               (static_cast<float>(playlist().getHighVoltageCutoff()) -
                (static_cast<float>(m_current_setpoint) * std_impedance)) &&
           m_current_setpoint > playlist().getConstantVoltageStepSize()) {
@@ -416,7 +416,7 @@ void Channel::stateMachine() {
     }
     if (playlist().getEnableTrickle() &&
         !playlist().getEnableConstantVoltage()) {
-      if (m_voltage_prev >
+      if (info.voltage_prev >
               static_cast<float>(playlist().getTrickleChargeEngageLimit()) &&
           !m_trickle_engaged) {
         packets.append(BatlabPacket(
@@ -446,7 +446,7 @@ void Channel::stateMachine() {
     }
   } else if (m_test_state == TS_POSTDISCHARGE) {
     if (m_mode == MODE_STOPPED ||
-        m_voltage_prev <
+        info.voltage_prev <
             static_cast<float>(playlist().getStorageDischargeVoltage())) {
       logLvl2("POSTDISCHARGE");
       packets.append(BatlabPacket(info.slot, MODE, MODE_IDLE)
@@ -476,14 +476,14 @@ void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
   m_voltage_avg = 0;
   m_voltage_count = 0;
   m_voltage_error_count = 0;
-  m_voltage_prev = 0;
+  info.voltage_prev = 0;
 
   m_z_avg = 0;
   m_z_count = 0;
 
   m_current_avg = 0;
   m_current_count = 0;
-  m_current_prev = 0;
+  info.current_prev = 0;
 
   int responseCounter = 0;
   while (response[responseCounter].getAddress() != TEMPERATURE &&
@@ -620,9 +620,9 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   // Detect voltage measurement inconsistency hardware problem that was found
   // on a couple of batlabs
   if (!std::isnan(voltage) && !std::isnan(current)) {
-    if (m_current_prev > 0.05f && m_voltage_prev > 0.5f) {
-      if (std::abs(current - m_current_prev) < 0.05f) {
-        if (m_voltage_prev - voltage > 0.2f) {
+    if (info.current_prev > 0.05f && info.voltage_prev > 0.5f) {
+      if (std::abs(current - info.current_prev) < 0.05f) {
+        if (info.voltage_prev - voltage > 0.2f) {
           m_voltage_error_count++;
           qWarning() << tr("Unexpected voltage jump detected on Batlab %1, "
                            "Channel %2")
@@ -640,8 +640,8 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
         }
       }
     }
-    m_voltage_prev = voltage;
-    m_current_prev = current;
+    info.voltage_prev = voltage;
+    info.current_prev = current;
     m_voltage_avg =
         m_voltage_avg + (voltage - m_voltage_avg) / ++m_voltage_count;
     m_current_avg =
