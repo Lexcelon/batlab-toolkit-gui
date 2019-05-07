@@ -151,8 +151,10 @@ struct cellResultsStatusInfo {
   int batlabSerial;
   int channel;
 
-  float capacity;
-  float capacityRange;
+  float chargeCapacity;
+  float chargeCapacityRange;
+  float energyCapacity;
+  float energyCapacityRange;
   float impedance;
   float avgCurrent;
   float avgVoltage;

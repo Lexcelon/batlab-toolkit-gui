@@ -599,7 +599,7 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
     charge = ((multiplier * data / powf(2, 15)) * 4.096f / 9.765625f);
   }
 
-  auto duty = response[responseCounter++].getValue();
+  responseCounter++; // Skip duty (unused)
   auto vc = response[responseCounter++].asVcc();
 
   if (!std::isnan(static_cast<float>(vc))) {
@@ -679,10 +679,10 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
     logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
     logstr += QString::number(static_cast<double>(charge), 'f', 4) + ",";
     logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,";
-    logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",";
-    logstr += QString::number(op_raw) + ",";
-    logstr += QString::number(sp_raw) + ",";
-    logstr += QString::number(duty) + "\n";
+    logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",,,\n";
+    //    logstr += QString::number(op_raw) + ",";
+    //    logstr += QString::number(sp_raw) + ",";
+    //    logstr += QString::number(duty) + "\n";
     logLvl1(logstr);
   }
 
@@ -706,13 +706,14 @@ void Channel::logLvl1(QString logstr) {
                            "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
                        .toUtf8());
     cellFile.write(
-        "Cell Name,Batlab SN,Channel,Timestamp (s),Voltage (V),Current "
+        "Cell Name,Batlab Serial,Channel,Timestamp (s),Voltage (V),Current "
         "(A),Temperature (C),Impedance (Ohm),Energy (J),Charge (Coulombs),Test "
-        "State,Test Type,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
-        "Impedance (Ohm),delta Temperature (C),Avg Current (A),Avg "
+        "State,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
+        "Impedance (Ohm),delta Temperature (C),Average Current (A),Average "
         "Voltage,Runtime (s),VCC "
-        "(V),Capacity,CapacityRange,ColoumbicEfficiency,Impedance,AvgVoltage,"
-        "AvgCurrent\n");
+        "(V),Charge Capacity,Charge Capacity Range,Energy Capacity,Energy "
+        "Capacity Range,Impedance,Average Voltage,"
+        "Average Current\n");
     cellFile.close();
   }
   if (!cellFile.open(QIODevice::Append)) {
@@ -738,13 +739,14 @@ void Channel::logLvl2(QString type) {
                               "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
                           .toUtf8());
     summaryFile.write(
-        "Cell Name,Batlab SN,Channel,Timestamp (s),Voltage (V),Current "
+        "Cell Name,Batlab Serial,Channel,Timestamp (s),Voltage (V),Current "
         "(A),Temperature (C),Impedance (Ohm),Energy (J),Charge (Coulombs),Test "
-        "State,Test Type,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
-        "Impedance (Ohm),delta Temperature (C),Avg Current (A),Avg "
+        "State,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
+        "Impedance (Ohm),delta Temperature (C),Average Current (A),Average "
         "Voltage,Runtime (s),VCC "
-        "(V),Capacity,CapacityRange,ColoumbicEfficiency,Impedance,AvgVoltage,"
-        "AvgCurrent\n");
+        "(V),Charge Capacity,Charge Capacity Range,Energy Capacity,Energy "
+        "Capacity Range,Impedance,Average Voltage,"
+        "Average Current\n");
     summaryFile.close();
   }
   if (!summaryFile.open(QIODevice::Append)) {

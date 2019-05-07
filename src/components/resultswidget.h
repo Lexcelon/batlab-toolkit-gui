@@ -17,22 +17,12 @@ public:
 signals:
 
 public slots:
-  void showSelectCells();
-  void hideSelectCells();
-  void selectAllRows();
-  void resetCellData();
 
 private:
   QVBoxLayout *resultsLayout;
 
   QGridLayout *resultsButtonLayout;
   QTableWidget *resultsTableWidget;
-
-  QPushButton *selectCellsButton;
-  QPushButton *selectAllButton;
-  QPushButton *resetCellDataButton;
-
-  QVector<QTableWidgetItem *> checkBoxItems;
 
   QVector<cellResultsStatusInfo> infos;
 };

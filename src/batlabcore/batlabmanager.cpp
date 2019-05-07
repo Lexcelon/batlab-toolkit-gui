@@ -196,7 +196,7 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
     while (!summaryFile.atEnd()) {
       line = summaryFile.readLine();
       auto values = QString(line).remove('"').split(',');
-      if (values.length() < 25) {
+      if (values.length() < 27) {
         continue;
       }
       auto name = values[0];
@@ -205,11 +205,13 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
         m_cellResults[name].batlabSerial = values[1].toInt();
         m_cellResults[name].channel = values[2].toInt();
         m_cellResults[name].hasCompleteResults = true;
-        m_cellResults[name].capacity = values[20].toFloat();
-        m_cellResults[name].capacityRange = values[21].toFloat();
-        m_cellResults[name].impedance = values[22].toFloat();
-        m_cellResults[name].avgVoltage = values[23].toFloat();
-        m_cellResults[name].avgCurrent = values[24].toFloat();
+        m_cellResults[name].chargeCapacity = values[20].toFloat();
+        m_cellResults[name].chargeCapacityRange = values[21].toFloat();
+        m_cellResults[name].energyCapacity = values[22].toFloat();
+        m_cellResults[name].energyCapacityRange = values[23].toFloat();
+        m_cellResults[name].impedance = values[24].toFloat();
+        m_cellResults[name].avgVoltage = values[25].toFloat();
+        m_cellResults[name].avgCurrent = values[26].toFloat();
       }
     }
   }
