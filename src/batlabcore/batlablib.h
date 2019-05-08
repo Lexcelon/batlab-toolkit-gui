@@ -108,6 +108,8 @@ struct channelStatusInfo {
   QString cellName;
 
   bool testInProgress;
+  float voltage_prev;
+  float current_prev;
 
   bool preChargeComplete;
   bool preChargeError;
@@ -151,8 +153,10 @@ struct cellResultsStatusInfo {
   int batlabSerial;
   int channel;
 
-  float capacity;
-  float capacityRange;
+  float chargeCapacity;
+  float chargeCapacityRange;
+  float energyCapacity;
+  float energyCapacityRange;
   float impedance;
   float avgCurrent;
   float avgVoltage;

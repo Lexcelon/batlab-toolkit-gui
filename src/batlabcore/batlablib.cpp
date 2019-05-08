@@ -24,8 +24,10 @@ cellResultsStatusInfo BatlabLib::createInitializedCellResultsStatusInfo() {
   newCellResult.batlabSerial = -1;
   newCellResult.channel = -1;
 
-  newCellResult.capacity = -1;
-  newCellResult.capacityRange = -1;
+  newCellResult.chargeCapacity = -1;
+  newCellResult.chargeCapacityRange = -1;
+  newCellResult.energyCapacity = -1;
+  newCellResult.energyCapacityRange = -1;
   newCellResult.impedance = -1;
   newCellResult.avgVoltage = -1;
   newCellResult.avgCurrent = -1;

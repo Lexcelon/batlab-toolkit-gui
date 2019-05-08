@@ -36,8 +36,8 @@ public:
   bool getStorageDischarge();
   bool setStorageDischargeVoltage(double num);
   double getStorageDischargeVoltage();
-  bool setRestPeriod(int num);
-  int getRestPeriod();
+  bool setRestPeriod(double num);
+  double getRestPeriod();
   bool setChargeTempCutoff(double num);
   double getChargeTempCutoff();
   bool setDischargeTempCutoff(double num);
@@ -131,7 +131,7 @@ private:
   int numMeasurementCycles;
   bool storageDischarge;
   double storageDischargeVoltage;
-  int restPeriod;
+  double restPeriod;
   double acceptableImpedanceThreshold;
   double reportingPeriod;
   double impedanceReportingPeriod;

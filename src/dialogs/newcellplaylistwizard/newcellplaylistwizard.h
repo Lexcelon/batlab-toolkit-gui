@@ -8,176 +8,168 @@
 #include "batlabcore/cellplaylist.h"
 #include "batlabcore/version.h"
 
-class NewCellPlaylistWizard : public QWizard
-{
-    Q_OBJECT
+class NewCellPlaylistWizard : public QWizard {
+  Q_OBJECT
 
 public:
-    NewCellPlaylistWizard(QWidget *parent = 0);
+  NewCellPlaylistWizard(QWidget *parent = 0);
 
-    void accept() override;
-    void savePlaylist();
-    void skipToNextPage();
+  void accept() override;
+  void savePlaylist();
+  void skipToNextPage();
 
 signals:
-    void finished(CellPlaylist);
+  void finished(CellPlaylist);
 
 private:
-    bool skipped;
-    CellPlaylist m_playlist;
+  bool skipped;
+  CellPlaylist m_playlist;
 };
 
-class IntroPage : public QWizardPage
-{
-    Q_OBJECT
+class IntroPage : public QWizardPage {
+  Q_OBJECT
 
 public:
-    IntroPage(QWidget *parent = 0);
+  IntroPage(QWidget *parent = 0);
 
 private:
-    QLabel *label;
+  QLabel *label;
 };
 
-class BasicSetupPage : public QWizardPage
-{
-    Q_OBJECT
+class BasicSetupPage : public QWizardPage {
+  Q_OBJECT
 
 public:
-    BasicSetupPage(QWidget *parent = 0);
-    void updateExampleCellName();
+  BasicSetupPage(QWidget *parent = 0);
+  void updateExampleCellName();
 
 private:
-    QGroupBox *selectChemistryBox;
-    QRadioButton *lipoRadioButton;
-    QRadioButton *ironPhosphateRadioButton;
-    QRadioButton *otherRadioButton;
-    QLabel *sameTypeLabel;
-    QLabel *numCellsLabel;
-    QSpinBox *numCellsSpinBox;
-    QLabel *cellDesignatorLabel;
-    QLineEdit *cellDesignatorLineEdit;
-    QLabel *startingCellNumberLabel;
-    QSpinBox *startingCellNumberSpinBox;
-    QLabel *exampleCellNameLabel;
-    QLabel *exampleCellName;
-    QLabel *cellPlaylistNameLabel;
-    QLineEdit *cellPlaylistNameLineEdit;
+  QGroupBox *selectChemistryBox;
+  QRadioButton *lipoRadioButton;
+  QRadioButton *ironPhosphateRadioButton;
+  QRadioButton *otherRadioButton;
+  QLabel *sameTypeLabel;
+  QLabel *numCellsLabel;
+  QSpinBox *numCellsSpinBox;
+  QLabel *cellDesignatorLabel;
+  QLineEdit *cellDesignatorLineEdit;
+  QLabel *startingCellNumberLabel;
+  QSpinBox *startingCellNumberSpinBox;
+  QLabel *exampleCellNameLabel;
+  QLabel *exampleCellName;
+  QLabel *cellPlaylistNameLabel;
+  QLineEdit *cellPlaylistNameLineEdit;
 };
 
-class ConfigPlaylistPage : public QWizardPage
-{
-    Q_OBJECT
+class ConfigPlaylistPage : public QWizardPage {
+  Q_OBJECT
 
 public:
-    ConfigPlaylistPage(QWidget *parent = 0);
-    void initializePage();
-    void enableOrDisableStorageDischargeField();
-    void updateDynamicFieldBounds();
+  ConfigPlaylistPage(QWidget *parent = 0);
+  void initializePage();
+  void enableOrDisableStorageDischargeField();
+  void updateDynamicFieldBounds();
 
 private:
-    QLabel *numWarmupCyclesLabel;
-    QSpinBox *numWarmupCyclesSpinBox;
+  QLabel *numWarmupCyclesLabel;
+  QSpinBox *numWarmupCyclesSpinBox;
 
-    QLabel *numMeasurementCyclesLabel;
-    QSpinBox *numMeasurementCyclesSpinBox;
+  QLabel *numMeasurementCyclesLabel;
+  QSpinBox *numMeasurementCyclesSpinBox;
 
-    QCheckBox *storageDischargeCheckBox;
+  QCheckBox *storageDischargeCheckBox;
 
-    QWidget *advancedConfigExtensionWidget;
+  QWidget *advancedConfigExtensionWidget;
 
-    QLabel *restPeriodLabel;
-    QDoubleSpinBox *restPeriodSpinBox;
-    QLabel *restPeriodUnit;
+  QLabel *restPeriodLabel;
+  QDoubleSpinBox *restPeriodSpinBox;
+  QLabel *restPeriodUnit;
 
-    QLabel *highVoltageCutoffLabel;
-    QDoubleSpinBox *highVoltageCutoffSpinBox;
-    QLabel *highVoltageCutoffUnit;
+  QLabel *highVoltageCutoffLabel;
+  QDoubleSpinBox *highVoltageCutoffSpinBox;
+  QLabel *highVoltageCutoffUnit;
 
-    QLabel *lowVoltageCutoffLabel;
-    QDoubleSpinBox *lowVoltageCutoffSpinBox;
-    QLabel *lowVoltageCutoffUnit;
+  QLabel *lowVoltageCutoffLabel;
+  QDoubleSpinBox *lowVoltageCutoffSpinBox;
+  QLabel *lowVoltageCutoffUnit;
 
-    QLabel *chargeTemperatureCutoffLabel;
-    QDoubleSpinBox *chargeTemperatureCutoffSpinBox;
-    QLabel *chargeTemperatureCutoffUnit;
+  QLabel *chargeTemperatureCutoffLabel;
+  QDoubleSpinBox *chargeTemperatureCutoffSpinBox;
+  QLabel *chargeTemperatureCutoffUnit;
 
-    QLabel *dischargeTemperatureCutoffLabel;
-    QDoubleSpinBox *dischargeTemperatureCutoffSpinBox;
-    QLabel *dischargeTemperatureCutoffUnit;
+  QLabel *dischargeTemperatureCutoffLabel;
+  QDoubleSpinBox *dischargeTemperatureCutoffSpinBox;
+  QLabel *dischargeTemperatureCutoffUnit;
 
-    QLabel *chargeCurrentSafetyCutoffLabel;
-    QDoubleSpinBox *chargeCurrentSafetyCutoffSpinBox;
-    QLabel *chargeCurrentSafetyCutoffUnit;
+  QLabel *chargeCurrentSafetyCutoffLabel;
+  QDoubleSpinBox *chargeCurrentSafetyCutoffSpinBox;
+  QLabel *chargeCurrentSafetyCutoffUnit;
 
-    QLabel *dischargeCurrentSafetyCutoffLabel;
-    QDoubleSpinBox *dischargeCurrentSafetyCutoffSpinBox;
-    QLabel *dischargeCurrentSafetyCutoffUnit;
+  QLabel *dischargeCurrentSafetyCutoffLabel;
+  QDoubleSpinBox *dischargeCurrentSafetyCutoffSpinBox;
+  QLabel *dischargeCurrentSafetyCutoffUnit;
 
-    QLabel *prechargeRateLabel;
-    QDoubleSpinBox *prechargeRateSpinBox;
-    QLabel *prechargeRateUnit;
+  QLabel *prechargeRateLabel;
+  QDoubleSpinBox *prechargeRateSpinBox;
+  QLabel *prechargeRateUnit;
 
-    QLabel *chargeRateLabel;
-    QDoubleSpinBox *chargeRateSpinBox;
-    QLabel *chargeRateUnit;
+  QLabel *chargeRateLabel;
+  QDoubleSpinBox *chargeRateSpinBox;
+  QLabel *chargeRateUnit;
 
-    QLabel *dischargeRateLabel;
-    QDoubleSpinBox *dischargeRateSpinBox;
-    QLabel *dischargeRateUnit;
+  QLabel *dischargeRateLabel;
+  QDoubleSpinBox *dischargeRateSpinBox;
+  QLabel *dischargeRateUnit;
 
-    QLabel *storageDischargeVoltageLabel;
-    QDoubleSpinBox *storageDischargeVoltageSpinBox;
-    QLabel *storageDischargeVoltageUnit;
+  QLabel *storageDischargeVoltageLabel;
+  QDoubleSpinBox *storageDischargeVoltageSpinBox;
+  QLabel *storageDischargeVoltageUnit;
 
-    QLabel *acceptableCellImpedanceThresholdLabel;
-    QDoubleSpinBox *acceptableCellImpedanceThresholdSpinBox;
-    QLabel *acceptableCellImpedanceThresholdUnit;
+  QLabel *acceptableCellImpedanceThresholdLabel;
+  QDoubleSpinBox *acceptableCellImpedanceThresholdSpinBox;
+  QLabel *acceptableCellImpedanceThresholdUnit;
 
-    QWidget *basicConfigWidget;
-    QPushButton *advancedConfigButton;
+  QWidget *basicConfigWidget;
+  QPushButton *advancedConfigButton;
 };
 
-class PlaylistDirectoryPage : public QWizardPage
-{
-    Q_OBJECT
+class PlaylistDirectoryPage : public QWizardPage {
+  Q_OBJECT
 
 public:
-    PlaylistDirectoryPage(QWidget *parent = 0);
+  PlaylistDirectoryPage(QWidget *parent = 0);
 
 private:
-    QLineEdit *playlistDirectoryLineEdit;
-    QPushButton *playlistDirectoryBrowseButton;
+  QLineEdit *playlistDirectoryLineEdit;
+  QPushButton *playlistDirectoryBrowseButton;
 
-    void browseForPlaylistDirectory();
-    void initializePage();
-    bool validatePage();
+  void browseForPlaylistDirectory();
+  void initializePage();
+  bool validatePage();
 };
 
-class SavePlaylistPage : public QWizardPage
-{
-    Q_OBJECT
+class SavePlaylistPage : public QWizardPage {
+  Q_OBJECT
 
 public:
-    SavePlaylistPage(QWidget *parent = 0);
-    QPushButton *skipButton;
+  SavePlaylistPage(QWidget *parent = 0);
+  QPushButton *skipButton;
 
 private:
-    QLineEdit *saveFilenameLineEdit;
-    QPushButton *saveFilenameBrowseButton;
-    void browseForSaveFilename();
-    void initializePage();
-    bool validatePage();
+  QLineEdit *saveFilenameLineEdit;
+  QPushButton *saveFilenameBrowseButton;
+  void browseForSaveFilename();
+  void initializePage();
+  bool validatePage();
 };
 
-class FinishPlaylistPage : public QWizardPage
-{
-    Q_OBJECT
+class FinishPlaylistPage : public QWizardPage {
+  Q_OBJECT
 
 public:
-    FinishPlaylistPage(QWidget *parent = 0);
+  FinishPlaylistPage(QWidget *parent = 0);
 
 private:
-
 };
 
 #endif // NEWCELLPLAYLISTWIZARD_H

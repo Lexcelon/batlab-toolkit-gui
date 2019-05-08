@@ -376,7 +376,7 @@ double CellPlaylist::getStorageDischargeVoltage() {
   return storageDischargeVoltage;
 }
 
-bool CellPlaylist::setRestPeriod(int num) {
+bool CellPlaylist::setRestPeriod(double num) {
   if (REST_PERIOD_MIN <= num && num <= REST_PERIOD_MAX) {
     restPeriod = num;
     return true;
@@ -385,7 +385,7 @@ bool CellPlaylist::setRestPeriod(int num) {
   }
 }
 
-int CellPlaylist::getRestPeriod() { return restPeriod; }
+double CellPlaylist::getRestPeriod() { return restPeriod; }
 
 bool CellPlaylist::setChargeTempCutoff(double num) {
   if (CHARGE_TEMP_CUTOFF_MIN <= num && num <= CHARGE_TEMP_CUTOFF_MAX) {

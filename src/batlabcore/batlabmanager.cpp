@@ -3,7 +3,7 @@
 BatlabManager::BatlabManager(QObject *parent) : QObject(parent) {
   qRegisterMetaType<QVector<uchar>>("QVector<uchar>");
 
-  isCellPlaylistLoaded = false;
+  m_isCellPlaylistLoaded = false;
 
   QTimer *updateConnectedBatlabsTimer = new QTimer(this);
   connect(updateConnectedBatlabsTimer, &QTimer::timeout, this,
@@ -62,10 +62,18 @@ void BatlabManager::startTests() {
 
   // TODO at the end of a channel test, assignremainingcellstoopenchannels again
   // and then shut down channel if no more cells
+
+  emit testsInProgressState(true);
+  // Trigger redraw of Batlabs to disable firmware upgrade button
+  processUpdatedBatlabInfo();
 }
 
 void BatlabManager::stopTests() {
   // TODO
+
+  emit testsInProgressState(false);
+  // Trigger redraw of Batlabs to enable firmware upgrade button
+  processUpdatedBatlabInfo();
 }
 
 CellPlaylist BatlabManager::loadedPlaylist() { return m_loadedPlaylist; }
@@ -139,6 +147,17 @@ bool BatlabManager::hasPartialCellResults(CellPlaylist playlist) {
   return false;
 }
 
+void BatlabManager::savePlaylist() {
+  m_loadedPlaylist.write(m_loadedPlaylist.getPlaylistSaveFilename());
+  emit cellPlaylistEditedState(false);
+}
+
+void BatlabManager::savePlaylistAs(QString filename) {
+  m_loadedPlaylist.write(filename);
+  m_loadedPlaylist.setPlaylistSaveFilename(filename);
+  emit cellPlaylistEditedState(false);
+}
+
 // This will automatically archive incomplete cell results (move them to
 // archive_* files). If you want to know in advance if that will happen, call
 // hasIncompleteCellResults().
@@ -177,7 +196,7 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
     while (!summaryFile.atEnd()) {
       line = summaryFile.readLine();
       auto values = QString(line).remove('"').split(',');
-      if (values.length() < 25) {
+      if (values.length() < 27) {
         continue;
       }
       auto name = values[0];
@@ -186,11 +205,13 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
         m_cellResults[name].batlabSerial = values[1].toInt();
         m_cellResults[name].channel = values[2].toInt();
         m_cellResults[name].hasCompleteResults = true;
-        m_cellResults[name].capacity = values[20].toFloat();
-        m_cellResults[name].capacityRange = values[21].toFloat();
-        m_cellResults[name].impedance = values[22].toFloat();
-        m_cellResults[name].avgVoltage = values[23].toFloat();
-        m_cellResults[name].avgCurrent = values[24].toFloat();
+        m_cellResults[name].chargeCapacity = values[20].toFloat();
+        m_cellResults[name].chargeCapacityRange = values[21].toFloat();
+        m_cellResults[name].energyCapacity = values[22].toFloat();
+        m_cellResults[name].energyCapacityRange = values[23].toFloat();
+        m_cellResults[name].impedance = values[24].toFloat();
+        m_cellResults[name].avgVoltage = values[25].toFloat();
+        m_cellResults[name].avgCurrent = values[26].toFloat();
       }
     }
   }
@@ -200,11 +221,38 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
   // First, rename individual cell files to archive_*
   for (auto cell : m_cellResults.values()) {
     if (cell.hasSomeResults && !cell.hasCompleteResults) {
-      QFile::rename(resultsDir.absoluteFilePath(playlist.getCellPlaylistName() +
-                                                "_" + cell.cellName + ".csv"),
-                    resultsDir.absoluteFilePath("archive_" +
-                                                playlist.getCellPlaylistName() +
-                                                "_" + cell.cellName + ".csv"));
+      QString currentName = resultsDir.absoluteFilePath(
+          playlist.getCellPlaylistName() + "_" + cell.cellName + ".csv");
+      QString archiveName = resultsDir.absoluteFilePath(
+          "archive_" + playlist.getCellPlaylistName() + "_" + cell.cellName +
+          ".csv");
+      QFile currentFile(currentName);
+      QFile archiveFile(archiveName);
+      if (archiveFile.exists()) {
+        if (!currentFile.open(QIODevice::ReadOnly)) {
+          qWarning() << currentFile.errorString();
+          return;
+        }
+        QByteArray output;
+        QString line;
+        while (!line.startsWith("Cell Name") &&
+               !currentFile.atEnd()) { // JSON and headers
+          line = currentFile.readLine();
+        }
+        while (!currentFile.atEnd()) {
+          line = currentFile.readLine();
+          output.append(line);
+        }
+        if (!archiveFile.open(QIODevice::Append)) {
+          qWarning() << archiveFile.errorString();
+          return;
+        }
+        archiveFile.write(output);
+        archiveFile.close();
+        currentFile.remove();
+      } else {
+        QFile::rename(currentName, archiveName);
+      }
     }
   }
   // Next, move lvl2 lines for those cells to their archive_ file
@@ -261,11 +309,39 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
   }
 
   // Record that we loaded the playlist
-  isCellPlaylistLoaded = true;
+  m_isCellPlaylistLoaded = true;
   emit cellPlaylistLoaded(m_loadedPlaylist);
 
   // Load any existing results into GUI
   processCellResultsUpdated();
+}
+
+void BatlabManager::updatePlaylist(CellPlaylist playlist) {
+  m_loadedPlaylist.setCellPlaylistName(playlist.getCellPlaylistName());
+  m_loadedPlaylist.setCellChemistryType(playlist.getCellChemistryType());
+  m_loadedPlaylist.setCellNames(playlist.getCellNames());
+  m_loadedPlaylist.setNumWarmupCycles(playlist.getNumWarmupCycles());
+  m_loadedPlaylist.setNumMeasurementCycles(playlist.getNumMeasurementCycles());
+  m_loadedPlaylist.setStorageDischarge(playlist.getStorageDischarge());
+  m_loadedPlaylist.setRestPeriod(playlist.getRestPeriod());
+  m_loadedPlaylist.setHighVoltageCutoff(playlist.getHighVoltageCutoff());
+  m_loadedPlaylist.setLowVoltageCutoff(playlist.getLowVoltageCutoff());
+  m_loadedPlaylist.setChargeTempCutoff(playlist.getChargeTempCutoff());
+  m_loadedPlaylist.setDischargeTempCutoff(playlist.getDischargeTempCutoff());
+  m_loadedPlaylist.setChargeCurrentSafetyCutoff(
+      playlist.getChargeCurrentSafetyCutoff());
+  m_loadedPlaylist.setDischargeCurrentSafetyCutoff(
+      playlist.getDischargeCurrentSafetyCutoff());
+  m_loadedPlaylist.setPrechargeRate(playlist.getPrechargeRate());
+  m_loadedPlaylist.setChargeRate(playlist.getChargeRate());
+  m_loadedPlaylist.setDischargeRate(playlist.getDischargeRate());
+  m_loadedPlaylist.setStorageDischargeVoltage(
+      playlist.getStorageDischargeVoltage());
+  m_loadedPlaylist.setAcceptableImpedanceThreshold(
+      playlist.getAcceptableImpedanceThreshold());
+  // TODO add trickle etc
+
+  emit cellPlaylistEditedState(true);
 }
 
 void BatlabManager::setAllBatlabChannelsIdle() {

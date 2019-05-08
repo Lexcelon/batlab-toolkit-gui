@@ -40,6 +40,8 @@ signals:
   void cellResultsUpdated(QVector<cellResultsStatusInfo> infos);
   void error(QString e);
   void notify(QString title, QString text);
+  void testsInProgressState(bool testsInProgress);
+  void cellPlaylistEditedState(bool edited);
 
 public slots:
   void updateConnectedBatlabs();
@@ -68,11 +70,15 @@ public slots:
   QString getPortNameFromSerial(int serial);
 
   void loadPlaylist(CellPlaylist playlist);
+  void updatePlaylist(CellPlaylist playlist);
   bool hasPartialCellResults(CellPlaylist playlist);
   CellPlaylist loadedPlaylist();
 
+  void savePlaylist();
+  void savePlaylistAs(QString filename);
+
 private:
-  bool isCellPlaylistLoaded;
+  bool m_isCellPlaylistLoaded;
 
   CellPlaylist m_loadedPlaylist;
   QMap<QString, cellResultsStatusInfo> m_cellResults;
