@@ -134,7 +134,7 @@ bool BatlabManager::hasPartialCellResults(CellPlaylist playlist) {
       auto values = QString(line).remove('"').split(',');
       auto name = values[0];
       cellResults[name].hasSomeResults = true;
-      if (values[11] == "SUMMARY") {
+      if (values[10] == "SUMMARY") {
         cellResults[name].hasCompleteResults = true;
       }
     }
@@ -201,17 +201,17 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
       }
       auto name = values[0];
       m_cellResults[name].hasSomeResults = true;
-      if (values[11] == "SUMMARY") {
+      if (values[10] == "SUMMARY") {
         m_cellResults[name].batlabSerial = values[1].toInt();
         m_cellResults[name].channel = values[2].toInt();
         m_cellResults[name].hasCompleteResults = true;
-        m_cellResults[name].chargeCapacity = values[20].toFloat();
-        m_cellResults[name].chargeCapacityRange = values[21].toFloat();
-        m_cellResults[name].energyCapacity = values[22].toFloat();
-        m_cellResults[name].energyCapacityRange = values[23].toFloat();
-        m_cellResults[name].impedance = values[24].toFloat();
-        m_cellResults[name].avgVoltage = values[25].toFloat();
-        m_cellResults[name].avgCurrent = values[26].toFloat();
+        m_cellResults[name].chargeCapacity = values[19].toFloat();
+        m_cellResults[name].chargeCapacityRange = values[20].toFloat();
+        m_cellResults[name].energyCapacity = values[21].toFloat();
+        m_cellResults[name].energyCapacityRange = values[22].toFloat();
+        m_cellResults[name].impedance = values[23].toFloat();
+        m_cellResults[name].avgVoltage = values[24].toFloat();
+        m_cellResults[name].avgCurrent = values[25].toFloat();
       }
     }
   }

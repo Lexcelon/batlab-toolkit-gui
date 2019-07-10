@@ -678,8 +678,8 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
     logstr += QString::number(static_cast<double>(temperature), 'f', 4) + ",,";
     logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
     logstr += QString::number(static_cast<double>(charge), 'f', 4) + ",";
-    logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,";
-    logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",,,\n";
+    logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,";
+    logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",,,,\n";
     //    logstr += QString::number(op_raw) + ",";
     //    logstr += QString::number(sp_raw) + ",";
     //    logstr += QString::number(duty) + "\n";
