@@ -339,7 +339,31 @@ void BatlabManager::updatePlaylist(CellPlaylist playlist) {
       playlist.getStorageDischargeVoltage());
   m_loadedPlaylist.setAcceptableImpedanceThreshold(
       playlist.getAcceptableImpedanceThreshold());
-  // TODO add trickle etc
+
+  m_loadedPlaylist.setEnablePulse(playlist.getEnablePulse());
+  m_loadedPlaylist.setPulseDischargeOffTime(
+      playlist.getPulseDischargeOffTime());
+  m_loadedPlaylist.setPulseDischargeOnTime(playlist.getPulseDischargeOnTime());
+  m_loadedPlaylist.setPulseChargeOffTime(playlist.getPulseChargeOffTime());
+  m_loadedPlaylist.setPulseChargeOnTime(playlist.getPulseChargeOnTime());
+  m_loadedPlaylist.setPulseChargeOffRate(playlist.getPulseChargeOffRate());
+  m_loadedPlaylist.setPulseDischargeOffRate(
+      playlist.getPulseDischargeOffRate());
+
+  m_loadedPlaylist.setEnableTrickle(playlist.getEnableTrickle());
+  m_loadedPlaylist.setTrickleDischargeEngageLimit(
+      playlist.getTrickleDischargeEngageLimit());
+  m_loadedPlaylist.setTrickleChargeEngageLimit(
+      playlist.getTrickleChargeEngageLimit());
+  m_loadedPlaylist.setTrickleChargeRate(playlist.getTrickleChargeRate());
+  m_loadedPlaylist.setTrickleDischargeRate(playlist.getTrickleDischargeRate());
+
+  m_loadedPlaylist.setEnableConstantVoltage(
+      (playlist.getEnableConstantVoltage()));
+  m_loadedPlaylist.setConstantVoltageSensitivity(
+      playlist.getConstantVoltageSensitivity());
+  m_loadedPlaylist.setConstantVoltageStepSize(
+      playlist.getConstantVoltageStepSize());
 
   emit cellPlaylistEditedState(true);
 }

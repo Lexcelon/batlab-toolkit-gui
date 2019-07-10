@@ -100,6 +100,10 @@ private:
   QLabel *acceptableCellImpedanceThresholdLabel;
   QDoubleSpinBox *acceptableCellImpedanceThresholdSpinBox;
   QLabel *acceptableCellImpedanceThresholdUnit;
+
+  QCheckBox *enableConstantVoltageCheckBox;
+  QCheckBox *enableTrickleCheckBox;
+  QCheckBox *enablePulseCheckBox;
 };
 
 #endif // PLAYLISTSETTINGSWIDGET_H

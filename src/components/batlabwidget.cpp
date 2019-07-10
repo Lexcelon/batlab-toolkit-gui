@@ -75,11 +75,18 @@ BatlabWidget::BatlabWidget(batlabStatusInfo info, int latestFirmwareVersion,
       QLabel *cellNameLabel =
           new QLabel(tr(info.channels[i].cellName.toStdString().c_str()));
       cellNameLabel->setFixedWidth(50);
-      // LEFT OFF add current and voltage
 
       // Add Batlab Cell Widgets to View Layout
       batlabCellInfoLayout->addWidget(cellNameLabel, i, 0);
-      batlabCellInfoLayout->addWidget(CellTestStatusWidgetList[i], i, 1);
+      if (testsInProgress) {
+        QLabel *currentLabel = new QLabel(tr(" %1A").arg(QString::number(
+            static_cast<double>(info.channels[i].current_prev), 'f', 2)));
+        QLabel *voltageLabel = new QLabel(tr(" %1V").arg(QString::number(
+            static_cast<double>(info.channels[i].voltage_prev), 'f', 2)));
+        batlabCellInfoLayout->addWidget(currentLabel, i, 1);
+        batlabCellInfoLayout->addWidget(voltageLabel, i, 2);
+      }
+      batlabCellInfoLayout->addWidget(CellTestStatusWidgetList[i], i, 3);
     }
 
     batlabCellInfoWidget->setLayout(batlabCellInfoLayout);
