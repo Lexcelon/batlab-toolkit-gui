@@ -976,6 +976,22 @@ void Channel::logLvl3() {
   logstr += QString::number(static_cast<double>(average_current), 'f', 3) + ",";
 
   summaryFile.write(logstr.toUtf8());
+
+  info.testInProgress = false;
+  auto batlabManager = dynamic_cast<BatlabManager *>(batlab()->parent());
+  batlabManager->m_cellResults[info.cellName].testInProgress = false;
+  batlabManager->m_cellResults[info.cellName].hasSomeResults = true;
+  batlabManager->m_cellResults[info.cellName].hasCompleteResults = true;
+  batlabManager->m_cellResults[info.cellName].impedance = impedance;
+  batlabManager->m_cellResults[info.cellName].avgVoltage = average_voltage;
+  batlabManager->m_cellResults[info.cellName].avgCurrent = average_current;
+  batlabManager->m_cellResults[info.cellName].chargeCapacity = charge_capacity;
+  batlabManager->m_cellResults[info.cellName].chargeCapacityRange =
+      charge_capacity_range;
+  batlabManager->m_cellResults[info.cellName].energyCapacity = energy_capacity;
+  batlabManager->m_cellResults[info.cellName].energyCapacityRange =
+      energy_capacity_range;
+  emit resultsUpdated();
 }
 
 void Channel::handleLogLvl2Response(QVector<BatlabPacket> response) {
@@ -988,9 +1004,7 @@ void Channel::completeTest() {
   // Log lvl3 in file. Assume lvl2 already logged
   logLvl3();
 
-  // LEFT OFF show results in results view
-  // TODO log string to log view
-  // TODO make it ask to remove cell and then place next cell
+  qInfo() << tr("Test completed on cell %1").arg(info.cellName);
 }
 
 void Channel::impedance() {

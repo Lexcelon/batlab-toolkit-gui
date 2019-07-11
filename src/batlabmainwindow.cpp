@@ -274,8 +274,6 @@ void BatlabMainWindow::processCellPlaylistEditedState(bool edited) {
 }
 
 void BatlabMainWindow::savelogView() {
-  // TODO default path should be as is if no playlist loaded, should be in
-  // directory/named file for particular playlist if one loaded
   QString appLocalDataPath =
       QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
 
@@ -489,9 +487,7 @@ void BatlabMainWindow::debugBatlab() {
   batlabDebugDialog->show();
 }
 
-void BatlabMainWindow::checkForBatlabFirmwareUpdates() {
-  // TODO
-}
+void BatlabMainWindow::checkForBatlabFirmwareUpdates() {}
 
 void BatlabMainWindow::aboutBatlabToolkitGUI() {
   QString msgText =

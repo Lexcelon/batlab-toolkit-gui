@@ -17,10 +17,6 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent) {
 }
 
 void BatlabManager::startTests() {
-  // TODO See if playlist settings have been edited and act accordingly (offer
-  // to save) TODO also do this when making a new playlist
-  // TODO validate playlist settings are within limits
-
   if (connectedBatlabsByPortName.size() == 0) {
     emit error(tr("At least one Batlab must be connected to start tests."));
     return;
@@ -59,9 +55,6 @@ void BatlabManager::startTests() {
 
   // This will automatically start tests on those channels
   assignRemainingCellsToOpenChannels();
-
-  // TODO at the end of a channel test, assignremainingcellstoopenchannels again
-  // and then shut down channel if no more cells
 
   emit testsInProgressState(true);
   // Trigger redraw of Batlabs to disable firmware upgrade button
@@ -454,7 +447,6 @@ void BatlabManager::processCellResultsUpdated() {
       if (channelInfo.cellName != "") {
         m_cellResults[channelInfo.cellName].testInProgress =
             channelInfo.testInProgress;
-        // TODO figure out if tests are done and then show results
       }
     }
   }
@@ -464,6 +456,8 @@ void BatlabManager::processCellResultsUpdated() {
     infos.append(cell);
   }
   emit cellResultsUpdated(infos);
+
+  assignRemainingCellsToOpenChannels();
 }
 
 void BatlabManager::removeBatlab(QString portName) {
@@ -547,7 +541,6 @@ void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address,
 void BatlabManager::processFirmwareFlashRequest(int serial,
                                                 QString firmwareVersion) {
   if (testsInProgress()) {
-    // TODO grey out firmware flash button when tests are in progress
     qWarning() << "Cannot flash firmware while tests are in progress.";
     return;
   }
