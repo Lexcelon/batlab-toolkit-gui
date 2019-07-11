@@ -20,7 +20,7 @@ public:
   explicit Channel(int slot, QObject *parent = nullptr);
   channelStatusInfo info;
   bool testInProgress() { return m_test_state != TS_IDLE; }
-  ChannelMode mode() { return m_mode; }
+  ChannelMode mode() { return info.mode; }
 
 signals:
   void resultsUpdated();
@@ -42,7 +42,6 @@ public slots:
 private:
   QTimer *m_channelPeriodicCheckTimer;
 
-  ChannelMode m_mode;
   TestState m_test_state;
 
   std::chrono::time_point<std::chrono::system_clock> m_ts;

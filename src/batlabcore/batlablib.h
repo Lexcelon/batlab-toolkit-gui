@@ -18,6 +18,7 @@
 #include "version.h"
 
 extern QVector<QString> L_TEST_STATE;
+extern QVector<QString> MODE_LIST;
 
 enum batlabNamespaces {
   CHANNEL0 = 0x00,
@@ -102,10 +103,23 @@ enum commsNamespace {
   EXTERNAL_PSU_VOLTAGE,
 };
 
+// Mode register codes
+enum ChannelMode {
+  MODE_NO_CELL = 0x0000,
+  MODE_BACKWARDS,
+  MODE_IDLE,
+  MODE_CHARGE,
+  MODE_DISCHARGE,
+  MODE_IMPEDANCE,
+  MODE_STOPPED
+};
+
 struct channelStatusInfo {
   int slot;
 
   QString cellName;
+
+  ChannelMode mode;
 
   bool testInProgress;
   float voltage_prev;
@@ -260,19 +274,6 @@ static QMap<int, QString> namespaceIntToString{
 
 #define LOCK_LOCKED 0x0001
 #define LOCK_UNLOCKED 0x0000
-
-// Mode register codes
-enum ChannelMode {
-  MODE_NO_CELL = 0x0000,
-  MODE_BACKWARDS,
-  MODE_IDLE,
-  MODE_CHARGE,
-  MODE_DISCHARGE,
-  MODE_IMPEDANCE,
-  MODE_STOPPED
-};
-// MODE_LIST =
-// ['MODE_NO_CELL','MODE_BACKWARDS','MODE_IDLE','MODE_CHARGE','MODE_DISCHARGE','MODE_IMPEDANCE','MODE_STOPPED']
 
 // Test states
 enum TestState {

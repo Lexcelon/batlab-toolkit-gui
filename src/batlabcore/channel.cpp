@@ -20,7 +20,7 @@ Channel::Channel(int slot, QObject *parent) : QObject(parent) {
   info.tempCalibB = -1;
   info.tempCalibR = -1;
 
-  m_mode = MODE_NO_CELL;
+  info.mode = MODE_NO_CELL;
   m_test_state = TS_IDLE;
 
   m_voltage_count = 0;
@@ -144,7 +144,7 @@ void Channel::startTest() {
 void Channel::stateMachine() {
   QVector<BatlabPacket> packets;
   if (m_test_state == TS_PRECHARGE && info.cellName != "") {
-    if (m_mode == MODE_IDLE) {
+    if (info.mode == MODE_IDLE) {
       info.testInProgress = true;
       packets.append(BatlabPacket(info.slot, CURRENT_SETPOINT, 0));
       packets.append(BatlabPacket(info.slot, MODE, MODE_CHARGE)
@@ -192,7 +192,7 @@ void Channel::stateMachine() {
       }
     }
 
-    if (m_mode == MODE_STOPPED) {
+    if (info.mode == MODE_STOPPED) {
       info.preChargeComplete = true;
       logLvl2("PRECHARGE");
       m_test_state = TS_CHARGEREST;
@@ -325,7 +325,7 @@ void Channel::stateMachine() {
         m_trickle_engaged = true;
       }
     }
-    if (m_mode == MODE_STOPPED) {
+    if (info.mode == MODE_STOPPED) {
       logLvl2("DISCHARGE");
       m_test_state = TS_DISCHARGEREST;
       m_rest_time = std::chrono::system_clock::now();
@@ -427,7 +427,7 @@ void Channel::stateMachine() {
         m_trickle_engaged = true;
       }
     }
-    if (m_mode == MODE_STOPPED) {
+    if (info.mode == MODE_STOPPED) {
       logLvl2("CHARGE");
       m_test_state = TS_CHARGEREST;
       m_rest_time = std::chrono::system_clock::now();
@@ -447,7 +447,7 @@ void Channel::stateMachine() {
       }
     }
   } else if (m_test_state == TS_POSTDISCHARGE) {
-    if (m_mode == MODE_STOPPED ||
+    if (info.mode == MODE_STOPPED ||
         info.voltage_prev <
             static_cast<float>(playlist().getStorageDischargeVoltage())) {
       logLvl2("POSTDISCHARGE");
@@ -534,7 +534,7 @@ void Channel::handleCurrentCompensateResponse() {
 void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   int responseCounter = 0;
 
-  m_mode = static_cast<ChannelMode>(response[responseCounter++].getValue());
+  info.mode = static_cast<ChannelMode>(response[responseCounter++].getValue());
   auto p = response[responseCounter++];
 
   if (response.length() == 2) {
@@ -552,7 +552,7 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   auto op_raw = p.getValue();       // Actual operating point
   auto sp_raw = m_current_setpoint; // Current setpoint
   auto sp = sp_raw / 128.0;
-  if (m_mode == MODE_CHARGE || m_mode == MODE_DISCHARGE) {
+  if (info.mode == MODE_CHARGE || info.mode == MODE_DISCHARGE) {
     if (current > 0 && (sp >= 0.35 || current < 0.37f)) {
       if (current < (static_cast<float>(sp) - 0.01f)) {
         op_raw++;
@@ -666,7 +666,7 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
     }
     //    impedance();
   }
-  if (m_mode != MODE_NO_CELL && m_mode != MODE_BACKWARDS) {
+  if (info.mode != MODE_NO_CELL && info.mode != MODE_BACKWARDS) {
     QString logstr = "";
     logstr += info.cellName + "," +
               QString::number(batlab()->getSerialNumber()) + ",";
@@ -803,7 +803,9 @@ void Channel::handleLogLvl2Response(QVector<BatlabPacket> response) {
 }
 
 void Channel::completeTest() {
-  // TODO
+  abortTest();
+
+  // LEFT OFF
 }
 
 void Channel::impedance() {
