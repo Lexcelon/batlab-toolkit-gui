@@ -37,6 +37,7 @@ public slots:
   void handleSetModeResponse(QVector<BatlabPacket> response);
   void logLvl1(QString logstr);
   void logLvl2(QString type);
+  void logLvl3();
   void handleLogLvl2Response(QVector<BatlabPacket> response);
 
 private:

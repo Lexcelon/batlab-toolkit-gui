@@ -798,6 +798,66 @@ void Channel::logLvl2(QString type) {
   batlab()->sendPacketBundle(packetBundle);
 }
 
+void Channel::logLvl3() {
+    QDir resultsDir(playlist().getPlaylistOutputDirectory());
+    QFile summaryFile(
+        resultsDir.absoluteFilePath(playlist().getCellPlaylistName() + ".csv"));
+    if (!resultsDir.exists()) {
+      resultsDir.mkpath(resultsDir.path());
+    }
+    if (!summaryFile.exists()) {
+      if (!summaryFile.open(QIODevice::WriteOnly)) {
+        qWarning() << "Unable to create summary results file";
+        return;
+      }
+      summaryFile.write(QString("\"" + playlist().toJson().replace("\"", "\"\"") +
+                                "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
+                            .toUtf8());
+      summaryFile.write(
+          "Cell Name,Batlab Serial,Channel,Timestamp (s),Voltage (V),Current "
+          "(A),Temperature (C),Impedance (Ohm),Energy (J),Charge (Coulombs),Test "
+          "State,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
+          "Impedance (Ohm),delta Temperature (C),Average Current (A),Average "
+          "Voltage,Runtime (s),VCC "
+          "(V),Charge Capacity,Charge Capacity Range,Energy Capacity,Energy "
+          "Capacity Range,Impedance,Average Voltage,"
+          "Average Current\n");
+      summaryFile.close();
+    }
+    if (!summaryFile.open(QIODevice::Append)) {
+      qWarning() << "Unable to open summary results file";
+      return;
+    }
+
+    QString state = L_TEST_STATE[m_test_state];
+    std::chrono::duration<double> runtime =
+        std::chrono::system_clock::now() - m_last_lvl2_time;
+    m_last_lvl2_time = std::chrono::system_clock::now();
+
+    QString logstr = "";
+    logstr +=
+        info.cellName + "," + QString::number(batlab()->getSerialNumber()) + ",";
+    logstr += QString::number(info.slot) + ",";
+    logstr += QDateTime::fromTime_t(
+                  static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
+                  .toString("MM/dd/yyyy hh:mm:ss AP") +
+              ",,,,,,,,";
+    logstr += "SUMMARY,";
+    logstr += QString::number(static_cast<double>(m_q), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(m_z_avg), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(m_delta_t), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(m_current_avg), 'f', 4) + ",";
+    logstr += QString::number(static_cast<double>(m_voltage_avg), 'f', 4) + ",";
+    logstr +=
+        QString::number(static_cast<double>(runtime.count()), 'f', 4) + ",\n";
+    summaryFile.write(logstr.toUtf8());
+
+    m_voltage_count = 0;
+    m_current_count = 0;
+    m_z_count = 0;
+}
+
 void Channel::handleLogLvl2Response(QVector<BatlabPacket> response) {
   m_temperature0 = response[0].asTemperatureC(info.tempCalibR, info.tempCalibB);
 }
@@ -805,9 +865,10 @@ void Channel::handleLogLvl2Response(QVector<BatlabPacket> response) {
 void Channel::completeTest() {
   abortTest();
 
-  // LEFT OFF
-  // TODO log lvl3 in file
-  // TODO show results in results view
+  // Log lvl3 in file. Assume lvl2 already logged
+  logLvl3();
+
+  // LEFT OFF show results in results view
   // TODO log string to log view
   // TODO make it ask to remove cell and then place next cell
 }
