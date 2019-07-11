@@ -69,7 +69,7 @@ void BatlabManager::startTests() {
 }
 
 void BatlabManager::stopTests() {
-  // TODO
+  abortAllTests();
 
   emit testsInProgressState(false);
   // Trigger redraw of Batlabs to enable firmware upgrade button
