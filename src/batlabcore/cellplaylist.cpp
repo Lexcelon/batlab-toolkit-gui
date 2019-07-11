@@ -32,23 +32,30 @@ CellPlaylist::CellPlaylist() {
   playlistBatlabSettings.sineWaveFrequency = SINE_WAVE_FREQUENCY_DEFAULT;
   playlistBatlabSettings.sineWaveMagnitude = SINE_WAVE_MAGNITUDE_DEFAULT;
 
-  playlistBatlabSettings.enableConstantVoltage = false;
-  playlistBatlabSettings.constantVoltageStepSize = 8;
-  playlistBatlabSettings.constantVoltageSensitivity = 1;
+  playlistBatlabSettings.enableConstantVoltage =
+      ENABLE_CONSTANT_VOLTAGE_DEFAULT;
+  playlistBatlabSettings.constantVoltageStepSize =
+      CONSTANT_VOLTAGE_STEP_SIZE_DEFAULT;
+  playlistBatlabSettings.constantVoltageSensitivity =
+      CONSTANT_VOLTAGE_SENSITIVITY_DEFAULT;
 
-  playlistBatlabSettings.enableTrickle = false;
-  playlistBatlabSettings.trickleDischargeEngageLimit = 4.1;
-  playlistBatlabSettings.trickleChargeEngageLimit = 2.8;
-  playlistBatlabSettings.trickleChargeRate = 0.5;
-  playlistBatlabSettings.trickleDischargeRate = 0.5;
+  playlistBatlabSettings.enableTrickle = ENABLE_TRICKLE_DEFAULT;
+  playlistBatlabSettings.trickleDischargeEngageLimit =
+      TRICKLE_DISCHARGE_ENGAGE_LIMIT_DEFAULT;
+  playlistBatlabSettings.trickleChargeEngageLimit =
+      TRICKLE_CHARGE_ENGAGE_LIMIT_DEFAULT;
+  playlistBatlabSettings.trickleChargeRate = TRICKLE_CHARGE_RATE_DEFAULT;
+  playlistBatlabSettings.trickleDischargeRate = TRICKLE_DISCHARGE_RATE_DEFAULT;
 
-  playlistBatlabSettings.enablePulse = false;
-  playlistBatlabSettings.pulseDischargeOffTime = 10;
-  playlistBatlabSettings.pulseDischargeOnTime = 60;
-  playlistBatlabSettings.pulseChargeOffTime = 10;
-  playlistBatlabSettings.pulseChargeOnTime = 60;
-  playlistBatlabSettings.pulseChargeOffRate = 0;
-  playlistBatlabSettings.pulseDischargeOffRate = 0;
+  playlistBatlabSettings.enablePulse = ENABLE_PULSE_DEFAULT;
+  playlistBatlabSettings.pulseDischargeOffTime =
+      PULSE_DISCHARGE_OFF_TIME_DEFAULT;
+  playlistBatlabSettings.pulseDischargeOnTime = PULSE_DISCHARGE_ON_TIME_DEFAULT;
+  playlistBatlabSettings.pulseChargeOffTime = PULSE_CHARGE_OFF_TIME_DEFAULT;
+  playlistBatlabSettings.pulseChargeOnTime = PULSE_CHARGE_ON_TIME_DEFAULT;
+  playlistBatlabSettings.pulseChargeOffRate = PULSE_CHARGE_OFF_RATE_DEFAULT;
+  playlistBatlabSettings.pulseDischargeOffRate =
+      PULSE_DISCHARGE_OFF_RATE_DEFAULT;
 }
 
 QString CellPlaylist::toJson() {
@@ -108,8 +115,38 @@ QString CellPlaylist::toJson() {
   playlistJson[PLAYLIST_OUTPUT_DIRECTORY_FIELDSTR] = playlistOutputDirectory;
   playlistJson[PLAYLIST_SAVE_FILENAME_FIELDSTR] = playlistSaveFilename;
 
+  batlabSettingsJson[ENABLE_PULSE_FIELDSTR] =
+      playlistBatlabSettings.enablePulse;
+  batlabSettingsJson[PULSE_DISCHARGE_OFF_TIME_FIELDSTR] =
+      playlistBatlabSettings.pulseDischargeOffTime;
+  batlabSettingsJson[PULSE_DISCHARGE_ON_TIME_FIELDSTR] =
+      playlistBatlabSettings.pulseDischargeOnTime;
+  batlabSettingsJson[PULSE_CHARGE_OFF_TIME_FIELDSTR] =
+      playlistBatlabSettings.pulseChargeOffTime;
+  batlabSettingsJson[PULSE_CHARGE_ON_TIME_FIELDSTR] =
+      playlistBatlabSettings.pulseChargeOnTime;
+  batlabSettingsJson[PULSE_CHARGE_OFF_RATE_FIELDSTR] =
+      playlistBatlabSettings.pulseChargeOffRate;
+  batlabSettingsJson[PULSE_DISCHARGE_OFF_RATE_FIELDSTR] =
+      playlistBatlabSettings.pulseDischargeOffRate;
+
+  batlabSettingsJson[ENABLE_TRICKLE_FIELDSTR] =
+      playlistBatlabSettings.enableTrickle;
+  batlabSettingsJson[TRICKLE_DISCHARGE_ENGAGE_LIMIT_FIELDSTR] =
+      playlistBatlabSettings.trickleDischargeEngageLimit;
+  batlabSettingsJson[TRICKLE_CHARGE_ENGAGE_LIMIT_FIELDSTR] =
+      playlistBatlabSettings.trickleChargeEngageLimit;
+  batlabSettingsJson[TRICKLE_CHARGE_RATE_FIELDSTR] =
+      playlistBatlabSettings.trickleChargeRate;
+  batlabSettingsJson[TRICKLE_DISCHARGE_RATE_FIELDSTR] =
+      playlistBatlabSettings.trickleDischargeRate;
+
   batlabSettingsJson[ENABLE_CONSTANT_VOLTAGE_FIELDSTR] =
       playlistBatlabSettings.enableConstantVoltage;
+  batlabSettingsJson[CONSTANT_VOLTAGE_SENSITIVITY_FIELDSTR] =
+      playlistBatlabSettings.constantVoltageSensitivity;
+  batlabSettingsJson[CONSTANT_VOLTAGE_STEP_SIZE_FIELDSTR] =
+      playlistBatlabSettings.constantVoltageStepSize;
 
   playlistJson[BATLAB_SETTINGS_FIELDSTR] = batlabSettingsJson;
 
@@ -244,10 +281,74 @@ bool CellPlaylist::load(QString filename) {
     setSineWaveMagnitude(
         batlabSettingsJsonObject[SINE_WAVE_MAGNITUDE_FIELDSTR].toInt());
   }
+
+  if (batlabSettingsJsonObject.contains(ENABLE_PULSE_FIELDSTR)) {
+    setEnablePulse(batlabSettingsJsonObject[ENABLE_PULSE_FIELDSTR].toBool());
+  }
+  if (batlabSettingsJsonObject.contains(PULSE_DISCHARGE_OFF_TIME_FIELDSTR)) {
+    setPulseDischargeOffTime(
+        batlabSettingsJsonObject[PULSE_DISCHARGE_OFF_TIME_FIELDSTR].toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(PULSE_DISCHARGE_ON_TIME_FIELDSTR)) {
+    setPulseDischargeOnTime(
+        batlabSettingsJsonObject[PULSE_DISCHARGE_ON_TIME_FIELDSTR].toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(PULSE_CHARGE_OFF_TIME_FIELDSTR)) {
+    setPulseChargeOffTime(
+        batlabSettingsJsonObject[PULSE_CHARGE_OFF_TIME_FIELDSTR].toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(PULSE_CHARGE_ON_TIME_FIELDSTR)) {
+    setPulseChargeOnTime(
+        batlabSettingsJsonObject[PULSE_CHARGE_ON_TIME_FIELDSTR].toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(PULSE_CHARGE_OFF_RATE_FIELDSTR)) {
+    setPulseChargeOffRate(
+        batlabSettingsJsonObject[PULSE_CHARGE_OFF_RATE_FIELDSTR].toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(PULSE_DISCHARGE_OFF_RATE_FIELDSTR)) {
+    setPulseDischargeOffRate(
+        batlabSettingsJsonObject[PULSE_DISCHARGE_OFF_RATE_FIELDSTR].toDouble());
+  }
+
+  if (batlabSettingsJsonObject.contains(ENABLE_TRICKLE_FIELDSTR)) {
+    setEnableTrickle(
+        batlabSettingsJsonObject[ENABLE_TRICKLE_FIELDSTR].toBool());
+  }
+  if (batlabSettingsJsonObject.contains(
+          TRICKLE_DISCHARGE_ENGAGE_LIMIT_FIELDSTR)) {
+    setTrickleDischargeEngageLimit(
+        batlabSettingsJsonObject[TRICKLE_DISCHARGE_ENGAGE_LIMIT_FIELDSTR]
+            .toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(TRICKLE_CHARGE_ENGAGE_LIMIT_FIELDSTR)) {
+    setTrickleChargeEngageLimit(
+        batlabSettingsJsonObject[TRICKLE_CHARGE_ENGAGE_LIMIT_FIELDSTR]
+            .toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(TRICKLE_CHARGE_RATE_FIELDSTR)) {
+    setTrickleChargeRate(
+        batlabSettingsJsonObject[TRICKLE_CHARGE_RATE_FIELDSTR].toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(TRICKLE_DISCHARGE_RATE_FIELDSTR)) {
+    setTrickleDischargeRate(
+        batlabSettingsJsonObject[TRICKLE_DISCHARGE_RATE_FIELDSTR].toDouble());
+  }
+
   if (batlabSettingsJsonObject.contains(ENABLE_CONSTANT_VOLTAGE_FIELDSTR)) {
     setEnableConstantVoltage(
         batlabSettingsJsonObject[ENABLE_CONSTANT_VOLTAGE_FIELDSTR].toBool());
   }
+  if (batlabSettingsJsonObject.contains(
+          CONSTANT_VOLTAGE_SENSITIVITY_FIELDSTR)) {
+    setConstantVoltageSensitivity(
+        batlabSettingsJsonObject[CONSTANT_VOLTAGE_SENSITIVITY_FIELDSTR]
+            .toDouble());
+  }
+  if (batlabSettingsJsonObject.contains(CONSTANT_VOLTAGE_STEP_SIZE_FIELDSTR)) {
+    setConstantVoltageStepSize(
+        batlabSettingsJsonObject[CONSTANT_VOLTAGE_STEP_SIZE_FIELDSTR].toInt());
+  }
+
   if (jsonObject.contains(INDIVIDUAL_CELL_LOGS_FIELDSTR)) {
     setIndividualCellLogs(jsonObject[INDIVIDUAL_CELL_LOGS_FIELDSTR].toBool());
   }

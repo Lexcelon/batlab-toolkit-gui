@@ -3,7 +3,7 @@
 void NewCellPlaylistWizard::accept() {
   QDialog::accept();
   emit finished(m_playlist);
-  // TODO load changes even if they were not saved to a file
+  // FUTURE load changes even if they were not saved to a file
 }
 
 NewCellPlaylistWizard::NewCellPlaylistWizard(QWidget *parent)
@@ -77,7 +77,6 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent) {
   cellPlaylistNameLineEdit->setValidator(cellPlaylistNameValidator);
   registerField(QString(CELL_PLAYLIST_NAME_FIELDSTR) + "*",
                 cellPlaylistNameLineEdit);
-  // TODO trim whitespace from strings in fields with simplified()
 
   selectChemistryBox = new QGroupBox(tr("Cell chemistry type"));
   lipoRadioButton = new QRadioButton(
@@ -115,7 +114,6 @@ BasicSetupPage::BasicSetupPage(QWidget *parent) : QWizardPage(parent) {
   QValidator *cellDesignatorValidator = new QRegExpValidator(cellDesignatorRx);
   cellDesignatorLineEdit->setValidator(cellDesignatorValidator);
   registerField(CELL_DESIGNATOR_FIELDSTR, cellDesignatorLineEdit);
-  // TODO trim whitespace from strings in fields with simplified()
 
   startingCellNumberLabel = new QLabel(tr("Starting cell number:"));
   startingCellNumberSpinBox = new QSpinBox;
@@ -386,7 +384,6 @@ ConfigPlaylistPage::ConfigPlaylistPage(QWidget *parent) : QWizardPage(parent) {
   dischargeRateSpinBox->setValue(DISCHARGE_RATE_DEFAULT);
   registerField(DISCHARGE_RATE_FIELDSTR, dischargeRateSpinBox);
 
-  // TODO grey out if storage discharge not selected
   storageDischargeVoltageLabel = new QLabel(tr("Storage discharge voltage:"));
   storageDischargeVoltageSpinBox = new QDoubleSpinBox;
   storageDischargeVoltageUnit = new QLabel(tr("V"));
@@ -501,8 +498,6 @@ void PlaylistDirectoryPage::browseForPlaylistDirectory() {
   QString playlistDirectoryPathString =
       homeDirPath + "/" +
       field(CELL_PLAYLIST_NAME_FIELDSTR).toString().simplified();
-  // TODO fix this so that if none is selected it leaves the path instead of
-  // setting it to ""
   playlistDirectoryPathString = QFileDialog::getExistingDirectory(
       this, tr("Choose playlist directory for output files:"),
       playlistDirectoryPathString);

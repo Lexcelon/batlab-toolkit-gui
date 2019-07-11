@@ -54,7 +54,7 @@ public slots:
   void processFirmwareDownloadFinished();
   void processFirmwareDownloadError();
   void processCellResultsUpdated();
-  void setAllBatlabChannelsIdle();
+  void abortAllTests();
 
   void assignRemainingCellsToOpenChannels();
   void findBatlabForCell(cellResultsStatusInfo cell);
@@ -77,11 +77,12 @@ public slots:
   void savePlaylist();
   void savePlaylistAs(QString filename);
 
+  QMap<QString, cellResultsStatusInfo> m_cellResults;
+
 private:
   bool m_isCellPlaylistLoaded;
 
   CellPlaylist m_loadedPlaylist;
-  QMap<QString, cellResultsStatusInfo> m_cellResults;
 
   QMap<QString, Batlab *> candidateBatlabsByPortName;
   QMap<QString, Batlab *> connectedBatlabsByPortName;

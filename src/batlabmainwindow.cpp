@@ -274,8 +274,6 @@ void BatlabMainWindow::processCellPlaylistEditedState(bool edited) {
 }
 
 void BatlabMainWindow::savelogView() {
-  // TODO default path should be as is if no playlist loaded, should be in
-  // directory/named file for particular playlist if one loaded
   QString appLocalDataPath =
       QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
 
@@ -489,9 +487,7 @@ void BatlabMainWindow::debugBatlab() {
   batlabDebugDialog->show();
 }
 
-void BatlabMainWindow::checkForBatlabFirmwareUpdates() {
-  // TODO
-}
+void BatlabMainWindow::checkForBatlabFirmwareUpdates() {}
 
 void BatlabMainWindow::aboutBatlabToolkitGUI() {
   QString msgText =
@@ -537,8 +533,13 @@ void BatlabMainWindow::closeEvent(QCloseEvent *event) {
                                 QMessageBox::Yes | QMessageBox::No);
 
   if (reply == QMessageBox::Yes) {
-    batlabManager->setAllBatlabChannelsIdle();
-    //    std::this_thread::sleep_for(std::chrono::milliseconds(x));
+    batlabManager->abortAllTests();
+
+    // https://stackoverflow.com/questions/3752742/how-do-i-create-a-pause-wait-function-using-qt
+    QTime dieTime = QTime::currentTime().addSecs(1);
+    while (QTime::currentTime() < dieTime)
+      QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+
     event->accept();
   } else {
     event->ignore();

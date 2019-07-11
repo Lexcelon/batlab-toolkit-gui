@@ -20,7 +20,7 @@ public:
   explicit Channel(int slot, QObject *parent = nullptr);
   channelStatusInfo info;
   bool testInProgress() { return m_test_state != TS_IDLE; }
-  ChannelMode mode() { return m_mode; }
+  ChannelMode mode() { return info.mode; }
 
 signals:
   void resultsUpdated();
@@ -37,12 +37,12 @@ public slots:
   void handleSetModeResponse(QVector<BatlabPacket> response);
   void logLvl1(QString logstr);
   void logLvl2(QString type);
+  void logLvl3();
   void handleLogLvl2Response(QVector<BatlabPacket> response);
 
 private:
   QTimer *m_channelPeriodicCheckTimer;
 
-  ChannelMode m_mode;
   TestState m_test_state;
 
   std::chrono::time_point<std::chrono::system_clock> m_ts;
@@ -71,6 +71,8 @@ private:
 
   float m_temperature0;
   float m_delta_t;
+
+  float m_last_charge;
 
   int m_current_cycle;
 

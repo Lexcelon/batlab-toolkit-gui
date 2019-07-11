@@ -75,16 +75,21 @@ public:
 
   bool getEnableConstantVoltage() {
     return playlistBatlabSettings.enableConstantVoltage;
-  } // TODO add trickle, constant voltage, pulse to UI and to file read/write
-    // and checks
+  }
   void setEnableConstantVoltage(bool b) {
     playlistBatlabSettings.enableConstantVoltage = b;
   }
   double getConstantVoltageSensitivity() {
     return playlistBatlabSettings.constantVoltageSensitivity;
   }
+  void setConstantVoltageSensitivity(double v) {
+    playlistBatlabSettings.constantVoltageSensitivity = v;
+  }
   int getConstantVoltageStepSize() {
     return playlistBatlabSettings.constantVoltageStepSize;
+  }
+  void setConstantVoltageStepSize(int v) {
+    playlistBatlabSettings.constantVoltageStepSize = v;
   }
 
   bool getEnablePulse() { return playlistBatlabSettings.enablePulse; }
@@ -92,20 +97,38 @@ public:
   double getPulseDischargeOnTime() {
     return playlistBatlabSettings.pulseDischargeOnTime;
   }
+  void setPulseDischargeOnTime(double v) {
+    playlistBatlabSettings.pulseDischargeOnTime = v;
+  }
   double getPulseChargeOnTime() {
     return playlistBatlabSettings.pulseChargeOnTime;
+  }
+  void setPulseChargeOnTime(double v) {
+    playlistBatlabSettings.pulseChargeOnTime = v;
   }
   double getPulseDischargeOffTime() {
     return playlistBatlabSettings.pulseChargeOffTime;
   }
+  void setPulseDischargeOffTime(double v) {
+    playlistBatlabSettings.pulseDischargeOffTime = v;
+  }
   double getPulseChargeOffTime() {
     return playlistBatlabSettings.pulseChargeOffTime;
+  }
+  void setPulseChargeOffTime(double v) {
+    playlistBatlabSettings.pulseChargeOffTime = v;
   }
   double getPulseDischargeOffRate() {
     return playlistBatlabSettings.pulseDischargeOffRate;
   }
+  void setPulseDischargeOffRate(double v) {
+    playlistBatlabSettings.pulseDischargeOffRate = v;
+  }
   double getPulseChargeOffRate() {
     return playlistBatlabSettings.pulseChargeOffRate;
+  }
+  void setPulseChargeOffRate(double v) {
+    playlistBatlabSettings.pulseChargeOffRate = v;
   }
 
   bool getEnableTrickle() { return playlistBatlabSettings.enableTrickle; }
@@ -113,14 +136,26 @@ public:
   double getTrickleChargeEngageLimit() {
     return playlistBatlabSettings.trickleChargeEngageLimit;
   }
+  void setTrickleChargeEngageLimit(double v) {
+    playlistBatlabSettings.trickleChargeEngageLimit = v;
+  }
   double getTrickleDischargeEngageLimit() {
     return playlistBatlabSettings.trickleDischargeEngageLimit;
+  }
+  void setTrickleDischargeEngageLimit(double v) {
+    playlistBatlabSettings.trickleDischargeEngageLimit = v;
   }
   double getTrickleChargeRate() {
     return playlistBatlabSettings.trickleChargeRate;
   }
+  void setTrickleChargeRate(double v) {
+    playlistBatlabSettings.trickleChargeRate = v;
+  }
   double getTrickleDischargeRate() {
     return playlistBatlabSettings.trickleDischargeRate;
+  }
+  void setTrickleDischargeRate(double v) {
+    playlistBatlabSettings.trickleDischargeRate = v;
   }
 
 private:
@@ -285,9 +320,40 @@ private:
 #define ENABLE_TRICKLE_FIELDSTR "enableTrickle"
 #define ENABLE_TRICKLE_DEFAULT false
 
+#define TRICKLE_DISCHARGE_ENGAGE_LIMIT_FIELDSTR "trickleDischargeEngageLimit"
+#define TRICKLE_DISCHARGE_ENGAGE_LIMIT_DEFAULT 4.1
+#define TRICKLE_CHARGE_ENGAGE_LIMIT_FIELDSTR "trickleChargeEngageLimit"
+#define TRICKLE_CHARGE_ENGAGE_LIMIT_DEFAULT 2.8
+#define TRICKLE_CHARGE_RATE_FIELDSTR "trickleChargeRate"
+#define TRICKLE_CHARGE_RATE_DEFAULT 0.5
+#define TRICKLE_DISCHARGE_RATE_FIELDSTR "trickleDischargeRate"
+#define TRICKLE_DISCHARGE_RATE_DEFAULT 0.5
+
 // Unit: Boolean
 #define ENABLE_PULSE_FIELDSTR "enablePulse"
 #define ENABLE_PULSE_DEFAULT false
+
+#define PULSE_DISCHARGE_OFF_TIME_FIELDSTR "pulseDischargeOffTime"
+#define PULSE_DISCHARGE_OFF_TIME_DEFAULT 10
+#define PULSE_DISCHARGE_ON_TIME_FIELDSTR "pulseDischargeOnTime"
+#define PULSE_DISCHARGE_ON_TIME_DEFAULT 60
+#define PULSE_CHARGE_OFF_TIME_FIELDSTR "pulseChargeOffTime"
+#define PULSE_CHARGE_OFF_TIME_DEFAULT 10
+#define PULSE_CHARGE_ON_TIME_FIELDSTR "pulseChargeOnTime"
+#define PULSE_CHARGE_ON_TIME_DEFAULT 60;
+#define PULSE_CHARGE_OFF_RATE_FIELDSTR "pulseChargeOffRate"
+#define PULSE_CHARGE_OFF_RATE_DEFAULT 0
+#define PULSE_DISCHARGE_OFF_RATE_FIELDSTR "pulseDischargeOffRate"
+#define PULSE_DISCHARGE_OFF_RATE_DEFAULT 0
+
+// Unit: Boolean
+#define ENABLE_CONSTANT_VOLTAGE_FIELDSTR "enableConstantVoltage"
+#define ENABLE_CONSTANT_VOLTAGE_DEFAULT false
+
+#define CONSTANT_VOLTAGE_STEP_SIZE_FIELDSTR "constantVoltageStepSize"
+#define CONSTANT_VOLTAGE_STEP_SIZE_DEFAULT 8
+#define CONSTANT_VOLTAGE_SENSITIVITY_FIELDSTR "constantVoltageSensitivity"
+#define CONSTANT_VOLTAGE_SENSITIVITY_DEFAULT 1
 
 // Unit: Boolean
 #define INDIVIDUAL_CELL_LOGS_FIELDSTR "individualCellLogs"

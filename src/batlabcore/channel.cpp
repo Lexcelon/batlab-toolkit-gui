@@ -20,7 +20,7 @@ Channel::Channel(int slot, QObject *parent) : QObject(parent) {
   info.tempCalibB = -1;
   info.tempCalibR = -1;
 
-  m_mode = MODE_NO_CELL;
+  info.mode = MODE_NO_CELL;
   m_test_state = TS_IDLE;
 
   m_voltage_count = 0;
@@ -76,6 +76,8 @@ void Channel::handleSerialResponseBundleReady(batlabPacketBundle bundle) {
     handleSetModeResponse(bundle.packets);
   } else if (bundle.callback == "handleLogLvl2Response") {
     handleLogLvl2Response(bundle.packets);
+  } else if (bundle.callback == "handleAbortTestResponse") {
+    // No need to do anything
   } else {
     qWarning() << tr("%1 not implemented in Channel implementation")
                       .arg(bundle.callback);
@@ -142,7 +144,7 @@ void Channel::startTest() {
 void Channel::stateMachine() {
   QVector<BatlabPacket> packets;
   if (m_test_state == TS_PRECHARGE && info.cellName != "") {
-    if (m_mode == MODE_IDLE) {
+    if (info.mode == MODE_IDLE) {
       info.testInProgress = true;
       packets.append(BatlabPacket(info.slot, CURRENT_SETPOINT, 0));
       packets.append(BatlabPacket(info.slot, MODE, MODE_CHARGE)
@@ -190,7 +192,7 @@ void Channel::stateMachine() {
       }
     }
 
-    if (m_mode == MODE_STOPPED) {
+    if (info.mode == MODE_STOPPED) {
       info.preChargeComplete = true;
       logLvl2("PRECHARGE");
       m_test_state = TS_CHARGEREST;
@@ -323,7 +325,7 @@ void Channel::stateMachine() {
         m_trickle_engaged = true;
       }
     }
-    if (m_mode == MODE_STOPPED) {
+    if (info.mode == MODE_STOPPED) {
       logLvl2("DISCHARGE");
       m_test_state = TS_DISCHARGEREST;
       m_rest_time = std::chrono::system_clock::now();
@@ -425,7 +427,7 @@ void Channel::stateMachine() {
         m_trickle_engaged = true;
       }
     }
-    if (m_mode == MODE_STOPPED) {
+    if (info.mode == MODE_STOPPED) {
       logLvl2("CHARGE");
       m_test_state = TS_CHARGEREST;
       m_rest_time = std::chrono::system_clock::now();
@@ -445,7 +447,7 @@ void Channel::stateMachine() {
       }
     }
   } else if (m_test_state == TS_POSTDISCHARGE) {
-    if (m_mode == MODE_STOPPED ||
+    if (info.mode == MODE_STOPPED ||
         info.voltage_prev <
             static_cast<float>(playlist().getStorageDischargeVoltage())) {
       logLvl2("POSTDISCHARGE");
@@ -499,7 +501,7 @@ void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
 
   m_vcc = 5.0;
 
-  m_current_cycle = 0;
+  m_current_cycle = -1;
 
   // Control variables for pulse discharge test
   m_pulse_charge_on_time = std::chrono::system_clock::from_time_t(0);
@@ -532,7 +534,7 @@ void Channel::handleCurrentCompensateResponse() {
 void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   int responseCounter = 0;
 
-  m_mode = static_cast<ChannelMode>(response[responseCounter++].getValue());
+  info.mode = static_cast<ChannelMode>(response[responseCounter++].getValue());
   auto p = response[responseCounter++];
 
   if (response.length() == 2) {
@@ -550,7 +552,7 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
   auto op_raw = p.getValue();       // Actual operating point
   auto sp_raw = m_current_setpoint; // Current setpoint
   auto sp = sp_raw / 128.0;
-  if (m_mode == MODE_CHARGE || m_mode == MODE_DISCHARGE) {
+  if (info.mode == MODE_CHARGE || info.mode == MODE_DISCHARGE) {
     if (current > 0 && (sp >= 0.35 || current < 0.37f)) {
       if (current < (static_cast<float>(sp) - 0.01f)) {
         op_raw++;
@@ -598,6 +600,8 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
     auto data = (chargeh2 << 16) + chargel2;
     charge = ((multiplier * data / powf(2, 15)) * 4.096f / 9.765625f);
   }
+
+  m_last_charge = charge;
 
   responseCounter++; // Skip duty (unused)
   auto vc = response[responseCounter++].asVcc();
@@ -662,9 +666,9 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
                 .count() > playlist().getImpedanceReportingPeriod() &&
         playlist().getImpedanceReportingPeriod() > 0 && !m_trickle_engaged) {
     }
-    //    impedance();
+    //    impedance();  // TODO enable this
   }
-  if (m_mode != MODE_NO_CELL && m_mode != MODE_BACKWARDS) {
+  if (info.mode != MODE_NO_CELL && info.mode != MODE_BACKWARDS) {
     QString logstr = "";
     logstr += info.cellName + "," +
               QString::number(batlab()->getSerialNumber()) + ",";
@@ -678,11 +682,8 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
     logstr += QString::number(static_cast<double>(temperature), 'f', 4) + ",,";
     logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
     logstr += QString::number(static_cast<double>(charge), 'f', 4) + ",";
-    logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,";
-    logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",,,\n";
-    //    logstr += QString::number(op_raw) + ",";
-    //    logstr += QString::number(sp_raw) + ",";
-    //    logstr += QString::number(duty) + "\n";
+    logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,";
+    logstr += QString::number(static_cast<double>(m_vcc), 'f', 4) + ",,,,\n";
     logLvl1(logstr);
   }
 
@@ -691,6 +692,10 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
 }
 
 void Channel::logLvl1(QString logstr) {
+  // Don't log unless we are in a measurement cycle
+  if (m_current_cycle <= playlist().getNumWarmupCycles()) {
+    return;
+  }
   QDir resultsDir(playlist().getPlaylistOutputDirectory());
   QFile cellFile(resultsDir.absoluteFilePath(playlist().getCellPlaylistName() +
                                              "_" + info.cellName + ".csv"));
@@ -724,6 +729,10 @@ void Channel::logLvl1(QString logstr) {
 }
 
 void Channel::logLvl2(QString type) {
+  // Don't log unless we are in a measurement cycle
+  if (m_current_cycle <= playlist().getNumWarmupCycles()) {
+    return;
+  }
   QDir resultsDir(playlist().getPlaylistOutputDirectory());
   QFile summaryFile(
       resultsDir.absoluteFilePath(playlist().getCellPlaylistName() + ".csv"));
@@ -766,7 +775,7 @@ void Channel::logLvl2(QString type) {
   logstr += QDateTime::fromTime_t(
                 static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
                 .toString("MM/dd/yyyy hh:mm:ss AP") +
-            ",,,,,,,,";
+            ",,,,,,,";
   logstr += type + ",";
   logstr += QString::number(static_cast<double>(m_q), 'f', 4) + ",";
   logstr += QString::number(static_cast<double>(m_e), 'f', 4) + ",";
@@ -796,12 +805,216 @@ void Channel::logLvl2(QString type) {
   batlab()->sendPacketBundle(packetBundle);
 }
 
+void Channel::logLvl3() {
+  QDir resultsDir(playlist().getPlaylistOutputDirectory());
+  QFile summaryFile(
+      resultsDir.absoluteFilePath(playlist().getCellPlaylistName() + ".csv"));
+  if (!resultsDir.exists()) {
+    resultsDir.mkpath(resultsDir.path());
+  }
+  if (!summaryFile.exists()) {
+    if (!summaryFile.open(QIODevice::WriteOnly)) {
+      qWarning() << "Unable to create summary results file";
+      return;
+    }
+    summaryFile.write(QString("\"" + playlist().toJson().replace("\"", "\"\"") +
+                              "\",,,,,,,,,,,,,,,,,,,,,,,,,\n")
+                          .toUtf8());
+    summaryFile.write(
+        "Cell Name,Batlab Serial,Channel,Timestamp (s),Voltage (V),Current "
+        "(A),Temperature (C),Impedance (Ohm),Energy (J),Charge (Coulombs),Test "
+        "State,Charge Capacity (Coulombs),Energy Capacity (J),Avg "
+        "Impedance (Ohm),delta Temperature (C),Average Current (A),Average "
+        "Voltage,Runtime (s),VCC "
+        "(V),Charge Capacity,Charge Capacity Range,Energy Capacity,Energy "
+        "Capacity Range,Impedance,Average Voltage,"
+        "Average Current\n");
+    summaryFile.close();
+  }
+
+  // Init lvl3 params
+  float charge_capacity = 0;
+  float charge_capacity_range = 0;
+  float energy_capacity = 0;
+  float energy_capacity_range = 0;
+  float impedance = 0;
+  float average_voltage = 0;
+  float average_current = 0;
+
+  // Calculations
+
+  // Calculate middle 50% state of charge, and get all discharge currents and
+  // voltages
+  QFile cellFile(resultsDir.absoluteFilePath(playlist().getCellPlaylistName() +
+                                             "_" + info.cellName + ".csv"));
+  if (!cellFile.exists()) {
+    qWarning() << tr("No cell results file found for %1").arg(info.cellName);
+  }
+  if (!cellFile.open(QIODevice::ReadOnly)) {
+    qWarning() << summaryFile.errorString();
+    return;
+  }
+  QVector<float> charges;
+  QVector<float> currents;
+  QVector<float> voltages;
+  QString line;
+  while (!line.startsWith("Cell Name") &&
+         !cellFile.atEnd()) { // JSON and headers
+    line = cellFile.readLine();
+  }
+  while (!cellFile.atEnd()) { // Data
+    line = cellFile.readLine();
+    auto values = QString(line).remove('"').split(',');
+    if (values[9] != "") { // Charge
+      charges.push_back(values[9].toFloat());
+    }
+    if (values[10] == "DISCHARGE" && values[4] != "") { // Voltage
+      voltages.push_back(values[4].toFloat());
+    }
+    if (values[10] == "DISCHARGE" && values[5] != "") { // Current
+      currents.push_back(values[5].toFloat());
+    }
+  }
+  cellFile.close();
+  if (charges.size() > 1) {
+    float charges_min = *std::min_element(charges.begin(), charges.end());
+    float charges_max = *std::max_element(charges.begin(), charges.end());
+    float charges_range = charges_max - charges_min;
+    float accept_impedance_with_charge_above =
+        charges_min + 0.25f * charges_range;
+    float accept_impedance_with_charge_below =
+        charges_max - 0.25f * charges_range;
+
+    // Get all impedance values in this range
+    if (!cellFile.open(QIODevice::ReadOnly)) {
+      qWarning() << summaryFile.errorString();
+      return;
+    }
+    QVector<float> impedances;
+    QString line;
+    while (!line.startsWith("Cell Name") &&
+           !cellFile.atEnd()) { // JSON and headers
+      line = cellFile.readLine();
+    }
+    while (!cellFile.atEnd()) { // Data
+      line = cellFile.readLine();
+      auto values = QString(line).remove('"').split(',');
+      if (values[9] != "" && values[7] != "") { // Impedance and charge
+        if (accept_impedance_with_charge_above <= values[9].toFloat() &&
+            values[9].toFloat() <= accept_impedance_with_charge_below) {
+          impedances.push_back(values[7].toFloat());
+        }
+      }
+    }
+    cellFile.close();
+    // Get median of accepted impedance values
+    const auto median_it = impedances.begin() + impedances.size() / 2;
+    std::nth_element(impedances.begin(), median_it, impedances.end());
+    impedance = *median_it;
+  }
+
+  // Calculate mean current and voltage
+  if (currents.size() > 0) {
+    average_current = std::accumulate(currents.begin(), currents.end(), 0.0f) /
+                      currents.size();
+  }
+  if (voltages.size() > 0) {
+    average_voltage = std::accumulate(voltages.begin(), voltages.end(), 0.0f) /
+                      voltages.size();
+  }
+
+  // Get all lvl2 discharge charge capacities and discharge energy capacities
+  if (!summaryFile.open(QIODevice::ReadOnly)) {
+    qWarning() << summaryFile.errorString();
+    return;
+  }
+  line = "";
+  QVector<float> charge_capacities;
+  QVector<float> energy_capacities;
+  while (!line.startsWith("Cell Name") &&
+         !summaryFile.atEnd()) { // JSON and headers
+    line = summaryFile.readLine();
+  }
+  while (!summaryFile.atEnd()) { // Data
+    line = summaryFile.readLine();
+    auto values = QString(line).remove('"').split(',');
+    if (values[10] == "DISCHARGE" && values[11] != "") { // Charge capacity
+      charge_capacities.push_back(values[11].toFloat());
+    }
+    if (values[10] == "DISCHARGE" && values[12] != "") { // Energy capacity
+      energy_capacities.push_back(values[12].toFloat());
+    }
+  }
+
+  // Take the last discharge charge capacity/energy capacity
+  // Also calculate charge capacity/energy capacity range
+  if (!charge_capacities.empty()) {
+    float charge_capacities_min =
+        *std::min_element(charge_capacities.begin(), charge_capacities.end());
+    float charge_capacities_max =
+        *std::max_element(charge_capacities.begin(), charge_capacities.end());
+    charge_capacity = *charge_capacities.end();
+    charge_capacity_range = charge_capacities_max - charge_capacities_min;
+  }
+  if (!energy_capacities.empty()) {
+    float energy_capacities_min =
+        *std::min_element(energy_capacities.begin(), energy_capacities.end());
+    float energy_capacities_max =
+        *std::max_element(energy_capacities.begin(), energy_capacities.end());
+    energy_capacity = *energy_capacities.end();
+    energy_capacity_range = energy_capacities_max - energy_capacities_min;
+  }
+
+  // Log results
+  QString logstr = "";
+  logstr +=
+      info.cellName + "," + QString::number(batlab()->getSerialNumber()) + ",";
+  logstr += QString::number(info.slot) + ",";
+  logstr += QDateTime::fromTime_t(
+                static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
+                .toString("MM/dd/yyyy hh:mm:ss AP") +
+            ",,,,,,,";
+  logstr += "SUMMARY,,,,,,,,";
+  logstr += QString::number(static_cast<double>(charge_capacity), 'f', 3) + ",";
+  logstr +=
+      QString::number(static_cast<double>(charge_capacity_range), 'f', 3) + ",";
+  logstr += QString::number(static_cast<double>(energy_capacity), 'f', 3) + ",";
+  logstr +=
+      QString::number(static_cast<double>(energy_capacity_range), 'f', 3) + ",";
+  logstr += QString::number(static_cast<double>(impedance), 'f', 1) + ",";
+  logstr += QString::number(static_cast<double>(average_voltage), 'f', 3) + ",";
+  logstr += QString::number(static_cast<double>(average_current), 'f', 3) + ",";
+
+  summaryFile.write(logstr.toUtf8());
+
+  info.testInProgress = false;
+  auto batlabManager = dynamic_cast<BatlabManager *>(batlab()->parent());
+  batlabManager->m_cellResults[info.cellName].testInProgress = false;
+  batlabManager->m_cellResults[info.cellName].hasSomeResults = true;
+  batlabManager->m_cellResults[info.cellName].hasCompleteResults = true;
+  batlabManager->m_cellResults[info.cellName].impedance = impedance;
+  batlabManager->m_cellResults[info.cellName].avgVoltage = average_voltage;
+  batlabManager->m_cellResults[info.cellName].avgCurrent = average_current;
+  batlabManager->m_cellResults[info.cellName].chargeCapacity = charge_capacity;
+  batlabManager->m_cellResults[info.cellName].chargeCapacityRange =
+      charge_capacity_range;
+  batlabManager->m_cellResults[info.cellName].energyCapacity = energy_capacity;
+  batlabManager->m_cellResults[info.cellName].energyCapacityRange =
+      energy_capacity_range;
+  emit resultsUpdated();
+}
+
 void Channel::handleLogLvl2Response(QVector<BatlabPacket> response) {
   m_temperature0 = response[0].asTemperatureC(info.tempCalibR, info.tempCalibB);
 }
 
 void Channel::completeTest() {
-  // TODO
+  abortTest();
+
+  // Log lvl3 in file. Assume lvl2 already logged
+  logLvl3();
+
+  qInfo() << tr("Test completed on cell %1").arg(info.cellName);
 }
 
 void Channel::impedance() {
@@ -858,7 +1071,8 @@ void Channel::handleImpedanceResponse(QVector<BatlabPacket> response) {
                 static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
                 .toString("MM/dd/yyyy hh:mm:ss AP") +
             ",";
-  logstr += ",,," + QString("%1").arg(static_cast<double>(z), 4) + ",,,";
+  logstr += ",,," + QString("%1").arg(static_cast<double>(z), 4) + ",,";
+  logstr += QString::number(static_cast<double>(m_last_charge), 'f', 4) + ",";
   logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,,,,\n";
   logLvl1(logstr);
 }

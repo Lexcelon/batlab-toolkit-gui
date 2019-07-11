@@ -246,6 +246,21 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
           QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
           &PlaylistSettingsWidget::updatePlaylist);
 
+  enableConstantVoltageCheckBox = new QCheckBox(tr("Enable constant voltage"));
+  enableConstantVoltageCheckBox->setChecked(ENABLE_CONSTANT_VOLTAGE_DEFAULT);
+  connect(enableConstantVoltageCheckBox, &QCheckBox::toggled, this,
+          &PlaylistSettingsWidget::updatePlaylist);
+
+  enableTrickleCheckBox = new QCheckBox(tr("Enable trickle charge/discharge"));
+  enableTrickleCheckBox->setChecked(ENABLE_TRICKLE_DEFAULT);
+  connect(enableTrickleCheckBox, &QCheckBox::toggled, this,
+          &PlaylistSettingsWidget::updatePlaylist);
+
+  enablePulseCheckBox = new QCheckBox(tr("Enable pulse charge/discharge"));
+  enablePulseCheckBox->setChecked(ENABLE_PULSE_DEFAULT);
+  connect(enablePulseCheckBox, &QCheckBox::toggled, this,
+          &PlaylistSettingsWidget::updatePlaylist);
+
   QVBoxLayout *manageLayout = new QVBoxLayout;
   manageLayout->addWidget(newCellPlaylistButton);
   manageLayout->addWidget(openCellPlaylistButton);
@@ -308,6 +323,9 @@ PlaylistSettingsWidget::PlaylistSettingsWidget(QWidget *parent)
                                      11, 1);
   advancedExtensionLayout->addWidget(acceptableCellImpedanceThresholdUnit, 11,
                                      2);
+  advancedExtensionLayout->addWidget(enableConstantVoltageCheckBox, 12, 0);
+  advancedExtensionLayout->addWidget(enableTrickleCheckBox, 13, 0);
+  advancedExtensionLayout->addWidget(enablePulseCheckBox, 14, 0);
 
   QVBoxLayout *configLayout = new QVBoxLayout;
   configLayout->addLayout(basicConfigLayout);
@@ -390,8 +408,12 @@ void PlaylistSettingsWidget::updatePlaylist() {
   playlist.setStorageDischargeVoltage(storageDischargeVoltageSpinBox->value());
   playlist.setAcceptableImpedanceThreshold(
       acceptableCellImpedanceThresholdSpinBox->value());
+
+  playlist.setEnableConstantVoltage(enableConstantVoltageCheckBox->isChecked());
+  playlist.setEnableTrickle(enableTrickleCheckBox->isChecked());
+  playlist.setEnablePulse(enablePulseCheckBox->isChecked());
+
   emit playlistUpdated(playlist);
-  // TODO add trickle etc
 }
 
 void PlaylistSettingsWidget::loadPlaylist(CellPlaylist playlist) {

@@ -317,8 +317,13 @@ void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
 
 Batlab::~Batlab() { delete m_commsManager; }
 
-void Batlab::setAllIdle() // TODO validate this behavior
-{
+void Batlab::abortTests() {
+  // Abort tests
+  for (int i = 0; i < 4; i++) {
+    m_channels[i]->abortTest();
+  }
+
+  // Then set the channels to idle
   QVector<BatlabPacket> idlePackets;
 
   idlePackets.append(

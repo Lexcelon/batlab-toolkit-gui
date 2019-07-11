@@ -17,10 +17,6 @@ BatlabManager::BatlabManager(QObject *parent) : QObject(parent) {
 }
 
 void BatlabManager::startTests() {
-  // TODO See if playlist settings have been edited and act accordingly (offer
-  // to save) TODO also do this when making a new playlist
-  // TODO validate playlist settings are within limits
-
   if (connectedBatlabsByPortName.size() == 0) {
     emit error(tr("At least one Batlab must be connected to start tests."));
     return;
@@ -60,16 +56,13 @@ void BatlabManager::startTests() {
   // This will automatically start tests on those channels
   assignRemainingCellsToOpenChannels();
 
-  // TODO at the end of a channel test, assignremainingcellstoopenchannels again
-  // and then shut down channel if no more cells
-
   emit testsInProgressState(true);
   // Trigger redraw of Batlabs to disable firmware upgrade button
   processUpdatedBatlabInfo();
 }
 
 void BatlabManager::stopTests() {
-  // TODO
+  abortAllTests();
 
   emit testsInProgressState(false);
   // Trigger redraw of Batlabs to enable firmware upgrade button
@@ -134,7 +127,7 @@ bool BatlabManager::hasPartialCellResults(CellPlaylist playlist) {
       auto values = QString(line).remove('"').split(',');
       auto name = values[0];
       cellResults[name].hasSomeResults = true;
-      if (values[11] == "SUMMARY") {
+      if (values[10] == "SUMMARY") {
         cellResults[name].hasCompleteResults = true;
       }
     }
@@ -201,17 +194,17 @@ void BatlabManager::loadPlaylist(CellPlaylist playlist) {
       }
       auto name = values[0];
       m_cellResults[name].hasSomeResults = true;
-      if (values[11] == "SUMMARY") {
+      if (values[10] == "SUMMARY") {
         m_cellResults[name].batlabSerial = values[1].toInt();
         m_cellResults[name].channel = values[2].toInt();
         m_cellResults[name].hasCompleteResults = true;
-        m_cellResults[name].chargeCapacity = values[20].toFloat();
-        m_cellResults[name].chargeCapacityRange = values[21].toFloat();
-        m_cellResults[name].energyCapacity = values[22].toFloat();
-        m_cellResults[name].energyCapacityRange = values[23].toFloat();
-        m_cellResults[name].impedance = values[24].toFloat();
-        m_cellResults[name].avgVoltage = values[25].toFloat();
-        m_cellResults[name].avgCurrent = values[26].toFloat();
+        m_cellResults[name].chargeCapacity = values[19].toFloat();
+        m_cellResults[name].chargeCapacityRange = values[20].toFloat();
+        m_cellResults[name].energyCapacity = values[21].toFloat();
+        m_cellResults[name].energyCapacityRange = values[22].toFloat();
+        m_cellResults[name].impedance = values[23].toFloat();
+        m_cellResults[name].avgVoltage = values[24].toFloat();
+        m_cellResults[name].avgCurrent = values[25].toFloat();
       }
     }
   }
@@ -339,14 +332,38 @@ void BatlabManager::updatePlaylist(CellPlaylist playlist) {
       playlist.getStorageDischargeVoltage());
   m_loadedPlaylist.setAcceptableImpedanceThreshold(
       playlist.getAcceptableImpedanceThreshold());
-  // TODO add trickle etc
+
+  m_loadedPlaylist.setEnablePulse(playlist.getEnablePulse());
+  m_loadedPlaylist.setPulseDischargeOffTime(
+      playlist.getPulseDischargeOffTime());
+  m_loadedPlaylist.setPulseDischargeOnTime(playlist.getPulseDischargeOnTime());
+  m_loadedPlaylist.setPulseChargeOffTime(playlist.getPulseChargeOffTime());
+  m_loadedPlaylist.setPulseChargeOnTime(playlist.getPulseChargeOnTime());
+  m_loadedPlaylist.setPulseChargeOffRate(playlist.getPulseChargeOffRate());
+  m_loadedPlaylist.setPulseDischargeOffRate(
+      playlist.getPulseDischargeOffRate());
+
+  m_loadedPlaylist.setEnableTrickle(playlist.getEnableTrickle());
+  m_loadedPlaylist.setTrickleDischargeEngageLimit(
+      playlist.getTrickleDischargeEngageLimit());
+  m_loadedPlaylist.setTrickleChargeEngageLimit(
+      playlist.getTrickleChargeEngageLimit());
+  m_loadedPlaylist.setTrickleChargeRate(playlist.getTrickleChargeRate());
+  m_loadedPlaylist.setTrickleDischargeRate(playlist.getTrickleDischargeRate());
+
+  m_loadedPlaylist.setEnableConstantVoltage(
+      (playlist.getEnableConstantVoltage()));
+  m_loadedPlaylist.setConstantVoltageSensitivity(
+      playlist.getConstantVoltageSensitivity());
+  m_loadedPlaylist.setConstantVoltageStepSize(
+      playlist.getConstantVoltageStepSize());
 
   emit cellPlaylistEditedState(true);
 }
 
-void BatlabManager::setAllBatlabChannelsIdle() {
+void BatlabManager::abortAllTests() {
   for (auto portName : connectedBatlabsByPortName.keys()) {
-    connectedBatlabsByPortName[portName]->setAllIdle();
+    connectedBatlabsByPortName[portName]->abortTests();
   }
 }
 
@@ -430,7 +447,6 @@ void BatlabManager::processCellResultsUpdated() {
       if (channelInfo.cellName != "") {
         m_cellResults[channelInfo.cellName].testInProgress =
             channelInfo.testInProgress;
-        // TODO figure out if tests are done and then show results
       }
     }
   }
@@ -440,6 +456,8 @@ void BatlabManager::processCellResultsUpdated() {
     infos.append(cell);
   }
   emit cellResultsUpdated(infos);
+
+  assignRemainingCellsToOpenChannels();
 }
 
 void BatlabManager::removeBatlab(QString portName) {
@@ -523,7 +541,6 @@ void BatlabManager::processRegisterWriteRequest(int serial, int ns, int address,
 void BatlabManager::processFirmwareFlashRequest(int serial,
                                                 QString firmwareVersion) {
   if (testsInProgress()) {
-    // TODO grey out firmware flash button when tests are in progress
     qWarning() << "Cannot flash firmware while tests are in progress.";
     return;
   }

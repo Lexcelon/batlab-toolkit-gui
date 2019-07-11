@@ -3,6 +3,9 @@
 QVector<QString> L_TEST_STATE({"IDLE", "CHARGE", "PRECHARGE", "DISCHARGE",
                                "CHARGEREST", "DISCHARGEREST", "POSTDISCHARGE"});
 
+QVector<QString> MODE_LIST({"NO CELL", "BACKWARDS", "IDLE", "CHARGE",
+                            "DISCHARGE", "IMPEDANCE", "STOPPED"});
+
 QString BatlabLib::cellName(QString designator, int numCells,
                             int startingCellNum, int cellId) {
   int maxCellNumber = numCells + startingCellNum;
