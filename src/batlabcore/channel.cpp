@@ -806,6 +806,10 @@ void Channel::completeTest() {
   abortTest();
 
   // LEFT OFF
+  // TODO log lvl3 in file
+  // TODO show results in results view
+  // TODO log string to log view
+  // TODO make it ask to remove cell and then place next cell
 }
 
 void Channel::impedance() {
