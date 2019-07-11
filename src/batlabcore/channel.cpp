@@ -501,7 +501,7 @@ void Channel::handleStartTestResponse(QVector<BatlabPacket> response) {
 
   m_vcc = 5.0;
 
-  m_current_cycle = 0;
+  m_current_cycle = -1;
 
   // Control variables for pulse discharge test
   m_pulse_charge_on_time = std::chrono::system_clock::from_time_t(0);
