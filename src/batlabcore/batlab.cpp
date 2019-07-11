@@ -317,24 +317,10 @@ void Batlab::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
 
 Batlab::~Batlab() { delete m_commsManager; }
 
-void Batlab::setAllIdle() // TODO validate this behavior
-{
-  QVector<BatlabPacket> idlePackets;
-
-  idlePackets.append(
-      BatlabPacket(batlabNamespaces::CHANNEL0, cellNamespace::MODE, MODE_IDLE));
-  idlePackets.append(
-      BatlabPacket(batlabNamespaces::CHANNEL1, cellNamespace::MODE, MODE_IDLE));
-  idlePackets.append(
-      BatlabPacket(batlabNamespaces::CHANNEL2, cellNamespace::MODE, MODE_IDLE));
-  idlePackets.append(
-      BatlabPacket(batlabNamespaces::CHANNEL3, cellNamespace::MODE, MODE_IDLE));
-
-  batlabPacketBundle packetBundle;
-  packetBundle.packets = idlePackets;
-  packetBundle.callback = "handleSetAllIdleResponse";
-  packetBundle.channel = -1;
-  m_commsManager->sendPacketBundle(packetBundle);
+void Batlab::abortTests() {
+  for (int i = 0; i < 4; i++) {
+    m_channels[i]->abortTest();
+  }
 }
 
 batlabStatusInfo Batlab::getInfo() {

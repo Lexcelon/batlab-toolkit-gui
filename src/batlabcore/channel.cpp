@@ -76,6 +76,8 @@ void Channel::handleSerialResponseBundleReady(batlabPacketBundle bundle) {
     handleSetModeResponse(bundle.packets);
   } else if (bundle.callback == "handleLogLvl2Response") {
     handleLogLvl2Response(bundle.packets);
+  } else if (bundle.callback == "handleAbortTestsResponse") {
+    // No need to do anything
   } else {
     qWarning() << tr("%1 not implemented in Channel implementation")
                       .arg(bundle.callback);

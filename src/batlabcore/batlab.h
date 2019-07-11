@@ -24,7 +24,7 @@ public:
   Batlab(QString portName, QObject *parent = nullptr);
   ~Batlab();
 
-  void setAllIdle();
+  void abortTests();
   bool testsInProgress();
 
 signals:

@@ -54,7 +54,7 @@ public slots:
   void processFirmwareDownloadFinished();
   void processFirmwareDownloadError();
   void processCellResultsUpdated();
-  void setAllBatlabChannelsIdle();
+  void abortAllTests();
 
   void assignRemainingCellsToOpenChannels();
   void findBatlabForCell(cellResultsStatusInfo cell);

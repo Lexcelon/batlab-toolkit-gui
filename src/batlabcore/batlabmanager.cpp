@@ -368,9 +368,9 @@ void BatlabManager::updatePlaylist(CellPlaylist playlist) {
   emit cellPlaylistEditedState(true);
 }
 
-void BatlabManager::setAllBatlabChannelsIdle() {
+void BatlabManager::abortAllTests() {
   for (auto portName : connectedBatlabsByPortName.keys()) {
-    connectedBatlabsByPortName[portName]->setAllIdle();
+    connectedBatlabsByPortName[portName]->abortTests();
   }
 }
 

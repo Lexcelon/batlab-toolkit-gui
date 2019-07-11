@@ -537,8 +537,13 @@ void BatlabMainWindow::closeEvent(QCloseEvent *event) {
                                 QMessageBox::Yes | QMessageBox::No);
 
   if (reply == QMessageBox::Yes) {
-    batlabManager->setAllBatlabChannelsIdle();
-    //    std::this_thread::sleep_for(std::chrono::milliseconds(x));
+    batlabManager->abortAllTests();
+
+    // https://stackoverflow.com/questions/3752742/how-do-i-create-a-pause-wait-function-using-qt
+    QTime dieTime = QTime::currentTime().addSecs(1);
+    while (QTime::currentTime() < dieTime)
+      QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+
     event->accept();
   } else {
     event->ignore();
