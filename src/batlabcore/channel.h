@@ -72,6 +72,8 @@ private:
   float m_temperature0;
   float m_delta_t;
 
+  float m_last_charge;
+
   int m_current_cycle;
 
   quint16 m_sp_raw;

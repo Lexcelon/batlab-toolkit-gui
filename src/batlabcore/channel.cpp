@@ -601,6 +601,8 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
     charge = ((multiplier * data / powf(2, 15)) * 4.096f / 9.765625f);
   }
 
+  m_last_charge = charge;
+
   responseCounter++; // Skip duty (unused)
   auto vc = response[responseCounter++].asVcc();
 
@@ -664,7 +666,7 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
                 .count() > playlist().getImpedanceReportingPeriod() &&
         playlist().getImpedanceReportingPeriod() > 0 && !m_trickle_engaged) {
     }
-    //    impedance();
+    //    impedance();  // TODO enable this
   }
   if (info.mode != MODE_NO_CELL && info.mode != MODE_BACKWARDS) {
     QString logstr = "";
@@ -1061,7 +1063,8 @@ void Channel::handleImpedanceResponse(QVector<BatlabPacket> response) {
                 static_cast<uint>(std::chrono::system_clock::to_time_t(m_ts)))
                 .toString("MM/dd/yyyy hh:mm:ss AP") +
             ",";
-  logstr += ",,," + QString("%1").arg(static_cast<double>(z), 4) + ",,,";
+  logstr += ",,," + QString("%1").arg(static_cast<double>(z), 4) + ",,";
+  logstr += QString::number(static_cast<double>(m_last_charge), 'f', 4) + ",";
   logstr += L_TEST_STATE[m_test_state] + ",,,,,,,,,,,,\n";
   logLvl1(logstr);
 }
