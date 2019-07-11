@@ -692,6 +692,10 @@ void Channel::handlePeriodicCheckResponse(QVector<BatlabPacket> response) {
 }
 
 void Channel::logLvl1(QString logstr) {
+  // Don't log unless we are in a measurement cycle
+  if (m_current_cycle <= playlist().getNumWarmupCycles()) {
+    return;
+  }
   QDir resultsDir(playlist().getPlaylistOutputDirectory());
   QFile cellFile(resultsDir.absoluteFilePath(playlist().getCellPlaylistName() +
                                              "_" + info.cellName + ".csv"));
@@ -725,6 +729,10 @@ void Channel::logLvl1(QString logstr) {
 }
 
 void Channel::logLvl2(QString type) {
+  // Don't log unless we are in a measurement cycle
+  if (m_current_cycle <= playlist().getNumWarmupCycles()) {
+    return;
+  }
   QDir resultsDir(playlist().getPlaylistOutputDirectory());
   QFile summaryFile(
       resultsDir.absoluteFilePath(playlist().getCellPlaylistName() + ".csv"));
